@@ -1,0 +1,38 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm" version "1.1.4"
+    id "application"
+}
+
+allprojects {
+   apply plugin: 'org.jetbrains.kotlin.jvm'
+}
+
+mainClassName = 'api.server.MainApp'
+
+defaultTasks 'build'
+
+repositories {
+    maven {
+        name "aliyun-maven"
+        url "http://maven.aliyun.com/nexus/content/groups/public/"
+    }
+    jcenter()
+    ivy {
+        name "typesafe-ivy-release"
+        url "https://repo.typesafe.com/typesafe/ivy-releases"
+        layout "ivy"
+    }
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.4"
+    compile "org.jetbrains.kotlin:kotlin-reflect:1.1.4"
+
+    compile project(':subProjects:api-server')
+}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
