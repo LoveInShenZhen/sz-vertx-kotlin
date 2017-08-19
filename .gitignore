@@ -12,3 +12,19 @@ gradle-app.setting
 
 # # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
 # gradle/wrapper/gradle-wrapper.properties
+
+logs/
+target/
+.idea/
+.idea_modules/
+.classpath
+.project
+.settings/
+classes/
+RUNNING_PID
+*.iml
+*.ipr
+*.iws
+
+# office temp files
+~$*
