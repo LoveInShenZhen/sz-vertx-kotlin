@@ -36,3 +36,17 @@ compileKotlin {
         jvmTarget = "1.8"
     }
 }
+
+distZip {
+    into(project.name) {
+        from '.'
+        include 'conf/*'
+    }
+}
+
+distTar {
+    into(project.name) {
+        from '.'
+        include 'conf/*'
+    }
+}
