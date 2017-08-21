@@ -9,9 +9,10 @@ import io.vertx.core.json.JsonObject
 import jodd.io.FileNameUtil
 import jodd.util.SystemUtil
 import org.apache.commons.lang3.reflect.MethodUtils
-import sz.scaffold.tools.json.toJsonPretty
 import sz.scaffold.tools.logger.Logger
 import java.io.File
+import java.net.URLClassLoader
+import kotlin.reflect.full.memberFunctions
 
 //
 // Created by kk on 17/8/19.
@@ -92,5 +93,14 @@ object Application {
 
         return HttpServerOptions(JsonObject(cfgMap))
 
+    }
+
+    fun addClassPath(path: String) {
+        val f = File(path)
+        MethodUtils.invokeMethod(classLoader, true, "addURL", f.toURI().toURL())
+    }
+
+    fun addConfToClassPath() {
+        addClassPath(FileNameUtil.concat(appHome, "conf"))
     }
 }

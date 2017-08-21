@@ -35,6 +35,8 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-reflect:1.1.4"
 
     compile project(':subProjects:api-server')
+
+    compile files("conf")
 }
 
 distZip {

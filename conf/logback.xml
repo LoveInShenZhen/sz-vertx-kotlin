@@ -1,0 +1,50 @@
+<!-- https://www.playframework.com/documentation/latest/SettingsLogger -->
+<configuration>
+
+    <conversionRule conversionWord="coloredLevel" converterClass="sz.scaffold.tools.logger.ColoredLevel"/>
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>logs/application.log</file>
+        <encoder>
+            <pattern>%date [%level] from %logger in %thread - %message%n%xException</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%coloredLevel %logger{15} - %message%n%xException{10}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ASYNCFILE" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="FILE"/>
+    </appender>
+
+    <appender name="ASYNCSTDOUT" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="STDOUT"/>
+    </appender>
+
+    <root level="WARN">
+        <appender-ref ref="ASYNCFILE"/>
+        <appender-ref ref="ASYNCSTDOUT"/>
+    </root>
+
+    <logger name="App" level="DEBUG"/>
+
+    <!-- Off these ones as they are annoying, and anyway we manage configuration ourselves -->
+    <!-- SQL and bind values -->
+    <logger name="io.ebean.SQL" level="OFF"/>
+
+    <!-- Transaction Commit and Rollback events -->
+    <logger name="io.ebean.TXN" level="OFF"/>
+
+    <!-- Summary level details -->
+    <logger name="io.ebean.SUM" level="OFF"/>
+
+    <!-- L2 logging -->
+    <logger name="io.ebean.cache.QUERY" level="OFF"/>
+    <logger name="io.ebean.cache.BEAN" level="OFF"/>
+    <logger name="io.ebean.cache.COLL" level="OFF"/>
+    <logger name="io.ebean.cache.NATKEY" level="OFF"/>
+
+</configuration>
