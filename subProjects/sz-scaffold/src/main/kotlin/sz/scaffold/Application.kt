@@ -10,6 +10,7 @@ import io.vertx.ext.web.Router
 import jodd.exception.ExceptionUtil
 import jodd.util.SystemUtil
 import sz.scaffold.controller.ApiRoute
+import sz.scaffold.tools.SzException
 import sz.scaffold.tools.logger.Logger
 import java.io.File
 
@@ -30,25 +31,34 @@ object Application {
     val appHome: String
     val classLoader = Application::class.java.classLoader
 
+    private var _vertx: Vertx? = null
+
+    val vertx: Vertx
+    get() {
+        if (_vertx == null) {
+            throw SzException("Application 还没有初始化 vertx")
+        }
+        return _vertx!!
+    }
+
     init {
         System.setProperty("config.file", "conf/application.conf")
         config = ConfigFactory.load()
         appHome = SystemUtil.workingFolder()
     }
 
-    fun run(appVertx: Vertx? = null) {
-        Runtime.getRuntime().addShutdownHook(object : Thread() {
-            override fun run() {
-                _onStopHandler()
-            }
-        })
+    fun setupVertx(appVertx: Vertx? = null) {
+        if (_vertx != null) {
+            throw SzException("Application 的 vertx 已经初始化过了, 请勿重复初始化")
+        }
+        _vertx = appVertx ?: Vertx.vertx(this.vertxOptions())
+    }
 
-        val vertx = appVertx ?: Vertx.vertx(this.vertxOptions())
+    fun run() {
+
         val httpServerOptions = this.httpServerOptions()
         val httpServer = vertx.createHttpServer(httpServerOptions)
         _onStartHanler()
-
-//        Logger.debug(httpServerOptions.toJson().encodePrettily())
 
         val router = Router.router(vertx)
 
@@ -69,6 +79,12 @@ object Application {
             }
 
         }
+
+        Runtime.getRuntime().addShutdownHook(object : Thread() {
+            override fun run() {
+                _onStopHandler()
+            }
+        })
 
         Logger.debug("Start http server at: ${httpServerOptions.host}:${httpServerOptions.port}")
         httpServer.listen()
