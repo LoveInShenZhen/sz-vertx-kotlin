@@ -6,10 +6,10 @@ import io.vertx.core.Vertx
 import io.vertx.core.VertxOptions
 import io.vertx.core.http.HttpServerOptions
 import io.vertx.core.json.JsonObject
-import jodd.io.FileNameUtil
+import io.vertx.ext.web.Router
+import jodd.exception.ExceptionUtil
 import jodd.util.SystemUtil
-import org.apache.commons.lang3.reflect.MethodUtils
-import sz.scaffold.tools.json.toJsonPretty
+import sz.scaffold.controller.ApiRoute
 import sz.scaffold.tools.logger.Logger
 import java.io.File
 
@@ -34,35 +34,44 @@ object Application {
         System.setProperty("config.file", "conf/application.conf")
         config = ConfigFactory.load()
         appHome = SystemUtil.workingFolder()
-
     }
 
-    fun run() {
+    fun run(appVertx: Vertx? = null) {
         Runtime.getRuntime().addShutdownHook(object : Thread() {
             override fun run() {
                 _onStopHandler()
             }
         })
 
-        val vertx = Vertx.vertx(this.vertxOptions())
+        val vertx = appVertx ?: Vertx.vertx(this.vertxOptions())
         val httpServerOptions = this.httpServerOptions()
         val httpServer = vertx.createHttpServer(httpServerOptions)
         _onStartHanler()
-        Logger.debug("Start http server at: ${httpServerOptions.host}:${httpServerOptions.port}")
+
 //        Logger.debug(httpServerOptions.toJson().encodePrettily())
 
-//        val router = Router.router(vertx
-//        val controllerKClass = Sample::class
-//        val controllerFun = controllerKClass.memberFunctions.first { it.name == "test" }
-//        val apiRoute = ApiRoute(method = ApiHttpMethod.GET,
-//                path = "/api/test",
-//                controllerKClass = controllerKClass,
-//                controllerFun = controllerFun,
-//                defaults = mapOf())
-//
-//        apiRoute.addToRoute(router)
-//
-//        httpServer.listen()
+        val router = Router.router(vertx)
+
+        val routeFile = File("conf/route")
+        ApiRoute.parseFromFile(routeFile).forEach {
+            it.addToRoute(router)
+        }
+
+        httpServer.requestHandler {
+            try {
+                // enable chunked responses because we will be adding data as
+                // we execute over other handlers. This is only required once and
+                // only if several handlers do output.
+                it.response().isChunked = true
+                router.accept(it)
+            } catch (ex: Exception) {
+                it.response().end("${ex.message}\n\n${ExceptionUtil.exceptionChainToString(ex)}")
+            }
+
+        }
+
+        Logger.debug("Start http server at: ${httpServerOptions.host}:${httpServerOptions.port}")
+        httpServer.listen()
     }
 
     fun onStart(block: () -> Unit) {

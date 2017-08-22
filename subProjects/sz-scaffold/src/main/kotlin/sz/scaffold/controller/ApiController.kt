@@ -5,11 +5,11 @@ import io.vertx.ext.web.RoutingContext
 //
 // Created by kk on 17/8/16.
 //
-open class ApiController() {
+open class ApiController {
 
     private var _context: RoutingContext? = null
 
-    fun init(context: RoutingContext) {
+    fun setupContext(context: RoutingContext) {
         _context = context
     }
 

@@ -1,0 +1,3 @@
+# 测试用api接口
+
+GET     /api/kktest     controllers.Sample.kktest
