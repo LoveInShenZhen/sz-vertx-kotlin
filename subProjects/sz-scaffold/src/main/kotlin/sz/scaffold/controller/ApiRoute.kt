@@ -1,6 +1,7 @@
 package sz.scaffold.controller
 
 import com.fasterxml.jackson.databind.JsonNode
+import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import sz.scaffold.Application
@@ -23,14 +24,14 @@ import kotlin.reflect.jvm.javaMethod
 //
 // Created by kk on 17/8/16.
 //
-class ApiRoute(val method: ApiHttpMethod,
+class ApiRoute(val method: HttpMethod,
                val path: String,
                val controllerKClass: KClass<*>,
                val controllerFun: KFunction<*>,
                val defaults: Map<String, String>) {
 
     fun addToRoute(router: Router) {
-        router.route(method.httpMethod(), path).blockingHandler { routingContext ->
+        router.route(method, path).blockingHandler { routingContext ->
             callApi(routingContext)
         }
     }
@@ -168,7 +169,7 @@ class ApiRoute(val method: ApiHttpMethod,
         }
 
         fun parse(routeDef: String): ApiRoute {
-            val routeRegex = """(GET|POST_JSON|POST_FORM)\s+(/\S+)\s+(\S+)\s*(\(.*\))?$""".toRegex()
+            val routeRegex = """(GET|POST)\s+(/\S+)\s+(\S+)\s*(\(.*\))?$""".toRegex()
             if (routeRegex.matches(routeDef)) {
                 val parts = routeRegex.matchEntire(routeDef)!!.groupValues
                 val method = parts[1].trim()
@@ -196,7 +197,7 @@ class ApiRoute(val method: ApiHttpMethod,
                 val props = Properties()
                 props.load(StringReader(defaultArgs))
 
-                return ApiRoute(method = ApiHttpMethod.valueOf(method),
+                return ApiRoute(method = HttpMethod.valueOf(method),
                         path = path,
                         controllerKClass = controllerKClazz,
                         controllerFun = funList.first(),
