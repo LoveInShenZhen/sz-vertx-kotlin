@@ -12,6 +12,7 @@ import jodd.io.FileUtil
 import jodd.util.SystemUtil
 import sz.scaffold.controller.ApiRoute
 import sz.scaffold.tools.SzException
+import sz.scaffold.tools.logger.AnsiColor
 import sz.scaffold.tools.logger.Logger
 import java.io.File
 
@@ -20,13 +21,8 @@ import java.io.File
 //
 object Application {
 
-    private var _onStartHanler: () -> Unit = {
-        Logger.debug("Application start ...")
-    }
-
-    private var _onStopHandler: () -> Unit = {
-        Logger.debug("Application stop ...")
-    }
+    private val startHandlers = mutableMapOf<Int, MutableList<() -> Unit>>()
+    private val stopHandlers = mutableMapOf<Int, MutableList<() -> Unit>>()
 
     val config: Config
     val appHome: String
@@ -46,6 +42,14 @@ object Application {
         System.setProperty("config.file", "conf/application.conf")
         config = ConfigFactory.load()
         appHome = SystemUtil.workingFolder()
+
+        this.regOnStartHandler(1) {
+            Logger.debug("Application start ...", AnsiColor.GREEN)
+        }
+
+        this.regOnStopHanlder(1) {
+            Logger.debug("Application stop ...", AnsiColor.GREEN)
+        }
     }
 
     fun setupVertx(appVertx: Vertx? = null) {
@@ -59,7 +63,8 @@ object Application {
 
         val httpServerOptions = this.httpServerOptions()
         val httpServer = vertx.createHttpServer(httpServerOptions)
-        _onStartHanler()
+
+        startHandlers.toSortedMap().flatMap { it.value }.forEach { it() }
 
         val router = Router.router(vertx)
 
@@ -83,7 +88,8 @@ object Application {
 
         Runtime.getRuntime().addShutdownHook(object : Thread() {
             override fun run() {
-                _onStopHandler()
+//                Logger.debug("Runtime::ShutdownHook")
+                stopHandlers.toSortedMap().flatMap { it.value }.forEach { it() }
             }
         })
 
@@ -91,12 +97,28 @@ object Application {
         httpServer.listen()
     }
 
-    fun onStart(block: () -> Unit) {
-        _onStartHanler = block
+    fun regOnStartHandler(priority: Int = 100, block: () -> Unit): Application {
+        val handlerList = if (startHandlers.containsKey(priority)) {
+            startHandlers[priority]!!
+        } else {
+            startHandlers.put(priority, mutableListOf())
+            startHandlers[priority]!!
+        }
+
+        handlerList.add(block)
+        return this
     }
 
-    fun onStop(block: () -> Unit) {
-        _onStopHandler = block
+    fun regOnStopHanlder(priority: Int = 100, block: () -> Unit): Application {
+        val handlerList = if (stopHandlers.containsKey(priority)) {
+            stopHandlers[priority]!!
+        } else {
+            stopHandlers.put(priority, mutableListOf())
+            stopHandlers[priority]!!
+        }
+
+        handlerList.add(block)
+        return this
     }
 
     private fun buildVertxOptions(): VertxOptions {
