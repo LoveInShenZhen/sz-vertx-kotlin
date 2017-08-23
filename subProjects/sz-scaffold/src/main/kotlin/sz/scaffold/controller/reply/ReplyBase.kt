@@ -1,6 +1,7 @@
 package sz.scaffold.controller.reply
 
 import com.fasterxml.jackson.databind.JsonNode
+import io.swagger.annotations.ApiModel
 import jodd.exception.ExceptionUtil
 import sz.scaffold.annotations.Comment
 import sz.scaffold.tools.BizLogicException
@@ -9,6 +10,8 @@ import sz.scaffold.tools.json.Json
 //
 // Created by kk on 17/8/16.
 //
+
+@ApiModel
 open class ReplyBase {
 
     @Comment("返回的错误码, 0: 成功, 非0: 错误")

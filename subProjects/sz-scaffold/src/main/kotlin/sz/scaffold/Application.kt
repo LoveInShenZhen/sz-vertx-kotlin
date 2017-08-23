@@ -8,6 +8,7 @@ import io.vertx.core.http.HttpServerOptions
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import jodd.exception.ExceptionUtil
+import jodd.io.FileUtil
 import jodd.util.SystemUtil
 import sz.scaffold.controller.ApiRoute
 import sz.scaffold.tools.SzException
@@ -34,12 +35,12 @@ object Application {
     private var _vertx: Vertx? = null
 
     val vertx: Vertx
-    get() {
-        if (_vertx == null) {
-            throw SzException("Application 还没有初始化 vertx")
+        get() {
+            if (_vertx == null) {
+                throw SzException("Application 还没有初始化 vertx")
+            }
+            return _vertx!!
         }
-        return _vertx!!
-    }
 
     init {
         System.setProperty("config.file", "conf/application.conf")
@@ -51,7 +52,7 @@ object Application {
         if (_vertx != null) {
             throw SzException("Application 的 vertx 已经初始化过了, 请勿重复初始化")
         }
-        _vertx = appVertx ?: Vertx.vertx(this.vertxOptions())
+        _vertx = appVertx ?: Vertx.vertx(this.buildVertxOptions())
     }
 
     fun run() {
@@ -98,9 +99,15 @@ object Application {
         _onStopHandler = block
     }
 
-    private fun vertxOptions(): VertxOptions {
-        val opts = VertxOptions()
-        // TODO: setup VertxOptions by configuration
+    private fun buildVertxOptions(): VertxOptions {
+        val vertxOptFile = File("conf/vertxOptions.json")
+        val opts = if (FileUtil.isExistingFile(vertxOptFile)) {
+            val jsonOpts = JsonObject(FileUtil.readString(vertxOptFile))
+            VertxOptions(jsonOpts)
+        } else {
+            VertxOptions()
+        }
+
         return opts
     }
 

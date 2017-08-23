@@ -1,13 +1,11 @@
 package sz
 
-import com.google.common.reflect.ClassPath
 import io.ebean.Ebean
 import io.ebean.EbeanServer
 import io.ebean.TxIsolation
 import io.ebean.TxScope
 import jodd.util.StringUtil
 import sz.annotations.DBIndexed
-import sz.scaffold.Application
 import sz.scaffold.tools.BizLogicException
 import java.math.BigDecimal
 import javax.persistence.Entity
@@ -28,10 +26,10 @@ internal class IndexInfo(var indexName: String) {
 
     companion object {
 
-        fun LoadIndexInfoForTable(tableName: String): Map<String, IndexInfo> {
+        fun LoadIndexInfoForTable(tableName: String, dbServer: EbeanServer): Map<String, IndexInfo> {
             val indexMap = mutableMapOf<String, IndexInfo>()
             val sql = String.format("show index from `%s`", tableName)
-            val rows = DB.Default().createSqlQuery(sql).findList()
+            val rows = dbServer.createSqlQuery(sql).findList()
             for (row in rows) {
                 val columnName = row.getString("Column_name")
                 val indexName = row.getString("Key_name")
@@ -61,15 +59,13 @@ internal class IndexInfo(var indexName: String) {
 
 }
 
-object DbIndex {
+class DbIndex(private val dbServer: EbeanServer) {
 
     fun GetCreateIndexSql(): String {
         val sb = StringBuilder()
-        val cp = ClassPath.from(Application.classLoader)
-        val classes = cp.getTopLevelClassesRecursive("models")
-        for (classInfo in classes) {
-            val modelClass = classInfo.load()
-            if (isEntityClass(classInfo.load())) {
+        val classes = SzEbeanConfig.ebeanServerConfigs.get(dbServer.name)!!.classes
+        for (modelClass in classes) {
+            if (isEntityClass(modelClass)) {
                 val tableName = getTableName(modelClass)
                 val dropSql = getDropIndexSqlBy(modelClass)
                 val createSql = getCreateIndexSqlByModel(modelClass)
@@ -128,7 +124,7 @@ object DbIndex {
 
         val sb = StringBuilder()
 
-        val indexMap = IndexInfo.LoadIndexInfoForTable(tableName)
+        val indexMap = IndexInfo.LoadIndexInfoForTable(tableName, dbServer)
         for (fieldName in fieldNames) {
             if (!IndexInfo.IndexExists(indexMap, fieldName)) {
                 // 对应的字段索引不存在
@@ -154,7 +150,7 @@ object DbIndex {
 
         val sb = StringBuilder()
 
-        val indexMap = IndexInfo.LoadIndexInfoForTable(tableName)
+        val indexMap = IndexInfo.LoadIndexInfoForTable(tableName, dbServer)
         for (indexInfo in indexMap.values) {
             if (indexInfo.IsCombinedIndex()) {
                 continue
@@ -191,44 +187,24 @@ object DB {
     fun byDataSource(dsName: String): EbeanServer {
         return Ebean.getServer(dsName)!!
     }
-
-//    fun <T> RunInTransaction(txCallable: TxCallable<T>): T {
-//        val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED)
-//        return Ebean.execute(txScope, txCallable)
-//    }
-//
-//    fun RunInTransaction(txRunnable: TxRunnable) {
-//        val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED)
-//        Ebean.execute(txScope, txRunnable)
-//    }
-//
-//    fun RunInTransaction(runnable: Runnable) {
-//        val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED)
-//        Ebean.execute(txScope, { runnable })
-//    }
-//
-//    fun <T> RunInTransaction(callable: Callable<T>) {
-//        val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED)
-//        return Ebean.execute(txScope, { callable })
-//    }
-
-    fun RunInTransaction(body: () -> Unit) {
-        val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED)
-        Ebean.execute(txScope, body)
-    }
-
-    fun <T> RunInTransaction(body: () -> T): T {
-        val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED)
-        return Ebean.execute(txScope, body)
-    }
-
-    fun TableExists(tableName: String): Boolean {
-        val rows = Default().createSqlQuery("SHOW TABLES").findList()
-        val count = rows.count { it.values.first() == tableName }
-        return count > 0
-    }
 }
 
 fun BigDecimal?.safeValue(): BigDecimal {
     return this ?: BigDecimal.ZERO
+}
+
+fun EbeanServer.RunInTransaction(body: () -> Unit) {
+    val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED)
+    this.execute(txScope, body)
+}
+
+fun <T> EbeanServer.RunInTransaction(body: () -> T): T {
+    val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED)
+    return this.execute(txScope, body)
+}
+
+fun EbeanServer.TableExists(tableName: String) : Boolean {
+    val rows = this.createSqlQuery("SHOW TABLES").findList()
+    val count = rows.count { it.values.first() == tableName }
+    return count > 0
 }

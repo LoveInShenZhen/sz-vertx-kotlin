@@ -1,2 +1,2 @@
-include "subProjects:sz-scaffold", "subProjects:sz-ebean", "subProjects:sz-api-doc", "subProjects:sz-plan-task"
+include "subProjects:sz-scaffold", "subProjects:sz-ebean", "subProjects:sz-api-doc", "subProjects:sz-plan-task", "subProjects:sz-swagger"
 include "subProjects:controllers", "subProjects:models", "subProjects:models-biz", "subProjects:api-server"

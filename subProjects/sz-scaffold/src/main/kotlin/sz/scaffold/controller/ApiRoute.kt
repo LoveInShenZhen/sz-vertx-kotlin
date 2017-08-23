@@ -57,7 +57,6 @@ class ApiRoute(val method: HttpMethod,
         } else {
             // 其他普通的 http 请求(非 api 请求)
             val result = wrapperAction.call()
-            Logger.debug("其他普通的 http 请求(非 api 请求)")
 
             if (result != null && result != Unit) {
                 response.write(result.toString())

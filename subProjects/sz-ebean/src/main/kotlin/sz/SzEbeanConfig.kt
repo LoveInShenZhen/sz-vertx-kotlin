@@ -16,13 +16,16 @@ import java.util.*
 //
 object SzEbeanConfig {
 
-    private val ebeanConfig: Config
+    private val ebeanConfig: Config = Application.config.getConfig("ebean")
     private val defaultDatasourceName: String
+    private val _ebeanServerConfigs = mutableMapOf<String, ServerConfig>()
 
-    val hasDbConfiged:Boolean
+    val ebeanServerConfigs: Map<String, ServerConfig>
+        get() = _ebeanServerConfigs.toMap()
+
+    val hasDbConfiged: Boolean
 
     init {
-        ebeanConfig = Application.config.getConfig("ebean")
         defaultDatasourceName = ebeanConfig.getString("defaultDatasource")
         val dataSources = ebeanConfig.getConfig("dataSources")
         hasDbConfiged = dataSources.root().size > 0
@@ -35,7 +38,7 @@ object SzEbeanConfig {
             val dataSourceConfig = dataSources.getConfig(it)
             val dataSourceProps = dataSourceConfig.toProperties()
             val hiDsConfig = HikariConfig(dataSourceProps)
-            val ds = HikariDataSource(hiDsConfig)
+            val ds = HikariDataSource(hiDsConfig)!!
 
             val ebeanServerCfg = ServerConfig()
             ebeanServerCfg.name = dataSourceName
@@ -50,6 +53,8 @@ object SzEbeanConfig {
             ebeanServerCfg.addModelClasses(modelClassSet)
 
             EbeanServerFactory.create(ebeanServerCfg)
+
+            _ebeanServerConfigs.put(dataSourceName, ebeanServerCfg)
         }
     }
 
@@ -103,7 +108,7 @@ private fun ServerConfig.addModelClass(clazz: Class<*>) {
     try {
         Logger.debug("add class for ebean server: $clazz")
         this.addClass(clazz)
-    } catch (ex:Exception) {
+    } catch (ex: Exception) {
         Logger.debug("ebean.dataSources.${this.name} Cannot register class [${clazz}] in Ebean server. For reason:${ex.message}")
     }
 }

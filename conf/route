@@ -1,3 +1,8 @@
 # 测试用api接口
 
 GET     /api/kktest     controllers.Sample.kktest
+
+# 内置EBean
+GET     /api/builtin/ebean/CreateTablesSql          controllers.builtin.szebean.CreateTablesSql     (dataSource = )
+GET     /api/builtin/ebean/DropTablesSql            controllers.builtin.szebean.DropTablesSql       (dataSource = )
+GET     /api/builtin/ebean/CreateIndexSql           controllers.builtin.szebean.CreateIndexSql      (dataSource = )

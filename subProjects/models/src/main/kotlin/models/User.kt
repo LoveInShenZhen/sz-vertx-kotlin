@@ -55,6 +55,7 @@ class User : Model() {
     @Column(columnDefinition = "VARCHAR(2) DEFAULT '' COMMENT '证件类型'")
     var id_type: String = ""
 
+    @DBIndexed
     @Column(columnDefinition = "VARCHAR(64) COMMENT '证件号码'", unique = true)
     var id_no: String? = null
 

@@ -59,12 +59,12 @@ tasks.withType(CreateStartScripts) {
 
 tasks.withType(JavaExec) {
     if (project.hasProperty("debug")) {
-        def debugPort = "9999"
+        def debugPort = "5005"
         if (project.findProperty("debug").toString().isNumber()) {
             debugPort = project.findProperty("debug").toString()
         }
-        it.forkOptions.jvmArgs.add("-Xdebug")
-        it.forkOptions.jvmArgs.add("-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=${debugPort}")
+        it.jvmArgs.add("-Xdebug")
+        it.jvmArgs.add("-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=${debugPort}")
         println("\u001b[35m" + "Remote debug is enabled. debug port: ${debugPort}" + "\u001b[0m")
     }
 

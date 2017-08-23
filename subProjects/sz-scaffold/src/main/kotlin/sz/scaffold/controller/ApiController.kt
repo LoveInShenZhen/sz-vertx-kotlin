@@ -20,4 +20,8 @@ open class ApiController {
             }
             return _context!!
         }
+
+    fun contentType(contentType: String) {
+        httpContext.response().putHeader("Content-Type", contentType)
+    }
 }

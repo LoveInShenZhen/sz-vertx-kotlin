@@ -38,4 +38,8 @@ dependencies {
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
+
+    compile group: 'io.swagger', name: 'swagger-annotations', version: '1.5.16'
+    compile group: 'io.swagger', name: 'swagger-models', version: '1.5.16'
+
 }
