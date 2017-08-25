@@ -19,5 +19,6 @@ dependencies {
 
     compile project(':subProjects:controllers')
     compile project(':subProjects:sz-scaffold')
+    compile project(':subProjects:sz-api-doc')
 }
 

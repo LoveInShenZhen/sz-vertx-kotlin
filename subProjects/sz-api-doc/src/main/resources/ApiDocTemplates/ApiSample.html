@@ -1,0 +1,303 @@
+<!doctype html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>API 调用测试</title>
+    <link href="//cdn.bootcss.com/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery.form/3.51/jquery.form.min.js"></script>
+
+
+    <style type="text/css">
+        body {
+            min-height: 100%;
+            min-width: 1080px;
+            font-family: 'Microsoft YaHei', 'Heiti SC', simhei, 'Lucida Sans Unicode', 'Myriad Pro', 'Hiragino Sans GB', Verdana;
+            background: #fff;
+            color: #000;
+            font-size: 13px;
+        }
+
+        /*全局样式*/
+        ul, li {
+            list-style: none;
+            margin: 0px;
+
+        }
+
+        a {
+            color: #444;
+        }
+
+        a:hover {
+            text-decoration: none;
+            color: #646464;
+        }
+
+        .container {
+            width: 960px;
+            margin: 0 auto;
+        }
+    </style>
+
+</head>
+<body>
+<div class="container">
+    <fieldset>
+        <legend>${url}</legend>
+
+        <#if IsGetJsonApi()>
+            <!--Get 方式 -->
+            <ul class="nav nav-pills">
+                <li class="active">
+                    <a>GET方式</a>
+                </li>
+            </ul>
+            <div class="form-horizontal" id="get_box">
+                <form id="ajax_form">
+                    <#list params as api_param>
+                        <div class="control-group param">
+                            <label class="control-label">${api_param.name}</label>
+
+                            <div class="controls">
+                                <div class="pull-left">
+                                    <input type="text" id="${api_param.name}" name="${api_param.name}">
+                                </div>
+                                <div class="pull-left" style="margin-left:10px;">
+                                    ${api_param.type!}, ${api_param.desc!}
+                                </div>
+                            </div>
+
+                        </div>
+                    </#list>
+                </form>
+
+                <div class="control-group">
+                    <div class="controls">
+                        <button type="button" onclick="testAPI();" class="btn">测试</button>
+                        <button type="button" onclick="ClearOutput();" class="btn">Clear Output</button>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">返回结果：</label>
+
+                    <div class="controls">
+                        <textarea id="response" style="min-height: 640px;min-width: 800px;"></textarea>
+                    </div>
+                </div>
+            </div>
+            <!--Get 方式 -->
+        </#if>
+
+        <#if IsPostJsonApi()>
+            <!--Post Json 方式 -->
+            <ul class="nav nav-pills">
+                <li class="active" id="get_nav">
+                    <a>自组成JSON采用POST方式</a>
+                </li>
+            </ul>
+            <div class="form-horizontal" id="post_box">
+
+                <form id="ajax_form">
+                    <#list params as api_param>
+                        <div class="control-group param">
+                            <label class="control-label">${api_param.name}</label>
+
+                            <div class="controls">
+                                <div class="pull-left">
+                                    <input type="text" id="${api_param.name}" name="${api_param.name}">
+                                </div>
+                                <div class="pull-left" style="margin-left:10px;">
+                                    ${api_param.type!}, ${api_param.desc!}
+                                </div>
+                            </div>
+
+                        </div>
+                    </#list>
+                </form>
+
+                <div class="control-group">
+                    <label class="control-label">JSON串：</label>
+
+                    <div class="controls">
+                        <textarea id="requestJson" style="min-height: 300px;min-width: 640px;"></textarea>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="controls">
+                        <button type="button" onclick="testPostAPI();" class="btn">测试</button>
+                        <button type="button" onclick="ClearPostOutput();" class="btn">Clear Output</button>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">返回结果：</label>
+
+                    <div class="controls">
+                        <textarea id="postresponse" style="min-height: 640px;min-width: 800px;"></textarea>
+                    </div>
+                </div>
+            </div>
+            <!--Post Json 方式 -->
+        </#if>
+
+        <#if IsPostFormApi()>
+            <!--Post Form 方式 -->
+            <ul class="nav nav-pills">
+                <li class="active" id="get_nav">
+                    <a>Post Form 方式</a>
+                </li>
+            </ul>
+            <div class="form-horizontal" id="post_box">
+
+                <form id="ajax_form">
+                    <#list params as api_param>
+                        <div class="control-group param">
+                            <label class="control-label">${api_param.name}</label>
+
+                            <div class="controls">
+                                <div class="pull-left">
+                                    <input type="text" id="${api_param.name}" name="${api_param.name}">
+                                </div>
+                                <div class="pull-left" style="margin-left:10px;">
+                                    ${api_param.type!}, ${api_param.desc!}
+                                </div>
+                            </div>
+
+                        </div>
+                    </#list>
+                </form>
+
+                <ul class="nav nav-pills">
+                    <li class="active" id="get_nav">
+                        <a>下面是 form 表单</a>
+                    </li>
+                </ul>
+
+                <form id="post_form" method="POST" enctype="multipart/form-data">
+                    <#list PostFormFieldInfos() as api_param>
+                        <div class="control-group param">
+                            <label class="control-label">${api_param.name}</label>
+
+                            <div class="controls">
+                                <div class="pull-left">
+                                    <input type="${api_param.input_type}" id="${api_param.name}" name="${api_param.name}">
+                                </div>
+                                <div class="pull-left" style="margin-left:10px;">
+                                    ${api_param.type!}, ${api_param.desc!}
+                                </div>
+                            </div>
+
+                        </div>
+                    </#list>
+
+                    <div class="control-group">
+                        <div class="controls">
+                            <button type="button" onclick="testPostFormAPI();" class="btn">测试</button>
+                            <button type="button" onclick="ClearPostOutput();" class="btn">Clear Output</button>
+                        </div>
+                    </div>
+
+                </form>
+
+                <div class="control-group">
+                    <label class="control-label">返回结果：</label>
+
+                    <div class="controls">
+                        <textarea id="postresponse" style="min-height: 640px;min-width: 800px;"></textarea>
+                    </div>
+                </div>
+            </div>
+            <!--Post Form 方式 -->
+        </#if>
+
+    </fieldset>
+</div>
+<div class='displaynone' id='hf_summit'></div>
+</body>
+
+</html>
+
+
+<script type="text/javascript">
+    function testAPI() {
+        var apiurl = $("legend").html();
+        var query_str = $("#ajax_form").serialize();
+        var json_api_url = apiurl + "?" + query_str + "&timetamp=" + new Date().getTime();
+
+        $.ajax({
+            url: json_api_url,
+            type: 'get',
+            dataType: 'json',
+            error: function () {
+                alert('error');
+            },
+            success: function (data) {
+                if (data['form'] !=null && data['formId'] != null) {
+                    $("#hf_summit").html(data['form']);
+                    $("#" + data['formId']).submit();
+                } else {
+                    $("#response").val(JSON.stringify(data, null, 2));
+                }
+
+            }
+        });
+    }
+
+    function ClearOutput() {
+        $("#response").val("");
+    }
+
+    function testPostAPI() {
+        var apiurl = $("legend").html();
+        var query_str = $("#ajax_form").serialize();
+        var json_api_url = apiurl + "?" + query_str + "&timetamp=" + new Date().getTime();;
+
+        var jsondata = $("#requestJson").val();
+        try {
+        　　var obj = jQuery.parseJSON(jsondata);
+        } catch (err) {
+            alert("貌似json格式不对，请检查");
+            return;
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: json_api_url,
+            data: jsondata, // or JSON.stringify ({name: 'jonas'}),
+            contentType: "application/json",
+            dataType: 'json',
+            error: function () {
+                alert('error');
+            },
+            success: function (data) {
+                $("#postresponse").val(JSON.stringify(data, null, 2));
+            }
+        });
+    }
+
+    function testPostFormAPI() {
+        var apiurl = $("legend").html();
+        var query_str = $("#ajax_form").serialize();
+        var json_api_url = apiurl + "?" + query_str + "&timetamp=" + new Date().getTime();;
+
+        $("#post_form").attr("action", json_api_url);
+
+        $("#post_form").ajaxSubmit({
+            error: function () {
+                alert('error');
+            },
+            success: function (data) {
+                $("#postresponse").val(JSON.stringify(data, null, 2));
+            }
+        })
+    }
+
+    function ClearPostOutput() {
+        $("#postresponse").val("");
+    }
+
+</script>
+
+

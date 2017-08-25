@@ -8,6 +8,7 @@ import io.vertx.core.http.HttpServerOptions
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import jodd.exception.ExceptionUtil
+import jodd.io.FileNameUtil
 import jodd.io.FileUtil
 import jodd.util.SystemUtil
 import sz.scaffold.controller.ApiRoute
@@ -43,11 +44,11 @@ object Application {
         config = ConfigFactory.load()
         appHome = SystemUtil.workingFolder()
 
-        this.regOnStartHandler(1) {
+        this.regOnStartHandler(Int.MIN_VALUE) {
             Logger.debug("Application start ...", AnsiColor.GREEN)
         }
 
-        this.regOnStopHanlder(1) {
+        this.regOnStopHanlder(Int.MIN_VALUE) {
             Logger.debug("Application stop ...", AnsiColor.GREEN)
         }
     }
@@ -88,7 +89,6 @@ object Application {
 
         Runtime.getRuntime().addShutdownHook(object : Thread() {
             override fun run() {
-//                Logger.debug("Runtime::ShutdownHook")
                 stopHandlers.toSortedMap().flatMap { it.value }.forEach { it() }
             }
         })
@@ -146,5 +146,10 @@ object Application {
 
         return HttpServerOptions(JsonObject(cfgMap))
 
+    }
+
+    fun getFile(relativePath: String) : File {
+        val path = FileNameUtil.concat(appHome, relativePath)
+        return File(path)
     }
 }

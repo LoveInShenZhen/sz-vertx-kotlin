@@ -5,6 +5,8 @@ import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import sz.scaffold.Application
+import sz.scaffold.annotations.PostForm
+import sz.scaffold.annotations.PostJson
 import sz.scaffold.aop.actions.Action
 import sz.scaffold.aop.annotations.WithAction
 import sz.scaffold.controller.reply.ReplyBase
@@ -18,13 +20,14 @@ import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
+import kotlin.reflect.KType
 import kotlin.reflect.full.*
 import kotlin.reflect.jvm.javaMethod
 
 //
 // Created by kk on 17/8/16.
 //
-class ApiRoute(val method: HttpMethod,
+data class ApiRoute(val method: HttpMethod,
                val path: String,
                val controllerKClass: KClass<*>,
                val controllerFun: KFunction<*>,
@@ -69,6 +72,29 @@ class ApiRoute(val method: HttpMethod,
 
         if (!response.ended()) {
             response.end()
+        }
+    }
+
+    fun isJsonApi() : Boolean {
+        return controllerFun.returnType.isSubtypeOf(ReplyBase::class.createType())
+    }
+
+    fun returnType() : KType {
+        return controllerFun.returnType
+    }
+
+    fun postBodyClass() : KClass<*>? {
+        if (method == HttpMethod.POST) {
+            val annPostJson = controllerFun.findAnnotation<PostJson>()
+            if (annPostJson != null) return annPostJson.value
+
+            val annPostForm = controllerFun.findAnnotation<PostForm>()
+            if (annPostForm != null) return annPostForm.value
+
+            return null
+
+        } else {
+            return null
         }
     }
 

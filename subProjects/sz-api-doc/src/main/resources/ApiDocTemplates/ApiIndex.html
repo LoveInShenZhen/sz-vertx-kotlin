@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>API 调用测试</title>
+<link href="//cdn.bootcss.com/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+
+<style type="text/css">
+body {
+min-height: 100%;
+min-width: 1080px;
+font-family: 'Microsoft YaHei','Heiti SC',simhei,'Lucida Sans Unicode','Myriad Pro','Hiragino Sans GB',Verdana;
+background: #fff;
+color: #000;
+font-size: 13px;
+}
+/*全局样式*/
+ul,li {
+  list-style: none;
+  margin: 0px;
+
+}
+a {
+  color: #444;
+}
+a:hover {
+  text-decoration: none;
+  color: #646464;
+}
+.container{
+  width: 960px;
+  margin: 0 auto;
+}
+</style>
+
+</head>
+<body>
+<div class="container">
+<#list groups as group>
+    <div class="list">
+      <ul class="nav nav-pills nav-stacked" style="margin-top:20px;">
+        <li class="active"><a href="#" style="cursor:default;">${group.groupName}</a></li>
+      </ul>
+      <table class="table table-hover">
+            <thead>
+              <tr style="background: #D2D2D2;">
+                <th>API</th>
+                <th>说明</th>
+                <th>  </th>
+              </tr>
+            </thead>
+            <tbody>
+              <#list group.apiInfoList as apiInfo>
+              <tr>
+                <td>${apiInfo.url}</td>
+                <td>${apiInfo.apiComment}</td>
+                <td><a href='${apiInfo.TestPage()}' target="_blank">点击测试</a></td>
+              </tr>
+              </#list>
+            </tbody>
+       </table>
+   </div>
+</#list>
+</div>
+
+</body>
+
+</html>
+

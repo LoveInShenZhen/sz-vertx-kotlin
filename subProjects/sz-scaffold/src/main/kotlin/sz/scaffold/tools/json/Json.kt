@@ -5,8 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema
+import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import jodd.datetime.JDateTime
+import kotlin.reflect.KClass
 
 //
 // Created by kk on 17/8/16.
@@ -65,6 +68,11 @@ object Json {
             throw RuntimeException(e)
         }
 
+    }
+
+    fun generateSchema(clazz: KClass<*>) : JsonSchema {
+        val schemaGen = JsonSchemaGenerator(mapper)
+        return schemaGen.generateSchema(clazz.java)
     }
 
     fun toStrMap(jsonStr: String): Map<String, String> {
