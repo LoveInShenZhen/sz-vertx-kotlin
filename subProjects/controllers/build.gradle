@@ -18,5 +18,6 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-reflect:1.1.4"
 
     compile project(':subProjects:models-biz')
+    compile project(':subProjects:sz-plan-task')
 }
 

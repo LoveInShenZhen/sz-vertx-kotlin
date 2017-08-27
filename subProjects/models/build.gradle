@@ -24,3 +24,7 @@ dependencies {
   compile project(':subProjects:sz-ebean')
 }
 
+
+ebeanEnhance {
+    packages = 'models.**'
+}

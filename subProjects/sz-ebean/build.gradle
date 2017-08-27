@@ -27,3 +27,6 @@ dependencies {
     compile project(':subProjects:sz-scaffold')
 }
 
+ebeanEnhance {
+    packages = 'models.**'
+}

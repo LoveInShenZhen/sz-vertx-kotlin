@@ -1,3 +1,7 @@
+plugins {
+    id "com.github.kt3k.ebean.enhance" version "3.0.0"
+}
+
 apply plugin: 'org.jetbrains.kotlin.jvm'
 
 repositories {
@@ -14,10 +18,15 @@ repositories {
 }
 
 dependencies {
-  compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.4"
-  compile "org.jetbrains.kotlin:kotlin-reflect:1.1.4"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.4"
+    compile "org.jetbrains.kotlin:kotlin-reflect:1.1.4"
 
-  compile project(':subProjects:sz-ebean')
-  compile project(':subProjects:sz-scaffold')
+    compile project(':subProjects:sz-ebean')
+    compile project(':subProjects:sz-scaffold')
 }
+
+ebeanEnhance {
+    packages = 'models.**'
+}
+
 
