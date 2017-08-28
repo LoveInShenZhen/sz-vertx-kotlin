@@ -38,7 +38,7 @@ object SzEbeanConfig {
             val dataSourceConfig = dataSources.getConfig(it)
             val dataSourceProps = dataSourceConfig.toProperties()
             val hiDsConfig = HikariConfig(dataSourceProps)
-            val ds = HikariDataSource(hiDsConfig)!!
+            val ds = HikariDataSource(hiDsConfig)
 
             val ebeanServerCfg = ServerConfig()
             ebeanServerCfg.name = dataSourceName

@@ -5,6 +5,17 @@ plugins {
 
 allprojects {
     apply plugin: 'org.jetbrains.kotlin.jvm'
+    apply plugin: 'maven-publish'
+
+    group = 'com.github.LoveInShenZhen'
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+            }
+        }
+    }
 
     compileKotlin {
         kotlinOptions {
