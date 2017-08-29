@@ -152,4 +152,8 @@ object Application {
         val path = FileNameUtil.concat(appHome, relativePath)
         return File(path)
     }
+
+    fun testSnapshot() : String {
+        return "ver1..."
+    }
 }
