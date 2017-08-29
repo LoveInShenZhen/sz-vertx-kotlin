@@ -9,10 +9,15 @@ allprojects {
 
     group = 'com.github.kklongming'
 
+    task sourceJar(type: Jar) {
+        from sourceSets.main.allSource
+    }
+
     publishing {
         publications {
             mavenJava(MavenPublication) {
                 from components.java
+
                 artifact sourceJar {
                     classifier "sources"
                 }

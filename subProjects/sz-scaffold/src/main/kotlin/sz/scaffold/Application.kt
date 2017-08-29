@@ -60,7 +60,7 @@ object Application {
         _vertx = appVertx ?: Vertx.vertx(this.buildVertxOptions())
     }
 
-    fun run() {
+    fun runHttpServer() {
 
         val httpServerOptions = this.httpServerOptions()
         val httpServer = vertx.createHttpServer(httpServerOptions)
@@ -151,9 +151,5 @@ object Application {
     fun getFile(relativePath: String) : File {
         val path = FileNameUtil.concat(appHome, relativePath)
         return File(path)
-    }
-
-    fun testSnapshot() : String {
-        return "ver1..."
     }
 }

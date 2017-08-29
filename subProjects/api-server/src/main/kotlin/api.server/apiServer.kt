@@ -20,7 +20,7 @@ fun main(args: Array<String>) {
         PlanTaskService.Stop()
     }
 
-    Application.run()
+    Application.runHttpServer()
 
 }
 
