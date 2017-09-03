@@ -2,6 +2,7 @@ package sz.scaffold
 
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
+import io.vertx.core.AsyncResult
 import io.vertx.core.Vertx
 import io.vertx.core.VertxOptions
 import io.vertx.core.http.HttpServerOptions
@@ -12,10 +13,13 @@ import jodd.io.FileNameUtil
 import jodd.io.FileUtil
 import jodd.util.SystemUtil
 import sz.scaffold.controller.ApiRoute
+import sz.scaffold.ext.getBooleanOrElse
 import sz.scaffold.tools.SzException
+import sz.scaffold.tools.json.toJsonPretty
 import sz.scaffold.tools.logger.AnsiColor
 import sz.scaffold.tools.logger.Logger
 import java.io.File
+import java.util.concurrent.CompletableFuture
 
 //
 // Created by kk on 17/8/19.
@@ -57,7 +61,29 @@ object Application {
         if (_vertx != null) {
             throw SzException("Application 的 vertx 已经初始化过了, 请勿重复初始化")
         }
-        _vertx = appVertx ?: Vertx.vertx(this.buildVertxOptions())
+        _vertx = appVertx ?: createVertx()
+    }
+
+    fun createVertx() : Vertx {
+        val clustered = config.getBooleanOrElse("app.vertx.clustered", false)
+        if (clustered) {
+            // 集群方式
+            val future = CompletableFuture<Vertx>()
+            Vertx.clusteredVertx(buildVertxOptions().setClustered(true)) {
+                event: AsyncResult<Vertx> ->
+                if (event.failed()) {
+                    Logger.error("创建集群方式Vertx失败:\n${ExceptionUtil.exceptionChainToString(event.cause())}")
+                    throw SzException("创建集群方式Vertx失败: ${event.cause().message}")
+                } else {
+                    future.complete(event.result())
+                }
+            }
+            return future.get()
+        } else {
+            // 非集群方式
+            return Vertx.vertx(this.buildVertxOptions())
+        }
+
     }
 
     fun runHttpServer() {
@@ -129,6 +155,8 @@ object Application {
         } else {
             VertxOptions()
         }
+
+        Logger.debug("\n${opts.toJsonPretty()}")
 
         return opts
     }

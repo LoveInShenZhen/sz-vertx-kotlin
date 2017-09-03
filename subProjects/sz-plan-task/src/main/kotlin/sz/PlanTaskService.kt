@@ -41,7 +41,7 @@ object PlanTaskService {
     fun Start() {
         try {
             if (!enabled()) {
-                Logger.debug("PlanTaskServer 不能允许. 请检查配置和数据库是否就绪")
+                Logger.debug("PlanTaskServer 不能运行. 请检查配置和数据库是否就绪")
                 return
             }
 

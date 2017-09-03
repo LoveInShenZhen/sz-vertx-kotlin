@@ -25,5 +25,12 @@ fun Config.getIntOrElse(path: String, defaultValue: Int): Int {
     } else {
         return defaultValue
     }
+}
 
+fun Config.getBooleanOrElse(path: String, defaultValue: Boolean): Boolean {
+    if (this.hasPath(path)) {
+        return this.getBoolean(path)
+    } else {
+        return defaultValue
+    }
 }
