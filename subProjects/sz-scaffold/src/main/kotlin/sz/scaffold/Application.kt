@@ -54,6 +54,20 @@ object Application {
 
         this.regOnStopHanlder(Int.MIN_VALUE) {
             Logger.debug("Application stop ...", AnsiColor.GREEN)
+            val stopVertxFuture = CompletableFuture<Boolean>()
+            vertx.close { res ->
+                if (res.failed()) {
+                    Logger.error(ExceptionUtil.exceptionChainToString(res.cause()))
+                    stopVertxFuture.complete(false)
+                } else {
+                    stopVertxFuture.complete(true)
+                }
+            }
+            if (stopVertxFuture.get()) {
+                Logger.info("Stop vertx successed.")
+            } else {
+                Logger.error("Stop vertx failed.")
+            }
         }
     }
 
@@ -155,9 +169,7 @@ object Application {
         } else {
             VertxOptions()
         }
-
-        Logger.debug("\n${opts.toJsonPretty()}")
-
+        
         return opts
     }
 
