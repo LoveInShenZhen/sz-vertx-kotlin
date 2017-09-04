@@ -377,7 +377,7 @@ class Images {
             internal val DropShadowGimpyOpacity = Application.config.getIntOrElse("captcha.DropShadowGimpyRendererOpacity", 75)
             internal val CurvedLine = Application.config.getBooleanOrElse("captcha.NoiseCurvedLine", false)
             internal val CurvedLineWidth = Application.config.getIntOrElse("captcha.NoiseCurvedLineWidth", 2)
-            internal val CurvedLineColor = Application.config.getStringOrElse("captcha.Noise_CurvedLine_Color", "#2795EA")
+            internal val CurvedLineColor = Application.config.getStringOrElse("captcha.NoiseCurvedLineColor", "#2795EA")
             internal val AddBorder = Application.config.getBooleanOrElse("captcha.AddBorder", false)
 
             private val CHAR_CODES = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789"
@@ -386,7 +386,7 @@ class Images {
             private val DEFAULT_FONTS = ArrayList<Font>()
 
             init {
-                val colors = Application.config.getStringList("captcha.Font_Colors")
+                val colors = Application.config.getStringList("captcha.FontColors")
                 if (colors == null) {
                     DEFAULT_COLORS.add(Color.BLUE)
                     DEFAULT_COLORS.add(Color.GREEN)
