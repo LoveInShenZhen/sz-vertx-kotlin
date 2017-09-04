@@ -8,6 +8,7 @@ import sz.scaffold.Application
 
 
 fun main(args: Array<String>) {
+
     SzEbeanConfig.loadConfig()
 
     Application.setupVertx()

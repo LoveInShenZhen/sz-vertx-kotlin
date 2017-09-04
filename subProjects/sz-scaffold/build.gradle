@@ -44,4 +44,11 @@ dependencies {
 
     compile group: 'org.freemarker', name: 'freemarker', version: '2.3.23'
 
+    // https://mvnrepository.com/artifact/com.google.code.maven-play-plugin.org.playframework/jj-simplecaptcha
+    compile group: 'com.google.code.maven-play-plugin.org.playframework', name: 'jj-simplecaptcha', version: '1.1'
+
+    // https://mvnrepository.com/artifact/redis.clients/jedis
+    compile group: 'redis.clients', name: 'jedis', version: '2.9.0'
+
+
 }

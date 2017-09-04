@@ -15,7 +15,6 @@ import jodd.util.SystemUtil
 import sz.scaffold.controller.ApiRoute
 import sz.scaffold.ext.getBooleanOrElse
 import sz.scaffold.tools.SzException
-import sz.scaffold.tools.json.toJsonPretty
 import sz.scaffold.tools.logger.AnsiColor
 import sz.scaffold.tools.logger.Logger
 import java.io.File

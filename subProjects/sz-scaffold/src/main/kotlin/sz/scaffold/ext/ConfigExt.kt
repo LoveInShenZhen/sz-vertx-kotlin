@@ -19,6 +19,14 @@ fun Config.getStringOrElse(path: String, defaultValue: String): String {
     }
 }
 
+fun Config.getStringOrNll(path: String):String? {
+    return if (this.hasPath(path)) {
+        this.getString(path)
+    } else {
+        null
+    }
+}
+
 fun Config.getIntOrElse(path: String, defaultValue: Int): Int {
     if (this.hasPath(path)) {
         return this.getInt(path)
@@ -32,5 +40,11 @@ fun Config.getBooleanOrElse(path: String, defaultValue: Boolean): Boolean {
         return this.getBoolean(path)
     } else {
         return defaultValue
+    }
+}
+
+fun Config.existThenApply(path: String, block: ()->Unit) {
+    if (this.hasPath(path)) {
+        block()
     }
 }
