@@ -97,7 +97,7 @@ private fun ServerConfig.addModelClasses(modelClasses: Set<String>) {
                 val clazz = Application.classLoader.loadClass(it)
                 this.addModelClass(clazz)
             } catch (ex: Exception) {
-                Logger.debug("Load class: [$it] failed. For reason: ${ex.message}")
+                Logger.error("Load class: [$it] failed. For reason: ${ex.message}")
             }
 
         }
@@ -106,9 +106,9 @@ private fun ServerConfig.addModelClasses(modelClasses: Set<String>) {
 
 private fun ServerConfig.addModelClass(clazz: Class<*>) {
     try {
-        Logger.debug("add class for ebean server: $clazz")
+//        Logger.debug("add class for ebean server: $clazz")
         this.addClass(clazz)
     } catch (ex: Exception) {
-        Logger.debug("ebean.dataSources.${this.name} Cannot register class [${clazz}] in Ebean server. For reason:${ex.message}")
+        Logger.error("ebean.dataSources.${this.name} Cannot register class [${clazz}] in Ebean server. For reason:${ex.message}")
     }
 }
