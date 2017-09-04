@@ -11,6 +11,8 @@ import io.vertx.ext.web.Router
 import jodd.exception.ExceptionUtil
 import jodd.io.FileNameUtil
 import jodd.io.FileUtil
+import jodd.util.ClassLoaderUtil
+import jodd.util.ClassUtil
 import jodd.util.SystemUtil
 import sz.scaffold.controller.ApiRoute
 import sz.scaffold.ext.getBooleanOrElse
@@ -45,7 +47,16 @@ object Application {
     init {
         System.setProperty("config.file", "conf/application.conf")
         config = ConfigFactory.load()
-        appHome = SystemUtil.workingFolder()
+
+        val workingFolder = File(SystemUtil.workingFolder())
+        val confFolder = File(FileNameUtil.concat(SystemUtil.workingFolder(), "conf"))
+        if (confFolder.exists()) {
+            appHome = SystemUtil.workingFolder()
+        } else {
+            // 从 class path 里查找 conf 结尾的路径
+            val confFile = ClassLoaderUtil.getDefaultClasspath().find { it.name == "conf" } ?: throw SzException("class path 里不包含 conf 目录, 请检查启动环境脚本")
+            appHome = confFile.parent
+        }
 
         this.regOnStartHandler(Int.MIN_VALUE) {
             Logger.debug("Application start ...", AnsiColor.GREEN)
