@@ -19,6 +19,14 @@ fun Config.getStringOrElse(path: String, defaultValue: String): String {
     }
 }
 
+fun Config.getStringListOrEmpty(path: String): List<String> {
+    if (this.hasPath(path)) {
+        return this.getStringList(path)
+    } else {
+        return listOf()
+    }
+}
+
 fun Config.getStringOrNll(path: String):String? {
     return if (this.hasPath(path)) {
         this.getString(path)

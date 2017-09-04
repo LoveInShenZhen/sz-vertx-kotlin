@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils
 import sz.scaffold.Application
 import sz.scaffold.ext.getBooleanOrElse
 import sz.scaffold.ext.getIntOrElse
+import sz.scaffold.ext.getStringListOrEmpty
 import sz.scaffold.ext.getStringOrElse
 import java.awt.*
 import java.awt.image.BufferedImage
@@ -386,8 +387,8 @@ class Images {
             private val DEFAULT_FONTS = ArrayList<Font>()
 
             init {
-                val colors = Application.config.getStringList("captcha.FontColors")
-                if (colors == null) {
+                val colors = Application.config.getStringListOrEmpty("captcha.FontColors")
+                if (colors.isEmpty()) {
                     DEFAULT_COLORS.add(Color.BLUE)
                     DEFAULT_COLORS.add(Color.GREEN)
                     DEFAULT_COLORS.add(Color.RED)
@@ -398,8 +399,8 @@ class Images {
                     }
                 }
 
-                val fonts = Application.config.getStringList("captcha.Fonts")
-                if (fonts == null) {
+                val fonts = Application.config.getStringListOrEmpty("captcha.Fonts")
+                if (fonts.isEmpty()) {
                     DEFAULT_FONTS.add(Font("Arial", Font.BOLD, 40))
                     DEFAULT_FONTS.add(Font("Courier", Font.BOLD, 40))
                     DEFAULT_FONTS.add(Font("Arial", Font.ITALIC, 40))
