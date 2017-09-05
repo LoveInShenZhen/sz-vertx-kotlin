@@ -363,7 +363,7 @@ class Images {
             internal val TextLength = Application.config.getIntOrElse("captcha.TextLength", 4)
             internal val TextMarginBottom = Application.config.getIntOrElse("captcha.TextMarginBottom", 15)
             internal val TextMarginLeft = Application.config.getIntOrElse("captcha.TextMarginLeft", 10)
-            internal val OutlineFont = Application.config.getBooleanOrElse("captcha.Outline_Font", true)
+            internal val OutlineFont = Application.config.getBooleanOrElse("captcha.OutlineFont", true)
             internal val BackgroundTransparent = Application.config.getBooleanOrElse("captcha.BackgroundTransparent", true)
             internal val BackgroundGradiated = Application.config.getBooleanOrElse("captcha.BackgroundGradiated", false)
             internal val GradiatedFromColor = Application.config.getStringOrElse("captcha.BackgroundGradiatedFromColor", "#EDEEF0")
