@@ -395,7 +395,7 @@ class Images {
                     DEFAULT_COLORS.add(Color.BLACK)
                 } else {
                     for (color_name in colors) {
-                        DEFAULT_COLORS.add(Color.decode(color_name))
+                        DEFAULT_COLORS.add(Color.decode(color_name.replace("#", "").toLong(16).toString()))
                     }
                 }
 
