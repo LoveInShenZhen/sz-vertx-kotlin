@@ -7,3 +7,7 @@ package sz.scaffold.tools.json
 fun Any.toJsonPretty() : String {
     return Json.toJsonStrPretty(this)
 }
+
+fun Any.toShortJson() : String {
+    return Json.toJsonExcludeEmptyFields(this)
+}

@@ -1,5 +1,6 @@
 package sz.scaffold.tools.json
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
@@ -17,6 +18,7 @@ import kotlin.reflect.KClass
 object Json {
 
     val mapper: ObjectMapper = ObjectMapper()
+    val excludeEmptyMapper = ObjectMapper()
 
     init {
         val JDateTimeModule = SimpleModule("CustomTypeModule")
@@ -24,6 +26,12 @@ object Json {
         JDateTimeModule.addDeserializer(JDateTime::class.java, JDateTimeJsonDeserializer())
 
         mapper.registerKotlinModule()
+                .registerModule(Jdk8Module())
+                .registerModule(JavaTimeModule())
+                .registerModule(JDateTimeModule)
+
+        excludeEmptyMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
+        excludeEmptyMapper.registerKotlinModule()
                 .registerModule(Jdk8Module())
                 .registerModule(JavaTimeModule())
                 .registerModule(JDateTimeModule)
@@ -53,6 +61,11 @@ object Json {
     fun toJsonStrPretty(obj: Any): String {
         val jsonNode = Json.toJson(obj)
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode)
+    }
+
+    fun toJsonExcludeEmptyFields(obj: Any) : String {
+        val jsonNode = Json.toJson(obj)
+        return excludeEmptyMapper.writeValueAsString(jsonNode)
     }
 
     fun formatJson(jsonStr: String): String {
