@@ -1,3 +1,6 @@
+GET     /                                           sz.scaffold.controller.builtIn.Default.hello
+POST    /                                           sz.scaffold.controller.builtIn.Default.hello
+
 # 内置EBean
 GET     /api/builtin/ebean/CreateTablesSql          controllers.builtin.szebean.CreateTablesSql     (dataSource = )
 GET     /api/builtin/ebean/DropTablesSql            controllers.builtin.szebean.DropTablesSql       (dataSource = )

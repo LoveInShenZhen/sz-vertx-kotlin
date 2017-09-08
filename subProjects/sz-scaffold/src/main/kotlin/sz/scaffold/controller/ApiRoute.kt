@@ -194,7 +194,7 @@ data class ApiRoute(val method: HttpMethod,
         }
 
         fun parse(routeDef: String): ApiRoute {
-            val routeRegex = """(GET|POST)\s+(/\S+)\s+(\S+)\s*(\(.*\))?$""".toRegex()
+            val routeRegex = """(GET|POST)\s+(/\S*)\s+(\S+)\s*(\(.*\))?$""".toRegex()
             if (routeRegex.matches(routeDef)) {
                 val parts = routeRegex.matchEntire(routeDef)!!.groupValues
                 val method = parts[1].trim()
