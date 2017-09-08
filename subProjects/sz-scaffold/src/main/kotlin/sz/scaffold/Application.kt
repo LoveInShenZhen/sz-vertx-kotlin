@@ -12,7 +12,6 @@ import jodd.exception.ExceptionUtil
 import jodd.io.FileNameUtil
 import jodd.io.FileUtil
 import jodd.util.ClassLoaderUtil
-import jodd.util.ClassUtil
 import jodd.util.SystemUtil
 import sz.scaffold.controller.ApiRoute
 import sz.scaffold.ext.getBooleanOrElse
@@ -20,6 +19,7 @@ import sz.scaffold.tools.SzException
 import sz.scaffold.tools.logger.AnsiColor
 import sz.scaffold.tools.logger.Logger
 import java.io.File
+import java.lang.management.ManagementFactory
 import java.util.concurrent.CompletableFuture
 
 //
@@ -48,7 +48,8 @@ object Application {
         System.setProperty("config.file", "conf/application.conf")
         config = ConfigFactory.load()
 
-        val workingFolder = File(SystemUtil.workingFolder())
+        writePidFile()
+
         val confFolder = File(FileNameUtil.concat(SystemUtil.workingFolder(), "conf"))
         if (confFolder.exists()) {
             appHome = SystemUtil.workingFolder()
@@ -88,13 +89,12 @@ object Application {
         _vertx = appVertx ?: createVertx()
     }
 
-    fun createVertx() : Vertx {
+    fun createVertx(): Vertx {
         val clustered = config.getBooleanOrElse("app.vertx.clustered", false)
         if (clustered) {
             // 集群方式
             val future = CompletableFuture<Vertx>()
-            Vertx.clusteredVertx(buildVertxOptions().setClustered(true)) {
-                event: AsyncResult<Vertx> ->
+            Vertx.clusteredVertx(buildVertxOptions().setClustered(true)) { event: AsyncResult<Vertx> ->
                 if (event.failed()) {
                     Logger.error("创建集群方式Vertx失败:\n${ExceptionUtil.exceptionChainToString(event.cause())}")
                     throw SzException("创建集群方式Vertx失败: ${event.cause().message}")
@@ -179,7 +179,7 @@ object Application {
         } else {
             VertxOptions()
         }
-        
+
         return opts
     }
 
@@ -198,8 +198,19 @@ object Application {
 
     }
 
-    fun getFile(relativePath: String) : File {
+    fun getFile(relativePath: String): File {
         val path = FileNameUtil.concat(appHome, relativePath)
         return File(path)
+    }
+
+    private fun queryPid(): Long {
+        return ManagementFactory.getRuntimeMXBean().name.split("@")[0].toLong()
+    }
+
+    private fun writePidFile() {
+        val pidFilePath = System.getProperty("pidfile.path")
+        if (!pidFilePath.isNullOrBlank()) {
+            FileUtil.writeString(pidFilePath, queryPid().toString())
+        }
     }
 }
