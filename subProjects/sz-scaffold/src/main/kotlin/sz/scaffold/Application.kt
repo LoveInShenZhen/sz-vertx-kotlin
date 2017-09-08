@@ -45,10 +45,10 @@ object Application {
         }
 
     init {
+        writePidFile()
+
         System.setProperty("config.file", "conf/application.conf")
         config = ConfigFactory.load()
-
-        writePidFile()
 
         val confFolder = File(FileNameUtil.concat(SystemUtil.workingFolder(), "conf"))
         if (confFolder.exists()) {
