@@ -8,6 +8,12 @@ import sz.scaffold.tools.SzException
 //
 class RedisCacheApi : CacheApi {
 
+    override fun exists(key: String): Boolean {
+        return JRedisPool.jedis().use {
+            it.exists(key)
+        }
+    }
+
     override fun get(key: String): String {
         return JRedisPool.jedis().use {
             it.get(key) ?: throw SzException("$key 在缓存中不存在")

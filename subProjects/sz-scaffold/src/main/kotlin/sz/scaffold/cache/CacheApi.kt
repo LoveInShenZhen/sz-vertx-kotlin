@@ -7,6 +7,8 @@ import sz.scaffold.cache.redis.RedisCacheApi
 //
 interface CacheApi {
 
+    fun exists(key: String) : Boolean
+
     fun get(key: String): String
 
     fun getOrElse(key: String, default: () -> String): String
