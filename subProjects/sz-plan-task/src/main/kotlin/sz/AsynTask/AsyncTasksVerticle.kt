@@ -5,6 +5,7 @@ import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx
 import jodd.exception.ExceptionUtil
 import sz.scaffold.tools.json.Json
+import sz.scaffold.tools.json.toJsonPretty
 import sz.scaffold.tools.logger.Logger
 
 //
@@ -16,6 +17,7 @@ class AsyncTasksVerticle : AbstractVerticle() {
         Logger.debug("AsyncTasksVerticle start")
         this.vertx.eventBus().consumer<AsyncTask>(address) { message ->
             try {
+                Logger.debug("收到 event: ${message.body().toJsonPretty()}")
                 val asyncTask = message.body()
                 val task = Json.fromJsonString(asyncTask.data, Class.forName(asyncTask.className)) as Runnable
 
@@ -43,11 +45,20 @@ class AsyncTasksVerticle : AbstractVerticle() {
 
         val address = "sz.app.asyncTask"
 
+        private var deoloyId = ""
+
         fun deploy(vertx: Vertx) {
             val options = DeploymentOptions()
             options.isWorker = true
+            val verticle = AsyncTasksVerticle()
+            vertx.deployVerticle(verticle, options)
+            deoloyId = verticle.deploymentID()
+        }
 
-            vertx.deployVerticle(AsyncTasksVerticle(), options)
+        fun unDeploy(vertx: Vertx) {
+            if (deoloyId.isNotBlank()) {
+                vertx.undeploy(deoloyId)
+            }
         }
     }
 }
