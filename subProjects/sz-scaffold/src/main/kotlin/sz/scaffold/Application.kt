@@ -63,7 +63,7 @@ object Application {
             Logger.debug("Application start ...", AnsiColor.GREEN)
         }
 
-        this.regOnStopHanlder(Int.MIN_VALUE) {
+        this.regOnStopHanlder(Int.MAX_VALUE) {
             Logger.debug("Application stop ...", AnsiColor.GREEN)
             val stopVertxFuture = CompletableFuture<Boolean>()
             vertx.close { res ->
