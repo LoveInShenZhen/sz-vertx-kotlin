@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
+import jodd.exception.ExceptionUtil
 import sz.scaffold.Application
 import sz.scaffold.annotations.PostForm
 import sz.scaffold.annotations.PostJson
@@ -12,7 +13,6 @@ import sz.scaffold.aop.annotations.WithAction
 import sz.scaffold.controller.reply.ReplyBase
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.json.toJsonPretty
-import sz.scaffold.tools.logger.Logger
 import java.io.File
 import java.io.StringReader
 import java.math.BigDecimal
@@ -28,10 +28,10 @@ import kotlin.reflect.jvm.javaMethod
 // Created by kk on 17/8/16.
 //
 data class ApiRoute(val method: HttpMethod,
-               val path: String,
-               val controllerKClass: KClass<*>,
-               val controllerFun: KFunction<*>,
-               val defaults: Map<String, String>) {
+                    val path: String,
+                    val controllerKClass: KClass<*>,
+                    val controllerFun: KFunction<*>,
+                    val defaults: Map<String, String>) {
 
     fun addToRoute(router: Router) {
         router.route(method, path).blockingHandler { routingContext ->
@@ -53,21 +53,35 @@ data class ApiRoute(val method: HttpMethod,
 
         // 通过控制器方法的返回类型, 是否是ReplyBase或者其子类型, 来判断是否是 json api 方法
         if (controllerFun.returnType.isSubtypeOf(ReplyBase::class.createType())) {
-            val result = wrapperAction.call() as ReplyBase
+            try {
+                val result = wrapperAction.call() as ReplyBase
 
-            response.putHeader("Content-Type", "application/json; charset=utf-8")
-            response.write(result.toJsonPretty())
+                response.putHeader("Content-Type", "application/json; charset=utf-8")
+                response.write(result.toJsonPretty())
+            } catch (ex: Exception) {
+                val reply = ReplyBase()
+                reply.OnError(ex)
+                response.putHeader("Content-Type", "application/json; charset=utf-8")
+                response.write(reply.toJsonPretty())
+            }
+
         } else {
             // 其他普通的 http 请求(非 api 请求)
-            val result = wrapperAction.call()
+            try {
+                val result = wrapperAction.call()
 
-            if (result != null && result != Unit) {
-                response.write(result.toString())
+                if (result != null && result != Unit) {
+                    response.write(result.toString())
+                }
+
+                if (result is ReplyBase || result is JsonNode) {
+                    response.putHeader("Content-Type", "application/json; charset=utf-8")
+                }
+            } catch (ex: Exception) {
+                response.putHeader("Content-Type", "text/plain; charset=utf-8")
+                response.end("${ex.message}\n\n${ExceptionUtil.exceptionChainToString(ex)}")
             }
 
-            if (result is ReplyBase || result is JsonNode) {
-                response.putHeader("Content-Type", "application/json; charset=utf-8")
-            }
         }
 
         if (!response.ended()) {
@@ -75,15 +89,15 @@ data class ApiRoute(val method: HttpMethod,
         }
     }
 
-    fun isJsonApi() : Boolean {
+    fun isJsonApi(): Boolean {
         return controllerFun.returnType.isSubtypeOf(ReplyBase::class.createType())
     }
 
-    fun returnType() : KType {
+    fun returnType(): KType {
         return controllerFun.returnType
     }
 
-    fun postBodyClass() : KClass<*>? {
+    fun postBodyClass(): KClass<*>? {
         if (method == HttpMethod.POST) {
             val annPostJson = controllerFun.findAnnotation<PostJson>()
             if (annPostJson != null) return annPostJson.value
