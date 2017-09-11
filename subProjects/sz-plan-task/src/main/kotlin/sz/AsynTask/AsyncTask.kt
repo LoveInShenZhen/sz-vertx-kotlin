@@ -2,6 +2,7 @@ package sz.AsynTask
 
 import sz.scaffold.Application
 import sz.scaffold.tools.json.toJsonPretty
+import sz.scaffold.tools.json.toShortJson
 
 //
 // Created by kk on 17/9/10.
@@ -14,7 +15,7 @@ class AsyncTask {
     var data: String = ""
 
     fun send() {
-        Application.vertx.eventBus().publish(AsyncTasksVerticle.address, this)
+        Application.vertx.eventBus().publish(AsyncTasksVerticle.address, this.toShortJson())
     }
 
     companion object {

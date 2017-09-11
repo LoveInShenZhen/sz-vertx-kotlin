@@ -15,10 +15,9 @@ class AsyncTasksVerticle : AbstractVerticle() {
 
     override fun start() {
         Logger.debug("AsyncTasksVerticle start")
-        this.vertx.eventBus().consumer<AsyncTask>(address) { message ->
+        this.vertx.eventBus().consumer<String>(address) { message ->
             try {
-                Logger.debug("收到 event: ${message.body().toJsonPretty()}")
-                val asyncTask = message.body()
+                val asyncTask = Json.fromJsonString(message.body(), AsyncTask::class.java)
                 val task = Json.fromJsonString(asyncTask.data, Class.forName(asyncTask.className)) as Runnable
 
                 this.vertx.executeBlocking<Unit>({ future ->
