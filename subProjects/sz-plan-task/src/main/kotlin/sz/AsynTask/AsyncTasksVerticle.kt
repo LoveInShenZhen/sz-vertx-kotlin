@@ -51,8 +51,14 @@ class AsyncTasksVerticle : AbstractVerticle() {
             val options = DeploymentOptions()
             options.isWorker = true
             val verticle = AsyncTasksVerticle()
-            vertx.deployVerticle(verticle, options)
-            deoloyId = verticle.deploymentID()
+            vertx.deployVerticle(verticle, options) { res ->
+                if (res.succeeded()) {
+                    deoloyId = res.result()
+                } else {
+                    Logger.error("Deploy AsyncTasksVerticle failed.")
+                    vertx.close()
+                }
+            }
         }
 
         fun unDeploy(vertx: Vertx) {
