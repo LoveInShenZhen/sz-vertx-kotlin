@@ -60,7 +60,8 @@ data class ApiRoute(val method: HttpMethod,
                 response.write(result.toJsonPretty())
             } catch (ex: Exception) {
                 val reply = ReplyBase()
-                reply.OnError(ex)
+                val reason = if (ex.cause == null) ex else ex.cause!!
+                reply.OnError(reason)
                 response.putHeader("Content-Type", "application/json; charset=utf-8")
                 response.write(reply.toJsonPretty())
             }
@@ -79,7 +80,8 @@ data class ApiRoute(val method: HttpMethod,
                 }
             } catch (ex: Exception) {
                 response.putHeader("Content-Type", "text/plain; charset=utf-8")
-                response.end("${ex.message}\n\n${ExceptionUtil.exceptionChainToString(ex)}")
+                val reason = if (ex.cause == null) ex else ex.cause
+                response.end("${ex.message}\n\n${ExceptionUtil.exceptionChainToString(reason)}")
             }
 
         }
