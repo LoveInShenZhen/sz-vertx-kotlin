@@ -110,12 +110,22 @@ object Application {
 
     }
 
+    fun setupOnStartAndOnStop() {
+        // 执行 OnStart 方法
+        startHandlers.toSortedMap().flatMap { it.value }.forEach { it() }
+
+        // 注册 OnStop 方法
+        Runtime.getRuntime().addShutdownHook(object : Thread() {
+            override fun run() {
+                stopHandlers.toSortedMap().flatMap { it.value }.forEach { it() }
+            }
+        })
+    }
+
     fun runHttpServer() {
 
         val httpServerOptions = this.httpServerOptions()
         val httpServer = vertx.createHttpServer(httpServerOptions)
-
-        startHandlers.toSortedMap().flatMap { it.value }.forEach { it() }
 
         val router = Router.router(vertx)
 
@@ -137,11 +147,7 @@ object Application {
 
         }
 
-        Runtime.getRuntime().addShutdownHook(object : Thread() {
-            override fun run() {
-                stopHandlers.toSortedMap().flatMap { it.value }.forEach { it() }
-            }
-        })
+        setupOnStartAndOnStop()
 
         Logger.debug("Start http server at: ${httpServerOptions.host}:${httpServerOptions.port}")
         httpServer.listen()
