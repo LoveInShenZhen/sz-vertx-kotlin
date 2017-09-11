@@ -17,6 +17,7 @@ class AsyncTasksVerticle : AbstractVerticle() {
         Logger.debug("AsyncTasksVerticle start")
         this.vertx.eventBus().consumer<String>(address) { message ->
             try {
+                Logger.debug("AsyncTasksVerticle 收到\n${message.body()}")
                 val asyncTask = Json.fromJsonString(message.body(), AsyncTask::class.java)
                 val task = Json.fromJsonString(asyncTask.data, Class.forName(asyncTask.className)) as Runnable
 
