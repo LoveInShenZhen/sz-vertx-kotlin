@@ -15,7 +15,7 @@ class AsyncTask {
     var data: String = ""
 
     fun send() {
-        Application.vertx.eventBus().publish(AsyncTasksVerticle.address, this.toShortJson())
+        Application.vertx.eventBus().send(AsyncTasksVerticle.address, this.toShortJson())
     }
 
     companion object {
