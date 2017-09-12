@@ -1,6 +1,5 @@
 package sz.scaffold.tools
 
-import com.sun.org.apache.xpath.internal.operations.Bool
 import jodd.util.Base64
 import org.bouncycastle.util.io.pem.PemObject
 import org.bouncycastle.util.io.pem.PemReader
@@ -23,7 +22,7 @@ object RSAUtil {
      * 创建一堆公私秘钥, 并转化成 PEM 格式的文本字符串, 放在返回结果的Pair里
      * Pair.first: 公钥 Pair.second: 私钥
      */
-    fun createPemKeyPail(): Pair<String, String> {
+    fun createPemKeyPair(): Pair<String, String> {
         val keyGen = KeyPairGenerator.getInstance("RSA")
         val secRandom = SecureRandom()
         keyGen.initialize(1024, secRandom)
