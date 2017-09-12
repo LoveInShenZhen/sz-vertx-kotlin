@@ -19,7 +19,7 @@ object RSAUtil {
     val rsaAlgorithm = "SHA1withRSA"
 
     /**
-     * 创建一堆公私秘钥, 并转化成 PEM 格式的文本字符串, 放在返回结果的Pair里
+     * 创建一对公私秘钥, 并转化成 PEM 格式的文本字符串, 放在返回结果的Pair里
      * Pair.first: 公钥 Pair.second: 私钥
      */
     fun createPemKeyPair(): Pair<String, String> {
