@@ -52,5 +52,5 @@ dependencies {
     // https://mvnrepository.com/artifact/redis.clients/jedis
     compile group: 'redis.clients', name: 'jedis', version: '2.9.0'
 
-
+    compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.58'
 }
