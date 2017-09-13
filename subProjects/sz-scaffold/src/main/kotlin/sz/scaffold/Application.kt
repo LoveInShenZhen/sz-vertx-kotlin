@@ -9,6 +9,7 @@ import io.vertx.core.http.HttpMethod
 import io.vertx.core.http.HttpServerOptions
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
+import io.vertx.ext.web.handler.BodyHandler
 import jodd.exception.ExceptionUtil
 import jodd.io.FileNameUtil
 import jodd.io.FileUtil
@@ -130,6 +131,8 @@ object Application {
 
         val router = Router.router(vertx)
 
+        router.route().handler(BodyHandler.create().setMergeFormAttributes(false))
+
         val routeFile = File("conf/route")
         ApiRoute.parseFromFile(routeFile).forEach {
             it.addToRoute(router)
@@ -145,6 +148,7 @@ object Application {
                 if (it.method() == HttpMethod.POST) {
                     it.isExpectMultipart = true
                 }
+
                 router.accept(it)
             } catch (ex: Exception) {
                 it.response().end("${ex.message}\n\n${ExceptionUtil.exceptionChainToString(ex)}")
