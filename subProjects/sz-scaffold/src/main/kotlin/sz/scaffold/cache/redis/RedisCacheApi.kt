@@ -64,7 +64,11 @@ class RedisCacheApi : CacheApi {
     override fun set(key: String, objJson: String, expirationInMs: Long) {
         try {
             JRedisPool.jedis().use {
-                it.psetex(key, expirationInMs, objJson)
+                if (expirationInMs > 0) {
+                    it.psetex(key, expirationInMs, objJson)
+                } else {
+                    it.set(key, objJson)
+                }
             }
         } catch (ex: Exception) {
             Logger.error(ex.ChainToString())

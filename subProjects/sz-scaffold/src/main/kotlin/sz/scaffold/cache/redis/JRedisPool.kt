@@ -7,6 +7,7 @@ import sz.scaffold.Application
 import sz.scaffold.ext.existThenApply
 import sz.scaffold.ext.getStringOrNll
 import sz.scaffold.tools.SzException
+import sz.scaffold.tools.logger.Logger
 
 //
 // Created by kk on 17/9/4.
@@ -39,6 +40,7 @@ object JRedisPool {
                 Application.config.getInt("redis.database"),
                 Application.config.getBoolean("redis.ssl")
         )
+        Logger.debug("初始化 JedisPool             [OK]")
     }
 
     fun jedis(): Jedis {

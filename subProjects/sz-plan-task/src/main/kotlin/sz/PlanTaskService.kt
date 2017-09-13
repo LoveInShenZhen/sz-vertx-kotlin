@@ -133,7 +133,7 @@ object PlanTaskService {
                         // 在 endTime 之前没有需要执行的 task, 尝试等待新任务, 释放 cpu
                         try {
                             synchronized(taskNotifier, {
-                                Logger.debug("开始等待task requireSeq:[$requireSeq}] 最多: $taskLoaderWaitTime 秒")
+//                                Logger.debug("开始等待task requireSeq:[$requireSeq}] 最多: $taskLoaderWaitTime 秒")
                                 taskNotifier.wait(taskLoaderWaitTime * 1000L)
                             })
                         } catch (ex: Exception) {

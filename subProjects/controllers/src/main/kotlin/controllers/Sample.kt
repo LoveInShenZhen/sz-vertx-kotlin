@@ -2,6 +2,7 @@ package controllers
 
 import models.PlanTask
 import sz.scaffold.annotations.Comment
+import sz.scaffold.cache.CacheApi
 import sz.scaffold.controller.ApiController
 import sz.scaffold.controller.reply.ReplyBase
 import tasks.SampleTask
@@ -16,7 +17,7 @@ class Sample : ApiController() {
 
         val task = SampleTask()
 
-        PlanTask.addTask(task)
+        CacheApi.redisCache.set("kktest", "kktest")
 
         return reply
     }
