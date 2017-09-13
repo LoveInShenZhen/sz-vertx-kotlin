@@ -1,5 +1,6 @@
 package sz.scaffold.ext
 
+import jodd.exception.ExceptionUtil
 import sz.scaffold.tools.logger.AnsiColor
 
 //
@@ -14,4 +15,8 @@ fun String?.escapeMarkdown(): String {
 fun String.Colorization(color: AnsiColor? = AnsiColor.BLUE, bgColog: AnsiColor? = null): String {
     if (color == null && bgColog == null) return this
     return "${color?.code ?: ""}${bgColog?.code ?: ""}${this}${AnsiColor.RESET.code}"
+}
+
+fun Exception.ChainToString(): String {
+    return ExceptionUtil.exceptionChainToString(this)
 }
