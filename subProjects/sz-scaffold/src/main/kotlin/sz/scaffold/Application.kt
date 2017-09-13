@@ -5,6 +5,7 @@ import com.typesafe.config.ConfigFactory
 import io.vertx.core.AsyncResult
 import io.vertx.core.Vertx
 import io.vertx.core.VertxOptions
+import io.vertx.core.http.HttpMethod
 import io.vertx.core.http.HttpServerOptions
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
@@ -140,6 +141,10 @@ object Application {
                 // we execute over other handlers. This is only required once and
                 // only if several handlers do output.
                 it.response().isChunked = true
+
+                if (it.method() == HttpMethod.POST) {
+                    it.isExpectMultipart = true
+                }
                 router.accept(it)
             } catch (ex: Exception) {
                 it.response().end("${ex.message}\n\n${ExceptionUtil.exceptionChainToString(ex)}")
