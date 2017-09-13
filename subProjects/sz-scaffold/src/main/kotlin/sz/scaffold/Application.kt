@@ -10,6 +10,7 @@ import io.vertx.core.http.HttpServerOptions
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
+import io.vertx.ext.web.handler.CookieHandler
 import jodd.exception.ExceptionUtil
 import jodd.io.FileNameUtil
 import jodd.io.FileUtil
@@ -131,7 +132,9 @@ object Application {
 
         val router = Router.router(vertx)
 
-        router.route().handler(BodyHandler.create().setMergeFormAttributes(false))
+        router.route()
+                .handler(BodyHandler.create().setMergeFormAttributes(false))
+                .handler(CookieHandler.create())
 
         val routeFile = File("conf/route")
         ApiRoute.parseFromFile(routeFile).forEach {
