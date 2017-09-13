@@ -82,9 +82,20 @@ object RSAUtil {
     }
 
     /**
-     * 对指定的字符串和签名(经过base64编码后的签名字符串) 进行验证签名
+     * 调用此方法前, 请将mapData里不需要进行加签的字段过滤掉.此处, mapData 已经试经过过滤后的map
+     * 对map里的键值对, 根据Key, 按照字母排序(升序), key=value 然后用 "&" 链接起来后的字符串进行加签
+     * @return 返回加签后,经过base64编码后签名字符串
      */
-    fun verify(data: String, signBase64: String, pubKey : PublicKey, charset: Charset = Charsets.UTF_8) : Boolean {
+    fun sign(mapData: Map<String, String>, privateKey: PrivateKey, charset: Charset = Charsets.UTF_8): String {
+        val beSigned = mapData.toSortedMap().map { "${it.key}=${it.value}" }.joinToString("&")
+        return sign(beSigned, privateKey, charset)
+    }
+
+    /**
+     * 对指定的字符串和签名(经过base64编码后的签名字符串) 进行验证签名
+     * @return 验签通过返回true
+     */
+    fun verify(data: String, signBase64: String, pubKey: PublicKey, charset: Charset = Charsets.UTF_8): Boolean {
         val sign = Base64.decode(signBase64)
         val signature = Signature.getInstance(rsaAlgorithm)
         signature.initVerify(pubKey)       // 公钥用来验证签名
@@ -92,5 +103,15 @@ object RSAUtil {
         signature.update(data.toByteArray(charset))
 
         return signature.verify(sign)
+    }
+
+    /**
+     * 调用此方法前, 请将mapData里不需要进行加签的字段过滤掉.此处, mapData 已经试经过过滤后的map
+     * 对map里的键值对, 根据Key, 按照字母排序(升序), key=value 然后用 "&" 链接起来后的字符串进行验签
+     * @return 验签通过返回true
+     */
+    fun verify(mapData: Map<String, String>, signBase64: String, pubKey: PublicKey, charset: Charset = Charsets.UTF_8): Boolean {
+        val beSigned = mapData.toSortedMap().map { "${it.key}=${it.value}" }.joinToString("&")
+        return verify(beSigned, signBase64, pubKey, charset)
     }
 }
