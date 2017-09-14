@@ -134,7 +134,6 @@ object Application {
 
         router.route()
                 .handler(BodyHandler.create().setMergeFormAttributes(false))
-                .handler(CookieHandler.create())
 
         val routeFile = File("conf/route")
         ApiRoute.parseFromFile(routeFile).forEach {
