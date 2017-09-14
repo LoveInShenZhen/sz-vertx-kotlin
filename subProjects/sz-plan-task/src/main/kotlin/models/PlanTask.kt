@@ -9,6 +9,7 @@ import jodd.datetime.JDateTime
 import sz.DB
 import sz.PlanTaskService
 import sz.RunInTransaction
+import sz.annotations.DBIndexed
 import sz.scaffold.Application
 import sz.scaffold.tools.json.toJsonPretty
 import java.sql.Timestamp
@@ -39,6 +40,7 @@ class PlanTask : Model() {
     @Column(columnDefinition = "VARCHAR(64) COMMENT '顺序执行的类别'", nullable = false)
     var seq_type: String? = null
 
+    @DBIndexed
     @Column(columnDefinition = "DATETIME COMMENT '任务计划执行时间'")
     var plan_run_time: JDateTime? = null
 
