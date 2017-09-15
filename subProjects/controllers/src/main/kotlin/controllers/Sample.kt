@@ -1,6 +1,5 @@
 package controllers
 
-import models.PlanTask
 import sz.scaffold.annotations.Comment
 import sz.scaffold.cache.CacheApi
 import sz.scaffold.controller.ApiController
@@ -12,12 +11,12 @@ import tasks.SampleTask
 class Sample : ApiController() {
 
     @Comment("KK 临时测试代码")
-    fun kktest(): ReplyBase {
+    fun kktest(@Comment("保存到redis的消息") msg: String): ReplyBase {
         val reply = ReplyBase()
 
         val task = SampleTask()
 
-        CacheApi.redisCache.set("kktest", "kktest")
+        CacheApi.redisCache.set("kktest", msg)
 
         return reply
     }

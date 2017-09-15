@@ -40,14 +40,29 @@ data class ApiRoute(val method: HttpMethod,
     }
 
     private fun callApi(httpContext: RoutingContext) {
+        val response = httpContext.response()
         val controller = controllerKClass.createInstance()
         val apiController = controller as ApiController
         apiController.setupContext(httpContext)
 
         val paramDatas = httpContext.queryParams(defaults)
-        val args = controllerFun.buildCallArgs(apiController, paramDatas)
+        // 在此, 需要先检查控制器方法需要的参数, 在 query parameters 和 default 参数列表 里是否都存在
 
-        val response = httpContext.response()
+        val missingParameters = this.controllerFun.parameters
+                .filter { !it.isOptional && it.kind == KParameter.Kind.VALUE }      // 排除掉控制器方法的可选参数和 实例() 参数
+                .filter { !paramDatas.containsKey(it.name) && !this.defaults.containsKey(it.name) }
+
+        if (missingParameters.isNotEmpty()) {
+            // 说明缺少参数
+            missingParameters.forEach {
+                response.write("missing query parameter: ${it.name}\n")
+            }
+            response.putHeader("Content-Type", "text/plain; charset=utf-8")
+            response.end()
+            return
+        }
+
+        val args = controllerFun.buildCallArgs(apiController, paramDatas)
 
         val wrapperAction = buildWrappedAction(httpContext, args)
 
