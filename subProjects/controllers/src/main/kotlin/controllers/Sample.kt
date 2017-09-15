@@ -1,5 +1,6 @@
 package controllers
 
+import io.vertx.ext.web.Cookie
 import sz.scaffold.annotations.Comment
 import sz.scaffold.cache.CacheApi
 import sz.scaffold.controller.ApiController
@@ -17,6 +18,9 @@ class Sample : ApiController() {
         val task = SampleTask()
 
         CacheApi.redisCache.set("kktest", msg)
+
+        this.httpContext.removeCookie("kktest")
+        this.httpContext.addCookie(Cookie.cookie("kktest", msg))
 
         return reply
     }
