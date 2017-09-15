@@ -4,6 +4,7 @@ import sz.scaffold.annotations.Comment
 import sz.scaffold.ext.escapeMarkdown
 import sz.scaffold.tools.json.toJsonPretty
 import kotlin.reflect.KClass
+import kotlin.reflect.KVisibility
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.memberProperties
@@ -67,7 +68,7 @@ constructor(
         replyInfo.desc = ""
         replyInfo.type = JsonDataType.OBJECT.typeName
 
-        postDataSample = if (postDataKClass != null ) {
+        postDataSample = if (postDataKClass != null) {
             SampleJsonData(postDataKClass)
         } else {
             ""
@@ -154,16 +155,18 @@ constructor(
 
     fun PostFormFieldInfos(): List<ParameterInfo> {
         if (this.IsPostFormApi()) {
-            return Class.forName(this.postDataClass).kotlin.memberProperties.map {
-                var paramDesc = ""
-                val paramComment = it.annotations.find { it is Comment }
-                if (paramComment != null && paramComment is Comment) {
-                    paramDesc = paramComment.value
-                }
-                ParameterInfo(name = it.name,
-                        desc = paramDesc,
-                        type = it.returnType.javaType.typeName.split(".").last())
-            }
+            return Class.forName(this.postDataClass).kotlin.memberProperties
+                    .filter { it.visibility == KVisibility.PUBLIC }
+                    .map {
+                        var paramDesc = ""
+                        val paramComment = it.annotations.find { it is Comment }
+                        if (paramComment != null && paramComment is Comment) {
+                            paramDesc = paramComment.value
+                        }
+                        ParameterInfo(name = it.name,
+                                desc = paramDesc,
+                                type = it.returnType.javaType.typeName.split(".").last())
+                    }
         } else {
             return emptyList()
         }
@@ -171,16 +174,18 @@ constructor(
 
     fun PostJsonFieldInfos(): List<ParameterInfo> {
         if (this.IsPostJsonApi()) {
-            return Class.forName(this.postDataClass).kotlin.memberProperties.map {
-                var paramDesc = ""
-                val paramComment = it.annotations.find { it is Comment }
-                if (paramComment != null && paramComment is Comment) {
-                    paramDesc = paramComment.value
-                }
-                ParameterInfo(name = it.name,
-                        desc = paramDesc,
-                        type = it.returnType.javaType.typeName.split(".").last())
-            }
+            return Class.forName(this.postDataClass).kotlin.memberProperties
+                    .filter { it.visibility == KVisibility.PUBLIC }
+                    .map {
+                        var paramDesc = ""
+                        val paramComment = it.annotations.find { it is Comment }
+                        if (paramComment != null && paramComment is Comment) {
+                            paramDesc = paramComment.value
+                        }
+                        ParameterInfo(name = it.name,
+                                desc = paramDesc,
+                                type = it.returnType.javaType.typeName.split(".").last())
+                    }
         } else {
             return emptyList()
         }
