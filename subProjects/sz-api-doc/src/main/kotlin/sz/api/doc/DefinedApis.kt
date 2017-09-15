@@ -1,7 +1,10 @@
 package sz.api.doc
 
 import sz.scaffold.Application
+import sz.scaffold.annotations.PostForm
+import sz.scaffold.annotations.PostJson
 import sz.scaffold.controller.ApiRoute
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.jvm.jvmErasure
 
 //
@@ -40,9 +43,16 @@ class DefinedApis(private val host: String = "localhost:9000") {
 }
 
 fun ApiRoute.buildApiInfo(host: String): ApiInfo {
+    var httpMethod = this.method.name
+    if (this.controllerFun.findAnnotation<PostForm>() != null) {
+        httpMethod = ApiInfo.PostForm
+    }
+    if (this.controllerFun.findAnnotation<PostJson>() != null) {
+        httpMethod = ApiInfo.PostJson
+    }
     return ApiInfo(host = host,
             url = this.path,
-            httpMethod = this.method.name,
+            httpMethod = httpMethod,
             controllerClass = this.controllerKClass.java.name,
             methodName = this.controllerFun.name,
             replyKClass = this.returnType().jvmErasure,
