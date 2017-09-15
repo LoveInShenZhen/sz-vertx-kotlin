@@ -106,7 +106,7 @@ private fun ServerConfig.addModelClasses(modelClasses: Set<String>) {
 
 private fun ServerConfig.addModelClass(clazz: Class<*>) {
     try {
-        Logger.debug("add class for ebean server: $clazz")
+//        Logger.debug("add class for ebean server: $clazz")
         this.addClass(clazz)
     } catch (ex: Exception) {
         Logger.error("ebean.dataSources.${this.name} Cannot register class [${clazz}] in Ebean server. For reason:${ex.message}")
