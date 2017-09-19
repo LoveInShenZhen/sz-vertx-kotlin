@@ -34,9 +34,9 @@ data class ApiRoute(val method: HttpMethod,
                     val defaults: Map<String, String>) {
 
     fun addToRoute(router: Router) {
-        router.route(method, path).blockingHandler { routingContext ->
+        router.route(method, path).blockingHandler({ routingContext ->
             callApi(routingContext)
-        }
+        }, false)
     }
 
     private fun callApi(httpContext: RoutingContext) {
