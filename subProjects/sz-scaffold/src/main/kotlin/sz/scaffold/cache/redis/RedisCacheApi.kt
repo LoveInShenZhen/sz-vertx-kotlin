@@ -12,7 +12,7 @@ class RedisCacheApi : CacheApi {
 
     override fun exists(key: String): Boolean {
         try {
-            return JRedisPool.jedis().use {
+            return JRedisPool.default().jedis().use {
                 it.exists(key)
             }
         } catch (ex: Exception) {
@@ -24,7 +24,7 @@ class RedisCacheApi : CacheApi {
 
     override fun get(key: String): String {
         try {
-            return JRedisPool.jedis().use {
+            return JRedisPool.default().jedis().use {
                 it.get(key) ?: throw SzException("$key 在缓存中不存在")
             }
         } catch (ex: SzException) {
@@ -37,7 +37,7 @@ class RedisCacheApi : CacheApi {
 
     override fun getOrElse(key: String, default: () -> String): String {
         try {
-            return JRedisPool.jedis().use {
+            return JRedisPool.default().jedis().use {
                 if (!it.exists(key)) {
                     default()
                 } else {
@@ -52,7 +52,7 @@ class RedisCacheApi : CacheApi {
 
     override fun getOrNull(key: String): String? {
         try {
-            return JRedisPool.jedis().use {
+            return JRedisPool.default().jedis().use {
                 it.get(key)
             }
         } catch (ex: Exception) {
@@ -63,7 +63,7 @@ class RedisCacheApi : CacheApi {
 
     override fun set(key: String, objJson: String, expirationInMs: Long) {
         try {
-            JRedisPool.jedis().use {
+            JRedisPool.default().jedis().use {
                 if (expirationInMs > 0) {
                     it.psetex(key, expirationInMs, objJson)
                 } else {
@@ -77,7 +77,7 @@ class RedisCacheApi : CacheApi {
 
     override fun del(key: String) {
         try {
-            JRedisPool.jedis().use {
+            JRedisPool.default().jedis().use {
                 it.del(key)
             }
         } catch (ex:Exception) {

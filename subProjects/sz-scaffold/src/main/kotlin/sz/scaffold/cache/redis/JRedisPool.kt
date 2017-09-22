@@ -12,7 +12,7 @@ import sz.scaffold.tools.logger.Logger
 //
 // Created by kk on 17/9/4.
 //
-object JRedisPool {
+class JRedisPool(val name: String) {
 
     private var _jedisPool: JedisPool? = null
 
@@ -25,20 +25,13 @@ object JRedisPool {
         }
 
     init {
-//        public JedisPool(final GenericObjectPoolConfig poolConfig,
-//                          final String host,
-//                          int port,
-//                          int timeout,
-//                          final String password,
-//                          final int database,
-//                          final boolean ssl)
         _jedisPool = JedisPool(poolConfig(),
-                Application.config.getString("redis.host"),
-                Application.config.getInt("redis.port"),
-                Application.config.getInt("redis.timeout"),
-                Application.config.getStringOrNll("redis.password"),
-                Application.config.getInt("redis.database"),
-                Application.config.getBoolean("redis.ssl")
+                Application.config.getString("redis.$name.host"),
+                Application.config.getInt("redis.$name.port"),
+                Application.config.getInt("redis.$name.timeout"),
+                Application.config.getStringOrNll("redis.$name.password"),
+                Application.config.getInt("redis.$name.database"),
+                Application.config.getBoolean("redis.$name.ssl")
         )
         Logger.debug("初始化 JedisPool             [OK]")
     }
@@ -50,58 +43,74 @@ object JRedisPool {
     private fun poolConfig(): JedisPoolConfig {
         val poolCfg = JedisPoolConfig()
         val config = Application.config
-        config.existThenApply("redis.pool.maxIdle") {
-            poolCfg.maxIdle = config.getInt("redis.pool.maxIdle")
+        config.existThenApply("redis.$name.pool.maxIdle") {
+            poolCfg.maxIdle = config.getInt("redis.$name.pool.maxIdle")
         }
 
-        config.existThenApply("redis.pool.minIdle") {
-            poolCfg.minIdle = config.getInt("redis.pool.minIdle")
+        config.existThenApply("redis.$name.pool.minIdle") {
+            poolCfg.minIdle = config.getInt("redis.$name.pool.minIdle")
         }
 
-        config.existThenApply("redis.pool.maxTotal") {
-            poolCfg.maxTotal = config.getInt("redis.pool.maxTotal")
+        config.existThenApply("redis.$name.pool.maxTotal") {
+            poolCfg.maxTotal = config.getInt("redis.$name.pool.maxTotal")
         }
 
-        config.existThenApply("redis.pool.maxWaitMillis") {
-            poolCfg.maxWaitMillis = config.getLong("redis.pool.maxWaitMillis")
+        config.existThenApply("redis.$name.pool.maxWaitMillis") {
+            poolCfg.maxWaitMillis = config.getLong("redis.$name.pool.maxWaitMillis")
         }
 
-        config.existThenApply("redis.pool.testOnBorrow") {
-            poolCfg.testOnBorrow = config.getBoolean("redis.pool.testOnBorrow")
+        config.existThenApply("redis.$name.pool.testOnBorrow") {
+            poolCfg.testOnBorrow = config.getBoolean("redis.$name.pool.testOnBorrow")
         }
 
-        config.existThenApply("redis.pool.testOnReturn") {
-            poolCfg.testOnReturn = config.getBoolean("redis.pool.testOnReturn")
+        config.existThenApply("redis.$name.pool.testOnReturn") {
+            poolCfg.testOnReturn = config.getBoolean("redis.$name.pool.testOnReturn")
         }
 
-        config.existThenApply("redis.pool.testWhileIdle") {
-            poolCfg.testWhileIdle = config.getBoolean("redis.pool.testWhileIdle")
+        config.existThenApply("redis.$name.pool.testWhileIdle") {
+            poolCfg.testWhileIdle = config.getBoolean("redis.$name.pool.testWhileIdle")
         }
 
-        config.existThenApply("redis.pool.timeBetweenEvictionRunsMillis") {
-            poolCfg.timeBetweenEvictionRunsMillis = config.getLong("redis.pool.timeBetweenEvictionRunsMillis")
+        config.existThenApply("redis.$name.pool.timeBetweenEvictionRunsMillis") {
+            poolCfg.timeBetweenEvictionRunsMillis = config.getLong("redis.$name.pool.timeBetweenEvictionRunsMillis")
         }
 
-        config.existThenApply("redis.pool.numTestsPerEvictionRun") {
-            poolCfg.numTestsPerEvictionRun = config.getInt("redis.pool.numTestsPerEvictionRun")
+        config.existThenApply("redis.$name.pool.numTestsPerEvictionRun") {
+            poolCfg.numTestsPerEvictionRun = config.getInt("redis.$name.pool.numTestsPerEvictionRun")
         }
 
-        config.existThenApply("redis.pool.minEvictableIdleTimeMillis") {
-            poolCfg.minEvictableIdleTimeMillis = config.getLong("redis.pool.minEvictableIdleTimeMillis")
+        config.existThenApply("redis.$name.pool.minEvictableIdleTimeMillis") {
+            poolCfg.minEvictableIdleTimeMillis = config.getLong("redis.$name.pool.minEvictableIdleTimeMillis")
         }
 
-        config.existThenApply("redis.pool.softMinEvictableIdleTimeMillis") {
-            poolCfg.softMinEvictableIdleTimeMillis = config.getLong("redis.pool.softMinEvictableIdleTimeMillis")
+        config.existThenApply("redis.$name.pool.softMinEvictableIdleTimeMillis") {
+            poolCfg.softMinEvictableIdleTimeMillis = config.getLong("redis.$name.pool.softMinEvictableIdleTimeMillis")
         }
 
-        config.existThenApply("redis.pool.lifo") {
-            poolCfg.lifo = config.getBoolean("redis.pool.lifo")
+        config.existThenApply("redis.$name.pool.lifo") {
+            poolCfg.lifo = config.getBoolean("redis.$name.pool.lifo")
         }
 
-        config.existThenApply("redis.pool.blockWhenExhausted") {
-            poolCfg.blockWhenExhausted = config.getBoolean("redis.pool.blockWhenExhausted")
+        config.existThenApply("redis.$name.pool.blockWhenExhausted") {
+            poolCfg.blockWhenExhausted = config.getBoolean("redis.$name.pool.blockWhenExhausted")
         }
 
         return poolCfg
+    }
+
+    companion object {
+
+        private val pools: Map<String, JRedisPool> = Application.config.getConfig("redis")
+                .root()
+                .map { Pair<String, JRedisPool>(it.key, JRedisPool(it.key)) }
+                .toMap()
+
+        fun default(): JRedisPool {
+            return byName("default")
+        }
+
+        fun byName(name: String): JRedisPool {
+            return pools[name]!!
+        }
     }
 }
