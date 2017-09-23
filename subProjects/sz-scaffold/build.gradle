@@ -14,8 +14,8 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.4"
-    compile "org.jetbrains.kotlin:kotlin-reflect:1.1.4"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.50"
+    compile "org.jetbrains.kotlin:kotlin-reflect:1.1.50"
 
     compile group: 'org.jodd', name: 'jodd-core', version: '3.8.5'
     compile group: 'org.jodd', name: 'jodd-bean', version: '3.8.5'
