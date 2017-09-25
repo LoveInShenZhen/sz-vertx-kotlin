@@ -80,8 +80,18 @@ class RedisCacheApi : CacheApi {
             JRedisPool.default().jedis().use {
                 it.del(key)
             }
-        } catch (ex:Exception) {
+        } catch (ex: Exception) {
             Logger.error(ex.ChainToString())
+        }
+    }
+
+    // 以秒为单位，返回给定 key 的剩余生存时间(TTL, time to live)
+    fun ttl(key: String): Long {
+        try {
+            return JRedisPool.default().jedis().ttl(key)
+        } catch (ex: Exception) {
+            Logger.error(ex.ChainToString())
+            return 0
         }
     }
 }
