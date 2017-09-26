@@ -85,13 +85,19 @@ class RedisCacheApi : CacheApi {
         }
     }
 
-    // 以秒为单位，返回给定 key 的剩余生存时间(TTL, time to live)
+    // 以秒为单位，返回给定 key 的剩余生存时间(TTL, time to live), 单位: 秒
     fun ttl(key: String): Long {
         try {
             return JRedisPool.default().jedis().ttl(key)
         } catch (ex: Exception) {
             Logger.error(ex.ChainToString())
-            return 0
+            return -1
         }
+    }
+
+    fun update(key: String, value:String) {
+        val ttl = this.ttl(key)
+        if (ttl == (-1).toLong()) return        // 获取ttl失败
+        this.set(key = key, objJson = value, expirationInMs = ttl * 1000)
     }
 }
