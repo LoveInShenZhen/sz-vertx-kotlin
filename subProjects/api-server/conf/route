@@ -12,4 +12,5 @@ GET     /api/builtin/doc/apiTest                    sz.api.controllers.ApiDoc.ap
 
 # 测试用api接口
 
-GET     /api/kktest     controllers.Sample.kktest
+GET     /api/kktest                                 controllers.Sample.kktest
+GET     /api/testSendEventBus                       controllers.Sample.testSendEventBus

@@ -1,10 +1,19 @@
 package controllers
 
 import io.vertx.ext.web.Cookie
+import jodd.datetime.JDateTime
+import models.PlanTask
+import plantask.redis.RedisPlanTask
+import plantask.redis.RedisTask
+import plantask.redis.recordKey
+import sz.AsynTask.AsyncTask
 import sz.scaffold.annotations.Comment
 import sz.scaffold.cache.CacheApi
+import sz.scaffold.cache.redis.JRedisPool
 import sz.scaffold.controller.ApiController
 import sz.scaffold.controller.reply.ReplyBase
+import sz.scaffold.tools.json.toJsonPretty
+import sz.scaffold.tools.logger.Logger
 import tasks.SampleTask
 
 
@@ -23,5 +32,17 @@ class Sample : ApiController() {
         this.httpContext.addCookie(Cookie.cookie("kktest", msg))
 
         return reply
+    }
+
+    @Comment("测试EventBus")
+    fun testSendEventBus() : ReplyBase {
+        Logger.debug("testSendEventBus begin")
+        val task = SampleTask()
+        RedisPlanTask.addTask(task, JDateTime().addSecond(9))
+        RedisPlanTask.addTask(task, JDateTime().addSecond(9))
+        RedisPlanTask.addTask(task, JDateTime().addSecond(9))
+        RedisPlanTask.addTask(task, JDateTime().addSecond(9))
+
+        return ReplyBase()
     }
 }

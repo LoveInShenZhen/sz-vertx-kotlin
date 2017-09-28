@@ -2,6 +2,7 @@
 
 package api.server
 
+import plantask.redis.RedisTaskLoader
 import sz.AsynTask.AsyncTasksVerticle
 import sz.PlanTaskService
 import sz.SzEbeanConfig
@@ -17,12 +18,14 @@ fun main(args: Array<String>) {
     Application.regOnStartHandler(10) {
         PlanTaskService.Start()
         AsyncTasksVerticle.deploy(Application.vertx)
+        RedisTaskLoader.deploy(Application.vertx)
     }
 
 
     Application.regOnStopHanlder(10) {
         PlanTaskService.Stop()
-        AsyncTasksVerticle.unDeploy(Application.vertx)
+        AsyncTasksVerticle.unDeploy()
+        RedisTaskLoader.unDeploy()
     }
 
     Application.runHttpServer()

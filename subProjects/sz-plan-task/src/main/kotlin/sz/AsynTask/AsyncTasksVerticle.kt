@@ -40,8 +40,8 @@ class AsyncTasksVerticle : AbstractVerticle() {
     companion object {
 
         val address = "sz.app.asyncTask"
-
         private var deoloyId = ""
+        private var vertxRef: Vertx? = null
 
         fun deploy(vertx: Vertx) {
             val options = DeploymentOptions()
@@ -51,6 +51,7 @@ class AsyncTasksVerticle : AbstractVerticle() {
             vertx.deployVerticle(verticle, options) { res ->
                 if (res.succeeded()) {
                     deoloyId = res.result()
+                    vertxRef = vertx
                 } else {
                     Logger.error("Deploy AsyncTasksVerticle failed.")
                     vertx.close()
@@ -58,9 +59,9 @@ class AsyncTasksVerticle : AbstractVerticle() {
             }
         }
 
-        fun unDeploy(vertx: Vertx) {
+        fun unDeploy() {
             if (deoloyId.isNotBlank()) {
-                vertx.undeploy(deoloyId)
+                vertxRef!!.undeploy(deoloyId)
             }
         }
     }

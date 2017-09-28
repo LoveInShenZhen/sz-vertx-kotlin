@@ -33,7 +33,11 @@ class JRedisPool(val name: String) {
                 Application.config.getInt("redis.$name.database"),
                 Application.config.getBoolean("redis.$name.ssl")
         )
-        Logger.debug("初始化 JedisPool             [OK]")
+        Logger.debug("初始化 JedisPool ($name)             [OK]")
+    }
+
+    fun pool(): JedisPool {
+        return _jedisPool!!
     }
 
     fun jedis(): Jedis {
