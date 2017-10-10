@@ -1,10 +1,12 @@
 package sz.api.doc
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import sz.scaffold.annotations.Comment
 import sz.scaffold.ext.escapeMarkdown
 import sz.scaffold.tools.json.toJsonPretty
 import kotlin.reflect.KClass
 import kotlin.reflect.KVisibility
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.memberProperties
@@ -156,7 +158,7 @@ constructor(
     fun PostFormFieldInfos(): List<ParameterInfo> {
         if (this.IsPostFormApi()) {
             return Class.forName(this.postDataClass).kotlin.memberProperties
-                    .filter { it.visibility == KVisibility.PUBLIC }
+                    .filter { it.visibility == KVisibility.PUBLIC && it.findAnnotation<JsonIgnore>() == null }
                     .map {
                         var paramDesc = ""
                         val paramComment = it.annotations.find { it is Comment }
@@ -175,7 +177,7 @@ constructor(
     fun PostJsonFieldInfos(): List<ParameterInfo> {
         if (this.IsPostJsonApi()) {
             return Class.forName(this.postDataClass).kotlin.memberProperties
-                    .filter { it.visibility == KVisibility.PUBLIC }
+                    .filter { it.visibility == KVisibility.PUBLIC && it.findAnnotation<JsonIgnore>() == null }
                     .map {
                         var paramDesc = ""
                         val paramComment = it.annotations.find { it is Comment }

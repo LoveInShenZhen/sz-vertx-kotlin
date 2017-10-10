@@ -63,7 +63,7 @@ object RedisPlanTask {
     }
 
     fun notifyNewTask() {
-        Application.vertx.eventBus().publish(RedisTaskLoader.address, "")
+        Application.vertx.eventBus().send(RedisTaskLoader.address, "")
     }
 }
 

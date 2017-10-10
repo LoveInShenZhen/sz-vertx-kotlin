@@ -57,11 +57,11 @@ class RedisTaskLoader : AbstractVerticle() {
 
         // 注册一个每隔5秒轮询检查的定时器
         checkerTimerId = this.vertx.setPeriodic(5000) { _ ->
-            this.vertx.eventBus().publish(address, "")
+            this.vertx.eventBus().send(address, "")
         }
 
         // 发送一个消息, 立即检查
-        this.vertx.eventBus().publish(address, "")
+        this.vertx.eventBus().send(address, "")
 
         Logger.debug("RedisTaskLoader started.")
     }
