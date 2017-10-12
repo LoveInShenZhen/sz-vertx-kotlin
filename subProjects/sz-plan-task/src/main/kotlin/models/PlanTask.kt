@@ -62,28 +62,32 @@ class PlanTask : Model() {
     companion object : Finder<Long, PlanTask>(PlanTask::class.java) {
 
         fun addTask(task: Runnable, requireSeq: Boolean = false, seqType: String = "", planRunTime: JDateTime? = null, tag: String = "") {
-            val planTask = PlanTask()
-            planTask.require_seq = requireSeq
-            planTask.seq_type = seqType
-            planTask.plan_run_time = planRunTime
-            planTask.task_status = TaskStatus.WaitingInDB.code
-            planTask.class_name = task.javaClass.name
-            planTask.json_data = task.toJsonPretty()
-            planTask.tag = tag
+            DB.Default().RunInTransaction {
+                val planTask = PlanTask()
+                planTask.require_seq = requireSeq
+                planTask.seq_type = seqType
+                planTask.plan_run_time = planRunTime
+                planTask.task_status = TaskStatus.WaitingInDB.code
+                planTask.class_name = task.javaClass.name
+                planTask.json_data = task.toJsonPretty()
+                planTask.tag = tag
 
-            planTask.save()
+                planTask.save()
+            }
 
             notifyNewTask()
         }
 
         fun addSingletonTask(task: Runnable, requireSeq: Boolean = false, seqType: String = "", planRunTime: JDateTime? = null, tag: String = "") {
-            val className = task.javaClass.name
-            val oldTask = query().where()
-                    .eq("class_name", className)
-                    .eq("task_status", TaskStatus.WaitingInDB.code)
-                    .findUnique()
-            if (oldTask == null) {
-                addTask(task, requireSeq, seqType, planRunTime, tag)
+            DB.Default().RunInTransaction {
+                val className = task.javaClass.name
+                val oldTask = query().where()
+                        .eq("class_name", className)
+                        .eq("task_status", TaskStatus.WaitingInDB.code)
+                        .findUnique()
+                if (oldTask == null) {
+                    addTask(task, requireSeq, seqType, planRunTime, tag)
+                }
             }
 
             notifyNewTask()
