@@ -24,4 +24,9 @@ open class ApiController {
     fun contentType(contentType: String) {
         httpContext.response().putHeader("Content-Type", contentType)
     }
+
+    fun redirect(newLocation: String) {
+        httpContext.response().statusCode = 307
+        httpContext.response().putHeader("Location", newLocation).end()
+    }
 }
