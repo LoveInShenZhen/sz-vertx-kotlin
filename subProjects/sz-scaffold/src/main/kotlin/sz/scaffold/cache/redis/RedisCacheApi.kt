@@ -75,6 +75,16 @@ class RedisCacheApi : CacheApi {
         }
     }
 
+    override fun set(key: String, objJson: String) {
+        try {
+            JRedisPool.default().jedis().use {
+                it.set(key, objJson)
+            }
+        } catch (ex: Exception) {
+            Logger.error(ex.ChainToString())
+        }
+    }
+
     override fun del(key: String) {
         try {
             JRedisPool.default().jedis().use {
@@ -95,7 +105,7 @@ class RedisCacheApi : CacheApi {
         }
     }
 
-    fun update(key: String, value:String) {
+    fun update(key: String, value: String) {
         val ttl = this.ttl(key)
         if (ttl == (-1).toLong()) return        // 获取ttl失败
         this.set(key = key, objJson = value, expirationInMs = ttl * 1000)

@@ -1,5 +1,6 @@
 package sz.scaffold.cache
 
+import jodd.datetime.JDateTime
 import sz.scaffold.cache.redis.RedisCacheApi
 
 //
@@ -7,7 +8,7 @@ import sz.scaffold.cache.redis.RedisCacheApi
 //
 interface CacheApi {
 
-    fun exists(key: String) : Boolean
+    fun exists(key: String): Boolean
 
     fun get(key: String): String
 
@@ -15,7 +16,19 @@ interface CacheApi {
 
     fun getOrNull(key: String): String?
 
-    fun set(key: String, objJson: String, expirationInMs: Long = 0)
+    fun set(key: String, objJson: String, expirationInMs: Long)
+
+    fun set(key: String, objJson: String)
+
+    fun set(key: String, objJson: String, cleaningTime: JDateTime) {
+        val now = JDateTime().convertToDate().time
+        val diffTime = cleaningTime.convertToDate().time - now
+        if (diffTime <= 0) {
+            set(key, objJson)
+        } else {
+            set(key, objJson, diffTime)
+        }
+    }
 
     fun del(key: String)
 
