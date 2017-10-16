@@ -1,13 +1,13 @@
 package sz.scaffold.aop.actions
 
-import aop.annotations.CheckToken
+import aop.annotations.SampleCheckToken
 import sz.scaffold.controller.reply.ReplyBase
 import sz.scaffold.tools.logger.Logger
 
 //
 // Created by kk on 17/8/16.
 //
-class CheckTokenAction : Action<CheckToken>() {
+class SampleCheckTokenAction : Action<SampleCheckToken>() {
 
     override fun call(): Any? {
         Logger.debug(" CheckTokenAction.call() ... token: ${this.config.token}, roles: [${this.config.roles.joinToString(",")}]")
