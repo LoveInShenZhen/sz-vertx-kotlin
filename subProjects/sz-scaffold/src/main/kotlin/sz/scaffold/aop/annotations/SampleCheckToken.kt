@@ -1,4 +1,4 @@
-package aop.annotations
+package sz.scaffold.aop.annotations
 
 
 import sz.scaffold.aop.actions.SampleCheckTokenAction

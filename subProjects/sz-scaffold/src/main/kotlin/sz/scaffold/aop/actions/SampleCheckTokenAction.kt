@@ -1,6 +1,6 @@
 package sz.scaffold.aop.actions
 
-import aop.annotations.SampleCheckToken
+import sz.scaffold.aop.annotations.SampleCheckToken
 import sz.scaffold.controller.reply.ReplyBase
 import sz.scaffold.tools.logger.Logger
 
