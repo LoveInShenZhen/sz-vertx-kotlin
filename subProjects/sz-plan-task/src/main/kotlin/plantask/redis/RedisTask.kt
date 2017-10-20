@@ -21,6 +21,8 @@ class RedisTask {
 
     var error: String = ""
 
+    var ordered: Boolean = false
+
     fun run() {
         val task = loadTask()
         task.run()
