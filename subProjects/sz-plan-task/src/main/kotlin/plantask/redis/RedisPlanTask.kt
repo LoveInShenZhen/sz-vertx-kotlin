@@ -33,7 +33,7 @@ object RedisPlanTask {
         return jedis().use { jedis -> jedis.incr(taskIdKey).toLong() }
     }
 
-    fun addTask(task: Runnable, planRunTime: JDateTime = justRunTime, tag: String = "") {
+    fun addTask(task: Runnable, planRunTime: JDateTime = justRunTime, tag: String = "", ordered: Boolean = false) {
         try {
             val redisTask = RedisTask()
             redisTask.id = nextId()
@@ -41,6 +41,7 @@ object RedisPlanTask {
             redisTask.className = task::class.java.name
             redisTask.jsonData = task.toJsonPretty()
             redisTask.tag = tag
+            redisTask.ordered = ordered
 
             jedis().use { jedis ->
                 Logger.debug("go in to addTask tran")
