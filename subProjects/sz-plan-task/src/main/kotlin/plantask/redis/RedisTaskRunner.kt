@@ -62,6 +62,8 @@ class RedisTaskRunner : AbstractVerticle() {
                                     taskTran.set(redisTask.recordKey(), redisTask.toJsonPretty())
                                     taskTran.sadd(RedisPlanTask.errorQueueKey, redisTask.recordKey())
                                     taskTran.exec()
+
+                                    Logger.warn(redisTask.error)
                                 }
                             } finally {
                                 this.vertx.cancelTimer(timerId)
@@ -93,6 +95,8 @@ class RedisTaskRunner : AbstractVerticle() {
                                             taskTran.set(redisTask.recordKey(), redisTask.toJsonPretty())
                                             taskTran.sadd(RedisPlanTask.errorQueueKey, redisTask.recordKey())
                                             taskTran.exec()
+
+                                            Logger.warn(redisTask.error)
                                         }
                                     }
                                 })
