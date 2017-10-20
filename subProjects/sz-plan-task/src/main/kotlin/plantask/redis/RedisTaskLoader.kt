@@ -54,6 +54,7 @@ class RedisTaskLoader : AbstractVerticle() {
         }
 
         RedisTaskRunner.deploy(this.vertx)
+        RedisTaskRunner.deploySingleton(this.vertx)
 
         // 注册一个每隔5秒轮询检查的定时器
         checkerTimerId = this.vertx.setPeriodic(5000) { _ ->
@@ -76,6 +77,7 @@ class RedisTaskLoader : AbstractVerticle() {
         }
 
         RedisTaskRunner.unDeploy()
+        RedisTaskRunner.unDeploySingleton()
 
         Logger.debug("RedisTaskLoader stopped.")
     }
