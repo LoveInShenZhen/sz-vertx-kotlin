@@ -163,6 +163,7 @@ class RedisTaskRunner : AbstractVerticle() {
             val options = DeploymentOptions()
             options.isWorker = true
             options.isMultiThreaded = false     // 单线程
+            options.workerPoolSize = 1
             val verticle = RedisTaskRunner()
             verticle.ordered = true
             vertx.deployVerticle(verticle, options) { res ->
