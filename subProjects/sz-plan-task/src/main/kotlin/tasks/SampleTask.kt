@@ -13,7 +13,7 @@ class SampleTask : Runnable{
 
     override fun run() {
         Logger.debug("Run SampleTask ($id) start. Threa Id: ${Thread.currentThread().id}", AnsiColor.YELLOW)
-        Thread.sleep(5000)
+        Thread.sleep(3000)
         Logger.debug("Run SampleTask ($id) finished. Threa Id: ${Thread.currentThread().id}", AnsiColor.YELLOW)
     }
 }
