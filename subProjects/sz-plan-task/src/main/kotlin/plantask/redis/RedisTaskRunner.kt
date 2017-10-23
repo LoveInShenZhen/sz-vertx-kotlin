@@ -10,6 +10,9 @@ import sz.scaffold.ext.ChainToString
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.json.toJsonPretty
 import sz.scaffold.tools.logger.Logger
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 
 //
 // Created by kk on 2017/9/28.
@@ -18,7 +21,7 @@ class RedisTaskRunner : AbstractVerticle() {
 
     private var consumer: MessageConsumer<String>? = null
     private var checkerTimerId: Long = -1
-    private var ordered = false
+    private val seqTaskWorker: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
 
     override fun start() {
         consumer = this.vertx.eventBus().consumer<String>(address) { taskKey ->
@@ -38,40 +41,32 @@ class RedisTaskRunner : AbstractVerticle() {
                     return@consumer
                 }
 
-                if (redisTask.ordered == this.ordered) {
-                    val now = JDateTime()
-                    val delay = redisTask.delayInMs(now)
-                    if (delay > 0) {
-                        Logger.debug("定时器添加任务, delay $delay ms")
+                val now = JDateTime()
+                val delay = redisTask.delayInMs(now)
+                if (delay > 0) {
+                    Logger.debug("定时器添加任务, delay $delay ms")
+                    if (redisTask.ordered) {
+                        // 进入有序单线程队列
+                        this.seqTaskWorker.schedule(wrapperRunTask(redisTask), delay, TimeUnit.MICROSECONDS)
+                    } else {
+                        // 对顺序无要求
                         this.vertx.setTimer(delay) { timerId ->
                             try {
-                                redisTask.run()
-                                // 执行成功
-                                RedisPlanTask.jedis().use { jedis ->
-                                    val taskTran = jedis.multi()
-                                    taskTran.srem(RedisPlanTask.processingQueueKey, redisTask.recordKey())
-                                    taskTran.del(redisTask.recordKey())
-                                    taskTran.exec()
-                                }
-                            } catch (ex: Exception) {
-                                // task 执行发生异常, 将 异常任务 记录并转移到 errorQueue
-                                RedisPlanTask.jedis().use { jedis ->
-                                    val taskTran = jedis.multi()
-                                    taskTran.srem(RedisPlanTask.processingQueueKey, redisTask.recordKey())
-                                    redisTask.error = ex.ChainToString()
-                                    taskTran.set(redisTask.recordKey(), redisTask.toJsonPretty())
-                                    taskTran.sadd(RedisPlanTask.errorQueueKey, redisTask.recordKey())
-                                    taskTran.exec()
-
-                                    Logger.warn(redisTask.error)
-                                }
+                                wrapperRunTask(redisTask).run()
                             } finally {
                                 this.vertx.cancelTimer(timerId)
                             }
                         }
+                    }
+
+                } else {
+                    // delay == 0  立即执行
+                    Logger.debug("立即执行任务")
+                    if (redisTask.ordered) {
+                        // 进入有序单线程队列
+                        this.seqTaskWorker.submit(wrapperRunTask(redisTask))
                     } else {
-                        // delay == 0  立即执行
-                        Logger.debug("立即执行任务")
+                        // 对顺序无要求
                         this.vertx.executeBlocking<String>({ future ->
                             redisTask.run()
                             future.complete(redisTask.recordKey())
@@ -101,6 +96,7 @@ class RedisTaskRunner : AbstractVerticle() {
                                     }
                                 })
                     }
+
                 }
             } catch (ex: Exception) {
                 Logger.error(ex.ChainToString())
@@ -119,7 +115,37 @@ class RedisTaskRunner : AbstractVerticle() {
             this.vertx.cancelTimer(checkerTimerId)
         }
 
+        this.seqTaskWorker.shutdown()
+        this.seqTaskWorker.awaitTermination(10, TimeUnit.SECONDS)
+
         Logger.debug("RedisTaskRunner stopped.")
+    }
+
+    fun wrapperRunTask(redisTask: RedisTask): Runnable {
+        return Runnable {
+            try {
+                redisTask.run()
+                // 执行成功
+                RedisPlanTask.jedis().use { jedis ->
+                    val taskTran = jedis.multi()
+                    taskTran.srem(RedisPlanTask.processingQueueKey, redisTask.recordKey())
+                    taskTran.del(redisTask.recordKey())
+                    taskTran.exec()
+                }
+            } catch (ex: Exception) {
+                // task 执行发生异常, 将 异常任务 记录并转移到 errorQueue
+                RedisPlanTask.jedis().use { jedis ->
+                    val taskTran = jedis.multi()
+                    taskTran.srem(RedisPlanTask.processingQueueKey, redisTask.recordKey())
+                    redisTask.error = ex.ChainToString()
+                    taskTran.set(redisTask.recordKey(), redisTask.toJsonPretty())
+                    taskTran.sadd(RedisPlanTask.errorQueueKey, redisTask.recordKey())
+                    taskTran.exec()
+
+                    Logger.warn(redisTask.error)
+                }
+            }
+        }
     }
 
     companion object {
@@ -139,7 +165,6 @@ class RedisTaskRunner : AbstractVerticle() {
             options.isWorker = true
             options.isMultiThreaded = true
             val verticle = RedisTaskRunner()
-            verticle.ordered = false
             vertx.deployVerticle(verticle, options) { res ->
                 if (res.succeeded()) {
                     deoloyId = res.result()
@@ -154,32 +179,6 @@ class RedisTaskRunner : AbstractVerticle() {
         fun unDeploy() {
             if (deoloyId.isNotBlank()) {
                 vertxRef!!.undeploy(deoloyId)
-            }
-        }
-
-        private var singletonDeployId = ""
-
-        fun deploySingleton(vertx: Vertx) {
-            val options = DeploymentOptions()
-            options.isWorker = true
-            options.isMultiThreaded = false     // 单线程
-            options.workerPoolSize = 1
-            val verticle = RedisTaskRunner()
-            verticle.ordered = true
-            vertx.deployVerticle(verticle, options) { res ->
-                if (res.succeeded()) {
-                    singletonDeployId = res.result()
-                    vertxRef = vertx
-                } else {
-                    Logger.error("Deploy TaskLoader verticle failed.")
-                    vertx.close()
-                }
-            }
-        }
-
-        fun unDeploySingleton() {
-            if (singletonDeployId.isNotBlank()) {
-                vertxRef!!.undeploy(singletonDeployId)
             }
         }
     }

@@ -25,7 +25,6 @@ class RedisTask {
     var ordered: Boolean = false
 
     fun run() {
-        Logger.debug("task:\n${this.toJsonPretty()}")
         val task = loadTask()
         task.run()
     }
