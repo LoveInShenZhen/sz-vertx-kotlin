@@ -30,7 +30,7 @@ class RedisTask {
     }
 
     private fun loadTask(): Runnable {
-        return Class.forName(this.className).newInstance() as Runnable
+        return Json.fromJsonString(this.jsonData, Class.forName(this.className)) as Runnable
     }
 
     fun score(): Double {
