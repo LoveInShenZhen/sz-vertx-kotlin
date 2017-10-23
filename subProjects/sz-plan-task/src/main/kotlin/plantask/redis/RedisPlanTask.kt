@@ -52,7 +52,7 @@ object RedisPlanTask {
                 tran.zadd(waitingQueueKey, redisTask.score(), redisTask.recordKey())
 
                 tran.exec()
-                Logger.debug("addTask tran.exec()")
+                Logger.debug("add RedisPlanTask:\n${redisTask.toJsonPretty()}")
             }
 
             notifyNewTask()
