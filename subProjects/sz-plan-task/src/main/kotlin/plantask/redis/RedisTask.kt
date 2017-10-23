@@ -2,6 +2,7 @@ package plantask.redis
 
 import jodd.datetime.JDateTime
 import sz.scaffold.tools.json.Json
+import sz.scaffold.tools.json.toJsonPretty
 import sz.scaffold.tools.logger.Logger
 
 //
@@ -24,6 +25,7 @@ class RedisTask {
     var ordered: Boolean = false
 
     fun run() {
+        Logger.debug("task:\n${this.toJsonPretty()}")
         val task = loadTask()
         task.run()
     }
