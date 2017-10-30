@@ -59,13 +59,11 @@ object Json {
     }
 
     fun toJsonStrPretty(obj: Any): String {
-        val jsonNode = Json.toJson(obj)
-        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode)
+        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj)
     }
 
     fun toJsonExcludeEmptyFields(obj: Any) : String {
-        val jsonNode = Json.toJson(obj)
-        return excludeEmptyMapper.writeValueAsString(jsonNode)
+        return excludeEmptyMapper.writeValueAsString(obj)
     }
 
     fun formatJson(jsonStr: String): String {
