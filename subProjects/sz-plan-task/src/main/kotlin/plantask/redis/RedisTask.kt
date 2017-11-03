@@ -1,6 +1,10 @@
 package plantask.redis
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import jodd.datetime.JDateTime
+import sz.scaffold.tools.json.JDateTimeWithMsJsonDeserializer
+import sz.scaffold.tools.json.JDateTimeWithMsJsonSerializer
 import sz.scaffold.tools.json.Json
 import sz.scaffold.tools.json.toJsonPretty
 import sz.scaffold.tools.logger.Logger
@@ -12,6 +16,8 @@ class RedisTask {
 
     var id: Long = 0
 
+    @JsonSerialize(using = JDateTimeWithMsJsonSerializer::class)
+    @JsonDeserialize(using = JDateTimeWithMsJsonDeserializer::class)
     var planRunTime: JDateTime = RedisPlanTask.justRunTime
 
     var className: String = ""
@@ -34,12 +40,12 @@ class RedisTask {
     }
 
     fun score(): Double {
-        return ((planRunTime.convertToDate().time - RedisPlanTask.justRunTime.convertToDate().time) / 1000).toDouble()
+        return ((planRunTime.convertToDate().time - RedisPlanTask.justRunTime.convertToDate().time)).toDouble()
     }
 
     fun delayInMs(now: JDateTime = JDateTime()): Long {
-        val delay = planRunTime.convertToDate().time - now.convertToDate().time
-        return if (delay > 10) {
+        val delay = Math.abs(planRunTime.convertToDate().time - now.convertToDate().time)
+        return if (delay > 0) {
             delay
         } else {
             0
