@@ -11,8 +11,10 @@ import sz.scaffold.annotations.PostJson
 import sz.scaffold.aop.actions.Action
 import sz.scaffold.aop.annotations.WithAction
 import sz.scaffold.controller.reply.ReplyBase
+import sz.scaffold.ext.ChainToString
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.json.toJsonPretty
+import sz.scaffold.tools.logger.Logger
 import java.io.File
 import java.io.StringReader
 import java.math.BigDecimal
@@ -69,11 +71,13 @@ data class ApiRoute(val method: HttpMethod,
         // 通过控制器方法的返回类型, 是否是ReplyBase或者其子类型, 来判断是否是 json api 方法
         if (controllerFun.returnType.isSubtypeOf(ReplyBase::class.createType())) {
             try {
-                val result = wrapperAction.call() as ReplyBase
-
-                response.putHeader("Content-Type", "application/json; charset=utf-8")
-                response.write(result.toJsonPretty())
+                val actionResult = wrapperAction.call()
+                if (actionResult is ReplyBase) {
+                    response.putHeader("Content-Type", "application/json; charset=utf-8")
+                    response.write(actionResult.toJsonPretty())
+                }
             } catch (ex: Exception) {
+                Logger.debug(ex.ChainToString())
                 val reply = ReplyBase()
                 val reason = if (ex.cause == null) ex else ex.cause!!
                 reply.OnError(reason)
