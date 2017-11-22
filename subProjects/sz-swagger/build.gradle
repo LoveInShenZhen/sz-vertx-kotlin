@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.60"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:1.1.60"
     compile "org.jetbrains.kotlin:kotlin-reflect:1.1.60"
 
     compile group: 'io.swagger', name: 'swagger-models', version: '2.0.0-rc1'
