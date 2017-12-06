@@ -14,17 +14,17 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:1.1.61"
-    compile "org.jetbrains.kotlin:kotlin-reflect:1.1.61"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.0"
+    compile "org.jetbrains.kotlin:kotlin-reflect:1.2.0"
 
     compile group: 'org.jodd', name: 'jodd-core', version: '3.8.5'
     compile group: 'org.jodd', name: 'jodd-bean', version: '3.8.5'
     compile group: 'org.jodd', name: 'jodd-http', version: '3.8.5'
 
-    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.8.9'
-    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.8.9'
-    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.8.9'
-    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-jsonSchema', version: '2.8.9'
+    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.9.2'
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.9.2'
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.2'
+    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-jsonSchema', version: '2.9.2'
 
 
     compile group: 'io.vertx', name: 'vertx-core', version: '3.4.2'

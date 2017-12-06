@@ -13,6 +13,7 @@ import sz.scaffold.aop.annotations.WithAction
 import sz.scaffold.controller.reply.ReplyBase
 import sz.scaffold.ext.ChainToString
 import sz.scaffold.tools.SzException
+import sz.scaffold.tools.json.Json
 import sz.scaffold.tools.json.toJsonPretty
 import sz.scaffold.tools.logger.Logger
 import java.io.File
@@ -72,7 +73,9 @@ data class ApiRoute(val method: HttpMethod,
         if (controllerFun.returnType.isSubtypeOf(ReplyBase::class.createType())) {
             try {
                 val actionResult = wrapperAction.call()
-                if (actionResult is ReplyBase) {
+                if (isJsonpRequest(httpContext, actionResult)) {
+                    onJsonp(httpContext, actionResult!!)
+                } else if (actionResult is ReplyBase) {
                     response.putHeader("Content-Type", "application/json; charset=utf-8")
                     response.write(actionResult.toJsonPretty())
                 }
@@ -89,14 +92,8 @@ data class ApiRoute(val method: HttpMethod,
             // 其他普通的 http 请求(非 api 请求)
             try {
                 val result = wrapperAction.call()
+                onNormal(httpContext, result)
 
-                if (result != null && result != Unit) {
-                    response.write(result.toString())
-                }
-
-                if (result is ReplyBase || result is JsonNode) {
-                    response.putHeader("Content-Type", "application/json; charset=utf-8")
-                }
             } catch (ex: Exception) {
                 response.putHeader("Content-Type", "text/plain; charset=utf-8")
                 val reason = if (ex.cause == null) ex else ex.cause
@@ -107,6 +104,42 @@ data class ApiRoute(val method: HttpMethod,
 
         if (!response.ended()) {
             response.end()
+        }
+    }
+
+    fun isJsonpRequest(httpContext: RoutingContext, result: Any?): Boolean {
+
+        if (result == null || result == Unit) {
+            return false
+        }
+
+        if (result is ReplyBase || result is JsonNode) {
+            return httpContext.queryParams(mapOf()).containsKey("callback")
+        }
+
+        return false
+    }
+
+    private fun onJsonp(httpContext: RoutingContext, result: Any) {
+        val response = httpContext.response()
+        response.putHeader("Content-Type", "text/javascript; charset=utf-8")
+        val callback = httpContext.queryParams(mapOf()).getValue("callback")
+        val body = "$callback(${Json.toJsonStrPretty(result)});"
+        response.write(body)
+    }
+
+    private fun onNormal(httpContext: RoutingContext, result: Any?) {
+        val response = httpContext.response()
+
+        if (result == null || result == Unit) {
+            return
+        }
+
+        if (result is ReplyBase || result is JsonNode) {
+            response.write(Json.toJsonStrPretty(result))
+            response.putHeader("Content-Type", "application/json; charset=utf-8")
+        } else {
+            response.write(result.toString())
         }
     }
 
