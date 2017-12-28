@@ -14,8 +14,8 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.0"
-    compile "org.jetbrains.kotlin:kotlin-reflect:1.2.0"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.10"
+    compile "org.jetbrains.kotlin:kotlin-reflect:1.2.10"
 
     compile project(':subProjects:models-biz')
     compile project(':subProjects:sz-plan-task')
