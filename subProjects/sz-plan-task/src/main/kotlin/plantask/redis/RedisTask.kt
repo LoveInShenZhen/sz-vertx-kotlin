@@ -30,6 +30,8 @@ class RedisTask {
 
     var ordered: Boolean = false
 
+    var singleton: Boolean = false
+
     fun run() {
         val task = loadTask()
         task.run()

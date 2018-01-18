@@ -128,8 +128,13 @@ class RedisTaskRunner : AbstractVerticle() {
                 // 执行成功
                 RedisPlanTask.jedis().use { jedis ->
                     val taskTran = jedis.multi()
+                    // 从执行队列里删除任务索引key
                     taskTran.srem(RedisPlanTask.processingQueueKey, redisTask.recordKey())
-                    taskTran.del(redisTask.recordKey())
+                    if (redisTask.singleton.not()) {
+                        // 普通一次性任务(非单例类型任务), 执行完后, 需要把任务数据本身删掉
+                        taskTran.del(redisTask.recordKey())
+                    }
+                    // 单例任务的数据, 保留不删除. 通常, 单例任务的任务json数据是会被本身更新的
                     taskTran.exec()
                 }
             } catch (ex: Exception) {

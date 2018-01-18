@@ -33,7 +33,7 @@ object RedisPlanTask {
         return jedis().use { jedis -> jedis.incr(taskIdKey).toLong() }
     }
 
-    fun addTask(task: Runnable, planRunTime: JDateTime = justRunTime, tag: String = "", ordered: Boolean = false) {
+    fun addTask(task: Runnable, planRunTime: JDateTime = justRunTime, tag: String = "", ordered: Boolean = false, singleton: Boolean = false) {
         try {
             val redisTask = RedisTask()
             redisTask.id = nextId()
@@ -42,17 +42,38 @@ object RedisPlanTask {
             redisTask.jsonData = task.toJsonPretty()
             redisTask.tag = tag
             redisTask.ordered = ordered
+            redisTask.singleton = singleton
 
             jedis().use { jedis ->
-                Logger.debug("go in to addTask tran")
-                val tran = jedis.multi()
+                if (redisTask.singleton) {
+                    // 添加单例任务
+                    val tran = jedis.multi()
 
-                tran.set(redisTask.recordKey(), redisTask.toJsonPretty())
+                    // 同种类型(className相同)的单例任务的 key 是一样的
+                    val inProcessing = tran.sismember(processingQueueKey, redisTask.recordKey())
+                    val inWaiting = tran.sismember(waitingQueueKey, redisTask.recordKey())
 
-                tran.zadd(waitingQueueKey, redisTask.score(), redisTask.recordKey())
+                    if (inProcessing.get().not()) {
+                        // 执行队列里面无此类型单例任务, 则在等待队列里查看是否有此类型单例任务, 有则删除掉,重新添加
+                        if (inWaiting.get()) {
+                            tran.srem(waitingQueueKey, redisTask.recordKey())
+                        }
+                        tran.set(redisTask.recordKey(), redisTask.toJsonPretty())
+                        tran.zadd(waitingQueueKey, redisTask.score(), redisTask.recordKey())
+                    }
 
-                tran.exec()
-                Logger.debug("add RedisPlanTask:\n${redisTask.toJsonPretty()}")
+                    tran.exec()
+                } else {
+//                    Logger.debug("go in to addTask tran")
+                    val tran = jedis.multi()
+
+                    tran.set(redisTask.recordKey(), redisTask.toJsonPretty())
+                    tran.zadd(waitingQueueKey, redisTask.score(), redisTask.recordKey())
+
+                    tran.exec()
+//                    Logger.debug("add RedisPlanTask:\n${redisTask.toJsonPretty()}")
+                }
+
             }
 
             notifyNewTask()
@@ -69,5 +90,10 @@ object RedisPlanTask {
 }
 
 fun RedisTask.recordKey(): String {
-    return "Record:PlanTask:${this.id}"
+    if (this.singleton) {
+        // 同种类型(className相同)的单例任务的 key 是一样的
+        return "Record:PlanTask:${this.className}"
+    } else {
+        return "Record:PlanTask:${this.id}"
+    }
 }
