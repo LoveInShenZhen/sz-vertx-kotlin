@@ -46,16 +46,15 @@ object RedisPlanTask {
 
             jedis().use { jedis ->
                 if (redisTask.singleton) {
+                    // 同种类型(className相同)的单例任务的 key 是一样的
+                    val inProcessing = jedis.sismember(processingQueueKey, redisTask.recordKey())
+                    val inWaiting = jedis.sismember(waitingQueueKey, redisTask.recordKey())
                     // 添加单例任务
                     val tran = jedis.multi()
 
-                    // 同种类型(className相同)的单例任务的 key 是一样的
-                    val inProcessing = tran.sismember(processingQueueKey, redisTask.recordKey())
-                    val inWaiting = tran.sismember(waitingQueueKey, redisTask.recordKey())
-
-                    if (inProcessing.get().not()) {
+                    if (inProcessing.not()) {
                         // 执行队列里面无此类型单例任务, 则在等待队列里查看是否有此类型单例任务, 有则删除掉,重新添加
-                        if (inWaiting.get()) {
+                        if (inWaiting) {
                             tran.srem(waitingQueueKey, redisTask.recordKey())
                         }
                         tran.set(redisTask.recordKey(), redisTask.toJsonPretty())

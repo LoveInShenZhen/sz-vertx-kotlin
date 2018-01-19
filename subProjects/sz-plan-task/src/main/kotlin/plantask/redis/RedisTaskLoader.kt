@@ -24,13 +24,15 @@ class RedisTaskLoader : AbstractVerticle() {
                 // 收到通知, 去检查是否有新任务可以加入到队列里执行
 //                Logger.debug("收到通知, 检查并加载 redis task")
                 val scoreMin = 0
-                val scoreMax = (JDateTime().addSecond(10).convertToDate().time / 1000).toDouble()
+                val scoreMax = (JDateTime().addSecond(10).convertToDate().time - RedisPlanTask.justRunTime.convertToDate().time).toDouble()
 
                 // 从 WaitingQueue 里找到运行时间在当前时间 + 10秒范围内的task
                 // 即找到将来10秒内到达计划运行时间的任务
                 val taskRecordKeyList = RedisPlanTask.jedis().use { jedis ->
                     jedis.zrangeByScore(RedisPlanTask.waitingQueueKey, scoreMin.toDouble(), scoreMax)
                 }
+
+//                Logger.debug("scoreMax: $scoreMax 10秒内到达计划运行时间的任务个数: ${taskRecordKeyList.size}")
 
                 taskRecordKeyList.forEach { recordKey ->
                     RedisPlanTask.jedis().use { jedis ->

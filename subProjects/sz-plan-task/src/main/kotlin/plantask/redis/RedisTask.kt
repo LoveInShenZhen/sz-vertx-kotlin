@@ -46,6 +46,8 @@ class RedisTask {
     }
 
     fun delayInMs(now: JDateTime = JDateTime()): Long {
+        if (now.isAfter(planRunTime)) return 0
+
         val delay = Math.abs(planRunTime.convertToDate().time - now.convertToDate().time)
         return if (delay > 0) {
             delay
