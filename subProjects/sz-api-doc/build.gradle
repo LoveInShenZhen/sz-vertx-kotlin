@@ -14,8 +14,8 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.20"
-    compile "org.jetbrains.kotlin:kotlin-reflect:1.2.20"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.21"
+    compile "org.jetbrains.kotlin:kotlin-reflect:1.2.21"
 
     compile project(':subProjects:sz-scaffold')
 }

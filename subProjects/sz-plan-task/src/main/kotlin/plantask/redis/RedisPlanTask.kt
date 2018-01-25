@@ -48,7 +48,7 @@ object RedisPlanTask {
                 if (redisTask.singleton) {
                     // 同种类型(className相同)的单例任务的 key 是一样的
                     val inProcessing = jedis.sismember(processingQueueKey, redisTask.recordKey())
-                    val inWaiting = jedis.sismember(waitingQueueKey, redisTask.recordKey())
+                    val inWaiting = jedis.zrank(waitingQueueKey, redisTask.recordKey()) != null
                     // 添加单例任务
                     val tran = jedis.multi()
 
