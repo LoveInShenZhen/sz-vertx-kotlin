@@ -1,5 +1,6 @@
 package sz.scaffold.tools.xml
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
@@ -15,6 +16,7 @@ import sz.scaffold.tools.json.JDateTimeJsonSerializer
 object Xml {
 
     val mapper: XmlMapper
+    val excludeEmptyMapper: XmlMapper
 
     init {
         val JDateTimeModule = SimpleModule("CustomTypeModule")
@@ -26,6 +28,13 @@ object Xml {
                 .registerModule(Jdk8Module())
                 .registerModule(JavaTimeModule())
                 .registerModule(JDateTimeModule)
+
+        excludeEmptyMapper = XmlMapper()
+        excludeEmptyMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
+                .registerKotlinModule()
+                .registerModule(Jdk8Module())
+                .registerModule(JavaTimeModule())
+                .registerModule(JDateTimeModule)
     }
 
     fun toXml(data: Any): String {
@@ -34,6 +43,10 @@ object Xml {
 
     fun toXmlPretty(data: Any): String {
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(data)
+    }
+
+    fun toXmlExcludeEmptyFields(data: Any) : String {
+        return excludeEmptyMapper.writerWithDefaultPrettyPrinter().writeValueAsString(data)
     }
 
     fun <A> fromXml(xmlStr: String, clazz: Class<A>): A {
