@@ -11,6 +11,7 @@ import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.ext.web.handler.CookieHandler
+import io.vertx.spi.cluster.ignite.IgniteClusterManager
 import jodd.exception.ExceptionUtil
 import jodd.io.FileNameUtil
 import jodd.io.FileUtil
@@ -108,7 +109,10 @@ object Application {
             // 集群方式
             Logger.debug("Vertx 集群方式")
             val future = CompletableFuture<Vertx>()
-            this._vertoptions = buildVertxOptions().setClustered(true)
+            this._vertoptions = buildVertxOptions()
+                    .setClustered(true)
+                    .setClusterManager(IgniteClusterManager())
+
             Vertx.clusteredVertx(this._vertoptions) { event: AsyncResult<Vertx> ->
                 if (event.failed()) {
                     Logger.error("创建集群方式Vertx失败:\n${ExceptionUtil.exceptionChainToString(event.cause())}")
