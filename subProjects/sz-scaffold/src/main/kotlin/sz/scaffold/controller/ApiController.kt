@@ -29,4 +29,20 @@ open class ApiController {
         httpContext.response().statusCode = 307
         httpContext.response().putHeader("Location", newLocation).end()
     }
+
+    //    Nginx 配置:
+    //
+    //    proxy_http_version 1.1;
+    //    proxy_set_header   Host             $http_host;
+    //    proxy_set_header   X-Real-IP        $remote_addr;
+    //    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+
+    fun ClientIp(): String {
+        val realIp = this.httpContext.request().getHeader("X-Real-IP")
+        if (realIp.isNullOrBlank()) {
+            return this.httpContext.request().remoteAddress().toString()
+        } else {
+            return realIp
+        }
+    }
 }
