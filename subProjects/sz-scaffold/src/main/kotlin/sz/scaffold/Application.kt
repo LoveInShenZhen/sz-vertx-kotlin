@@ -47,6 +47,15 @@ object Application {
             return _vertx!!
         }
 
+    private var _vertoptions: VertxOptions? = null
+    val vertxOptions: VertxOptions
+        get() {
+            if (_vertoptions == null) {
+                throw SzException("Application 还没有初始化 vertx")
+            }
+            return _vertoptions!!
+        }
+
     init {
         writePidFile()
 
@@ -58,7 +67,8 @@ object Application {
             appHome = SystemUtil.workingFolder()
         } else {
             // 从 class path 里查找 conf 结尾的路径
-            val confFile = ClassLoaderUtil.getDefaultClasspath().find { it.name == "conf" } ?: throw SzException("class path 里不包含 conf 目录, 请检查启动环境脚本")
+            val confFile = ClassLoaderUtil.getDefaultClasspath().find { it.name == "conf" }
+                    ?: throw SzException("class path 里不包含 conf 目录, 请检查启动环境脚本")
             appHome = confFile.parent
         }
 
@@ -96,8 +106,10 @@ object Application {
         val clustered = config.getBooleanOrElse("app.vertx.clustered", false)
         if (clustered) {
             // 集群方式
+            Logger.debug("Vertx 集群方式")
             val future = CompletableFuture<Vertx>()
-            Vertx.clusteredVertx(buildVertxOptions().setClustered(true)) { event: AsyncResult<Vertx> ->
+            this._vertoptions = buildVertxOptions().setClustered(true)
+            Vertx.clusteredVertx(this._vertoptions) { event: AsyncResult<Vertx> ->
                 if (event.failed()) {
                     Logger.error("创建集群方式Vertx失败:\n${ExceptionUtil.exceptionChainToString(event.cause())}")
                     throw SzException("创建集群方式Vertx失败: ${event.cause().message}")
@@ -108,7 +120,9 @@ object Application {
             return future.get()
         } else {
             // 非集群方式
-            return Vertx.vertx(this.buildVertxOptions())
+            Logger.debug("Vertx 非集群方式")
+            this._vertoptions = buildVertxOptions()
+            return Vertx.vertx(this._vertoptions)
         }
 
     }
