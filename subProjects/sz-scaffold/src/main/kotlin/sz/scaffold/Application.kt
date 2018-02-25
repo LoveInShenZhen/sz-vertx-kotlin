@@ -104,14 +104,13 @@ object Application {
     }
 
     fun createVertx(): Vertx {
-        val clustered = config.getBooleanOrElse("app.vertx.clustered", false)
-        if (clustered) {
+        this._vertoptions = buildVertxOptions()
+
+        if (this._vertoptions!!.isClustered) {
             // 集群方式
             Logger.debug("Vertx 集群方式")
             val future = CompletableFuture<Vertx>()
-            this._vertoptions = buildVertxOptions()
-                    .setClustered(true)
-                    .setClusterManager(IgniteClusterManager())
+            this._vertoptions!!.setClusterManager(IgniteClusterManager())
 
             Vertx.clusteredVertx(this._vertoptions) { event: AsyncResult<Vertx> ->
                 if (event.failed()) {
@@ -125,7 +124,6 @@ object Application {
         } else {
             // 非集群方式
             Logger.debug("Vertx 非集群方式")
-            this._vertoptions = buildVertxOptions()
             return Vertx.vertx(this._vertoptions)
         }
 
