@@ -1,5 +1,5 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.2.21"
+    id "org.jetbrains.kotlin.jvm" version "1.2.30"
 }
 
 allprojects {
@@ -47,8 +47,8 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.21"
-    compile "org.jetbrains.kotlin:kotlin-reflect:1.2.21"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.30"
+    compile "org.jetbrains.kotlin:kotlin-reflect:1.2.30"
 
     compile project(':subProjects:api-server')
 }

@@ -37,6 +37,14 @@ open class ReplyBase {
         }
     }
 
+    fun successed(): Boolean {
+        return ret == 0
+    }
+
+    fun failed(): Boolean {
+        return successed().not()
+    }
+
     override fun toString(): String {
         return Json.toJsonStrPretty(this)
     }
