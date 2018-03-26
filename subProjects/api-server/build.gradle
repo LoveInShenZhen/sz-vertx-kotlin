@@ -15,8 +15,8 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.30"
-    compile "org.jetbrains.kotlin:kotlin-reflect:1.2.30"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.31"
+    compile "org.jetbrains.kotlin:kotlin-reflect:1.2.31"
 
     compile project(':subProjects:controllers')
     compile project(':subProjects:sz-scaffold')
