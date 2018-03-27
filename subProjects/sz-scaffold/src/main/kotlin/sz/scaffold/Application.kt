@@ -18,7 +18,7 @@ import jodd.io.FileUtil
 import jodd.util.ClassLoaderUtil
 import jodd.util.SystemUtil
 import sz.scaffold.controller.ApiRoute
-import sz.scaffold.ext.getBooleanOrElse
+import sz.scaffold.controller.BodyHandlerOptions
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.logger.AnsiColor
 import sz.scaffold.tools.logger.Logger
@@ -145,10 +145,15 @@ object Application {
 
         val httpServerOptions = this.httpServerOptions()
         val httpServer = vertx.createHttpServer(httpServerOptions)
+        val bodyHandlerOptions = this.bodyHandlerOptions()
 
         val router = Router.router(vertx)
 
-        router.route().handler(BodyHandler.create().setMergeFormAttributes(false))
+        router.route().handler(BodyHandler.create()
+                .setMergeFormAttributes(bodyHandlerOptions.mergeFormAttributes)
+                .setBodyLimit(bodyHandlerOptions.bodyLimit)
+                .setDeleteUploadedFilesOnEnd(bodyHandlerOptions.deleteUploadedFilesOnEnd)
+                .setUploadsDirectory(bodyHandlerOptions.uploadsDirectory))
 
         router.route().handler(CookieHandler.create())
 
@@ -229,6 +234,21 @@ object Application {
         }.toMap()
 
         return HttpServerOptions(JsonObject(cfgMap))
+
+    }
+
+    private fun bodyHandlerOptions(): BodyHandlerOptions {
+        val httpCfg = config.getConfig("app.httpServer.bodyHandler")
+
+        val cfgMap = httpCfg.root().map {
+            if (it.key == "bodyLimit") {
+                Pair<String, Any>(it.key, it.value.unwrapped().toString().toLong())
+            } else {
+                Pair<String, Any>(it.key, it.value.unwrapped())
+            }
+        }.toMap()
+
+        return BodyHandlerOptions(JsonObject(cfgMap))
 
     }
 
