@@ -10,7 +10,7 @@ class BodyHandlerOptions {
 
     var uploadsDirectory: String = BodyHandler.DEFAULT_UPLOADS_DIRECTORY
 
-    var mergeFormAttributes: Boolean = BodyHandler.DEFAULT_MERGE_FORM_ATTRIBUTES
+    var mergeFormAttributes: Boolean = false //BodyHandler.DEFAULT_MERGE_FORM_ATTRIBUTES
 
     var deleteUploadedFilesOnEnd: Boolean = BodyHandler.DEFAULT_DELETE_UPLOADED_FILES_ON_END
 
