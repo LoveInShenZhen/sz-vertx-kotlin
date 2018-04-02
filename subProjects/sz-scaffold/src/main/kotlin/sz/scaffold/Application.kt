@@ -238,17 +238,23 @@ object Application {
     }
 
     private fun bodyHandlerOptions(): BodyHandlerOptions {
-        val httpCfg = config.getConfig("app.httpServer.bodyHandler")
+        val cfgPath = "app.httpServer.bodyHandler"
+        if (config.hasPath(cfgPath)) {
+            val httpCfg = config.getConfig(cfgPath)
 
-        val cfgMap = httpCfg.root().map {
-            if (it.key == "bodyLimit") {
-                Pair<String, Any>(it.key, it.value.unwrapped().toString().toLong())
-            } else {
-                Pair<String, Any>(it.key, it.value.unwrapped())
-            }
-        }.toMap()
+            val cfgMap = httpCfg.root().map {
+                if (it.key == "bodyLimit") {
+                    Pair<String, Any>(it.key, it.value.unwrapped().toString().toLong())
+                } else {
+                    Pair<String, Any>(it.key, it.value.unwrapped())
+                }
+            }.toMap()
 
-        return BodyHandlerOptions(JsonObject(cfgMap))
+            return BodyHandlerOptions(JsonObject(cfgMap))
+        } else {
+            return BodyHandlerOptions()
+        }
+
 
     }
 
