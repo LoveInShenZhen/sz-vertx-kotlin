@@ -223,7 +223,7 @@ object Application {
     }
 
     private fun httpServerOptions(): HttpServerOptions {
-        val httpCfg = config.getConfig("app.httpServer")
+        val httpCfg = config.getConfig("app.httpServer") // 资源文件里的 reference.conf 包含默认配置,所以该configPath必然存在
 
         val cfgMap = httpCfg.root().map {
             if (it.key == "port") {
