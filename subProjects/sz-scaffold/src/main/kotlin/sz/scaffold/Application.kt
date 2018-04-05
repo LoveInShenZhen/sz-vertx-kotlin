@@ -211,7 +211,7 @@ object Application {
     }
 
     private fun buildVertxOptions(): VertxOptions {
-        val vertxOptFile = File("conf/vertxOptions.json")
+        val vertxOptFile = File(FileNameUtil.concat(this.appHome, "conf/vertxOptions.json"))
         val opts = if (FileUtil.isExistingFile(vertxOptFile)) {
             val jsonOpts = JsonObject(FileUtil.readString(vertxOptFile))
             VertxOptions(jsonOpts)
