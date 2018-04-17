@@ -15,8 +15,7 @@ class DefinedApis(private val host: String = "localhost:9000") {
     var groups: MutableList<ApiGroup> = mutableListOf()
 
     init {
-        val routeFile = Application.getFile("conf/route")
-        ApiRoute.parseFromFile(routeFile).filter {
+        Application.loadApiRouteFromRouteFiles().filter {
             it.isJsonApi()
         }.forEach {
             addApi(it)

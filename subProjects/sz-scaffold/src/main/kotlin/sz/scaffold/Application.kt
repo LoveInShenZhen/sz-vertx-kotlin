@@ -141,6 +141,42 @@ object Application {
         })
     }
 
+    private fun loadRouteFromFiles(files: List<File>): List<ApiRoute> {
+        return files.map { file -> ApiRoute.parseFromFile(file) }
+                .flatMap { it }
+    }
+
+    // 检查在 route 文件 和 subRoutes 目录下的 *.route 里定义的route 的 method + path 没有重复的
+    private fun checkApiRoutes(apiRoutes: List<ApiRoute>) {
+        val routeMap = mutableMapOf<String, Int>()
+        apiRoutes.forEach {
+            val key = "${it.method.name}  ${it.path}"
+            val count = routeMap.getOrDefault(key, 0)
+            routeMap[key] = count + 1
+        }
+
+        val errRoutes = routeMap.filter { it.value > 1 }.map { it.key }
+        if (errRoutes.isNotEmpty()) {
+            throw SzException("以下路由发生重复定义,请开发人员检查:\n${errRoutes.joinToString("\n")}")
+        }
+
+    }
+
+    // 从 conf/route 文件, 以及 conf/sub_routes/*.route 子路由文件里加载路由配置
+    fun loadApiRouteFromRouteFiles() : List<ApiRoute> {
+        val routeFiles = mutableListOf(File("conf/route"))
+        val subRoutesFolder = File("conf/sub_routes")
+        if (subRoutesFolder.exists() && subRoutesFolder.isDirectory) {
+            val files = subRoutesFolder.walk().filter { it.isFile && it.extension == "route" }
+            routeFiles.addAll(files)
+        }
+
+        val apiRoutes = loadRouteFromFiles(routeFiles)
+        checkApiRoutes(apiRoutes)
+
+        return apiRoutes
+    }
+
     fun runHttpServer() {
 
         val httpServerOptions = this.httpServerOptions()
@@ -157,8 +193,7 @@ object Application {
 
         router.route().handler(CookieHandler.create())
 
-        val routeFile = File("conf/route")
-        ApiRoute.parseFromFile(routeFile).forEach {
+        loadApiRouteFromRouteFiles().forEach {
             it.addToRoute(router)
         }
 
