@@ -81,6 +81,15 @@ object Json {
 
     }
 
+    fun <A> fromJsonNode(jsonNode: JsonNode, clazz: Class<A>): A {
+        try {
+            return mapper.treeToValue(jsonNode, clazz)
+        } catch (e: Exception) {
+            throw RuntimeException(e)
+        }
+
+    }
+
     fun generateSchema(clazz: KClass<*>) : JsonSchema {
         val schemaGen = JsonSchemaGenerator(mapper)
         return schemaGen.generateSchema(clazz.java)
