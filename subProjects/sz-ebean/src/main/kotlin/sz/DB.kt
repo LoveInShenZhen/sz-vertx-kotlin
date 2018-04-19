@@ -1,9 +1,6 @@
 package sz
 
-import io.ebean.Ebean
-import io.ebean.EbeanServer
-import io.ebean.TxIsolation
-import io.ebean.TxScope
+import io.ebean.*
 import jodd.util.StringUtil
 import sz.annotations.DBIndexed
 import sz.scaffold.tools.BizLogicException
@@ -89,8 +86,7 @@ class DbIndex(private val dbServer: EbeanServer) {
     }
 
     private fun getTableName(modelClass: Class<*>): String {
-        modelClass.getAnnotation(Entity::class.java) ?:
-                throw BizLogicException("不是实体类")
+        modelClass.getAnnotation(Entity::class.java) ?: throw BizLogicException("不是实体类")
 
         val annoTable = modelClass.getAnnotation(Table::class.java)
         if (annoTable != null && annoTable.name.isNotBlank()) {
@@ -187,7 +183,20 @@ object DB {
     fun byDataSource(dsName: String): EbeanServer {
         return Ebean.getServer(dsName)!!
     }
+
+    fun RunInTransaction(dataSource: String = "", body: (ebeanServer: EbeanServer) -> Unit) {
+        val ebserver = Ebean.getServer(dataSource)
+        val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED)
+        ebserver.execute(txScope, TxRunnable { body(ebserver) })
+    }
+
+    fun <T> RunInTransaction(dataSource: String = "", body: (ebeanServer: EbeanServer) -> T): T {
+        val ebserver = Ebean.getServer(dataSource)
+        val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED)
+        return ebserver.execute(txScope, TxCallable<T> { body(ebserver) })
+    }
 }
+
 
 fun BigDecimal?.safeValue(): BigDecimal {
     return this ?: BigDecimal.ZERO
@@ -203,7 +212,7 @@ fun <T> EbeanServer.RunInTransaction(body: () -> T): T {
     return this.execute(txScope, body)
 }
 
-fun EbeanServer.TableExists(tableName: String) : Boolean {
+fun EbeanServer.TableExists(tableName: String): Boolean {
     val rows = this.createSqlQuery("SHOW TABLES").findList()
     val count = rows.count { it.values.first() == tableName }
     return count > 0

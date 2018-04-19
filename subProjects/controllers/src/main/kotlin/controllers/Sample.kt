@@ -7,6 +7,7 @@ import plantask.redis.RedisPlanTask
 import plantask.redis.RedisTask
 import plantask.redis.recordKey
 import sz.AsynTask.AsyncTask
+import sz.DB
 import sz.scaffold.annotations.Comment
 import sz.scaffold.cache.CacheApi
 import sz.scaffold.cache.redis.JRedisPool
