@@ -45,9 +45,7 @@ object SzEbeanConfig {
             ebeanServerCfg.loadFromProperties()
             ebeanServerCfg.dataSource = ds
 
-            if (ebeanServerCfg.name == defaultDatasourceName) {
-                ebeanServerCfg.isDefaultServer = true
-            }
+            ebeanServerCfg.isDefaultServer = ebeanServerCfg.name == defaultDatasourceName
 
             val modelClassSet = modelsOfDatasource(dataSourceConfig)
             ebeanServerCfg.addModelClasses(modelClassSet)
