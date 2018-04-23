@@ -6,6 +6,7 @@ import io.vertx.core.AsyncResult
 import io.vertx.core.Vertx
 import io.vertx.core.VertxOptions
 import io.vertx.core.http.HttpMethod
+import io.vertx.core.http.HttpServer
 import io.vertx.core.http.HttpServerOptions
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
@@ -25,6 +26,7 @@ import sz.scaffold.tools.logger.Logger
 import java.io.File
 import java.lang.management.ManagementFactory
 import java.util.concurrent.CompletableFuture
+
 
 //
 // Created by kk on 17/8/19.
@@ -163,7 +165,7 @@ object Application {
     }
 
     // 从 conf/route 文件, 以及 conf/sub_routes/*.route 子路由文件里加载路由配置
-    fun loadApiRouteFromRouteFiles() : List<ApiRoute> {
+    fun loadApiRouteFromRouteFiles(): List<ApiRoute> {
         val routeFiles = mutableListOf(File("conf/route"))
         val subRoutesFolder = File("conf/sub_routes")
         if (subRoutesFolder.exists() && subRoutesFolder.isDirectory) {
@@ -219,6 +221,50 @@ object Application {
 
         Logger.debug("Start http server at: ${httpServerOptions.host}:${httpServerOptions.port}")
         httpServer.listen()
+    }
+
+    fun getHttpServer(): HttpServer {
+
+        val httpServerOptions = this.httpServerOptions()
+        val httpServer = vertx.createHttpServer(httpServerOptions)
+        val bodyHandlerOptions = this.bodyHandlerOptions()
+
+        val router = Router.router(vertx)
+
+        router.route().handler(BodyHandler.create()
+                .setMergeFormAttributes(bodyHandlerOptions.mergeFormAttributes)
+                .setBodyLimit(bodyHandlerOptions.bodyLimit)
+                .setDeleteUploadedFilesOnEnd(bodyHandlerOptions.deleteUploadedFilesOnEnd)
+                .setUploadsDirectory(bodyHandlerOptions.uploadsDirectory))
+
+        router.route().handler(CookieHandler.create())
+
+        loadApiRouteFromRouteFiles().forEach {
+            it.addToRoute(router)
+        }
+
+        httpServer.requestHandler {
+            try {
+                // enable chunked responses because we will be adding data as
+                // we execute over other handlers. This is only required once and
+                // only if several handlers do output.
+                it.response().isChunked = true
+
+                if (it.method() == HttpMethod.POST) {
+                    it.isExpectMultipart = true
+                }
+
+                router.accept(it)
+            } catch (ex: Exception) {
+                it.response().end("${ex.message}\n\n${ExceptionUtil.exceptionChainToString(ex)}")
+            }
+
+        }
+
+        setupOnStartAndOnStop()
+
+        Logger.debug("Start http server at: ${httpServerOptions.host}:${httpServerOptions.port}")
+        return httpServer
     }
 
     fun regOnStartHandler(priority: Int = 100, block: () -> Unit): Application {
