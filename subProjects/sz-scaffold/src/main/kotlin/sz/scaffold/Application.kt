@@ -181,46 +181,7 @@ object Application {
 
     fun runHttpServer() {
 
-        val httpServerOptions = this.httpServerOptions()
-        val httpServer = vertx.createHttpServer(httpServerOptions)
-        val bodyHandlerOptions = this.bodyHandlerOptions()
-
-        val router = Router.router(vertx)
-
-        router.route().handler(BodyHandler.create()
-                .setMergeFormAttributes(bodyHandlerOptions.mergeFormAttributes)
-                .setBodyLimit(bodyHandlerOptions.bodyLimit)
-                .setDeleteUploadedFilesOnEnd(bodyHandlerOptions.deleteUploadedFilesOnEnd)
-                .setUploadsDirectory(bodyHandlerOptions.uploadsDirectory))
-
-        router.route().handler(CookieHandler.create())
-
-        loadApiRouteFromRouteFiles().forEach {
-            it.addToRoute(router)
-        }
-
-        httpServer.requestHandler {
-            try {
-                // enable chunked responses because we will be adding data as
-                // we execute over other handlers. This is only required once and
-                // only if several handlers do output.
-                it.response().isChunked = true
-
-                if (it.method() == HttpMethod.POST) {
-                    it.isExpectMultipart = true
-                }
-
-                router.accept(it)
-            } catch (ex: Exception) {
-                it.response().end("${ex.message}\n\n${ExceptionUtil.exceptionChainToString(ex)}")
-            }
-
-        }
-
-        setupOnStartAndOnStop()
-
-        Logger.debug("Start http server at: ${httpServerOptions.host}:${httpServerOptions.port}")
-        httpServer.listen()
+        getHttpServer().listen()
     }
 
     fun getHttpServer(): HttpServer {
