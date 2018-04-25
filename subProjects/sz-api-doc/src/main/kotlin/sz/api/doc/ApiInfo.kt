@@ -199,10 +199,16 @@ constructor(
         const val PostForm = "POST FORM"
         const val Get = "GET"
 
+        private fun defaultSampleJson(kClass: KClass<*>):String {
+            val sampleObj = kClass.java.newInstance()
+            return sampleObj.toJsonPretty()
+        }
+
         fun SampleJsonData(kClass: KClass<*>): String {
-            val sampleDataFunc = kClass.memberFunctions.find { it.name == "SampleData" } ?: return "请在 ${kClass.qualifiedName} 实现 fun SampleData(): String"
+            val sampleDataFunc = kClass.memberFunctions.find { it.name == "SampleData" }
+                    ?: return "请在 ${kClass.qualifiedName} 实现 fun SampleData() 方法\n${defaultSampleJson(kClass)}"
             if (sampleDataFunc.parameters.size != 1) {
-                return "请在 ${kClass.qualifiedName} 实现 fun SampleData(): String"
+                return "请在 ${kClass.qualifiedName} 实现 fun SampleData() 方法"
             }
             val sampleObj = kClass.java.newInstance()
             if (sampleObj != null) {
