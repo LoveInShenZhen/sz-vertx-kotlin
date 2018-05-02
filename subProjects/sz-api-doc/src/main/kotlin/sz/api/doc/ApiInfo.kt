@@ -1,6 +1,8 @@
 package sz.api.doc
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import sz.api.controllers.ApiDoc
+import sz.scaffold.Application
 import sz.scaffold.annotations.Comment
 import sz.scaffold.ext.escapeMarkdown
 import sz.scaffold.tools.json.toJsonPretty
@@ -140,7 +142,7 @@ constructor(
     }
 
     fun TestPage(): String {
-        return "http://$host/api/builtin/doc/apiTest?apiUrl=${this.url}"
+        return "http://$host${pathOfTestPage()}?apiUrl=${this.url}"
     }
 
     fun IsGetJsonApi(): Boolean {
@@ -199,12 +201,15 @@ constructor(
         const val PostForm = "POST FORM"
         const val Get = "GET"
 
-        private fun defaultSampleJson(kClass: KClass<*>):String {
+        private fun defaultSampleJson(kClass: KClass<*>): String {
             val sampleObj = kClass.java.newInstance()
             return sampleObj.toJsonPretty()
         }
 
         fun SampleJsonData(kClass: KClass<*>): String {
+            if (kClass == Any::class) {
+                return "没有在@PostJson 注解里指定 PostJson 对应的Class, 请自行脑补需要Post的 json"
+            }
             val sampleDataFunc = kClass.memberFunctions.find { it.name == "SampleData" }
                     ?: return "请在 ${kClass.qualifiedName} 实现 fun SampleData() 方法\n${defaultSampleJson(kClass)}"
             if (sampleDataFunc.parameters.size != 1) {
@@ -217,6 +222,14 @@ constructor(
             } else {
                 return "${kClass.qualifiedName} 需要提供无参数的构造函数"
             }
+        }
+
+        private var testPagePath = ""
+        fun pathOfTestPage(): String {
+            if (testPagePath.isBlank()) {
+                testPagePath = Application.loadApiRouteFromRouteFiles().find { it.controllerKClass == ApiDoc::class && it.controllerFun.name == "apiTest" }!!.path
+            }
+            return testPagePath
         }
     }
 }
