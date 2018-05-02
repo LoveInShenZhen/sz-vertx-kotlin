@@ -14,8 +14,8 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.31"
-    compile "org.jetbrains.kotlin:kotlin-reflect:1.2.31"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.41"
+    compile "org.jetbrains.kotlin:kotlin-reflect:1.2.41"
 
     compile group: 'io.swagger', name: 'swagger-models', version: '2.0.0-rc1'
 

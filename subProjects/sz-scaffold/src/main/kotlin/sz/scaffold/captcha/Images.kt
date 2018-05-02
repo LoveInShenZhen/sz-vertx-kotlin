@@ -56,37 +56,37 @@ class Images {
      * @param keepRatio     : if true, resize will keep the original image ratio and use w and h as max dimensions
      */
     fun resize(originalImage: File, to: File, w: Int, h: Int, keepRatio: Boolean) {
-        var w = w
-        var h = h
+        var width = w
+        var height = h
         try {
             val source = ImageIO.read(originalImage)
             val owidth = source.getWidth()
             val oheight = source.getHeight()
             val ratio = owidth.toDouble() / oheight
 
-            val maxWidth = w
-            val maxHeight = h
+            val maxWidth = width
+            val maxHeight = height
 
-            if (w < 0 && h < 0) {
-                w = owidth
-                h = oheight
+            if (width < 0 && height < 0) {
+                width = owidth
+                height = oheight
             }
-            if (w < 0 && h > 0) {
-                w = (h * ratio).toInt()
+            if (width < 0 && height > 0) {
+                width = (height * ratio).toInt()
             }
-            if (w > 0 && h < 0) {
-                h = (w / ratio).toInt()
+            if (width > 0 && height < 0) {
+                height = (width / ratio).toInt()
             }
 
             if (keepRatio) {
-                h = (w / ratio).toInt()
-                if (h > maxHeight) {
-                    h = maxHeight
-                    w = (h * ratio).toInt()
+                height = (width / ratio).toInt()
+                if (height > maxHeight) {
+                    height = maxHeight
+                    width = (height * ratio).toInt()
                 }
-                if (w > maxWidth) {
-                    w = maxWidth
-                    h = (w / ratio).toInt()
+                if (width > maxWidth) {
+                    width = maxWidth
+                    height = (width / ratio).toInt()
                 }
             }
 
@@ -99,11 +99,11 @@ class Images {
             }
 
             // out
-            val dest = BufferedImage(w, h, BufferedImage.TYPE_INT_RGB)
-            val srcSized = source.getScaledInstance(w, h, Image.SCALE_SMOOTH)
+            val dest = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+            val srcSized = source.getScaledInstance(width, height, Image.SCALE_SMOOTH)
             val graphics = dest.graphics
             graphics.color = Color.WHITE
-            graphics.fillRect(0, 0, w, h)
+            graphics.fillRect(0, 0, width, height)
             graphics.drawImage(srcSized, 0, 0, null)
             val writer = ImageIO.getImageWritersByMIMEType(mimeType).next()
             val params = writer.defaultWriteParam
@@ -450,7 +450,7 @@ class CgWordRenderer : WordRenderer {
         val frc = g.fontRenderContext
         var startPosX = pos_x_
         val wc = word.toCharArray()
-        val generator = Random()
+//        val generator = Random()
         for (element in wc) {
             val itchar = charArrayOf(element)
             val itFont = getRandomFont()

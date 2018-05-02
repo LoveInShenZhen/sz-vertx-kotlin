@@ -18,8 +18,8 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.31"
-    compile "org.jetbrains.kotlin:kotlin-reflect:1.2.31"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.41"
+    compile "org.jetbrains.kotlin:kotlin-reflect:1.2.41"
 
     compile project(':subProjects:sz-ebean')
     compile project(':subProjects:sz-scaffold')
