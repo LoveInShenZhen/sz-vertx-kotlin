@@ -222,8 +222,6 @@ object Application {
 
         }
 
-        setupOnStartAndOnStop()
-
         Logger.debug("Start http server at: ${httpServerOptions.host}:${httpServerOptions.port}")
         return httpServer
     }
