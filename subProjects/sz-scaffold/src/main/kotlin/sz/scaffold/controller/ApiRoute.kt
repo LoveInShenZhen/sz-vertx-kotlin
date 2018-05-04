@@ -131,6 +131,11 @@ data class ApiRoute(val method: HttpMethod,
     private fun onNormal(httpContext: RoutingContext, result: Any?) {
         val response = httpContext.response()
 
+        if (response.ended()) {
+            // response 已经在前面被结束, 则直接返回
+            return
+        }
+
         if (result == null || result == Unit) {
             return
         }
@@ -138,9 +143,10 @@ data class ApiRoute(val method: HttpMethod,
         if (result is ReplyBase || result is JsonNode) {
             response.write(Json.toJsonStrPretty(result))
             response.putHeader("Content-Type", "application/json; charset=utf-8")
-        } else {
+        } else if (result is String) {
             response.write(result.toString())
         }
+        // 其他类型(非 ReplyBase, 非 JsonNode, 非 String), 不做处理
     }
 
     fun isJsonApi(): Boolean {
