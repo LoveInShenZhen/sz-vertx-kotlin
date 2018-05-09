@@ -72,7 +72,7 @@ constructor(
         replyInfo.desc = ""
         replyInfo.type = JsonDataType.OBJECT.typeName
 
-        postDataSample = if (postDataKClass != null) {
+        postDataSample = if (postDataKClass != null && IsPostJsonApi()) {
             SampleJsonData(postDataKClass)
         } else {
             ""
