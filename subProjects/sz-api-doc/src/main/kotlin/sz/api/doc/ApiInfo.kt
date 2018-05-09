@@ -6,6 +6,7 @@ import sz.scaffold.Application
 import sz.scaffold.annotations.Comment
 import sz.scaffold.ext.escapeMarkdown
 import sz.scaffold.tools.json.toJsonPretty
+import sz.scaffold.tools.logger.Logger
 import kotlin.reflect.KClass
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.findAnnotation
@@ -205,7 +206,8 @@ constructor(
             try {
                 val sampleObj = kClass.java.newInstance()
                 return sampleObj.toJsonPretty()
-            } catch (ex:Exception) {
+            } catch (ex: Exception) {
+                Logger.debug(ex.cause.toString())
                 return ""
             }
         }
