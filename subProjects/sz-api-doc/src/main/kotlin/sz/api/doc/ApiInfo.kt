@@ -211,7 +211,7 @@ constructor(
                 return "没有在@PostJson 注解里指定 PostJson 对应的Class, 请自行脑补需要Post的 json"
             }
             val sampleDataFunc = kClass.memberFunctions.find { it.name == "SampleData" }
-                    ?: return "请在 ${kClass.qualifiedName} 实现 fun SampleData() 方法\n${defaultSampleJson(kClass)}"
+                    ?: return "请在 ${kClass.qualifiedName} 实现 fun SampleData() 方法}"
             if (sampleDataFunc.parameters.size != 1) {
                 return "请在 ${kClass.qualifiedName} 实现 fun SampleData() 方法"
             }
