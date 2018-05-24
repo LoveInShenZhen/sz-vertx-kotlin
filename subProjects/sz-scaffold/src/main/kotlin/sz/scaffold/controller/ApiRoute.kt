@@ -97,6 +97,7 @@ data class ApiRoute(val method: HttpMethod,
             } catch (ex: Exception) {
                 response.putHeader("Content-Type", "text/plain; charset=utf-8")
                 val reason = if (ex.cause == null) ex else ex.cause
+                Logger.debug("非API请求处理发生异常, \n${ExceptionUtil.exceptionChainToString(reason)}")
                 response.end("${ex.message}\n\n${ExceptionUtil.exceptionChainToString(reason)}")
             }
 
