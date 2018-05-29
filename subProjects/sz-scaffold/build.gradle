@@ -36,7 +36,8 @@ dependencies {
     compile group: 'io.vertx', name: 'vertx-codegen', version: '3.5.1'
     compile group: 'io.vertx', name: 'vertx-ignite', version: '3.5.1'
 
-    compile group: 'com.google.guava', name: 'guava', version: '23.0'
+    compile group: 'com.google.guava', name: 'guava', version: '25.1-jre'
+
 
 //    compile group: 'org.javassist', name: 'javassist', version: '3.21.0-GA'
 
