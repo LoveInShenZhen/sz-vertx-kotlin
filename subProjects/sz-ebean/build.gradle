@@ -1,32 +1,42 @@
-plugins {
-    id "com.github.kt3k.ebean.enhance" version "3.0.0"
+
+buildscript {
+    repositories {
+        maven {
+            name "nexus-163"
+            url "http://mirrors.163.com/maven/repository/maven-public/"
+        }
+    }
+    dependencies {
+        classpath "io.ebean:ebean-gradle-plugin:11.10.1"
+    }
 }
 
-repositories {
-    maven {
-        name "aliyun-maven"
-        url "http://maven.aliyun.com/nexus/content/groups/public/"
-    }
-    jcenter()
-    ivy {
-        name "typesafe-ivy-release"
-        url "https://repo.typesafe.com/typesafe/ivy-releases"
-        layout "ivy"
-    }
-}
+apply plugin: 'io.ebean'
+apply plugin: 'kotlin-kapt'
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.41"
-    compile "org.jetbrains.kotlin:kotlin-reflect:1.2.41"
-
     compile group: 'com.zaxxer', name: 'HikariCP', version: '2.6.3'
-    compile group: 'io.ebean', name: 'ebean', version: '10.4.2'
 
-    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.39'
+//    compile "org.avaje.composite:logback:1.1"
+    // https://mvnrepository.com/artifact/io.ebean/ebean
+    compile group: 'io.ebean', name: 'ebean', version: '11.17.5'
+    // https://mvnrepository.com/artifact/io.ebean/ebean-querybean
+    compile group: 'io.ebean', name: 'ebean-querybean', version: '11.4.1'
+
+    kapt "io.ebean:kotlin-querybean-generator:11.4.1"
+
+    compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
 
     compile project(':subProjects:sz-scaffold')
 }
 
-ebeanEnhance {
-    packages = 'models.**'
+ebean {
+    debugLevel = 2
+    queryBeans = true
+    kotlin = true
+    generatorVersion = "11.4.1"
+}
+
+sourceSets {
+    main.java.srcDirs += [file("$buildDir/generated/source/kaptKotlin/main")]
 }

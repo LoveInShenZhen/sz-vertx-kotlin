@@ -1,10 +1,9 @@
 package controllers.builtin
 
-import io.ebean.dbmigration.model.CurrentModel
 import io.ebeaninternal.api.SpiEbeanServer
+import io.ebeaninternal.dbmigration.model.CurrentModel
 import sz.DB
 import sz.DbIndex
-import sz.SzEbeanConfig
 import sz.scaffold.annotations.Comment
 import sz.scaffold.controller.ApiController
 

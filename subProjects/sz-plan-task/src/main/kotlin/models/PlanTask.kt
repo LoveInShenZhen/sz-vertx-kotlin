@@ -84,7 +84,7 @@ class PlanTask : Model() {
                 val oldTask = query().where()
                         .eq("class_name", className)
                         .eq("task_status", TaskStatus.WaitingInDB.code)
-                        .findUnique()
+                        .findOne()
                 if (oldTask == null) {
                     addTask(task, requireSeq, seqType, planRunTime, tag)
                 }

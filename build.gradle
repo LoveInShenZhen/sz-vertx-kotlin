@@ -29,26 +29,19 @@ allprojects {
             jvmTarget = "1.8"
         }
     }
+
+    repositories {
+        maven {
+            name "nexus-163"
+            url "http://mirrors.163.com/maven/repository/maven-public/"
+        }
+        jcenter()
+    }
+
+    dependencies {
+        compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.41"
+        compile "org.jetbrains.kotlin:kotlin-reflect:1.2.41"
+    }
 }
 
 defaultTasks 'tasks'
-
-repositories {
-    maven {
-        name "aliyun-maven"
-        url "http://maven.aliyun.com/nexus/content/groups/public/"
-    }
-    jcenter()
-    ivy {
-        name "typesafe-ivy-release"
-        url "https://repo.typesafe.com/typesafe/ivy-releases"
-        layout "ivy"
-    }
-}
-
-dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.41"
-    compile "org.jetbrains.kotlin:kotlin-reflect:1.2.41"
-
-    compile project(':subProjects:api-server')
-}

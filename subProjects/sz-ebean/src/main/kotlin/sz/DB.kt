@@ -1,6 +1,9 @@
 package sz
 
-import io.ebean.*
+import io.ebean.Ebean
+import io.ebean.EbeanServer
+import io.ebean.TxScope
+import io.ebean.annotation.TxIsolation
 import jodd.util.StringUtil
 import sz.annotations.DBIndexed
 import sz.scaffold.tools.BizLogicException
@@ -114,7 +117,7 @@ class DbIndex(private val dbServer: EbeanServer) {
     private fun getIndexedFieldNames(modelClass: Class<*>): Set<String> {
         return modelClass.kotlin.memberProperties
                 .filter { it.annotations.filter { it is DBIndexed }.isNotEmpty() }
-                .map { it.name }
+                .map { StringUtil.fromCamelCase(it.name, '_') }
                 .toSet()
     }
 
@@ -201,13 +204,13 @@ object DB {
     fun RunInTransaction(dataSource: String = "", body: (ebeanServer: EbeanServer) -> Unit) {
         val ebserver = Ebean.getServer(dataSource)
         val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED)
-        ebserver.execute(txScope, TxRunnable { body(ebserver) })
+        ebserver.execute(txScope) { body(ebserver) }
     }
 
     fun <T> RunInTransaction(dataSource: String = "", body: (ebeanServer: EbeanServer) -> T): T {
         val ebserver = Ebean.getServer(dataSource)
         val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED)
-        return ebserver.execute(txScope, TxCallable<T> { body(ebserver) })
+        return ebserver.executeCall(txScope) { body(ebserver) }
     }
 }
 
@@ -223,7 +226,7 @@ fun EbeanServer.RunInTransaction(body: () -> Unit) {
 
 fun <T> EbeanServer.RunInTransaction(body: () -> T): T {
     val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED)
-    return this.execute(txScope, body)
+    return this.executeCall(txScope, body)
 }
 
 fun EbeanServer.TableExists(tableName: String): Boolean {

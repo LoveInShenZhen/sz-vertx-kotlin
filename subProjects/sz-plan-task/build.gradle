@@ -1,32 +1,34 @@
-plugins {
-    id "com.github.kt3k.ebean.enhance" version "3.0.0"
-}
+buildscript {
 
-apply plugin: 'org.jetbrains.kotlin.jvm'
-
-repositories {
-    maven {
-        name "aliyun-maven"
-        url "http://maven.aliyun.com/nexus/content/groups/public/"
+    repositories {
+        maven {
+            name "nexus-163"
+            url "http://mirrors.163.com/maven/repository/maven-public/"
+        }
     }
-    jcenter()
-    ivy {
-        name "typesafe-ivy-release"
-        url "https://repo.typesafe.com/typesafe/ivy-releases"
-        layout "ivy"
+    dependencies {
+        classpath "io.ebean:ebean-gradle-plugin:11.10.1"
     }
 }
+
+apply plugin: 'io.ebean'
+apply plugin: 'kotlin-kapt'
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.41"
-    compile "org.jetbrains.kotlin:kotlin-reflect:1.2.41"
-
     compile project(':subProjects:sz-ebean')
     compile project(':subProjects:sz-scaffold')
+
+    kapt "io.ebean:kotlin-querybean-generator:11.4.1"
 }
 
-ebeanEnhance {
-    packages = 'models.**'
+ebean {
+    debugLevel = 2
+    queryBeans = true
+    kotlin = true
+    generatorVersion = "11.4.1"
 }
 
+sourceSets {
+    main.java.srcDirs += [file("$buildDir/generated/source/kaptKotlin/main")]
+}
 
