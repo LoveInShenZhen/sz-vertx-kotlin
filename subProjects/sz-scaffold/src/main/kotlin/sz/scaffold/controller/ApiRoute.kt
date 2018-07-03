@@ -84,8 +84,15 @@ data class ApiRoute(val method: HttpMethod,
                 val reply = ReplyBase()
                 val reason = if (ex.cause == null) ex else ex.cause!!
                 reply.OnError(reason)
-                response.putHeader("Content-Type", "application/json; charset=utf-8")
-                response.write(reply.toJsonPretty())
+                if (httpContext.queryParams(mapOf()).containsKey("callback")) {
+                    response.putHeader("Content-Type", "text/javascript; charset=utf-8")
+                    val callback = httpContext.queryParams(mapOf()).getValue("callback")
+                    val body = "$callback(${reply.toJsonPretty()});"
+                    response.write(body)
+                } else {
+                    response.putHeader("Content-Type", "application/json; charset=utf-8")
+                    response.write(reply.toJsonPretty())
+                }
             }
 
         } else {
