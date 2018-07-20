@@ -6,20 +6,20 @@ dependencies {
     compile group: 'org.jodd', name: 'jodd-bean', version: '3.8.6'
     compile group: 'org.jodd', name: 'jodd-http', version: '3.8.6'
 
-    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.9.2'
-    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.9.2'
-    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.2'
-    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-jsonSchema', version: '2.9.2'
-    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.9.2'
+    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.9.6'
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.9.6'
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.6'
+    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-jsonSchema', version: '2.9.6'
+    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.9.6'
 
 
-    compile group: 'io.vertx', name: 'vertx-core', version: '3.5.1'
-    compile group: 'io.vertx', name: 'vertx-web', version: '3.5.1'
-    compile (group: 'io.vertx', name: 'vertx-lang-kotlin', version: '3.5.1') {
+    compile group: 'io.vertx', name: 'vertx-core', version: '3.5.2'
+    compile group: 'io.vertx', name: 'vertx-web', version: '3.5.2'
+    compile (group: 'io.vertx', name: 'vertx-lang-kotlin', version: '3.5.2') {
         exclude group: 'org.jetbrains.kotlin'
     }
-    compile group: 'io.vertx', name: 'vertx-codegen', version: '3.5.1'
-    compile group: 'io.vertx', name: 'vertx-ignite', version: '3.5.1'
+    compile group: 'io.vertx', name: 'vertx-codegen', version: '3.5.2'
+    compile group: 'io.vertx', name: 'vertx-ignite', version: '3.5.2'
 
     compile group: 'com.google.guava', name: 'guava', version: '25.1-jre'
 

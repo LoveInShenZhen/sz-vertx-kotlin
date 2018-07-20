@@ -19,7 +19,7 @@ dependencies {
 
 //    compile "org.avaje.composite:logback:1.1"
     // https://mvnrepository.com/artifact/io.ebean/ebean
-    compile group: 'io.ebean', name: 'ebean', version: '11.17.5'
+    compile group: 'io.ebean', name: 'ebean', version: '11.18.4'
     // https://mvnrepository.com/artifact/io.ebean/ebean-querybean
     compile group: 'io.ebean', name: 'ebean-querybean', version: '11.4.1'
 
