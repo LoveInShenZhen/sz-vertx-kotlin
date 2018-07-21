@@ -13,6 +13,7 @@ import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.ext.web.handler.CookieHandler
 import io.vertx.spi.cluster.ignite.IgniteClusterManager
+import io.vertx.spi.cluster.zookeeper.ZookeeperClusterManager
 import jodd.exception.ExceptionUtil
 import jodd.io.FileNameUtil
 import jodd.io.FileUtil
@@ -110,9 +111,16 @@ object Application {
 
         if (this._vertoptions!!.isClustered) {
             // 集群方式
-            Logger.debug("Vertx 集群方式")
+            val clusterManagerName = this.config.getString("app.vertx.clusterManager")
+
+            Logger.debug("Vertx 集群方式, Cluster Manager: $clusterManagerName")
             val future = CompletableFuture<Vertx>()
-            this._vertoptions!!.setClusterManager(IgniteClusterManager())
+
+            when(clusterManagerName) {
+                "Ignite" -> this._vertoptions!!.clusterManager = IgniteClusterManager()
+                "Zookeeper" -> this._vertoptions!!.clusterManager = ZookeeperClusterManager()
+                else -> throw SzException("app.vertx.clusterManager 配置错误, 只支持: Ignite 和 Zookeeper")
+            }
 
             Vertx.clusteredVertx(this._vertoptions) { event: AsyncResult<Vertx> ->
                 if (event.failed()) {
