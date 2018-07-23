@@ -12,6 +12,7 @@ import sz.scaffold.aop.actions.Action
 import sz.scaffold.aop.annotations.WithAction
 import sz.scaffold.controller.reply.ReplyBase
 import sz.scaffold.ext.ChainToString
+import sz.scaffold.tools.BizLogicException
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.json.Json
 import sz.scaffold.tools.json.toJsonPretty
@@ -82,8 +83,12 @@ data class ApiRoute(val method: HttpMethod,
             } catch (ex: Exception) {
                 Logger.debug(ex.ChainToString())
                 val reply = ReplyBase()
-                val reason = if (ex.cause == null) ex else ex.cause!!
-                reply.OnError(reason)
+                val reason = ExceptionUtil.findCause(ex, BizLogicException::class.java)
+                if (reason != null) {
+                    reply.OnError(reason)
+                } else {
+                    reply.OnError(ex)
+                }
                 if (httpContext.queryParams(mapOf()).containsKey("callback")) {
                     response.putHeader("Content-Type", "text/javascript; charset=utf-8")
                     val callback = httpContext.queryParams(mapOf()).getValue("callback")
