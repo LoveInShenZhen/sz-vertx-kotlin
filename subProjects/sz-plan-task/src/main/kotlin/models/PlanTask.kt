@@ -83,9 +83,14 @@ class PlanTask : Model() {
                 val className = task.javaClass.name
                 val oldTask = query().where()
                         .eq("class_name", className)
-                        .eq("task_status", TaskStatus.WaitingInDB.code)
+                        .`in`("task_status", TaskStatus.WaitingInDB.code, TaskStatus.WaitingInQueue.code)
                         .findOne()
                 if (oldTask == null) {
+                    addTask(task, requireSeq, seqType, planRunTime, tag)
+                } else if (oldTask.task_status == TaskStatus.WaitingInDB.code) {
+                    // 先删除在数据库等待的旧任务
+                    DB.Default().delete(oldTask)
+                    // 添加新版任务
                     addTask(task, requireSeq, seqType, planRunTime, tag)
                 }
             }
