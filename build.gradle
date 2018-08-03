@@ -6,7 +6,8 @@ allprojects {
     apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'maven-publish'
 
-    group = 'com.github.kklongming'
+    group = 'com.github.loveinshenzhen'
+    version = '1.0.1'
 
     task sourceJar(type: Jar) {
         from sourceSets.main.allSource
@@ -19,6 +20,26 @@ allprojects {
 
                 artifact sourceJar {
                     classifier "sources"
+                }
+            }
+            maven(MavenPublication) {
+                groupId project.group
+                artifactId project.name
+                version project.version
+                from components.java
+            }
+        }
+        repositories {
+            maven {
+                if (project.version.endsWith('-SNAPSHOT')) {
+                    url = "http://sz.xiaoi.com:8431/nexus/content/repositories/snapshots/"
+                } else {
+                    url = "http://sz.xiaoi.com:8431/nexus/content/repositories/releases/"
+                }
+
+                credentials {
+                    username 'admin'
+                    password 'admin123'
                 }
             }
         }
