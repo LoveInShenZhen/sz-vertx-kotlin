@@ -16,8 +16,8 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.50"
-    compile "org.jetbrains.kotlin:kotlin-reflect:1.2.50"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.51"
+    compile "org.jetbrains.kotlin:kotlin-reflect:1.2.51"
 
     compile group: 'com.zaxxer', name: 'HikariCP', version: '2.6.3'
     compile group: 'io.ebean', name: 'ebean', version: '10.4.2'
