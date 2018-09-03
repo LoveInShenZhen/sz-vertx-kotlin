@@ -65,10 +65,16 @@ open class ApiController {
 
     fun ClientIp(): String {
         val realIp = this.httpContext.request().getHeader("X-Real-IP")
-        if (realIp.isNullOrBlank()) {
-            return this.httpContext.request().remoteAddress().toString()
-        } else {
+        val forwardIp = this.httpContext.request().getHeader("X-Forwarded-For")
+
+        if (realIp.isNotBlank()) {
             return realIp
         }
+
+        if (forwardIp.isNotBlank()) {
+            return forwardIp
+        }
+
+        return this.httpContext.request().remoteAddress().toString()
     }
 }
