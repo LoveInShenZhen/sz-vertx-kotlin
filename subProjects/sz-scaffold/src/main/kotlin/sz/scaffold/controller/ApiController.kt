@@ -67,11 +67,11 @@ open class ApiController {
         val realIp = this.httpContext.request().getHeader("X-Real-IP")
         val forwardIp = this.httpContext.request().getHeader("X-Forwarded-For")
 
-        if (realIp.isNotBlank()) {
+        if (realIp.isNullOrBlank().not()) {
             return realIp
         }
 
-        if (forwardIp.isNotBlank()) {
+        if (forwardIp.isNullOrBlank().not()) {
             return forwardIp
         }
 

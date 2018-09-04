@@ -104,6 +104,8 @@ object Application {
             throw SzException("Application 的 vertx 已经初始化过了, 请勿重复初始化")
         }
         _vertx = appVertx ?: createVertx()
+
+        logClusterNodeId()
     }
 
     fun createVertx(): Vertx {
@@ -319,6 +321,13 @@ object Application {
         val pidFilePath = System.getProperty("pidfile.path")
         if (!pidFilePath.isNullOrBlank()) {
             FileUtil.writeString(pidFilePath, queryPid().toString())
+        }
+    }
+
+    private fun logClusterNodeId() {
+        if (Application.vertxOptions.isClustered) {
+            Logger.info("NodeId: ${Application.vertxOptions.clusterManager.nodeID}")
+            Logger.info("Cluster Nodes: ${Application.vertxOptions.clusterManager.nodes.joinToString(", ")}")
         }
     }
 }
