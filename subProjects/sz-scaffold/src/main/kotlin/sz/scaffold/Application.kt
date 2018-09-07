@@ -26,6 +26,7 @@ import sz.scaffold.tools.logger.AnsiColor
 import sz.scaffold.tools.logger.Logger
 import java.io.File
 import java.lang.management.ManagementFactory
+import java.net.InetAddress
 import java.util.concurrent.CompletableFuture
 
 
@@ -262,14 +263,30 @@ object Application {
 
     private fun buildVertxOptions(): VertxOptions {
         val vertxOptFile = File(FileNameUtil.concat(this.appHome, "conf/vertxOptions.json"))
-        val opts = if (FileUtil.isExistingFile(vertxOptFile)) {
+        if (FileUtil.isExistingFile(vertxOptFile)) {
+            // conf/vertxOptions.json 配置文件存在, 则根据配置文件, 设置 VertxOptions
             val jsonOpts = JsonObject(FileUtil.readString(vertxOptFile))
-            VertxOptions(jsonOpts)
-        } else {
-            VertxOptions()
-        }
+            val opts = VertxOptions(jsonOpts)
 
-        return opts
+            // 需要修正 clusterHost, 不然不同主机节点之间的 EventBus 不会互通
+            val hostIp = InetAddress.getLocalHost().hostAddress
+            // conf/vertxOptions.json 文件里 如果有配置 clusterHost, 则以配置文件的为有效
+            // 否则, 以获取到的主机的IP地址为 clusterHost
+            // 如果获取不到主机的IP地址, 则继续使用默认的 localhost
+            if (jsonOpts.containsKey("clusterHost").not() && hostIp.isNullOrBlank().not()) {
+                // 配置文件中不包含 clusterHost 配置项, 并且获取到的主机IP不为空
+                opts.clusterHost = hostIp
+            }
+            return opts
+        } else {
+            val opts = VertxOptions()
+            val hostIp = InetAddress.getLocalHost().hostAddress
+            if (hostIp.isNullOrBlank().not()) {
+                // 获取到的主机IP不为空
+                opts.clusterHost = hostIp
+            }
+            return opts
+        }
     }
 
     private fun httpServerOptions(): HttpServerOptions {
