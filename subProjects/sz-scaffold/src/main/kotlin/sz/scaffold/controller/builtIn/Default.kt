@@ -1,8 +1,11 @@
 package sz.scaffold.controller.builtIn
 
 import jodd.util.ClassLoaderUtil
+import jodd.util.CommandLine
+import sz.scaffold.Application
 import sz.scaffold.annotations.Comment
 import sz.scaffold.controller.ApiController
+import sz.scaffold.tools.logger.Logger
 import java.lang.management.ManagementFactory
 import java.net.InetAddress
 
@@ -54,12 +57,10 @@ class Default : ApiController() {
         var initMemorySize = heapUsage.init
         var maxMemorySize = heapUsage.max
         var usedMemorySize = heapUsage.used
-        var freeMemorySize = initMemorySize - usedMemorySize
 
         info.appendln("    Init Memory: ${initMemorySize/1024/1024} MB")
         info.appendln("    Max Memory:  ${maxMemorySize/1024/1024} MB")
         info.appendln("    Used Memory: ${usedMemorySize/1024/1024} MB")
-        info.appendln("    Free Memory: ${freeMemorySize/1024/1024} MB")
         info.appendln()
 
         val nonHeapUsage = mxBean.nonHeapMemoryUsage
@@ -76,6 +77,33 @@ class Default : ApiController() {
 
         info.appendln("  HostName: ${InetAddress.getLocalHost().hostName}")
         info.appendln("  HostIp: ${InetAddress.getLocalHost().hostAddress}")
+
+        info.appendln("-".repeat(64))
+        info.appendln("  Vertx Options:")
+        info.appendln(Application.vertxOptions.toString())
+
+
+
+        if (Application.vertxOptions.isClustered) {
+            info.appendln("-".repeat(64))
+            // 集群方式
+            val clusterManagerName = Application.config.getString("app.vertx.clusterManager")
+            info.appendln("Vertx 集群方式, Cluster Manager: $clusterManagerName")
+            info.appendln("    Node Id: ${Application.vertxOptions.clusterManager.nodeID}")
+            info.appendln("    Nodes: ${Application.vertxOptions.clusterManager.nodes.toList()}")
+        }
+
+        info.appendln("-".repeat(64))
+
+        val ulimitCmd = CommandLine.cmd("ulimit").args("-a").outPrefix("    ")
+
+        try {
+            val cmdResult = ulimitCmd.run()
+            info.appendln("ulimit info:")
+            info.appendln(cmdResult.output)
+        } catch (ex:Exception) {
+            info.appendln("Can not get ulimit info: ${ex.message}")
+        }
 
         return info.toString()
     }
