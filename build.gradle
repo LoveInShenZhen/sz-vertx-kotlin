@@ -1,3 +1,12 @@
+buildscript {
+    repositories {
+        maven {
+            name "nexus-aliyun"
+            url "https://maven.aliyun.com/repository/gradle-plugin/"
+        }
+    }
+}
+
 plugins {
     id "org.jetbrains.kotlin.jvm" version "1.2.61" apply false
 }

@@ -2,8 +2,8 @@ buildscript {
 
     repositories {
         maven {
-            name "nexus-163"
-            url "http://mirrors.163.com/maven/repository/maven-public/"
+            name "nexus-aliyun"
+            url "https://maven.aliyun.com/repository/gradle-plugin/"
         }
     }
     dependencies {
