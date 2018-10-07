@@ -18,7 +18,7 @@ import jodd.exception.ExceptionUtil
 import jodd.io.FileNameUtil
 import jodd.io.FileUtil
 import jodd.util.ClassLoaderUtil
-import jodd.util.SystemUtil
+import org.apache.commons.lang3.SystemUtils
 import sz.scaffold.controller.ApiRoute
 import sz.scaffold.controller.BodyHandlerOptions
 import sz.scaffold.tools.SzException
@@ -67,9 +67,9 @@ object Application {
         System.setProperty("config.file", "conf/application.conf")
         config = ConfigFactory.load()
 
-        val confFolder = File(FileNameUtil.concat(SystemUtil.workingFolder(), "conf"))
+        val confFolder = File(FileNameUtil.concat(SystemUtils.getUserDir().absolutePath, "conf"))
         if (confFolder.exists()) {
-            appHome = SystemUtil.workingFolder()
+            appHome = SystemUtils.getUserDir().absolutePath
         } else {
             // 从 class path 里查找 conf 结尾的路径
             val confFile = ClassLoaderUtil.getDefaultClasspath().find { it.name == "conf" }

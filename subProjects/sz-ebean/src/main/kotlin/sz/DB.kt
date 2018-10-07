@@ -4,8 +4,8 @@ import io.ebean.Ebean
 import io.ebean.EbeanServer
 import io.ebean.TxScope
 import io.ebean.annotation.TxIsolation
-import jodd.util.StringUtil
 import sz.annotations.DBIndexed
+import sz.scaffold.ext.camelCaseToLowCaseSeprated
 import sz.scaffold.tools.BizLogicException
 import java.math.BigDecimal
 import javax.persistence.Entity
@@ -109,7 +109,7 @@ class DbIndex(private val dbServer: EbeanServer) {
         if (annoTable != null && annoTable.name.isNotBlank()) {
             return annoTable.name
         } else {
-            return StringUtil.fromCamelCase(modelClass.simpleName, '_')
+            return modelClass.simpleName.camelCaseToLowCaseSeprated('_')
         }
 
     }
@@ -117,7 +117,7 @@ class DbIndex(private val dbServer: EbeanServer) {
     private fun getIndexedFieldNames(modelClass: Class<*>): Set<String> {
         return modelClass.kotlin.memberProperties
                 .filter { it.annotations.filter { it is DBIndexed }.isNotEmpty() }
-                .map { StringUtil.fromCamelCase(it.name, '_') }
+                .map { it.name.camelCaseToLowCaseSeprated('_') }
                 .toSet()
     }
 

@@ -1,0 +1,5 @@
+dependencies {
+    compile group: 'org.jodd', name: 'jodd-core', version: '5.0.5'
+    compile group: 'org.jodd', name: 'jodd-bean', version: '5.0.5'
+    compile group: 'org.jodd', name: 'jodd-http', version: '5.0.5'
+}

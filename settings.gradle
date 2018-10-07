@@ -1,1 +1,2 @@
 include "subProjects:sz-scaffold", "subProjects:sz-ebean", "subProjects:sz-api-doc", "subProjects:sz-plan-task", "subProjects:sz-swagger"
+include "subProjects:jodd-dependency"
