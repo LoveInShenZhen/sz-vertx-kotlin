@@ -11,7 +11,7 @@ object ResourceTemplate {
 
     private val classConfMap = mutableMapOf<String, Configuration>()
 
-    fun FindConfigBy(clazz: Class<*>): Configuration {
+    fun findConfigBy(clazz: Class<*>): Configuration {
         if (classConfMap.containsKey(clazz.typeName)) {
             return classConfMap[clazz.typeName]!!
         } else {
@@ -24,15 +24,13 @@ object ResourceTemplate {
         }
     }
 
-    fun Process(clazz: Class<*>, templatePath: String, data: Any): String {
-        var sw: StringWriter? = null
-        try {
-            sw = StringWriter()
-            val template = FindConfigBy(clazz).getTemplate(templatePath)
-            template!!.process(data, sw)
+    @Suppress("NAME_SHADOWING")
+    fun process(clazz: Class<*>, templatePath: String, data: Any): String {
+        val sw = StringWriter()
+        sw.use { sw ->
+            val template = findConfigBy(clazz).getTemplate(templatePath)
+            template.process(data, sw)
             return sw.toString()
-        } finally {
-            if (sw != null) sw.close()
         }
     }
 }

@@ -11,7 +11,7 @@ class ApiDoc : ApiController() {
 
     fun apiIndex() : String {
         val apis = DefinedApis(this.httpContext.request().host())
-        val html = ResourceTemplate.Process(DefinedApis::class.java, "/ApiDocTemplates/ApiIndex.html", apis)
+        val html = ResourceTemplate.process(DefinedApis::class.java, "/ApiDocTemplates/ApiIndex.html", apis)
         contentType("text/html; charset=UTF-8")
         return html
     }
@@ -20,7 +20,7 @@ class ApiDoc : ApiController() {
         val apiInfo = DefinedApis(this.httpContext.request().host())
                 .groups.flatMap { it.apiInfoList }
                 .find { it.url == apiUrl }!!
-        val html = ResourceTemplate.Process(DefinedApis::class.java, "/ApiDocTemplates/ApiSample.html", apiInfo)
+        val html = ResourceTemplate.process(DefinedApis::class.java, "/ApiDocTemplates/ApiSample.html", apiInfo)
         contentType("text/html; charset=UTF-8")
         return html
     }

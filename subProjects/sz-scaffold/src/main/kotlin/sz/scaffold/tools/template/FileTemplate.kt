@@ -13,34 +13,31 @@ import java.io.StringWriter
 //
 object FileTemplate {
 
-    private val templateConf: Configuration
+    private val templateConf: Configuration = Configuration(Configuration.VERSION_2_3_21)
 
     init {
-        templateConf = Configuration(Configuration.VERSION_2_3_21)
         templateConf.defaultEncoding = "UTF-8"
         try {
-            templateConf.setDirectoryForTemplateLoading(TemplateDir())
+            templateConf.setDirectoryForTemplateLoading(templateDir())
         } catch (e: IOException) {
             Logger.error(ExceptionUtil.exceptionStackTraceToString(e))
         }
 
     }
 
-    private fun TemplateDir(): File {
+    private fun templateDir(): File {
         // 约定, 所有的模板文件都放在 /conf 目录下
         return Application.getFile("/conf")
     }
 
     // TemplatePath 为在 /conf 目录下的相对路径
-    fun Process(TemplatePath: String, data: Any): String {
-        var sw: StringWriter? = null
-        try {
-            sw = StringWriter()
+    @Suppress("NAME_SHADOWING")
+    fun process(TemplatePath: String, data: Any): String {
+        val sw = StringWriter()
+        sw.use { sw ->
             val template = templateConf.getTemplate(TemplatePath)
             template.process(data, sw)
             return sw.toString()
-        } finally {
-            if (sw != null) sw.close()
         }
     }
 }
