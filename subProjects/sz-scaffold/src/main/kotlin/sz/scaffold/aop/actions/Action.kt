@@ -29,6 +29,10 @@ abstract class Action<out T> {
         this._delegate = delegateAction
     }
 
+    fun setupHttpContext(httpContext:RoutingContext) {
+        this._httpContext = httpContext
+    }
+
     companion object {
 
         fun <T> WrapperAction(wrappedMethod: () -> Any?): Action<T> {

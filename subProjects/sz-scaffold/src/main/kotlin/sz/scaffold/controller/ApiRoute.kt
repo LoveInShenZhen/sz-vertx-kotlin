@@ -10,6 +10,7 @@ import sz.scaffold.annotations.PostForm
 import sz.scaffold.annotations.PostJson
 import sz.scaffold.aop.actions.Action
 import sz.scaffold.aop.annotations.WithAction
+import sz.scaffold.controller.profiler.ApiProfiler
 import sz.scaffold.controller.reply.ReplyBase
 import sz.scaffold.ext.ChainToString
 import sz.scaffold.tools.BizLogicException
@@ -73,7 +74,7 @@ data class ApiRoute(val method: HttpMethod,
         // 通过控制器方法的返回类型, 是否是ReplyBase或者其子类型, 来判断是否是 json api 方法
         if (controllerFun.returnType.isSubtypeOf(ReplyBase::class.createType())) {
             try {
-                val actionResult = wrapperAction.call()
+                val actionResult = ApiProfiler.runAction(wrapperAction)
                 if (isJsonpRequest(httpContext, actionResult)) {
                     onJsonp(httpContext, actionResult!!)
                 } else if (actionResult is ReplyBase) {
@@ -193,6 +194,7 @@ data class ApiRoute(val method: HttpMethod,
         var resultAction: Action<*> = Action.WrapperAction<Any> {
             return@WrapperAction controllerFun.callBy(args)
         }
+        resultAction.setupHttpContext(httpContext)
 
         actionAnnos.forEach {
             val withAnno = it.annotationClass.findAnnotation<WithAction>()!!
