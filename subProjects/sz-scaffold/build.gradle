@@ -8,6 +8,8 @@ dependencies {
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.6'
     compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-jsonSchema', version: '2.9.6'
     compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.9.6'
+    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-csv', version: '2.9.6'
+
 
 
     compile group: 'io.vertx', name: 'vertx-core', version: '3.5.4'
