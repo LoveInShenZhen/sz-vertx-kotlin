@@ -14,6 +14,8 @@ import sz.scaffold.tools.logger.Logger
 //
 class JRedisPool(val name: String) {
 
+    val database :Int = Application.config.getInt("redis.$name.database")
+
     private var _jedisPool: JedisPool? = null
 
     private val jedisPool: JedisPool

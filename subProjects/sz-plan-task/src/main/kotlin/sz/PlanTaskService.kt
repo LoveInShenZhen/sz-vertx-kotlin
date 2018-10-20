@@ -132,10 +132,10 @@ object PlanTaskService {
                     } else {
                         // 在 endTime 之前没有需要执行的 task, 尝试等待新任务, 释放 cpu
                         try {
-                            synchronized(taskNotifier, {
-//                                Logger.debug("开始等待task requireSeq:[$requireSeq}] 最多: $taskLoaderWaitTime 秒")
+                            synchronized(taskNotifier) {
+                                //  Logger.debug("开始等待task requireSeq:[$requireSeq}] 最多: $taskLoaderWaitTime 秒")
                                 taskNotifier.wait(taskLoaderWaitTime * 1000L)
-                            })
+                            }
                         } catch (ex: Exception) {
                             // do nothing
                         }
@@ -192,26 +192,33 @@ object PlanTaskService {
             val runObj = DeserializeJsonData(task)
             if (runObj != null) {
                 try {
-                    DB.Default().RunInTransaction({
+                    DB.Default().RunInTransaction {
                         runObj.run()    // 执行任务
-                        task.refresh()
-                        task.delete()   // 任务执行成功后, 从数据库里删除记录
-                    })
+                        val originTask = PlanTask.query().where().idEq(task.id).findOneOrEmpty()
+                        originTask.ifPresent {theTask ->
+                            theTask.delete()
+                        }
+
+                    }
                 } catch (ex: Exception) {
                     // 任务执行发生错误, 标记任务状态, 记录
                     DB.Default().RunInTransaction {
-                        task.refresh()
-                        task.task_status = TaskStatus.Error.code
-                        task.remarks = ExceptionUtil.exceptionStackTraceToString(ex)
-                        task.save()
+                        val originTask = PlanTask.query().where().idEq(task.id).findOneOrEmpty()
+                        originTask.ifPresent {theTask ->
+                            theTask.task_status = TaskStatus.Error.code
+                            theTask.remarks = ExceptionUtil.exceptionStackTraceToString(ex)
+                            theTask.save()
+                        }
                     }
                 }
             } else {
                 DB.Default().RunInTransaction {
-                    task.refresh()
-                    task.task_status = TaskStatus.Error.code
-                    task.remarks = "反序列化任务失败"
-                    task.save()
+                    val originTask = PlanTask.query().where().idEq(task.id).findOneOrEmpty()
+                    originTask.ifPresent {theTask ->
+                        theTask.task_status = TaskStatus.Error.code
+                        theTask.remarks = "反序列化任务失败"
+                        theTask.save()
+                    }
                 }
             }
         } catch (ex: Exception) {
@@ -220,9 +227,9 @@ object PlanTaskService {
     }
 
     private fun notifyNewTask() {
-        synchronized(taskNotifier, {
+        synchronized(taskNotifier) {
             taskNotifier.notifyAll()
-        })
+        }
     }
 
     fun enabled(): Boolean {

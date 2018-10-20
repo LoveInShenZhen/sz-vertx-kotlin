@@ -8,15 +8,14 @@ import sz.scaffold.tools.logger.Logger
 //
 // Created by kk on 17/9/4.
 //
-class RedisCacheApi : CacheApi {
+class RedisCacheApi(val name:String = "default") : CacheApi {
 
     override fun exists(key: String): Boolean {
         try {
-            return JRedisPool.default().jedis().use {
+            return JRedisPool.byName(name).jedis().use {
                 it.exists(key)
             }
         } catch (ex: Exception) {
-            Logger.error(ex.ChainToString())
             return false
         }
 
@@ -24,7 +23,7 @@ class RedisCacheApi : CacheApi {
 
     override fun get(key: String): String {
         try {
-            return JRedisPool.default().jedis().use {
+            return JRedisPool.byName(name).jedis().use {
                 it.get(key) ?: throw SzException("$key 在缓存中不存在")
             }
         } catch (ex: SzException) {
@@ -37,7 +36,7 @@ class RedisCacheApi : CacheApi {
 
     override fun getOrElse(key: String, default: () -> String): String {
         try {
-            return JRedisPool.default().jedis().use {
+            return JRedisPool.byName(name).jedis().use {
                 if (!it.exists(key)) {
                     default()
                 } else {
@@ -52,7 +51,7 @@ class RedisCacheApi : CacheApi {
 
     override fun getOrNull(key: String): String? {
         try {
-            return JRedisPool.default().jedis().use {
+            return JRedisPool.byName(name).jedis().use {
                 it.get(key)
             }
         } catch (ex: Exception) {
@@ -63,7 +62,7 @@ class RedisCacheApi : CacheApi {
 
     override fun set(key: String, objJson: String, expirationInMs: Long) {
         try {
-            JRedisPool.default().jedis().use {
+            JRedisPool.byName(name).jedis().use {
                 if (expirationInMs > 0) {
                     it.psetex(key, expirationInMs, objJson)
                 } else {
@@ -77,7 +76,7 @@ class RedisCacheApi : CacheApi {
 
     override fun set(key: String, objJson: String) {
         try {
-            JRedisPool.default().jedis().use {
+            JRedisPool.byName(name).jedis().use {
                 it.set(key, objJson)
             }
         } catch (ex: Exception) {
@@ -87,7 +86,7 @@ class RedisCacheApi : CacheApi {
 
     override fun del(key: String) {
         try {
-            JRedisPool.default().jedis().use {
+            JRedisPool.byName(name).jedis().use {
                 it.del(key)
             }
         } catch (ex: Exception) {
@@ -98,7 +97,7 @@ class RedisCacheApi : CacheApi {
     // 以秒为单位，返回给定 key 的剩余生存时间(TTL, time to live), 单位: 秒
     fun ttl(key: String): Long {
         try {
-            return JRedisPool.default().jedis().ttl(key)
+            return JRedisPool.byName(name).jedis().ttl(key)
         } catch (ex: Exception) {
             Logger.error(ex.ChainToString())
             return -1

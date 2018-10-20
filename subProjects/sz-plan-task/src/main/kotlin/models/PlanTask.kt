@@ -81,18 +81,16 @@ class PlanTask : Model() {
         fun addSingletonTask(task: Runnable, requireSeq: Boolean = false, seqType: String = "", planRunTime: JDateTime? = null, tag: String = "") {
             DB.Default().RunInTransaction {
                 val className = task.javaClass.name
-                val oldTask = query().where()
+                val oldTasks = query().where()
                         .eq("class_name", className)
                         .`in`("task_status", TaskStatus.WaitingInDB.code, TaskStatus.WaitingInQueue.code)
-                        .findOne()
-                if (oldTask == null) {
-                    addTask(task, requireSeq, seqType, planRunTime, tag)
-                } else if (oldTask.task_status == TaskStatus.WaitingInDB.code) {
-                    // 先删除在数据库等待的旧任务
-                    DB.Default().delete(oldTask)
-                    // 添加新版任务
-                    addTask(task, requireSeq, seqType, planRunTime, tag)
-                }
+                        .findList()
+
+                // 先删除在数据库等待的旧任务
+                DB.Default().deleteAll(oldTasks)
+                // 添加新版任务
+                addTask(task, requireSeq, seqType, planRunTime, tag)
+
             }
 
             notifyNewTask()
