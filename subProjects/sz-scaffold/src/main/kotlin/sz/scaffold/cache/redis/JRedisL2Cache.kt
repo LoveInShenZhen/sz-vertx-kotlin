@@ -1,26 +1,31 @@
 package sz.scaffold.cache.redis
 
-import com.github.benmanes.caffeine.cache.Cache
+import com.github.benmanes.caffeine.cache.Caffeine
+import com.github.benmanes.caffeine.cache.LoadingCache
 import jodd.datetime.JDateTime
+import redis.clients.jedis.Response
+import sz.scaffold.Application
 import sz.scaffold.cache.CacheApi
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.logger.Logger
 import java.util.concurrent.Executor
 import java.util.concurrent.ForkJoinPool
+import java.util.concurrent.TimeUnit
 
 //
 // Created by kk on 2018/10/17.
 //
 class JRedisL2Cache(private val jedisPool: JRedisPool,
-                    private val localCache: Cache<String, String>,
+                    private val localCache: LoadingCache<String, String?> = createLocalCache(jedisPool),
                     private val executor: Executor = ForkJoinPool.commonPool()) : CacheApi {
 
     private val pubSub = L2CachePubSub(jedisPool, localCache)
     private val psubPattern = "__keyspace@${jedisPool.database}__:*"
+    private val logger = Logger.of("JRedisL2Cache")
 
     private var enabled = false
 
-    fun makeItWork() {
+    fun start(): JRedisL2Cache {
         if (enabled.not()) {
             enableKeySpaceNotify(jedisPool)
 
@@ -32,8 +37,47 @@ class JRedisL2Cache(private val jedisPool: JRedisPool,
                 }
             }.start()
 
-
             enabled = true
+
+            val autoRefresh = Application.config.getLong("redis.${jedisPool.name}.level2.autoRefresh")
+            if (autoRefresh > 0) {
+                object : Thread() {
+                    override fun run() {
+                        logger.debug("Auto refresh local cache thread started. autoRefresh time: $autoRefresh Seconds")
+                        while (enabled) {
+                            Thread.sleep(autoRefresh * 1000)
+
+                            jedisPool.jedis().use { jedis ->
+                                val piple = jedis.pipelined()
+                                val refreshedDatas = localCache.asMap().map { entry ->
+                                    Pair<String, Response<String?>>(entry.key, piple.get(entry.key))
+                                }
+                                piple.sync()
+                                refreshedDatas.forEach {
+                                    val newValue = it.second.get()
+                                    if (newValue == null) {
+                                        localCache.invalidate(it.first)
+                                        logger.debug("Auto refresh remove for key: '${it.first}'")
+                                    } else {
+                                        localCache.put(it.first, newValue)
+                                        logger.debug("Auto refresh update for key: '${it.first}', latest value: '$newValue'")
+                                    }
+                                }
+                            }
+                        }
+                        logger.debug("stop auto refresh local cache")
+                    }
+                }.start()
+            }
+        }
+
+        return this
+    }
+
+    fun stop() {
+        if (enabled) {
+            pubSub.punsubscribe(psubPattern)
+            enabled = false
         }
     }
 
@@ -42,27 +86,15 @@ class JRedisL2Cache(private val jedisPool: JRedisPool,
     }
 
     override fun get(key: String): String {
-        return localCache.get(key) {
-            jedisPool.jedis().use { jedis ->
-                jedis.get(key) ?: throw SzException("$key 在缓存中不存在")
-            }
-        }!!
+        return localCache.get(key) ?: throw SzException("$key 在缓存中不存在")
     }
 
     override fun getOrElse(key: String, default: () -> String): String {
-        return localCache.get(key) {
-            jedisPool.jedis().use { jedis ->
-                jedis.get(key) ?: default()
-            }
-        }!!
+        return localCache.get(key) ?: default()
     }
 
     override fun getOrNull(key: String): String? {
-        return localCache.get(key) {
-            jedisPool.jedis().use { jedis ->
-                jedis.get(key)
-            }
-        }
+        return localCache.get(key)
     }
 
     override fun set(key: String, objJson: String, expirationInMs: Long) {
@@ -75,6 +107,7 @@ class JRedisL2Cache(private val jedisPool: JRedisPool,
                     } else {
                         it.set(key, objJson)
                     }
+                    logger.debug("Set key: '$key' to value: '$objJson' on redis server.")
                 }
             } catch (ex: Exception) {
                 Logger.error(ex.localizedMessage)
@@ -89,6 +122,7 @@ class JRedisL2Cache(private val jedisPool: JRedisPool,
                 jedisPool.jedis().use {
                     it.set(key, objJson)
                 }
+                logger.debug("Set key: '$key' to value: '$objJson' on redis server.")
             } catch (ex: Exception) {
                 Logger.error(ex.localizedMessage)
             }
@@ -119,6 +153,8 @@ class JRedisL2Cache(private val jedisPool: JRedisPool,
     }
 
     companion object {
+
+        private val logger = Logger.of("JRedisL2Cache")
 
 //        /**
 //         * 因为开启 键事件频道 通知功能需要消耗一些 CPU ， 所以在默认配置下， 该功能处于关闭状态
@@ -169,6 +205,31 @@ class JRedisL2Cache(private val jedisPool: JRedisPool,
 //                }
 //            }
 //        }
+
+        fun createLocalCache(jedisPool: JRedisPool): LoadingCache<String, String?> {
+            val expireAfterAccess = Application.config.getLong("redis.${jedisPool.name}.level2.expireAfterAccess")
+            val expireAfterWrite = Application.config.getLong("redis.${jedisPool.name}.level2.expireAfterWrite")
+
+            val builder = Caffeine.newBuilder()
+
+            if (expireAfterAccess > 0) {
+                builder.expireAfterAccess(expireAfterAccess, TimeUnit.SECONDS)
+            }
+
+            if (expireAfterWrite > 0) {
+                builder.expireAfterWrite(expireAfterWrite, TimeUnit.SECONDS)
+            }
+
+//            builder.removalListener<String, String?> { key, value, cause -> logger.debug("Remove key: '$key', value: '$value', cause: $cause") }
+
+            return builder.build<String, String?> { key: String ->
+                jedisPool.jedis().use {
+                    val value = it.get(key)
+                    logger.debug("Get value for key: '$key' from redis server:\n$value")
+                    value
+                }
+            }
+        }
     }
 
 

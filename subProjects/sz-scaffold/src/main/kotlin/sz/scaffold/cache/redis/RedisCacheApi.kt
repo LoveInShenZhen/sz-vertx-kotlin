@@ -1,112 +1,40 @@
 package sz.scaffold.cache.redis
 
+import sz.scaffold.Application
 import sz.scaffold.cache.CacheApi
 import sz.scaffold.ext.ChainToString
+import sz.scaffold.ext.getBooleanOrElse
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.logger.Logger
 
 //
 // Created by kk on 17/9/4.
 //
-class RedisCacheApi(val name:String = "default") : CacheApi {
+class RedisCacheApi(val name:String = "default", private val cacheImp : CacheApi = createCacheApi(name)) : CacheApi by cacheImp {
 
-    override fun exists(key: String): Boolean {
-        try {
-            return JRedisPool.byName(name).jedis().use {
-                it.exists(key)
-            }
-        } catch (ex: Exception) {
-            return false
-        }
+    companion object {
 
-    }
+        private val cacheInstances = mutableMapOf<String, CacheApi>()
+        private val logger = Logger.of("JRedisL2Cache")
 
-    override fun get(key: String): String {
-        try {
-            return JRedisPool.byName(name).jedis().use {
-                it.get(key) ?: throw SzException("$key 在缓存中不存在")
-            }
-        } catch (ex: SzException) {
-            throw ex
-        } catch (ex: Exception) {
-            Logger.error(ex.ChainToString())
-            throw ex
-        }
-    }
+        private fun createCacheApi(redisName:String = "default") : CacheApi {
+            return cacheInstances.getOrElse(redisName) {
+                val l2CacheEnabled = Application.config.getBooleanOrElse("redis.$redisName.level2.cacheEnabled", false)
 
-    override fun getOrElse(key: String, default: () -> String): String {
-        try {
-            return JRedisPool.byName(name).jedis().use {
-                if (!it.exists(key)) {
-                    default()
+                val cacheImp = if (l2CacheEnabled) {
+                    logger.debug("Redis Cache, name: $redisName, class: JRedisL2Cache (本地2级缓存)")
+                    JRedisL2Cache(JRedisPool.byName(redisName)).start()
                 } else {
-                    it.get(key)
+                    logger.debug("Redis Cache, name: $redisName, class: RedisCacheApiImp")
+                    RedisCacheApiImp(redisName)
                 }
+                cacheInstances.putIfAbsent(redisName, cacheImp)
+                cacheImp
             }
-        } catch (ex: Exception) {
-            Logger.error(ex.ChainToString())
-            return default()
-        }
-    }
 
-    override fun getOrNull(key: String): String? {
-        try {
-            return JRedisPool.byName(name).jedis().use {
-                it.get(key)
-            }
-        } catch (ex: Exception) {
-            Logger.error(ex.ChainToString())
-            return null
-        }
-    }
 
-    override fun set(key: String, objJson: String, expirationInMs: Long) {
-        try {
-            JRedisPool.byName(name).jedis().use {
-                if (expirationInMs > 0) {
-                    it.psetex(key, expirationInMs, objJson)
-                } else {
-                    it.set(key, objJson)
-                }
-            }
-        } catch (ex: Exception) {
-            Logger.error(ex.ChainToString())
-        }
-    }
 
-    override fun set(key: String, objJson: String) {
-        try {
-            JRedisPool.byName(name).jedis().use {
-                it.set(key, objJson)
-            }
-        } catch (ex: Exception) {
-            Logger.error(ex.ChainToString())
         }
-    }
 
-    override fun del(key: String) {
-        try {
-            JRedisPool.byName(name).jedis().use {
-                it.del(key)
-            }
-        } catch (ex: Exception) {
-            Logger.error(ex.ChainToString())
-        }
-    }
-
-    // 以秒为单位，返回给定 key 的剩余生存时间(TTL, time to live), 单位: 秒
-    fun ttl(key: String): Long {
-        try {
-            return JRedisPool.byName(name).jedis().ttl(key)
-        } catch (ex: Exception) {
-            Logger.error(ex.ChainToString())
-            return -1
-        }
-    }
-
-    fun update(key: String, value: String) {
-        val ttl = this.ttl(key)
-        if (ttl == (-1).toLong()) return        // 获取ttl失败
-        this.set(key = key, objJson = value, expirationInMs = ttl * 1000)
     }
 }
