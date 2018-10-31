@@ -2,33 +2,30 @@ buildscript {
 
     repositories {
         maven {
-            name "nexus-aliyun"
-            url "https://maven.aliyun.com/repository/gradle-plugin/"
+            name "nexus-163"
+            url "http://mirrors.163.com/maven/repository/maven-public/"
         }
     }
     dependencies {
-        classpath "io.ebean:ebean-gradle-plugin:11.10.1"
+        classpath "io.ebean:ebean-gradle-plugin:11.11.1"
     }
 }
 
 apply plugin: 'io.ebean'
-apply plugin: 'kotlin-kapt'
 
 dependencies {
     compile project(':subProjects:sz-ebean')
     compile project(':subProjects:sz-scaffold')
-
-    kapt "io.ebean:kotlin-querybean-generator:11.4.1"
 }
 
 ebean {
     debugLevel = 2
-    queryBeans = true
-    kotlin = true
-    generatorVersion = "11.4.1"
+    queryBeans = false
+//    kotlin = true
+//    generatorVersion = "11.4.1"
 }
 
-sourceSets {
-    main.java.srcDirs += [file("$buildDir/generated/source/kaptKotlin/main")]
-}
+//sourceSets {
+//    main.java.srcDirs += [file("$buildDir/generated/source/kaptKotlin/main")]
+//}
 

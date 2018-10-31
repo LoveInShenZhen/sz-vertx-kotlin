@@ -27,7 +27,10 @@ class szebean : ApiController() {
         val ddl = CurrentModel(spiServer)
         this.contentType("text/plain; charset=UTF-8")
 
-        return ddl.createDdl + "\n\n" + DbIndex(spiServer).alterTableUseUtf8mb4()
+        val sqlScript = ddl.createDdl
+        val pos = sqlScript.indexOf("create table")
+
+        return sqlScript.drop(pos) + "\n\n" + DbIndex(spiServer).alterTableUseUtf8mb4()
     }
 
     @Comment("生成删除数据库表结构的SQL")

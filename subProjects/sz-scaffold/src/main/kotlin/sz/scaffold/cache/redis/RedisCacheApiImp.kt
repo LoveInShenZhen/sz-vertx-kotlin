@@ -29,7 +29,7 @@ class RedisCacheApiImp(val name:String) : CacheApi {
         } catch (ex: SzException) {
             throw ex
         } catch (ex: Exception) {
-            Logger.error(ex.ChainToString())
+            Logger.error(ex.localizedMessage)
             throw ex
         }
     }
@@ -44,7 +44,7 @@ class RedisCacheApiImp(val name:String) : CacheApi {
                 }
             }
         } catch (ex: Exception) {
-            Logger.error(ex.ChainToString())
+            Logger.error(ex.localizedMessage)
             return default()
         }
     }
@@ -55,7 +55,7 @@ class RedisCacheApiImp(val name:String) : CacheApi {
                 it.get(key)
             }
         } catch (ex: Exception) {
-            Logger.error(ex.ChainToString())
+            Logger.error(ex.localizedMessage)
             return null
         }
     }
@@ -70,7 +70,7 @@ class RedisCacheApiImp(val name:String) : CacheApi {
                 }
             }
         } catch (ex: Exception) {
-            Logger.error(ex.ChainToString())
+            Logger.error(ex.localizedMessage)
         }
     }
 
@@ -80,7 +80,7 @@ class RedisCacheApiImp(val name:String) : CacheApi {
                 it.set(key, objJson)
             }
         } catch (ex: Exception) {
-            Logger.error(ex.ChainToString())
+            Logger.error(ex.localizedMessage)
         }
     }
 
@@ -90,7 +90,7 @@ class RedisCacheApiImp(val name:String) : CacheApi {
                 it.del(key)
             }
         } catch (ex: Exception) {
-            Logger.error(ex.ChainToString())
+            Logger.error(ex.localizedMessage)
         }
     }
 }
