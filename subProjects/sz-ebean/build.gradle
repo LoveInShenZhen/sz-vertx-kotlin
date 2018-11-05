@@ -16,15 +16,9 @@ apply plugin: 'io.ebean'
 
 dependencies {
     compile group: 'com.zaxxer', name: 'HikariCP', version: '3.2.0'
-
-//    compile "org.avaje.composite:logback:1.1"
     // https://mvnrepository.com/artifact/io.ebean/ebean
     compile group: 'io.ebean', name: 'ebean', version: '11.22.10'
-    // https://mvnrepository.com/artifact/io.ebean/ebean-querybean
-//    compile group: 'io.ebean', name: 'ebean-querybean', version: '11.4.1'
-
-//    kapt "io.ebean:kotlin-querybean-generator:11.4.1"
-
+    
     compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.46'
 
     compile project(':subProjects:sz-scaffold')
