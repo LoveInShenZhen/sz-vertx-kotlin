@@ -23,7 +23,7 @@ dependencies {
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
-    compile group: 'com.google.guava', name: 'guava', version: '26.0-jre'
+    compile group: 'com.google.guava', name: 'guava', version: '27.0-jre'
 
     compile group: 'org.freemarker', name: 'freemarker', version: '2.3.23'
 
