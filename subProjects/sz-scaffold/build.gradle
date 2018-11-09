@@ -28,13 +28,13 @@ dependencies {
     compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.9.2'
 
 
-    compile group: 'io.vertx', name: 'vertx-core', version: '3.5.1'
-    compile group: 'io.vertx', name: 'vertx-web', version: '3.5.1'
-    compile (group: 'io.vertx', name: 'vertx-lang-kotlin', version: '3.5.1') {
+    compile group: 'io.vertx', name: 'vertx-core', version: '3.5.4'
+    compile group: 'io.vertx', name: 'vertx-web', version: '3.5.4'
+    compile (group: 'io.vertx', name: 'vertx-lang-kotlin', version: '3.5.4') {
         exclude group: 'org.jetbrains.kotlin'
     }
-    compile group: 'io.vertx', name: 'vertx-codegen', version: '3.5.1'
-    compile group: 'io.vertx', name: 'vertx-ignite', version: '3.5.1'
+    compile group: 'io.vertx', name: 'vertx-codegen', version: '3.5.4'
+    compile group: 'io.vertx', name: 'vertx-ignite', version: '3.5.4'
 
     compile group: 'com.google.guava', name: 'guava', version: '25.1-jre'
 
