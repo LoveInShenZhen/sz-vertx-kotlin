@@ -29,12 +29,11 @@ object CSV {
                 .registerModule(JDateTimeModule)
     }
 
-    fun saveToFile(csvFilePath: String, beans: List<*>, clazz: Class<*>, append: Boolean = false) {
+    fun saveToFile(csvFile: File, beans: List<*>, clazz: Class<*>, append: Boolean = false) {
         val csvSchema = mapper.schemaFor(clazz)
-        val destFile = File(csvFilePath)
-        val needWriteHeader = append.not() || destFile.exists().not() || destFile.length() == 0L
+        val needWriteHeader = append.not() || csvFile.exists().not() || csvFile.length() == 0L
 
-        val fos = FileOutputStream(destFile, append).buffered()
+        val fos = FileOutputStream(csvFile, append).buffered()
 
         val objw = if (needWriteHeader) {
             mapper.writerFor(clazz).with(csvSchema.withHeader()).writeValues(fos)
@@ -47,17 +46,23 @@ object CSV {
         }
     }
 
-    inline fun <reified T : Any>  saveToFile(csvFilePath: String, beans: List<T>, append: Boolean = false) {
-        saveToFile(csvFilePath, beans, T::class.java, append)
+    inline fun <reified T : Any> saveToFile(csvFilePath: String, beans: List<T>, append: Boolean = false) {
+        saveToFile(File(csvFilePath), beans, T::class.java, append)
     }
 
-    inline fun <reified T : Any> loadFromFile(csvFilePath: String): List<T> {
-        val csvSchema = mapper.schemaFor(T::class.java).withHeader()
-        val destFile = File(csvFilePath)
+    inline fun <reified T : Any> saveToFile(csvFileh: File, beans: List<T>, append: Boolean = false) {
+        saveToFile(csvFileh, beans, T::class.java, append)
+    }
 
-        val it = mapper.readerFor(T::class.java).with(csvSchema).readValues<T>(destFile.bufferedReader())
+    inline fun <reified T : Any> loadFromFile(csvFile: File): List<T> {
+        val csvSchema = mapper.schemaFor(T::class.java).withHeader()
+
+        val it = mapper.readerFor(T::class.java).with(csvSchema).readValues<T>(csvFile.bufferedReader())
         return it.readAll()
     }
 
+    inline fun <reified T : Any> loadFromFile(csvFilePath: String): List<T> {
+        return loadFromFile(File(csvFilePath))
+    }
 
 }
