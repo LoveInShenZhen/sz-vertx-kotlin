@@ -62,7 +62,7 @@ object Json {
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj)
     }
 
-    fun toJsonExcludeEmptyFields(obj: Any) : String {
+    fun toJsonExcludeEmptyFields(obj: Any): String {
         return excludeEmptyMapper.writeValueAsString(obj)
     }
 
@@ -81,6 +81,15 @@ object Json {
 
     }
 
+    inline fun <reified A : Any> fromJsonString(jsonStr: String): A {
+        val node = Json.parse(jsonStr)
+        try {
+            return mapper.treeToValue(node, A::class.java)
+        } catch (e: Exception) {
+            throw RuntimeException(e)
+        }
+    }
+
     fun <A> fromJsonNode(jsonNode: JsonNode, clazz: Class<A>): A {
         try {
             return mapper.treeToValue(jsonNode, clazz)
@@ -90,7 +99,7 @@ object Json {
 
     }
 
-    fun generateSchema(clazz: KClass<*>) : JsonSchema {
+    fun generateSchema(clazz: KClass<*>): JsonSchema {
         val schemaGen = JsonSchemaGenerator(mapper)
         return schemaGen.generateSchema(clazz.java)
     }
