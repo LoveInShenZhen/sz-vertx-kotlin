@@ -1,16 +1,8 @@
 apply plugin: 'org.jetbrains.kotlin.jvm'
 
 repositories {
-    maven {
-        name "aliyun-maven"
-        url "http://maven.aliyun.com/nexus/content/groups/public/"
-    }
+    mavenCentral()
     jcenter()
-    ivy {
-        name "typesafe-ivy-release"
-        url "https://repo.typesafe.com/typesafe/ivy-releases"
-        layout "ivy"
-    }
 }
 
 dependencies {

@@ -1,10 +1,7 @@
 
 buildscript {
     repositories {
-        maven {
-            name "nexus-163"
-            url "http://mirrors.163.com/maven/repository/maven-public/"
-        }
+        mavenCentral()
     }
     dependencies {
         classpath "io.ebean:ebean-gradle-plugin:11.11.1"
