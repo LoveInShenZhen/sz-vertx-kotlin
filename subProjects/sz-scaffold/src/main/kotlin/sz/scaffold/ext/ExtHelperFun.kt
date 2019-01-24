@@ -9,7 +9,7 @@ import sz.scaffold.tools.logger.AnsiColor
 
 fun String?.escapeMarkdown(): String {
     if (this.isNullOrBlank()) return ""
-    return this!!.replace("_", """\_""").replace("*", """\*""")
+    return this.replace("_", """\_""").replace("*", """\*""")
 }
 
 fun String.Colorization(color: AnsiColor? = AnsiColor.BLUE, bgColog: AnsiColor? = null): String {

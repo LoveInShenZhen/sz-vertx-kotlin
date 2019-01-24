@@ -226,7 +226,8 @@ object Application {
                     it.isExpectMultipart = true
                 }
 
-                router.accept(it)
+//                router.accept(it)
+                router.handle(it)
             } catch (ex: Exception) {
                 it.response().end("${ex.message}\n\n${ExceptionUtil.exceptionChainToString(ex)}")
             }
