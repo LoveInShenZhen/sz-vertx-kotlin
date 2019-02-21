@@ -32,9 +32,9 @@ allprojects {
         repositories {
             maven {
                 if (project.version.endsWith('-SNAPSHOT')) {
-                    url = "http://sz.xiaoi.com:8431/nexus/content/repositories/snapshots/"
+                    url = "http://sz.xiaoi.com:8081/nexus/content/repositories/snapshots/"
                 } else {
-                    url = "http://sz.xiaoi.com:8431/nexus/content/repositories/releases/"
+                    url = "http://sz.xiaoi.com:8081/nexus/content/repositories/releases/"
                 }
 
                 credentials {
