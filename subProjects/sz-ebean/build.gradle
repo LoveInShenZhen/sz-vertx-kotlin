@@ -17,7 +17,7 @@ apply plugin: "org.jetbrains.kotlin.kapt"
 dependencies {
     compile group: 'com.zaxxer', name: 'HikariCP', version: '3.2.0'
     // https://mvnrepository.com/artifact/io.ebean/ebean
-    compile group: 'io.ebean', name: 'ebean', version: '11.22.10'
+    compile group: 'io.ebean', name: 'ebean', version: '11.32.1'
     
     compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.46'
 
