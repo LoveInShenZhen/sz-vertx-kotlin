@@ -174,7 +174,6 @@ class RedisTaskRunner : AbstractVerticle() {
         fun deploy(vertx: Vertx) {
             val options = DeploymentOptions()
             options.isWorker = true
-            options.isMultiThreaded = true
             val verticle = RedisTaskRunner()
             vertx.deployVerticle(verticle, options) { res ->
                 if (res.succeeded()) {

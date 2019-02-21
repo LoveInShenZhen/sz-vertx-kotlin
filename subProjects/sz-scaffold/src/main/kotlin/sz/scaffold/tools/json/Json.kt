@@ -66,6 +66,10 @@ object Json {
         return excludeEmptyMapper.writeValueAsString(obj)
     }
 
+    fun toJsonExcludeEmptyFieldsPretty(obj: Any): String {
+        return excludeEmptyMapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj)
+    }
+
     fun formatJson(jsonStr: String): String {
         val jsonNode = Json.parse(jsonStr)
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode)
