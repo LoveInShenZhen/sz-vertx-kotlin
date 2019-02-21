@@ -9,10 +9,10 @@ dependencies {
     compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-jsonSchema', version: '2.9.6'
     compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.9.6'
     compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-csv', version: '2.9.6'
-    
+
     compile group: 'io.vertx', name: 'vertx-core', version: '3.6.2'
     compile group: 'io.vertx', name: 'vertx-web', version: '3.6.2'
-    compile (group: 'io.vertx', name: 'vertx-lang-kotlin', version: '3.6.2') {
+    compile(group: 'io.vertx', name: 'vertx-lang-kotlin', version: '3.6.2') {
         exclude group: 'org.jetbrains.kotlin'
     }
     compile group: 'io.vertx', name: 'vertx-codegen', version: '3.6.2'
@@ -35,4 +35,8 @@ dependencies {
     compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.58'
 
     compile project(':subProjects:jodd-dependency')
+
+    configurations.all {
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    }
 }
