@@ -10,14 +10,14 @@ dependencies {
     compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.9.6'
     compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-csv', version: '2.9.6'
 
-    compile group: 'io.vertx', name: 'vertx-core', version: '3.6.2'
-    compile group: 'io.vertx', name: 'vertx-web', version: '3.6.2'
-    compile(group: 'io.vertx', name: 'vertx-lang-kotlin', version: '3.6.2') {
+    compile group: 'io.vertx', name: 'vertx-core', version: '3.6.3'
+    compile group: 'io.vertx', name: 'vertx-web', version: '3.6.3'
+    compile(group: 'io.vertx', name: 'vertx-lang-kotlin', version: '3.6.3') {
         exclude group: 'org.jetbrains.kotlin'
     }
-    compile group: 'io.vertx', name: 'vertx-codegen', version: '3.6.2'
-    compile group: 'io.vertx', name: 'vertx-ignite', version: '3.6.2'
-    compile group: 'io.vertx', name: 'vertx-zookeeper', version: '3.6.2'
+    compile group: 'io.vertx', name: 'vertx-codegen', version: '3.6.3'
+    compile group: 'io.vertx', name: 'vertx-ignite', version: '3.6.3'
+    compile group: 'io.vertx', name: 'vertx-zookeeper', version: '3.6.3'
 
     compile group: 'com.typesafe', name: 'config', version: '1.3.1'
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
