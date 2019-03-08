@@ -7,21 +7,27 @@ import org.slf4j.LoggerFactory
  */
 object Logger {
 
+    var enableColor = true
+
     private val logger = LoggerFactory.getLogger("App")
 
-    fun debug(msg: String, color: AnsiColor? = AnsiColor.BLUE, bgColog: AnsiColor? = null) {
+    private fun defaultColor(): AnsiColor? {
+        return if (enableColor) AnsiColor.BLUE else null
+    }
+
+    fun debug(msg: String, color: AnsiColor? = defaultColor(), bgColog: AnsiColor? = null) {
         logger.colorDebug(msg, color, bgColog)
     }
 
-    fun info(msg: String, color: AnsiColor? = AnsiColor.BLUE, bgColog: AnsiColor? = null) {
+    fun info(msg: String, color: AnsiColor? = defaultColor(), bgColog: AnsiColor? = null) {
         logger.colorInfo(msg, color, bgColog)
     }
 
-    fun warn(msg: String, color: AnsiColor? = AnsiColor.BLUE, bgColog: AnsiColor? = null) {
+    fun warn(msg: String, color: AnsiColor? = defaultColor(), bgColog: AnsiColor? = null) {
         logger.colorWarn(msg, color, bgColog)
     }
 
-    fun error(msg: String, color: AnsiColor? = AnsiColor.BLUE, bgColog: AnsiColor? = null) {
+    fun error(msg: String, color: AnsiColor? = defaultColor(), bgColog: AnsiColor? = null) {
         logger.colorError(msg, color, bgColog)
     }
 
