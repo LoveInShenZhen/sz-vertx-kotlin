@@ -2,9 +2,7 @@ package sz.scaffold.cache.redis
 
 import sz.scaffold.Application
 import sz.scaffold.cache.CacheApi
-import sz.scaffold.ext.ChainToString
 import sz.scaffold.ext.getBooleanOrElse
-import sz.scaffold.tools.SzException
 import sz.scaffold.tools.logger.Logger
 
 //
