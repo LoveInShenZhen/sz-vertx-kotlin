@@ -7,6 +7,7 @@ import io.ebean.annotation.TxIsolation
 import sz.annotations.DBIndexed
 import sz.scaffold.ext.camelCaseToLowCaseSeprated
 import sz.scaffold.tools.BizLogicException
+import sz.scaffold.tools.logger.Logger
 import java.math.BigDecimal
 import javax.persistence.Entity
 import javax.persistence.Table
@@ -28,11 +29,19 @@ internal class IndexInfo(var indexName: String) {
 
         fun LoadIndexInfoForTable(tableName: String, dbServer: EbeanServer): Map<String, IndexInfo> {
             val indexMap = mutableMapOf<String, IndexInfo>()
-            val sql = String.format("show index from `%s`", tableName)
+            var sql = ""
+            if (SzEbeanConfig.isMySql()) {
+                sql = "show index from `$tableName`"
+            }
+            if (SzEbeanConfig.isH2()) {
+                sql = "SELECT t.TABLE_NAME, t.COLUMN_NAME AS Column_name, t.INDEX_NAME AS Key_name FROM INFORMATION_SCHEMA.INDEXES as t WHERE t.INDEX_TYPE_NAME != 'PRIMARY KEY' AND t.TABLE_NAME = '${tableName.toUpperCase()}'"
+            }
             val rows = dbServer.createSqlQuery(sql).findList()
             for (row in rows) {
                 val columnName = row.getString("Column_name")
                 val indexName = row.getString("Key_name")
+
+                Logger.debug("Column_name: $columnName  Key_name: $indexName")
 
                 if (!indexMap.containsKey(indexName)) {
                     indexMap.put(indexName, IndexInfo(indexName))

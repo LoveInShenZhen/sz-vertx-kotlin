@@ -68,15 +68,33 @@ object SzEbeanConfig {
             return setOf("models.*")
         }
     }
+
+    fun jdbcUrl(dataSource: String = "default"): String {
+        val dsConfig = ebeanConfig.getConfig("dataSources.$dataSource")
+        return dsConfig.getString("jdbcUrl")
+    }
+
+    fun isMySql(dataSource: String = "default") : Boolean {
+        return jdbcUrl(dataSource).startsWith("jdbc:mysql:")
+    }
+
+    fun isH2(dataSource: String = "default") : Boolean {
+        return jdbcUrl(dataSource).startsWith("jdbc:h2:")
+    }
+
+    fun isHsqldb(dataSource: String = "default") : Boolean {
+        return jdbcUrl(dataSource).startsWith("jdbc:hsqldb:")
+    }
+
 }
 
 private fun Config.toProperties(): Properties {
     val props = Properties()
     this.root().forEach { key, cfgValue ->
         if (cfgValue.valueType() in arrayOf(ConfigValueType.NUMBER,
-                ConfigValueType.STRING,
-                ConfigValueType.BOOLEAN,
-                ConfigValueType.NULL)) {
+                        ConfigValueType.STRING,
+                        ConfigValueType.BOOLEAN,
+                        ConfigValueType.NULL)) {
             props.setProperty(key, cfgValue.unwrapped().toString())
         }
     }
