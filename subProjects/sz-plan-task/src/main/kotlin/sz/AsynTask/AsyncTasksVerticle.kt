@@ -18,15 +18,26 @@ class AsyncTasksVerticle : AbstractVerticle() {
     override fun start() {
         Logger.debug("AsyncTasksVerticle start. context: ${this.context} Threa Id: ${Thread.currentThread().id}")
         consumer = this.vertx.eventBus().consumer<String>(address) { message ->
-            try {
+            this.vertx.executeBlocking<Unit>({ future ->
                 Logger.debug("AsyncTasksVerticle received message. Threa Id: ${Thread.currentThread().id} msg:\n${message.body()}")
                 val asyncTask = Json.fromJsonString(message.body(), AsyncTask::class.java)
                 val task = Json.fromJsonString(asyncTask.data, Class.forName(asyncTask.className)) as Runnable
-
                 task.run()
-            } catch (ex: Exception) {
-                Logger.warn(ExceptionUtil.exceptionChainToString(ex))
-            }
+                future.complete()
+            }, false, { result ->
+                if (result.failed()) {
+                    Logger.warn(ExceptionUtil.exceptionChainToString(result.cause()))
+                }
+            })
+//            try {
+//                Logger.debug("AsyncTasksVerticle received message. Threa Id: ${Thread.currentThread().id} msg:\n${message.body()}")
+//                val asyncTask = Json.fromJsonString(message.body(), AsyncTask::class.java)
+//                val task = Json.fromJsonString(asyncTask.data, Class.forName(asyncTask.className)) as Runnable
+//
+//                task.run()
+//            } catch (ex: Exception) {
+//                Logger.warn(ExceptionUtil.exceptionChainToString(ex))
+//            }
         }
     }
 
@@ -46,7 +57,7 @@ class AsyncTasksVerticle : AbstractVerticle() {
         fun deploy(vertx: Vertx) {
             val options = DeploymentOptions()
             options.isWorker = true
-            options.isMultiThreaded = true
+//            options.isMultiThreaded = true
             val verticle = AsyncTasksVerticle()
             vertx.deployVerticle(verticle, options) { res ->
                 if (res.succeeded()) {
