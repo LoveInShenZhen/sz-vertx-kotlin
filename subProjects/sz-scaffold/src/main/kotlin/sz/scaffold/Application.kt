@@ -64,18 +64,30 @@ object Application {
     init {
         writePidFile()
 
-        System.setProperty("config.file", "conf/application.conf")
-        config = ConfigFactory.load()
+        Logger.debug("current dir: ${File("").absolutePath}")
 
         val confFolder = File(FileNameUtil.concat(SystemUtils.getUserDir().absolutePath, "conf"))
         if (confFolder.exists()) {
             appHome = SystemUtils.getUserDir().absolutePath
+            Logger.debug("appHome is UserDir: $appHome")
         } else {
-            // 从 class path 里查找 conf 结尾的路径
-            val confFile = ClassLoaderUtil.getDefaultClasspath().find { it.name == "conf" }
-                    ?: throw SzException("class path 里不包含 conf 目录, 请检查启动环境脚本")
-            appHome = confFile.parent
+            if (SystemUtils.getUserDir().name == "bin") {
+                appHome = SystemUtils.getUserDir().parent
+                Logger.debug("appHome find by bin folder path: $appHome")
+            } else {
+                val jarFile = ClassLoaderUtil.getDefaultClasspath().find { it.name.startsWith("kotlin-stdlib-") }
+                    ?: throw SzException("class path 里不包含 kotlin-stdlib-*.jar, 请检查build.gradle")
+                appHome = File(jarFile.parent).parent
+                Logger.debug("appHome find by class lib folder path: $appHome")
+            }
         }
+
+        val confPath = FileNameUtil.concat(appHome, "conf/application.conf")
+        if (File(confPath).exists()) {
+            Logger.debug("""System.setProperty("config.file", "conf/application.conf") # confPath = $confPath""")
+            System.setProperty("config.file", confPath)
+        }
+        config = ConfigFactory.load()
 
         this.regOnStartHandler(Int.MIN_VALUE) {
             Logger.debug("Application start ...", AnsiColor.GREEN)
@@ -119,7 +131,7 @@ object Application {
             Logger.debug("Vertx 集群方式, Cluster Manager: $clusterManagerName")
             val future = CompletableFuture<Vertx>()
 
-            when(clusterManagerName) {
+            when (clusterManagerName) {
                 "Ignite" -> this._vertoptions!!.clusterManager = IgniteClusterManager()
                 "Zookeeper" -> this._vertoptions!!.clusterManager = ZookeeperClusterManager()
                 else -> throw SzException("app.vertx.clusterManager 配置错误, 只支持: Ignite 和 Zookeeper")
@@ -156,7 +168,7 @@ object Application {
 
     private fun loadRouteFromFiles(files: List<File>): List<ApiRoute> {
         return files.map { file -> ApiRoute.parseFromFile(file) }
-                .flatMap { it }
+            .flatMap { it }
     }
 
     // 检查在 route 文件 和 subRoutes 目录下的 *.route 里定义的route 的 method + path 没有重复的
@@ -204,10 +216,10 @@ object Application {
         val router = Router.router(vertx)
 
         router.route().handler(BodyHandler.create()
-                .setMergeFormAttributes(bodyHandlerOptions.mergeFormAttributes)
-                .setBodyLimit(bodyHandlerOptions.bodyLimit)
-                .setDeleteUploadedFilesOnEnd(bodyHandlerOptions.deleteUploadedFilesOnEnd)
-                .setUploadsDirectory(bodyHandlerOptions.uploadsDirectory))
+            .setMergeFormAttributes(bodyHandlerOptions.mergeFormAttributes)
+            .setBodyLimit(bodyHandlerOptions.bodyLimit)
+            .setDeleteUploadedFilesOnEnd(bodyHandlerOptions.deleteUploadedFilesOnEnd)
+            .setUploadsDirectory(bodyHandlerOptions.uploadsDirectory))
 
         router.route().handler(CookieHandler.create())
 
