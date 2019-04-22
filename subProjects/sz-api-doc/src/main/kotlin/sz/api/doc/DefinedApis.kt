@@ -1,5 +1,6 @@
 package sz.api.doc
 
+import sz.api.controllers.ApiDoc
 import sz.scaffold.Application
 import sz.scaffold.annotations.PostForm
 import sz.scaffold.annotations.PostJson
@@ -10,13 +11,13 @@ import kotlin.reflect.jvm.jvmErasure
 //
 // Created by kk on 17/8/24.
 //
-class DefinedApis(private val host: String = "localhost:9000") {
+class DefinedApis(val host: String = "localhost:9000", val isJsonApi: Boolean = true) {
 
     var groups: MutableList<ApiGroup> = mutableListOf()
 
     init {
         Application.loadApiRouteFromRouteFiles().filter {
-            it.isJsonApi()
+            it.isJsonApi() == isJsonApi && it.controllerKClass != ApiDoc::class
         }.forEach {
             addApi(it)
         }
@@ -43,18 +44,23 @@ class DefinedApis(private val host: String = "localhost:9000") {
 
 fun ApiRoute.buildApiInfo(host: String): ApiInfo {
     var httpMethod = this.method.name
-    if (this.controllerFun.findAnnotation<PostForm>() != null) {
+    if (httpMethod == "POST") {
         httpMethod = ApiInfo.PostForm
+//        if (this.controllerFun.findAnnotation<PostForm>() != null) {
+//            httpMethod = ApiInfo.PostForm
+//        }
+        if (this.controllerFun.findAnnotation<PostJson>() != null) {
+            httpMethod = ApiInfo.PostJson
+        }
     }
-    if (this.controllerFun.findAnnotation<PostJson>() != null) {
-        httpMethod = ApiInfo.PostJson
-    }
+
     return ApiInfo(host = host,
-            url = this.path,
-            httpMethod = httpMethod,
-            controllerClass = this.controllerKClass.java.name,
-            methodName = this.controllerFun.name,
-            replyKClass = this.returnType().jvmErasure,
-            postDataKClass = this.postBodyClass()
+        url = this.path,
+        httpMethod = httpMethod,
+        controllerClass = this.controllerKClass.java.name,
+        methodName = this.controllerFun.name,
+        replyKClass = this.returnType().jvmErasure,
+        postDataKClass = this.postBodyClass(),
+        is_json_api = this.isJsonApi()
     )
 }

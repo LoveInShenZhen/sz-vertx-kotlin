@@ -47,6 +47,7 @@ a:hover {
             <thead>
               <tr style="background: #D2D2D2;">
                 <th>API</th>
+                <th>http method</th>
                 <th>说明</th>
                 <th>  </th>
               </tr>
@@ -55,6 +56,7 @@ a:hover {
               <#list group.apiInfoList as apiInfo>
               <tr>
                 <td>${apiInfo.url}</td>
+                <td>${apiInfo.httpMethod}</td>
                 <td>${apiInfo.apiComment}</td>
                 <td><a href='${apiInfo.TestPage()}' target="_blank">点击测试</a></td>
               </tr>

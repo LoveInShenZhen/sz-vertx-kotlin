@@ -12,6 +12,8 @@ import java.net.InetAddress
 //
 // Created by kk on 17/9/8.
 //
+
+@Comment("内置默认的控制器内,提供一些关于系统信息的查询功能")
 class Default : ApiController() {
 
     fun hello() : String {
