@@ -1,7 +1,9 @@
 dependencies {
     compile project(':subProjects:jodd-dependency')
 
-    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.9.8'
+    compile(group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.9.8') {
+        exclude group: 'org.jetbrains.kotlin'
+    }
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.9.8'
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.8'
     compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-jsonSchema', version: '2.9.8'
