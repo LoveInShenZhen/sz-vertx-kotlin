@@ -124,7 +124,7 @@ object Application {
     fun createVertx(): Vertx {
         this._vertoptions = buildVertxOptions()
 
-        if (this._vertoptions!!.isClustered) {
+        if (this._vertoptions!!.eventBusOptions.isClustered) {
             // 集群方式
             val clusterManagerName = this.config.getString("app.vertx.clusterManager")
 
@@ -288,7 +288,7 @@ object Application {
             // 如果获取不到主机的IP地址, 则继续使用默认的 localhost
             if (jsonOpts.containsKey("clusterHost").not() && hostIp.isNullOrBlank().not()) {
                 // 配置文件中不包含 clusterHost 配置项, 并且获取到的主机IP不为空
-                opts.clusterHost = hostIp
+                opts.eventBusOptions.host = hostIp
             }
             return opts
         } else {
@@ -296,7 +296,7 @@ object Application {
             val hostIp = InetAddress.getLocalHost().hostAddress
             if (hostIp.isNullOrBlank().not()) {
                 // 获取到的主机IP不为空
-                opts.clusterHost = hostIp
+                opts.eventBusOptions.host = hostIp
             }
             return opts
         }
@@ -355,7 +355,7 @@ object Application {
     }
 
     private fun logClusterNodeId() {
-        if (Application.vertxOptions.isClustered) {
+        if (Application.vertxOptions.eventBusOptions.isClustered) {
             Logger.info("NodeId: ${Application.vertxOptions.clusterManager.nodeID}")
             Logger.info("Cluster Nodes: ${Application.vertxOptions.clusterManager.nodes.joinToString(", ")}")
         }

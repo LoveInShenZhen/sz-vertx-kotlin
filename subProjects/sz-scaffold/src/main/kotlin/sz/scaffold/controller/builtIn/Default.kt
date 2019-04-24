@@ -86,7 +86,7 @@ class Default : ApiController() {
 
 
 
-        if (Application.vertxOptions.isClustered) {
+        if (Application.vertxOptions.eventBusOptions.isClustered) {
             info.appendln("-".repeat(64))
             // 集群方式
             val clusterManagerName = Application.config.getString("app.vertx.clusterManager")
