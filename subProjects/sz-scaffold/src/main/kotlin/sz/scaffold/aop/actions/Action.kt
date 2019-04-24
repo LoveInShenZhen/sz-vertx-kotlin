@@ -35,15 +35,13 @@ abstract class Action<out T> {
 
     companion object {
 
-        fun <T> WrapperAction(wrappedMethod: () -> Any?): Action<T> {
-            val action = object : Action<T>() {
+        fun <T> wrapperAction(wrappedMethod: () -> Any?): Action<T> {
+            return object : Action<T>() {
                 override fun call(): Any? {
                     return wrappedMethod()
                 }
 
             }
-
-            return action
         }
     }
 }

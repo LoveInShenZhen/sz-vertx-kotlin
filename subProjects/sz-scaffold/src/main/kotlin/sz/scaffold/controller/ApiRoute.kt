@@ -37,6 +37,8 @@ data class ApiRoute(val method: HttpMethod,
                     val controllerFun: KFunction<*>,
                     val defaults: Map<String, String>) {
 
+    private val interceptorList: List<Interceptor> = Interceptor.buildOf(controllerFun)
+
     fun addToRoute(router: Router) {
         router.route(method, path).blockingHandler({ routingContext ->
             callApi(routingContext)
@@ -53,8 +55,8 @@ data class ApiRoute(val method: HttpMethod,
         // 在此, 需要先检查控制器方法需要的参数, 在 query parameters 和 default 参数列表 里是否都存在
 
         val missingParameters = this.controllerFun.parameters
-                .filter { !it.isOptional && it.kind == KParameter.Kind.VALUE }      // 排除掉控制器方法的可选参数和 实例() 参数
-                .filter { !paramDatas.containsKey(it.name) && !this.defaults.containsKey(it.name) }
+            .filter { !it.isOptional && it.kind == KParameter.Kind.VALUE }      // 排除掉控制器方法的可选参数和 实例() 参数
+            .filter { !paramDatas.containsKey(it.name) && !this.defaults.containsKey(it.name) }
 
         if (missingParameters.isNotEmpty()) {
             // 说明缺少参数
@@ -186,25 +188,29 @@ data class ApiRoute(val method: HttpMethod,
     }
 
     private fun buildWrappedAction(httpContext: RoutingContext, args: Map<KParameter, Any?>): Action<*> {
-        val actionAnnos = controllerFun.annotations.filter {
-            val ano = controllerFun.javaMethod!!.getAnnotation(it.annotationClass.java)
-            return@filter ano.annotationClass.findAnnotation<WithAction>() != null
-        }.reversed()
-        var resultAction: Action<*> = Action.WrapperAction<Any> {
-            return@WrapperAction controllerFun.callBy(args)
+//        val actionAnnos = controllerFun.annotations.filter {
+//            val ano = controllerFun.javaMethod!!.getAnnotation(it.annotationClass.java)
+//            return@filter ano.annotationClass.findAnnotation<WithAction>() != null
+//        }.reversed()
+        var delegateAction: Action<*> = Action.wrapperAction<Any> {
+            return@wrapperAction controllerFun.callBy(args)
         }
-        resultAction.setupHttpContext(httpContext)
+        delegateAction.setupHttpContext(httpContext)
 
-        actionAnnos.forEach {
-            val withAnno = it.annotationClass.findAnnotation<WithAction>()!!
-            val actionClass = withAnno.value
-            val actionInstance = actionClass.createInstance() as Action<*>
-            actionInstance.init(it, httpContext, resultAction)
-
-            resultAction = actionInstance
+        this.interceptorList.forEach {
+            delegateAction = it.chainedWith(httpContext, delegateAction)
         }
 
-        return resultAction
+//        actionAnnos.forEach {
+//            val withAnno = it.annotationClass.findAnnotation<WithAction>()!!
+//            val actionClass = withAnno.value
+//            val actionInstance = actionClass.createInstance() as Action<*>
+//            actionInstance.init(it, httpContext, delegateAction)
+//
+//            delegateAction = actionInstance
+//        }
+
+        return delegateAction
     }
 
     override fun toString(): String {
@@ -248,10 +254,10 @@ data class ApiRoute(val method: HttpMethod,
 
         fun RoutingContext.queryParams(defaults: Map<String, String>): Map<String, String> {
             val result = this.request()
-                    .params()
-                    .map { Pair(it.key, it.value) }
-                    .toMap()
-                    .toMutableMap()
+                .params()
+                .map { Pair(it.key, it.value) }
+                .toMap()
+                .toMutableMap()
 
             val shouldAdd = defaults.filter { !result.containsKey(it.key) }
 
@@ -274,11 +280,11 @@ data class ApiRoute(val method: HttpMethod,
 
         fun parseFromFile(routeFile: File): List<ApiRoute> {
             return routeFile.readLines()
-                    .map { it.trim() }
-                    .filter {
-                        // 排除 注释行 和 空行
-                        !it.startsWith("#") && !it.startsWith("//") && it.isNotBlank()
-                    }.map { parse(it) }
+                .map { it.trim() }
+                .filter {
+                    // 排除 注释行 和 空行
+                    !it.startsWith("#") && !it.startsWith("//") && it.isNotBlank()
+                }.map { parse(it) }
         }
 
         fun parse(routeDef: String): ApiRoute {
@@ -289,11 +295,11 @@ data class ApiRoute(val method: HttpMethod,
                 val path = parts[2].trim()
                 val controllerClassPath = parts[3].trim()
                 val defaultArgs = parts[4].trim()
-                        .removePrefix("(")
-                        .removeSuffix(")")
-                        .split(", ")
-                        .map { it.trim() }
-                        .joinToString("\n")
+                    .removePrefix("(")
+                    .removeSuffix(")")
+                    .split(", ")
+                    .map { it.trim() }
+                    .joinToString("\n")
 
                 val controllerClassName = controllerClassPath.split(".").dropLast(1).joinToString(".")
                 val controllerKClazz = loadKClass(controllerClassName)
@@ -311,10 +317,10 @@ data class ApiRoute(val method: HttpMethod,
                 props.load(StringReader(defaultArgs))
 
                 return ApiRoute(method = HttpMethod.valueOf(method),
-                        path = path,
-                        controllerKClass = controllerKClazz,
-                        controllerFun = funList.first(),
-                        defaults = props.map { Pair(it.key.toString(), it.value.toString()) }.toMap())
+                    path = path,
+                    controllerKClass = controllerKClazz,
+                    controllerFun = funList.first(),
+                    defaults = props.map { Pair(it.key.toString(), it.value.toString()) }.toMap())
 
             } else {
                 throw SzException("route definition syntax error: $routeDef")
@@ -326,6 +332,27 @@ data class ApiRoute(val method: HttpMethod,
                 return Application.classLoader.loadClass(className).kotlin
             } catch (ex: ClassNotFoundException) {
                 throw SzException("找不到控制器类: \"$className\"")
+            }
+        }
+    }
+}
+
+internal data class Interceptor(val configAnno: Annotation, val actionClass: KClass<*>) {
+
+    fun chainedWith(httpContext: RoutingContext, delegateAction: Action<*>): Action<*> {
+        val actionInstance = actionClass.createInstance() as Action<*>
+        actionInstance.init(configAnno, httpContext, delegateAction)
+        return actionInstance
+    }
+
+    companion object {
+        fun buildOf(controllerFun: KFunction<*>): List<Interceptor> {
+            return controllerFun.annotations.filter {
+                val ano = controllerFun.javaMethod!!.getAnnotation(it.annotationClass.java)
+                return@filter ano.annotationClass.findAnnotation<WithAction>() != null
+            }.reversed().map {
+                val withAnno = it.annotationClass.findAnnotation<WithAction>()!!
+                Interceptor(it, withAnno.value)
             }
         }
     }
