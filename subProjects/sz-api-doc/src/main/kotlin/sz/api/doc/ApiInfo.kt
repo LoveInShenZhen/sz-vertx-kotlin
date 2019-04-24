@@ -216,8 +216,8 @@ constructor(
         val PostJson = "POST JSON"
         val PostForm = "POST FORM"
         val Get = "GET"
-        val apiTestPath = Application.loadApiRouteFromRouteFiles().find { it.controllerKClass == ApiDoc::class && it.controllerFun.name == "apiTest" }!!.path
-        val pageTestPath = Application.loadApiRouteFromRouteFiles().find { it.controllerKClass == ApiDoc::class && it.controllerFun.name == "pageTest" }!!.path
+        val apiTestPath = Application.loadApiRouteFromRouteFiles().find { it.controllerKClass == ApiDoc::class && it.controllerFun.name == "apiTest" }?.path ?: ""
+        val pageTestPath = Application.loadApiRouteFromRouteFiles().find { it.controllerKClass == ApiDoc::class && it.controllerFun.name == "pageTest" }?.path ?: ""
 
         private fun defaultSampleJson(kClass: KClass<*>): String {
             try {
