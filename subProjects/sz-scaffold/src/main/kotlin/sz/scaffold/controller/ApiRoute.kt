@@ -5,6 +5,7 @@ import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import jodd.exception.ExceptionUtil
+import kotlinx.coroutines.*
 import sz.scaffold.Application
 import sz.scaffold.annotations.PostForm
 import sz.scaffold.annotations.PostJson
@@ -12,6 +13,7 @@ import sz.scaffold.aop.actions.Action
 import sz.scaffold.aop.annotations.WithAction
 import sz.scaffold.controller.profiler.ApiProfiler
 import sz.scaffold.controller.reply.ReplyBase
+import sz.scaffold.coroutines.launchOnVertx
 import sz.scaffold.tools.BizLogicException
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.json.Json
@@ -70,59 +72,63 @@ data class ApiRoute(val method: HttpMethod,
 
         val args = controllerFun.buildCallArgs(apiController, paramDatas)
 
-        val wrapperAction = buildWrappedAction(httpContext, args)
+        GlobalScope.launchOnVertx {
+            coroutineScope {
+                launch(workerDispatcher) {
+                    val wrapperAction = buildWrappedAction(httpContext, args)
+                    // 通过控制器方法的返回类型, 是否是ReplyBase或者其子类型, 来判断是否是 json api 方法
+                    if (controllerFun.returnType.isSubtypeOf(ReplyBase::class.createType())) {
+                        try {
+                            val actionResult = ApiProfiler.runAction(wrapperAction)
+                            if (isJsonpRequest(httpContext, actionResult)) {
+                                onJsonp(httpContext, actionResult!!)
+                            } else if (actionResult is ReplyBase) {
+                                response.putHeader("Content-Type", "application/json; charset=utf-8")
+                                response.write(actionResult.toJsonPretty())
+                            }
+                        } catch (ex: Exception) {
+                            Logger.debug(ExceptionUtil.exceptionStackTraceToString(ex))
+                            val reply = ReplyBase()
+                            val reason = ExceptionUtil.findCause(ex, BizLogicException::class.java)
+                            if (reason != null) {
+                                reply.OnError(reason)
+                            } else {
+                                reply.OnError(ex)
+                            }
+                            if (httpContext.queryParams(mapOf()).containsKey("callback")) {
+                                response.putHeader("Content-Type", "text/javascript; charset=utf-8")
+                                val callback = httpContext.queryParams(mapOf()).getValue("callback")
+                                val body = "$callback(${reply.toJsonPretty()});"
+                                response.write(body)
+                            } else {
+                                response.putHeader("Content-Type", "application/json; charset=utf-8")
+                                response.write(reply.toJsonPretty())
+                            }
+                        }
 
-        // 通过控制器方法的返回类型, 是否是ReplyBase或者其子类型, 来判断是否是 json api 方法
-        if (controllerFun.returnType.isSubtypeOf(ReplyBase::class.createType())) {
-            try {
-                val actionResult = ApiProfiler.runAction(wrapperAction)
-                if (isJsonpRequest(httpContext, actionResult)) {
-                    onJsonp(httpContext, actionResult!!)
-                } else if (actionResult is ReplyBase) {
-                    response.putHeader("Content-Type", "application/json; charset=utf-8")
-                    response.write(actionResult.toJsonPretty())
-                }
-            } catch (ex: Exception) {
-                Logger.debug(ExceptionUtil.exceptionStackTraceToString(ex))
-                val reply = ReplyBase()
-                val reason = ExceptionUtil.findCause(ex, BizLogicException::class.java)
-                if (reason != null) {
-                    reply.OnError(reason)
-                } else {
-                    reply.OnError(ex)
-                }
-                if (httpContext.queryParams(mapOf()).containsKey("callback")) {
-                    response.putHeader("Content-Type", "text/javascript; charset=utf-8")
-                    val callback = httpContext.queryParams(mapOf()).getValue("callback")
-                    val body = "$callback(${reply.toJsonPretty()});"
-                    response.write(body)
-                } else {
-                    response.putHeader("Content-Type", "application/json; charset=utf-8")
-                    response.write(reply.toJsonPretty())
+                    } else {
+                        // 其他普通的 http 请求(非 api 请求)
+                        try {
+                            val result = ApiProfiler.runAction(wrapperAction)
+                            onNormal(httpContext, result)
+
+                        } catch (ex: Exception) {
+                            response.putHeader("Content-Type", "text/plain; charset=utf-8")
+                            val reason = if (ex.cause == null) ex else ex.cause
+                            Logger.debug("非API请求处理发生异常, \n${ExceptionUtil.exceptionChainToString(reason)}")
+                            response.end("${ex.message}\n\n${ExceptionUtil.exceptionChainToString(reason)}")
+                        }
+                    }
+
+                    if (!response.ended()) {
+                        response.end()
+                    }
                 }
             }
-
-        } else {
-            // 其他普通的 http 请求(非 api 请求)
-            try {
-                val result = wrapperAction.call()
-                onNormal(httpContext, result)
-
-            } catch (ex: Exception) {
-                response.putHeader("Content-Type", "text/plain; charset=utf-8")
-                val reason = if (ex.cause == null) ex else ex.cause
-                Logger.debug("非API请求处理发生异常, \n${ExceptionUtil.exceptionChainToString(reason)}")
-                response.end("${ex.message}\n\n${ExceptionUtil.exceptionChainToString(reason)}")
-            }
-
-        }
-
-        if (!response.ended()) {
-            response.end()
         }
     }
 
-    fun isJsonpRequest(httpContext: RoutingContext, result: Any?): Boolean {
+    private fun isJsonpRequest(httpContext: RoutingContext, result: Any?): Boolean {
 
         if (result == null || result == Unit) {
             return false
@@ -187,28 +193,23 @@ data class ApiRoute(val method: HttpMethod,
         }
     }
 
-    private fun buildWrappedAction(httpContext: RoutingContext, args: Map<KParameter, Any?>): Action<*> {
-//        val actionAnnos = controllerFun.annotations.filter {
-//            val ano = controllerFun.javaMethod!!.getAnnotation(it.annotationClass.java)
-//            return@filter ano.annotationClass.findAnnotation<WithAction>() != null
-//        }.reversed()
-        var delegateAction: Action<*> = Action.wrapperAction<Any> {
-            return@wrapperAction controllerFun.callBy(args)
+    private fun wrapperSuspendFunction(controllerFun: KFunction<*>, httpContext: RoutingContext, args: Map<KParameter, Any?>): Action<*> {
+        val action = object : Action<Any>() {
+            override suspend fun call(): Any? {
+                return controllerFun.callSuspendBy(args)
+            }
         }
-        delegateAction.setupHttpContext(httpContext)
+
+        action.setupHttpContext(httpContext)
+        return action
+    }
+
+    private fun buildWrappedAction(httpContext: RoutingContext, args: Map<KParameter, Any?>): Action<*> {
+        var delegateAction = wrapperSuspendFunction(controllerFun, httpContext, args)
 
         this.interceptorList.forEach {
             delegateAction = it.chainedWith(httpContext, delegateAction)
         }
-
-//        actionAnnos.forEach {
-//            val withAnno = it.annotationClass.findAnnotation<WithAction>()!!
-//            val actionClass = withAnno.value
-//            val actionInstance = actionClass.createInstance() as Action<*>
-//            actionInstance.init(it, httpContext, delegateAction)
-//
-//            delegateAction = actionInstance
-//        }
 
         return delegateAction
     }
@@ -333,6 +334,11 @@ data class ApiRoute(val method: HttpMethod,
             } catch (ex: ClassNotFoundException) {
                 throw SzException("找不到控制器类: \"$className\"")
             }
+        }
+
+
+        val workerDispatcher: ExecutorCoroutineDispatcher by lazy {
+            Application.workerPool.asCoroutineDispatcher()
         }
     }
 }

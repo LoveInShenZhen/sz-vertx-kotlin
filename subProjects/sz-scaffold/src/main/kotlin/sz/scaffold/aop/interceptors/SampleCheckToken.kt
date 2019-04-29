@@ -15,7 +15,7 @@ annotation class SampleCheckToken(
 
 class SampleCheckTokenAction : Action<SampleCheckToken>() {
 
-    override fun call(): Any? {
+    override suspend fun call(): Any? {
         Logger.debug(" CheckTokenAction.call() ... token: ${this.config.token}, require roles: [${this.config.roles.joinToString(",")}]")
         // 以下2行是模拟检查token不通过, 直接结束掉当前的request处理.
 //        this.httpContext.response().end("token timeout ...")

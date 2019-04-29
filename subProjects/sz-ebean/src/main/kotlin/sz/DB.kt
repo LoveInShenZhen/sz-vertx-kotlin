@@ -4,13 +4,21 @@ import io.ebean.Ebean
 import io.ebean.EbeanServer
 import io.ebean.TxScope
 import io.ebean.annotation.TxIsolation
+import io.ebeaninternal.server.transaction.DefaultTransactionThreadLocal
+import io.ebeaninternal.server.transaction.TransactionMap
+import kotlinx.coroutines.*
+import org.apache.commons.lang3.reflect.FieldUtils
 import sz.annotations.DBIndexed
+import sz.coroutines.AutoThreadLocalElement
+import sz.coroutines.asAutoContextElement
 import sz.scaffold.ext.camelCaseToLowCaseSeprated
 import sz.scaffold.tools.BizLogicException
 import sz.scaffold.tools.logger.Logger
 import java.math.BigDecimal
 import javax.persistence.Entity
 import javax.persistence.Table
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.reflect.full.memberProperties
 
 internal class IndexInfo(var indexName: String) {
@@ -125,9 +133,9 @@ class DbIndex(private val dbServer: EbeanServer) {
 
     private fun getIndexedFieldNames(modelClass: Class<*>): Set<String> {
         return modelClass.kotlin.memberProperties
-                .filter { it.annotations.filter { it is DBIndexed }.isNotEmpty() }
-                .map { it.name.camelCaseToLowCaseSeprated('_') }
-                .toSet()
+            .filter { it.annotations.filter { it is DBIndexed }.isNotEmpty() }
+            .map { it.name.camelCaseToLowCaseSeprated('_') }
+            .toSet()
     }
 
     private fun getIndexedColumns(tableName: String): Map<String, String> {
@@ -152,9 +160,9 @@ class DbIndex(private val dbServer: EbeanServer) {
                 // 对应的字段索引不存在
                 val idx_name = String.format("idx_%s_%s", tableName, fieldName)
                 val create_sql = String.format("CREATE INDEX `%s` ON `%s` (`%s`);",
-                        idx_name,
-                        tableName,
-                        fieldName)
+                    idx_name,
+                    tableName,
+                    fieldName)
                 sb.append(create_sql).append("\n")
             }
         }
@@ -188,8 +196,8 @@ class DbIndex(private val dbServer: EbeanServer) {
 
             if (indexInfo.columns.filter { it in indexedFields }.isEmpty()) {
                 sb.append(String.format("DROP INDEX `%s` ON `%s`;\n",
-                        indexInfo.indexName,
-                        tableName))
+                    indexInfo.indexName,
+                    tableName))
             }
         }
 
@@ -221,8 +229,30 @@ object DB {
         val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED)
         return ebserver.executeCall(txScope) { body(ebserver) }
     }
+
+    // 创建一个新的 ebean(事务相关) 协程上下文
+    fun ebeanCoroutineContext(): AutoThreadLocalElement<TransactionMap> {
+        return ebeanTransactionMap.asAutoContextElement(TransactionMap())
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun getThreadLocalTransactionMap(): ThreadLocal<TransactionMap> {
+        val field = FieldUtils.getField(DefaultTransactionThreadLocal::class.java, "local", true)
+        return FieldUtils.readStaticField(field, true) as ThreadLocal<TransactionMap>
+    }
+
+    private val ebeanTransactionMap = getThreadLocalTransactionMap()
 }
 
+fun CoroutineScope.launchWithEbean(context: CoroutineContext = EmptyCoroutineContext,
+                                   block: suspend CoroutineScope.() -> Unit): Job {
+    return this.launch(context = context + DB.ebeanCoroutineContext(), block = block)
+}
+
+fun <T> CoroutineScope.asyncEbean(context: CoroutineContext = EmptyCoroutineContext,
+                                  block: suspend CoroutineScope.() -> T): Deferred<T> {
+    return this.async(context = context + DB.ebeanCoroutineContext(), block = block)
+}
 
 fun BigDecimal?.safeValue(): BigDecimal {
     return this ?: BigDecimal.ZERO
@@ -242,4 +272,46 @@ fun EbeanServer.TableExists(tableName: String): Boolean {
     val rows = this.createSqlQuery("SHOW TABLES").findList()
     val count = rows.count { it.values.first() == tableName }
     return count > 0
+}
+
+suspend fun <R> EbeanServer.callWithTransaction(body: () -> R): R {
+    val db = this
+    return coroutineScope {
+        withContext(this.coroutineContext + DB.ebeanCoroutineContext()) {
+            val tran = db.beginTransaction()
+            try {
+                val result = body()
+                tran.commit()
+                Logger.debug("commit: $tran")
+                return@withContext result
+            } catch (e: Exception) {
+                tran.rollback(e)
+                Logger.debug("rollback(e): $tran")
+                throw e
+            } finally {
+                tran.end()
+            }
+        }
+    }
+}
+
+suspend fun EbeanServer.runWithTransaction(body: () -> Unit) {
+    val db = this
+    coroutineScope {
+        withContext(this.coroutineContext + DB.ebeanCoroutineContext()) {
+            val tran = db.beginTransaction()
+            try {
+                val result = body()
+                tran.commit()
+                Logger.debug("commit: $tran")
+                return@withContext result
+            } catch (e: Exception) {
+                tran.rollback(e)
+                Logger.debug("rollback(e): $tran")
+                throw e
+            } finally {
+                tran.end()
+            }
+        }
+    }
 }

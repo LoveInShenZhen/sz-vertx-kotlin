@@ -17,7 +17,7 @@ object ApiProfiler {
     private val timeThreshold = Application.config.getIntOrElse("app.profiler.api.timeThreshold", 100)
     private val excludeRoutes = Application.config.getStringListOrEmpty("app.profiler.api.excludeRoutes").toSet()
 
-    fun runAction(action: Action<*>): Any? {
+    suspend fun runAction(action: Action<*>): Any? {
         return if (enabled && excludeRoutes.contains(action.httpContext.request().path()).not()) {
             val befor = System.currentTimeMillis()
             val result = action.call()
@@ -32,8 +32,5 @@ object ApiProfiler {
         } else {
             action.call()
         }
-
     }
-
-
 }

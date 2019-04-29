@@ -20,7 +20,7 @@ abstract class Action<out T> {
     val delegate: Action<*>
         get() = _delegate!!
 
-    abstract fun call(): Any?
+    abstract suspend fun call(): Any?
 
     @Suppress("UNCHECKED_CAST")
     fun init(conf: Any, context: RoutingContext, delegateAction: Action<*>) {
@@ -37,7 +37,7 @@ abstract class Action<out T> {
 
         fun <T> wrapperAction(wrappedMethod: () -> Any?): Action<T> {
             return object : Action<T>() {
-                override fun call(): Any? {
+                override suspend fun call(): Any? {
                     return wrappedMethod()
                 }
 

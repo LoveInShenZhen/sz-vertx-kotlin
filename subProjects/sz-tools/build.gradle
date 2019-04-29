@@ -1,4 +1,5 @@
 dependencies {
+    compile("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1")
     compile project(':subProjects:jodd-dependency')
 
     compile(group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.9.8') {

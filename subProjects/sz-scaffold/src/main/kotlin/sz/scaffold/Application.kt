@@ -8,6 +8,7 @@ import io.vertx.core.VertxOptions
 import io.vertx.core.http.HttpMethod
 import io.vertx.core.http.HttpServer
 import io.vertx.core.http.HttpServerOptions
+import io.vertx.core.impl.VertxImpl
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
@@ -28,6 +29,7 @@ import java.io.File
 import java.lang.management.ManagementFactory
 import java.net.InetAddress
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ExecutorService
 
 
 //
@@ -50,6 +52,16 @@ object Application {
                 throw SzException("Application 还没有初始化 vertx")
             }
             return _vertx!!
+        }
+
+    private val vertxImpl: VertxImpl
+        get() {
+            return vertx as VertxImpl
+        }
+
+    val workerPool: ExecutorService
+        get() {
+            return vertxImpl.workerPool
         }
 
     private var _vertoptions: VertxOptions? = null
@@ -84,7 +96,7 @@ object Application {
 
         val confPath = FileNameUtil.concat(appHome, "conf/application.conf")
         if (File(confPath).exists()) {
-            Logger.debug("""System.setProperty("config.file", "conf/application.conf") # confPath = $confPath""")
+            Logger.debug("""System.setProperty("config.file", "conf/application.conf") # application.conf full path = $confPath""")
             System.setProperty("config.file", confPath)
         }
         config = ConfigFactory.load()

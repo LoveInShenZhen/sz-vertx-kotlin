@@ -25,6 +25,12 @@ object SzEbeanConfig {
 
     val hasDbConfiged: Boolean
 
+    private var _hikariConfig: HikariConfig? = null
+    val hikariConfig: HikariConfig
+        get() {
+            return _hikariConfig!!
+        }
+
     init {
         defaultDatasourceName = ebeanConfig.getString("defaultDatasource")
         val dataSources = ebeanConfig.getConfig("dataSources")
@@ -37,8 +43,8 @@ object SzEbeanConfig {
             val dataSourceName = it
             val dataSourceConfig = dataSources.getConfig(it)
             val dataSourceProps = dataSourceConfig.toProperties()
-            val hiDsConfig = HikariConfig(dataSourceProps)
-            val ds = HikariDataSource(hiDsConfig)
+            _hikariConfig = HikariConfig(dataSourceProps)
+            val ds = HikariDataSource(_hikariConfig)
 
             val ebeanServerCfg = ServerConfig()
             ebeanServerCfg.name = dataSourceName
@@ -74,15 +80,15 @@ object SzEbeanConfig {
         return dsConfig.getString("jdbcUrl")
     }
 
-    fun isMySql(dataSource: String = "default") : Boolean {
+    fun isMySql(dataSource: String = "default"): Boolean {
         return jdbcUrl(dataSource).startsWith("jdbc:mysql:")
     }
 
-    fun isH2(dataSource: String = "default") : Boolean {
+    fun isH2(dataSource: String = "default"): Boolean {
         return jdbcUrl(dataSource).startsWith("jdbc:h2:")
     }
 
-    fun isHsqldb(dataSource: String = "default") : Boolean {
+    fun isHsqldb(dataSource: String = "default"): Boolean {
         return jdbcUrl(dataSource).startsWith("jdbc:hsqldb:")
     }
 
@@ -92,9 +98,9 @@ private fun Config.toProperties(): Properties {
     val props = Properties()
     this.root().forEach { key, cfgValue ->
         if (cfgValue.valueType() in arrayOf(ConfigValueType.NUMBER,
-                        ConfigValueType.STRING,
-                        ConfigValueType.BOOLEAN,
-                        ConfigValueType.NULL)) {
+                ConfigValueType.STRING,
+                ConfigValueType.BOOLEAN,
+                ConfigValueType.NULL)) {
             props.setProperty(key, cfgValue.unwrapped().toString())
         }
     }
