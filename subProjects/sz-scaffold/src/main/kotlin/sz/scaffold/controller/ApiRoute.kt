@@ -14,6 +14,7 @@ import sz.scaffold.aop.annotations.WithAction
 import sz.scaffold.controller.profiler.ApiProfiler
 import sz.scaffold.controller.reply.ReplyBase
 import sz.scaffold.coroutines.launchOnVertx
+import sz.scaffold.dispatchers.IDispatcherFactory
 import sz.scaffold.tools.BizLogicException
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.json.Json
@@ -337,8 +338,9 @@ data class ApiRoute(val method: HttpMethod,
         }
 
 
-        val workerDispatcher: ExecutorCoroutineDispatcher by lazy {
-            Application.workerPool.asCoroutineDispatcher()
+        val workerDispatcher: CoroutineDispatcher by lazy {
+            val factory = Class.forName(Application.config.getString("app.httpServer.dispatcher.factory")).newInstance() as IDispatcherFactory
+            factory.build()
         }
     }
 }

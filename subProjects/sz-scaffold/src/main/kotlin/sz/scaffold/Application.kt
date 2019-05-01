@@ -199,10 +199,14 @@ object Application {
 
     }
 
+    fun getFile(relativePath: String): File {
+        return File(FileNameUtil.concat(appHome, relativePath))
+    }
+
     // 从 conf/route 文件, 以及 conf/sub_routes/*.route 子路由文件里加载路由配置
     fun loadApiRouteFromRouteFiles(): List<ApiRoute> {
-        val routeFiles = mutableListOf(File("conf/route"))
-        val subRoutesFolder = File("conf/sub_routes")
+        val routeFiles = mutableListOf(getFile("conf/route"))
+        val subRoutesFolder = getFile("conf/sub_routes")
         if (subRoutesFolder.exists() && subRoutesFolder.isDirectory) {
             val files = subRoutesFolder.walk().filter { it.isFile && it.extension == "route" }
             routeFiles.addAll(files)
@@ -348,11 +352,6 @@ object Application {
         }
 
 
-    }
-
-    fun getFile(relativePath: String): File {
-        val path = FileNameUtil.concat(appHome, relativePath)
-        return File(path)
     }
 
     private fun queryPid(): Long {

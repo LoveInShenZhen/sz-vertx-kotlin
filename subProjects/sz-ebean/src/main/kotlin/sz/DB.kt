@@ -274,43 +274,58 @@ fun EbeanServer.TableExists(tableName: String): Boolean {
     return count > 0
 }
 
-suspend fun <R> EbeanServer.callWithTransaction(body: () -> R): R {
-    val db = this
-    return coroutineScope {
-        withContext(this.coroutineContext + DB.ebeanCoroutineContext()) {
-            val tran = db.beginTransaction()
-            try {
-                val result = body()
-                tran.commit()
-                Logger.debug("commit: $tran")
-                return@withContext result
-            } catch (e: Exception) {
-                tran.rollback(e)
-                Logger.debug("rollback(e): $tran")
-                throw e
-            } finally {
-                tran.end()
+fun EbeanServer.suspend(): SuspendEbeanServer {
+    return SuspendEbeanServer(this)
+}
+
+class SuspendEbeanServer(private val db: EbeanServer) {
+
+    suspend fun <R> callWithTransaction(body: () -> R): R {
+        return db.callWithTransaction(body)
+    }
+
+    suspend fun runWithTransaction(body: () -> Unit) {
+        return db.runWithTransaction(body)
+    }
+
+    private suspend fun <R> EbeanServer.callWithTransaction(body: () -> R): R {
+        val db = this
+        return coroutineScope {
+            withContext(this.coroutineContext + DB.ebeanCoroutineContext()) {
+                val tran = db.beginTransaction()
+                try {
+                    val result = body()
+                    tran.commit()
+                    Logger.debug("commit: $tran")
+                    return@withContext result
+                } catch (e: Exception) {
+                    tran.rollback(e)
+                    Logger.debug("rollback(e): $tran")
+                    throw e
+                } finally {
+                    tran.end()
+                }
             }
         }
     }
-}
 
-suspend fun EbeanServer.runWithTransaction(body: () -> Unit) {
-    val db = this
-    coroutineScope {
-        withContext(this.coroutineContext + DB.ebeanCoroutineContext()) {
-            val tran = db.beginTransaction()
-            try {
-                val result = body()
-                tran.commit()
-                Logger.debug("commit: $tran")
-                return@withContext result
-            } catch (e: Exception) {
-                tran.rollback(e)
-                Logger.debug("rollback(e): $tran")
-                throw e
-            } finally {
-                tran.end()
+    private suspend fun EbeanServer.runWithTransaction(body: () -> Unit) {
+        val db = this
+        coroutineScope {
+            withContext(this.coroutineContext + DB.ebeanCoroutineContext()) {
+                val tran = db.beginTransaction()
+                try {
+                    val result = body()
+                    tran.commit()
+                    Logger.debug("commit: $tran")
+                    return@withContext result
+                } catch (e: Exception) {
+                    tran.rollback(e)
+                    Logger.debug("rollback(e): $tran")
+                    throw e
+                } finally {
+                    tran.end()
+                }
             }
         }
     }
