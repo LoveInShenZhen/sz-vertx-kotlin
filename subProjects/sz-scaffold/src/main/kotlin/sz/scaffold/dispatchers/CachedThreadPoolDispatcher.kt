@@ -16,32 +16,34 @@ import java.util.concurrent.TimeUnit
 class CachedThreadPoolDispatcher : IDispatcherFactory {
 
     override fun build(): CoroutineDispatcher {
-        return cachedThreadPoolWorker
+        return dispatcherInstence
     }
 
-    val corePoolSize: Int
-        get() {
-            return Application.config.getIntOrElse("app.httpServer.dispatcher.corePoolSize", Runtime.getRuntime().availableProcessors().coerceAtLeast(4))
-        }
+    companion object {
+        val corePoolSize: Int
+            get() {
+                return Application.config.getIntOrElse("app.httpServer.dispatcher.corePoolSize", Runtime.getRuntime().availableProcessors().coerceAtLeast(4))
+            }
 
-    val maximumPoolSize:Int
-        get() {
-            return Application.config.getIntOrElse("app.httpServer.dispatcher.maximumPoolSize", corePoolSize * 2)
-        }
+        val maximumPoolSize:Int
+            get() {
+                return Application.config.getIntOrElse("app.httpServer.dispatcher.maximumPoolSize", corePoolSize * 2)
+            }
 
-    // 单位: SECONDS
-    val keepAliveTime:Long
-        get() {
-            return Application.config.getIntOrElse("app.httpServer.dispatcher.keepAliveTime", 60).toLong()
-        }
+        // 单位: SECONDS
+        val keepAliveTime:Long
+            get() {
+                return Application.config.getIntOrElse("app.httpServer.dispatcher.keepAliveTime", 60).toLong()
+            }
 
-    private val cachedThreadPoolWorker: CoroutineDispatcher by lazy {
-        Logger.debug("Create CachedThreadPoolDispatcher: corePoolSize: $corePoolSize, maximumPoolSize: $maximumPoolSize, keepAliveTime: $keepAliveTime seconds")
-        ThreadPoolExecutor(corePoolSize,
-            maximumPoolSize,
-            keepAliveTime,
-            TimeUnit.SECONDS,
-            SynchronousQueue<Runnable>(),
-            ThreadFactoryBuilder().setNameFormat("cached-worker-%d").get()).asCoroutineDispatcher()
+        private val dispatcherInstence: CoroutineDispatcher by lazy {
+            Logger.debug("Create CachedThreadPoolDispatcher: corePoolSize: $corePoolSize, maximumPoolSize: $maximumPoolSize, keepAliveTime: $keepAliveTime seconds")
+            ThreadPoolExecutor(corePoolSize,
+                maximumPoolSize,
+                keepAliveTime,
+                TimeUnit.SECONDS,
+                SynchronousQueue<Runnable>(),
+                ThreadFactoryBuilder().setNameFormat("cached-worker-%d").get()).asCoroutineDispatcher()
+        }
     }
 }

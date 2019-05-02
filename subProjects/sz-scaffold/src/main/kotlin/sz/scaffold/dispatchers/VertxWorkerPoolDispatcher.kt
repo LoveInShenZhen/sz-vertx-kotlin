@@ -9,6 +9,12 @@ import sz.scaffold.Application
 //
 class VertxWorkerPoolDispatcher: IDispatcherFactory {
     override fun build(): CoroutineDispatcher {
-        return Application.workerPool.asCoroutineDispatcher()
+        return dispatcherInstence
+    }
+
+    companion object {
+        private val dispatcherInstence: CoroutineDispatcher by lazy {
+            Application.workerPool.asCoroutineDispatcher()
+        }
     }
 }
