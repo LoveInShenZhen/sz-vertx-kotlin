@@ -194,7 +194,7 @@ object PlanTaskService {
                 try {
                     DB.Default().RunInTransaction {
                         runObj.run()    // 执行任务
-                        val originTask = PlanTask.query().where().idEq(task.id).findOneOrEmpty()
+                        val originTask = PlanTask.finder().query().where().idEq(task.id).findOneOrEmpty()
                         originTask.ifPresent {theTask ->
                             theTask.delete()
                         }
@@ -203,7 +203,7 @@ object PlanTaskService {
                 } catch (ex: Exception) {
                     // 任务执行发生错误, 标记任务状态, 记录
                     DB.Default().RunInTransaction {
-                        val originTask = PlanTask.query().where().idEq(task.id).findOneOrEmpty()
+                        val originTask = PlanTask.finder().query().where().idEq(task.id).findOneOrEmpty()
                         originTask.ifPresent {theTask ->
                             theTask.task_status = TaskStatus.Error.code
                             theTask.remarks = ExceptionUtil.exceptionStackTraceToString(ex)
@@ -213,7 +213,7 @@ object PlanTaskService {
                 }
             } else {
                 DB.Default().RunInTransaction {
-                    val originTask = PlanTask.query().where().idEq(task.id).findOneOrEmpty()
+                    val originTask = PlanTask.finder().query().where().idEq(task.id).findOneOrEmpty()
                     originTask.ifPresent {theTask ->
                         theTask.task_status = TaskStatus.Error.code
                         theTask.remarks = "反序列化任务失败"

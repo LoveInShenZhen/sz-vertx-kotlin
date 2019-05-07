@@ -6,7 +6,8 @@ import io.ebean.TxScope
 import io.ebean.annotation.TxIsolation
 import io.ebeaninternal.server.transaction.DefaultTransactionThreadLocal
 import io.ebeaninternal.server.transaction.TransactionMap
-import kotlinx.coroutines.*
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import org.apache.commons.lang3.reflect.FieldUtils
 import sz.annotations.DBIndexed
 import sz.coroutines.AutoThreadLocalElement
@@ -17,8 +18,7 @@ import sz.scaffold.tools.logger.Logger
 import java.math.BigDecimal
 import javax.persistence.Entity
 import javax.persistence.Table
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.concurrent.getOrSet
 import kotlin.reflect.full.memberProperties
 
 internal class IndexInfo(var indexName: String) {
@@ -215,24 +215,52 @@ object DB {
     }
 
     fun byDataSource(dsName: String): EbeanServer {
+        if (dsName.isBlank()) {
+            return Ebean.getDefaultServer()
+        }
+        if (SzEbeanConfig.ebeanServerConfigs.containsKey(dsName).not()) {
+            throw BizLogicException("""错误的 dataSource name: "$dsName", 请检查 application.conf 或者其他关于 dataSource 的配置项, 参数等等""")
+        }
         return Ebean.getServer(dsName)!!
     }
 
-    fun RunInTransaction(dataSource: String = "", body: (ebeanServer: EbeanServer) -> Unit) {
-        val ebserver = Ebean.getServer(dataSource)
-        val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED)
-        ebserver.execute(txScope) { body(ebserver) }
+    /**
+     * 根据线程上下文, 获取当前正在使用的 EbeanServer 实例
+     */
+    fun byContext(): EbeanServer {
+        return byDataSource(currentDataSource())
     }
 
-    fun <T> RunInTransaction(dataSource: String = "", body: (ebeanServer: EbeanServer) -> T): T {
-        val ebserver = Ebean.getServer(dataSource)
-        val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED)
-        return ebserver.executeCall(txScope) { body(ebserver) }
+    fun RunInTransaction(dataSource: String = "", readOnly: Boolean = false, body: (ebeanServer: EbeanServer) -> Unit) {
+        try {
+            setCurrentDataSource(dataSource)
+            val ebserver = byDataSource(dataSource)
+            val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED).setReadOnly(readOnly)
+            ebserver.execute(txScope) { body(ebserver) }
+        } finally {
+            resetCurrentDataSource()
+        }
     }
 
-    // 创建一个新的 ebean(事务相关) 协程上下文
-    fun ebeanCoroutineContext(): AutoThreadLocalElement<TransactionMap> {
+    fun <T> RunInTransaction(dataSource: String = "", readOnly: Boolean = false, body: (ebeanServer: EbeanServer) -> T): T {
+        try {
+            setCurrentDataSource(dataSource)
+            val ebserver = byDataSource(dataSource)
+            val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED).setReadOnly(readOnly)
+            return ebserver.executeCall(txScope) { body(ebserver) }
+        } finally {
+            resetCurrentDataSource()
+        }
+
+    }
+
+    // 创建一个新的 ebean transaction 协程上下文
+    fun transactionCoroutineContext(): AutoThreadLocalElement<TransactionMap> {
         return ebeanTransactionMap.asAutoContextElement(TransactionMap())
+    }
+
+    fun dataSourceCoroutineContext(dsName: String): AutoThreadLocalElement<String> {
+        return currentDataSourceName.asAutoContextElement(dsName)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -241,31 +269,48 @@ object DB {
         return FieldUtils.readStaticField(field, true) as ThreadLocal<TransactionMap>
     }
 
+    /**
+     * 根据当前线程上下文, 返回正在使用的 数据源的名称
+     */
+    fun currentDataSource(): String {
+        return currentDataSourceName.getOrSet { "" }
+    }
+
+    internal fun setCurrentDataSource(dsName: String) {
+        currentDataSourceName.set(dsName)
+    }
+
+    fun resetCurrentDataSource() {
+        currentDataSourceName.set("")
+    }
+
     private val ebeanTransactionMap = getThreadLocalTransactionMap()
-}
-
-fun CoroutineScope.launchWithEbean(context: CoroutineContext = EmptyCoroutineContext,
-                                   block: suspend CoroutineScope.() -> Unit): Job {
-    return this.launch(context = context + DB.ebeanCoroutineContext(), block = block)
-}
-
-fun <T> CoroutineScope.asyncEbean(context: CoroutineContext = EmptyCoroutineContext,
-                                  block: suspend CoroutineScope.() -> T): Deferred<T> {
-    return this.async(context = context + DB.ebeanCoroutineContext(), block = block)
+    private val currentDataSourceName = ThreadLocal<String>()
 }
 
 fun BigDecimal?.safeValue(): BigDecimal {
     return this ?: BigDecimal.ZERO
 }
 
-fun EbeanServer.RunInTransaction(body: () -> Unit) {
-    val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED)
-    this.execute(txScope, body)
+fun EbeanServer.RunInTransaction(readOnly: Boolean = false, body: () -> Unit) {
+    try {
+        DB.setCurrentDataSource(this.name)
+        val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED).setReadOnly(readOnly)
+        this.execute(txScope, body)
+    } finally {
+        DB.resetCurrentDataSource()
+    }
 }
 
-fun <T> EbeanServer.RunInTransaction(body: () -> T): T {
-    val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED)
-    return this.executeCall(txScope, body)
+fun <T> EbeanServer.RunInTransaction(readOnly: Boolean = false, body: () -> T): T {
+    try {
+        DB.setCurrentDataSource(this.name)
+        val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED).setReadOnly(readOnly)
+        return this.executeCall(txScope, body)
+    } finally {
+        DB.resetCurrentDataSource()
+    }
+
 }
 
 fun EbeanServer.TableExists(tableName: String): Boolean {
@@ -280,19 +325,20 @@ fun EbeanServer.suspend(): SuspendEbeanServer {
 
 class SuspendEbeanServer(private val db: EbeanServer) {
 
-    suspend fun <R> callWithTransaction(body: () -> R): R {
-        return db.callWithTransaction(body)
+    suspend fun <R> callWithTransaction(readOnly: Boolean = false, body: () -> R): R {
+        return db.callWithTransaction(readOnly, body)
     }
 
-    suspend fun runWithTransaction(body: () -> Unit) {
-        return db.runWithTransaction(body)
+    suspend fun runWithTransaction(readOnly: Boolean = false, body: () -> Unit) {
+        return db.runWithTransaction(readOnly, body)
     }
 
-    private suspend fun <R> EbeanServer.callWithTransaction(body: () -> R): R {
+    private suspend fun <R> EbeanServer.callWithTransaction(readOnly: Boolean = false, body: () -> R): R {
         val db = this
         return coroutineScope {
-            withContext(this.coroutineContext + DB.ebeanCoroutineContext()) {
-                val tran = db.beginTransaction()
+            withContext(this.coroutineContext + DB.transactionCoroutineContext() + DB.dataSourceCoroutineContext(db.name)) {
+                val tran = db.beginTransaction(TxIsolation.READ_COMMITED)
+                tran.isReadOnly = readOnly
                 try {
                     val result = body()
                     tran.commit()
@@ -309,11 +355,12 @@ class SuspendEbeanServer(private val db: EbeanServer) {
         }
     }
 
-    private suspend fun EbeanServer.runWithTransaction(body: () -> Unit) {
+    private suspend fun EbeanServer.runWithTransaction(readOnly: Boolean = false, body: () -> Unit) {
         val db = this
         coroutineScope {
-            withContext(this.coroutineContext + DB.ebeanCoroutineContext()) {
-                val tran = db.beginTransaction()
+            withContext(this.coroutineContext + DB.transactionCoroutineContext() + DB.dataSourceCoroutineContext(db.name)) {
+                val tran = db.beginTransaction(TxIsolation.READ_COMMITED)
+                tran.isReadOnly = readOnly
                 try {
                     val result = body()
                     tran.commit()

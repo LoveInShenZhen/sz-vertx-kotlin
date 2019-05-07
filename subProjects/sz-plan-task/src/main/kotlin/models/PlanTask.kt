@@ -2,11 +2,11 @@ package models
 
 import io.ebean.ExpressionList
 import io.ebean.Finder
-import io.ebean.Model
 import io.ebean.annotation.WhenCreated
 import io.ebean.annotation.WhenModified
 import jodd.datetime.JDateTime
 import sz.DB
+import sz.EntityBean.BaseModel
 import sz.PlanTaskService
 import sz.RunInTransaction
 import sz.annotations.DBIndexed
@@ -20,7 +20,7 @@ import javax.persistence.*
 //
 @Entity
 @Table(name = "plan_task")
-class PlanTask : Model() {
+class PlanTask : BaseModel() {
 
     @Id
     var id: Long = 0
@@ -59,7 +59,11 @@ class PlanTask : Model() {
     @Column(columnDefinition = "TEXT COMMENT '发生异常情况的时候, 用于记录额外信息'")
     var remarks: String? = null
 
-    companion object : Finder<Long, PlanTask>(PlanTask::class.java) {
+    companion object {
+
+        fun finder(dsName: String = DB.currentDataSource()): Finder<Long, PlanTask> {
+            return BaseModel.finder(dsName)
+        }
 
         fun addTask(task: Runnable, requireSeq: Boolean = false, seqType: String = "", planRunTime: JDateTime? = null, tag: String = "") {
             DB.Default().RunInTransaction {
@@ -81,10 +85,10 @@ class PlanTask : Model() {
         fun addSingletonTask(task: Runnable, requireSeq: Boolean = false, seqType: String = "", planRunTime: JDateTime? = null, tag: String = "") {
             DB.Default().RunInTransaction {
                 val className = task.javaClass.name
-                val oldTasks = query().where()
-                        .eq("class_name", className)
-                        .`in`("task_status", TaskStatus.WaitingInDB.code, TaskStatus.WaitingInQueue.code)
-                        .findList()
+                val oldTasks = finder().query().where()
+                    .eq("class_name", className)
+                    .`in`("task_status", TaskStatus.WaitingInDB.code, TaskStatus.WaitingInQueue.code)
+                    .findList()
 
                 // 先删除在数据库等待的旧任务
                 DB.Default().deleteAll(oldTasks)
@@ -100,14 +104,14 @@ class PlanTask : Model() {
             DB.Default().RunInTransaction {
                 val sql = "update `plan_task` set `task_status`=:init_status where `task_status`=:old_status"
                 DB.Default().createSqlUpdate(sql)
-                        .setParameter("init_status", TaskStatus.WaitingInDB.code)
-                        .setParameter("old_status", TaskStatus.WaitingInQueue.code)
-                        .execute()
+                    .setParameter("init_status", TaskStatus.WaitingInDB.code)
+                    .setParameter("old_status", TaskStatus.WaitingInQueue.code)
+                    .execute()
             }
         }
 
         fun where(): ExpressionList<PlanTask> {
-            return query().where()
+            return finder().query().where()
         }
 
         fun notifyNewTask() {

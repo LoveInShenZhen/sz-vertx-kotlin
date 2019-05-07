@@ -7,7 +7,12 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ebean.EbeanServerFactory
 import io.ebean.config.ServerConfig
+import jodd.introspector.ClassIntrospector
+import sz.SzEbeanConfig.hikariConfigKeys
 import sz.scaffold.Application
+import sz.scaffold.ext.getStringListOrEmpty
+import sz.scaffold.tools.BizLogicException
+import sz.scaffold.tools.json.toJsonPretty
 import sz.scaffold.tools.logger.Logger
 import java.util.*
 
@@ -21,7 +26,7 @@ object SzEbeanConfig {
     private val _ebeanServerConfigs = mutableMapOf<String, ServerConfig>()
 
     val ebeanServerConfigs: Map<String, ServerConfig>
-        get() = _ebeanServerConfigs.toMap()
+        get() = _ebeanServerConfigs
 
     val hasDbConfiged: Boolean
 
@@ -30,6 +35,18 @@ object SzEbeanConfig {
         get() {
             return _hikariConfig!!
         }
+
+    val hikariConfigKeys by lazy {
+        val classDescriptor = ClassIntrospector.get().lookup(HikariConfig::class.java)
+        return@lazy classDescriptor.allPropertyDescriptors.filter {
+            it.writeMethodDescriptor != null && it.writeMethodDescriptor.isPublic
+                && it.readMethodDescriptor != null
+                && (it.readMethodDescriptor.rawReturnType.isPrimitive || it.readMethodDescriptor.rawReturnType == String::class.java)
+        }.map {
+            //            Logger.debug("property: ${it.name} type: ${it.readMethodDescriptor.rawReturnType.name}")
+            it.name
+        }.toSet()
+    }
 
     init {
         defaultDatasourceName = ebeanConfig.getString("defaultDatasource")
@@ -62,6 +79,22 @@ object SzEbeanConfig {
         }
     }
 
+    private val _dataSourceByTagCache = mutableMapOf("" to arrayOf(""))
+    fun dataSourceByTag(tag: String): Array<String> {
+        return _dataSourceByTagCache.getOrPut(tag) {
+            val dataSources = ebeanConfig.getConfig("dataSources")
+            val dsNames = dataSources.root().keys.filter {
+                val config = dataSources.getConfig(it)
+                config.getStringListOrEmpty("tags").toSet().contains(tag)
+            }.toSet().toTypedArray()
+
+            if (dsNames.isEmpty()) {
+                throw BizLogicException("没有匹配此tag: '$tag' 的dataSource, 请检查 application.conf 相关配置")
+            }
+            dsNames
+        }
+    }
+
     private fun modelsOfDatasource(datasourceCfg: Config): Set<String> {
         if (datasourceCfg.hasPath("ebeanModels")) {
             val cfgVal = datasourceCfg.getValue("ebeanModels")
@@ -91,16 +124,12 @@ object SzEbeanConfig {
     fun isHsqldb(dataSource: String = "default"): Boolean {
         return jdbcUrl(dataSource).startsWith("jdbc:hsqldb:")
     }
-
 }
 
 private fun Config.toProperties(): Properties {
     val props = Properties()
     this.root().forEach { key, cfgValue ->
-        if (cfgValue.valueType() in arrayOf(ConfigValueType.NUMBER,
-                ConfigValueType.STRING,
-                ConfigValueType.BOOLEAN,
-                ConfigValueType.NULL)) {
+        if (key in hikariConfigKeys) {
             props.setProperty(key, cfgValue.unwrapped().toString())
         }
     }
