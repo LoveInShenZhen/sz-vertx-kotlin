@@ -235,7 +235,7 @@ object PlanTaskService {
     fun enabled(): Boolean {
         return Application.config.hasPath("service.planTask")
                 && Application.config.getBoolean("service.planTask")
-                && DB.Default().TableExists("plan_task")
+                && DB.Default().tableExists("plan_task")
     }
 
 }
