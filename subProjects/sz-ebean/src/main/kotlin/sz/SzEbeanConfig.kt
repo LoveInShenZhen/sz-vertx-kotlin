@@ -12,7 +12,6 @@ import sz.SzEbeanConfig.hikariConfigKeys
 import sz.scaffold.Application
 import sz.scaffold.ext.getStringListOrEmpty
 import sz.scaffold.tools.BizLogicException
-import sz.scaffold.tools.json.toJsonPretty
 import sz.scaffold.tools.logger.Logger
 import java.util.*
 
@@ -56,6 +55,8 @@ object SzEbeanConfig {
 
     fun loadConfig() {
         val dataSources = ebeanConfig.getConfig("dataSources")
+        val modelClassSet = ebeanModels()
+
         dataSources.root().keys.forEach {
             val dataSourceName = it
             val dataSourceConfig = dataSources.getConfig(it)
@@ -70,7 +71,7 @@ object SzEbeanConfig {
 
             ebeanServerCfg.isDefaultServer = ebeanServerCfg.name == defaultDatasourceName
 
-            val modelClassSet = modelsOfDatasource(dataSourceConfig)
+
             ebeanServerCfg.addModelClasses(modelClassSet)
 
             EbeanServerFactory.create(ebeanServerCfg)
@@ -95,17 +96,32 @@ object SzEbeanConfig {
         }
     }
 
-    private fun modelsOfDatasource(datasourceCfg: Config): Set<String> {
-        if (datasourceCfg.hasPath("ebeanModels")) {
-            val cfgVal = datasourceCfg.getValue("ebeanModels")
-            if (cfgVal.valueType() == ConfigValueType.STRING) {
-                return cfgVal.unwrapped().toString().split(",").map { it.trim() }.toSet()
-            } else {
-                return datasourceCfg.getStringList("ebeanModels").map { it.trim() }.toSet()
-            }
+    @Suppress("UnstableApiUsage")
+    private fun ebeanModels(): Set<Class<*>> {
+        val cfgVal = ebeanConfig.getValue("ebeanModels")
+        val models = if (cfgVal.valueType() == ConfigValueType.STRING) {
+            cfgVal.unwrapped().toString().split(",").map { it.trim() }.toSet()
         } else {
-            return setOf("models.*")
+            ebeanConfig.getStringList("ebeanModels").map { it.trim() }.toSet()
         }
+        val modelClassSet = mutableSetOf<Class<*>>()
+        models.forEach {
+            if (it.endsWith(".*")) {
+                val packagePath = it.dropLast(2)
+                ClassPath.from(Application.classLoader).getTopLevelClassesRecursive(packagePath).forEach { classInfo ->
+                    modelClassSet.add(classInfo.load())
+                }
+            } else {
+                try {
+                    val clazz = Application.classLoader.loadClass(it)
+                    modelClassSet.add(clazz)
+                } catch (ex: Exception) {
+                    Logger.error("Load class: [$it] failed. For reason: ${ex.message}")
+                }
+
+            }
+        }
+        return modelClassSet
     }
 
     fun jdbcUrl(dataSource: String = "default"): String {
@@ -136,22 +152,9 @@ private fun Config.toProperties(): Properties {
     return props
 }
 
-private fun ServerConfig.addModelClasses(modelClasses: Set<String>) {
-    modelClasses.forEach {
-        if (it.endsWith(".*")) {
-            val packagePath = it.dropLast(2)
-            ClassPath.from(Application.classLoader).getTopLevelClassesRecursive(packagePath).forEach { classInfo ->
-                this.addModelClass(classInfo.load())
-            }
-        } else {
-            try {
-                val clazz = Application.classLoader.loadClass(it)
-                this.addModelClass(clazz)
-            } catch (ex: Exception) {
-                Logger.error("Load class: [$it] failed. For reason: ${ex.message}")
-            }
-
-        }
+private fun ServerConfig.addModelClasses(modelClasses: Set<Class<*>>) {
+    modelClasses.forEach { clazz ->
+        this.addModelClass(clazz)
     }
 }
 
@@ -160,6 +163,6 @@ private fun ServerConfig.addModelClass(clazz: Class<*>) {
 //        Logger.debug("add class for ebean server: $clazz")
         this.addClass(clazz)
     } catch (ex: Exception) {
-        Logger.error("ebean.dataSources.${this.name} Cannot register class [${clazz}] in Ebean server. For reason:${ex.message}")
+        Logger.error("ebean.dataSources.${this.name} Cannot register class [${clazz.name}] in Ebean server. For reason:${ex.message}")
     }
 }
