@@ -42,7 +42,6 @@ object SzEbeanConfig {
                 && it.readMethodDescriptor != null
                 && (it.readMethodDescriptor.rawReturnType.isPrimitive || it.readMethodDescriptor.rawReturnType == String::class.java)
         }.map {
-            //            Logger.debug("property: ${it.name} type: ${it.readMethodDescriptor.rawReturnType.name}")
             it.name
         }.toSet()
     }

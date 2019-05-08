@@ -10,6 +10,7 @@ import kotlinx.coroutines.withContext
 import sz.DB
 import sz.scaffold.aop.actions.Action
 import sz.scaffold.aop.annotations.WithAction
+import sz.scaffold.tools.logger.Logger
 
 @WithAction(EbeanTransactionAction::class)
 @Target(AnnotationTarget.FUNCTION)
@@ -22,7 +23,7 @@ annotation class EbeanTransaction(
 class EbeanTransactionAction : Action<EbeanTransaction>() {
 
     override suspend fun call(): Any? {
-//        Logger.debug("将请求的协程上下文包装在Ebean的上下文中")
+        // 将请求的协程上下文包装在Ebean的上下文中
         return coroutineScope {
             withContext(this.coroutineContext + DB.transactionCoroutineContext() + DB.dataSourceCoroutineContext(config.dataSourceName)) {
                 val db = DB.byDataSource(config.dataSourceName)
