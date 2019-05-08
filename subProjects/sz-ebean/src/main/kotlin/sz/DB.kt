@@ -346,7 +346,7 @@ class SuspendEbeanServer(private val db: EbeanServer) {
                     return@withContext result
                 } catch (e: Exception) {
                     tran.rollback(e)
-                    Logger.debug("rollback(e): $tran")
+                    Logger.debug("rollback: $tran for reason: ${e.message}")
                     throw e
                 } finally {
                     tran.end()
