@@ -10,7 +10,6 @@ import kotlinx.coroutines.withContext
 import sz.DB
 import sz.scaffold.aop.actions.Action
 import sz.scaffold.aop.annotations.WithAction
-import sz.scaffold.tools.logger.Logger
 
 @WithAction(EbeanTransactionAction::class)
 @Target(AnnotationTarget.FUNCTION)

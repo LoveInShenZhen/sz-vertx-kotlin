@@ -313,7 +313,7 @@ fun <T> EbeanServer.RunInTransaction(readOnly: Boolean = false, body: () -> T): 
 
 }
 
-fun EbeanServer.TableExists(tableName: String): Boolean {
+fun EbeanServer.tableExists(tableName: String): Boolean {
     val rows = this.createSqlQuery("SHOW TABLES").findList()
     val count = rows.count { it.values.first() == tableName }
     return count > 0
@@ -346,7 +346,7 @@ class SuspendEbeanServer(private val db: EbeanServer) {
                     return@withContext result
                 } catch (e: Exception) {
                     tran.rollback(e)
-                    Logger.debug("rollback: $tran for reason: ${e.message}")
+//                    Logger.debug("rollback: $tran for reason: ${e.message}")
                     throw e
                 } finally {
                     tran.end()
@@ -368,7 +368,7 @@ class SuspendEbeanServer(private val db: EbeanServer) {
                     return@withContext result
                 } catch (e: Exception) {
                     tran.rollback(e)
-                    Logger.debug("rollback(e): $tran")
+//                    Logger.debug("rollback: $tran for reason: ${e.message}")
                     throw e
                 } finally {
                     tran.end()
