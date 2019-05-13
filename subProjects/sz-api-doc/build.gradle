@@ -1,4 +1,0 @@
-dependencies {
-    compile project(':subProjects:sz-scaffold')
-}
-
