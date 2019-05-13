@@ -44,6 +44,17 @@ publishing {
             artifact(tasks["sourcesJar"])
         }
     }
+
+    repositories {
+        var myRepo = "/Users/kk/ssdwork/github/LoveInShenZhen.github.io/repo"
+        System.getProperty("myRepo")?.apply {
+            myRepo = this
+        }
+        maven {
+            name = "myRepo"
+            url = uri("file://$myRepo")
+        }
+    }
 }
 
 ebean {
