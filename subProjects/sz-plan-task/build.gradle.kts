@@ -41,7 +41,7 @@ publishing {
     }
 
     repositories {
-        var myRepo = "/Users/kk/ssdwork/github/LoveInShenZhen.github.io/repo"
+        var myRepo = "/Users/kk/ssdwork/github/kklongming.github.io/repository"
         System.getProperty("myRepo")?.apply {
             myRepo = this
         }
