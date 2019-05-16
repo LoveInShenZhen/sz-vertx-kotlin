@@ -5,7 +5,10 @@ import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import jodd.exception.ExceptionUtil
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import sz.scaffold.Application
 import sz.scaffold.annotations.PostForm
 import sz.scaffold.annotations.PostJson
@@ -43,9 +46,11 @@ data class ApiRoute(val method: HttpMethod,
     private val interceptorList: List<Interceptor> = Interceptor.buildOf(controllerFun)
 
     fun addToRoute(router: Router) {
-        router.route(method, path).blockingHandler({ routingContext ->
-            callApi(routingContext)
-        }, false)
+//        router.route(method, path).blockingHandler({ routingContext ->
+//            callApi(routingContext)
+//        }, false)
+        // callApi(routingContext) will run on event loop
+        router.route(method, path).handler { routingContext -> callApi(routingContext) }
     }
 
     private fun callApi(httpContext: RoutingContext) {
