@@ -97,9 +97,9 @@ data class ApiRoute(val method: HttpMethod,
                             val reply = ReplyBase()
                             val reason = ExceptionUtil.findCause(ex, BizLogicException::class.java)
                             if (reason != null) {
-                                reply.OnError(reason)
+                                reply.onError(reason)
                             } else {
-                                reply.OnError(ex)
+                                reply.onError(ex)
                             }
                             if (httpContext.queryParams(mapOf()).containsKey("callback")) {
                                 response.putHeader("Content-Type", "text/javascript; charset=utf-8")

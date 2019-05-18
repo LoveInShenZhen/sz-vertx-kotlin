@@ -7,6 +7,14 @@ import java.net.URLDecoder
 //
 // Created by kk on 17/8/16.
 //
+
+object ContentTypes {
+    val Text = "text/plain; charset=utf-8"
+    val Html = "text/html; charset=utf-8"
+    val Json = "application/json; charset=utf-8"
+    val JavaScript = "text/javascript; charset=utf-8"
+}
+
 open class ApiController {
 
     private var _context: RoutingContext? = null

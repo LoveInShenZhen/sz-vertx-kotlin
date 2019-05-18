@@ -75,6 +75,7 @@ constructor(
         replyInfo.name = "reply"
         replyInfo.desc = ""
         replyInfo.type = JsonDataType.OBJECT.typeName
+        replyInfo.java_type_name = replyClass
 
         postDataSample = if (postDataKClass != null && IsPostJsonApi()) {
             SampleJsonData(postDataKClass)
@@ -199,6 +200,20 @@ constructor(
         }
     }
 
+    fun postJsonSchema() : String {
+//        FieldSchema.resolveFields(Class.forName(this.replyClass).kotlin, replyInfo)
+        val jsonSchema = FieldSchema()
+        jsonSchema.level = 0
+        jsonSchema.name = "Post Json Schema"
+        jsonSchema.desc = ""
+        jsonSchema.type = JsonDataType.OBJECT.typeName
+        jsonSchema.java_type_name = this.postDataClass
+
+        FieldSchema.resolveFields(Class.forName(this.postDataClass).kotlin, jsonSchema)
+
+        return jsonSchema.JsonSchema()
+    }
+
     fun pathOfTestPage(): String {
         return if (is_json_api) {
             apiTestPath
@@ -235,10 +250,10 @@ constructor(
             }
             val sampleDataFunc = kClass.memberFunctions
                 .find { it.name == "SampleData" }
-                ?: return "请在 ${kClass.qualifiedName} 实现 fun SampleData() {...}方法\n${defaultSampleJson(kClass)}"
+                ?: return "请在 ${kClass.qualifiedName} 实现 fun SampleData() {...}方法}"
 
             if (sampleDataFunc.parameters.size != 1) {
-                return "请在 ${kClass.qualifiedName} 实现 fun SampleData() {...}方法(无参数)"
+                return "请在 ${kClass.qualifiedName} 实现 fun SampleData() {...}方法,(备注:无参数)"
             }
             val sampleObj = kClass.java.newInstance()
             if (sampleObj != null) {

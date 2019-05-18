@@ -1,6 +1,5 @@
 package sz.scaffold.controller.reply
 
-import com.fasterxml.jackson.databind.JsonNode
 import jodd.exception.ExceptionUtil
 import sz.scaffold.annotations.Comment
 import sz.scaffold.tools.BizLogicException
@@ -18,16 +17,12 @@ open class ReplyBase {
     @Comment("ret=0时, 返回OK, 非0时, 返回错误描述信息")
     var errmsg: String = "OK"
 
-    @Comment("ret 非0时, 附加的错误信息, Json 格式")
-    var errors: JsonNode? = null
-
-    open fun SampleData() {
+    fun SampleData() {
         ret = 0
         errmsg = "OK"
-        errors = null
     }
 
-    fun OnError(ex: Throwable) {
+    fun onError(ex: Throwable) {
         if (ex is BizLogicException) {
             this.ret = ex.ErrCode
             this.errmsg = ex.message!!

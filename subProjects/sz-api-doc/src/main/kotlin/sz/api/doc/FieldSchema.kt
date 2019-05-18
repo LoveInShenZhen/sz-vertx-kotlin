@@ -2,9 +2,11 @@ package sz.api.doc
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import sz.scaffold.annotations.Comment
-import sz.scaffold.tools.json.toJsonPretty
+import sz.scaffold.tools.console.PrettyTree
+import sz.scaffold.tools.console.TreeNode
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.javaType
 
 //
 // Created by kk on 17/8/24.
@@ -25,11 +27,34 @@ class FieldSchema {
     @Comment("字段的Json数据类型")
     var type: String = ""
 
-    @Comment("包含的字段, key: 字段名(name)")
-    var fields: MutableMap<String, FieldSchema>? = mutableMapOf()
+    @Comment("字段对应的java类型名称")
+    var java_type_name: String = ""
 
-    fun JsonSchema():String {
-        return this.toJsonPretty()
+    @Comment("包含的字段, key: 字段名(name)")
+    var fields: MutableMap<String, FieldSchema> = mutableMapOf()
+
+    fun nodeText(): String {
+        return "$name: $desc [$type]"
+    }
+
+    fun handleNode(fieldSchema: FieldSchema, node: TreeNode) {
+        fieldSchema.fields.forEach { item ->
+            val schema = item.value
+            if (schema.fields.isEmpty()) {
+                node.children.add(TreeNode(item.value.nodeText()))
+            } else {
+                val objNode = TreeNode(item.value.nodeText())
+                node.children.add(objNode)
+                handleNode(schema, objNode)
+            }
+        }
+    }
+
+    fun JsonSchema(): String {
+        val root = TreeNode(nodeText())
+        handleNode(this, root)
+        val prettyTree = PrettyTree(root)
+        return prettyTree.prettyTxt()
     }
 
     companion object {
@@ -41,8 +66,9 @@ class FieldSchema {
                 propSchema.name = it.name
                 propSchema.desc = propertyDesc(it.annotations)
                 propSchema.type = jsonType(it.returnType).typeName
+                propSchema.java_type_name = it.returnType.javaType.typeName
 
-                ownnerSchema.fields!!.put(propSchema.name, propSchema)
+                ownnerSchema.fields.put(propSchema.name, propSchema)
 
                 if (isList(it.returnType) || isArray(it.returnType)) {
                     val elementKClass = listElementType(it.returnType).kotlin
@@ -50,10 +76,11 @@ class FieldSchema {
                     val elementSchema = FieldSchema()
                     elementSchema.level = propSchema.level + 1
                     elementSchema.name = "element"
-                    elementSchema.desc = "Element of List (or Array)"
+                    elementSchema.desc = "Element of List"
                     elementSchema.type = elementKClass.simpleName!!
+                    elementSchema.java_type_name = elementKClass.java.typeName
 
-                    propSchema.fields!!.put(elementSchema.name, elementSchema)
+                    propSchema.fields.put(elementSchema.name, elementSchema)
 
                     if (elementSchema.level < maxLevel && isSimpleObject(elementKClass)) {
                         resolveFields(elementKClass, elementSchema)
@@ -67,6 +94,7 @@ class FieldSchema {
                     keySchema.name = "key"
                     keySchema.desc = "Key of Map"
                     keySchema.type = keyKClass.simpleName!!
+                    keySchema.java_type_name = keyKClass.java.typeName
 
                     val valueKClass = mapValueType(it.returnType).kotlin
                     val valueSchema = FieldSchema()
@@ -74,9 +102,10 @@ class FieldSchema {
                     valueSchema.name = "value"
                     valueSchema.desc = "Value of Map"
                     valueSchema.type = valueKClass.simpleName!!
+                    valueSchema.java_type_name = valueKClass.java.typeName
 
-                    propSchema.fields!!.put(keySchema.name, keySchema)
-                    propSchema.fields!!.put(valueSchema.name, valueSchema)
+                    propSchema.fields.put(keySchema.name, keySchema)
+                    propSchema.fields.put(valueSchema.name, valueSchema)
 
                     if (valueSchema.level < maxLevel && isSimpleObject(valueKClass)) {
                         resolveFields(valueKClass, valueSchema)
@@ -84,7 +113,7 @@ class FieldSchema {
                 }
 
                 if (isBasicType(it.returnType)) {
-                    propSchema.fields = null
+                    propSchema.fields.clear()
                 }
             }
         }
