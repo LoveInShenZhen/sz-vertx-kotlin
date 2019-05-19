@@ -18,6 +18,7 @@ import io.vertx.spi.cluster.zookeeper.ZookeeperClusterManager
 import jodd.exception.ExceptionUtil
 import jodd.io.FileNameUtil
 import jodd.io.FileUtil
+import jodd.system.SystemInfo
 import jodd.util.ClassLoaderUtil
 import org.apache.commons.lang3.SystemUtils
 import sz.scaffold.controller.ApiRoute
@@ -329,8 +330,17 @@ object Application {
             }
         }.toMap()
 
-        return HttpServerOptions(JsonObject(cfgMap))
+        val httpServerOptions =  HttpServerOptions(JsonObject(cfgMap))
+        if (SystemInfo().isLinux) {
+            // Vert.x can run with native transports (when available) on BSD (OSX) and Linux:
+            // 参考: https://vertx.io/docs/vertx-core/kotlin/#_native_transports
+            httpServerOptions.isTcpFastOpen = config.getBoolean("app.httpServer.networkOptions.tcpFastOpen")
+            httpServerOptions.isTcpCork = config.getBoolean("app.httpServer.networkOptions.tcpCork")
+            httpServerOptions.isTcpQuickAck = config.getBoolean("app.httpServer.networkOptions.tcpQuickAck")
+            httpServerOptions.isReusePort = config.getBoolean("app.httpServer.networkOptions.reusePort")
+        }
 
+        return httpServerOptions
     }
 
     private fun bodyHandlerOptions(): BodyHandlerOptions {

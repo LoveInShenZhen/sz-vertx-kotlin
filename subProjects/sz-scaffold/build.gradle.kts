@@ -22,6 +22,9 @@ dependencies {
     api("io.vertx:vertx-lang-kotlin-coroutines:3.7.0") {
         this.exclude(group = "org.jetbrains.kotlin")
     }
+    // 参考: https://vertx.io/docs/vertx-core/kotlin/#_native_transports
+    api(group = "io.netty", name = "netty-transport-native-epoll", version = "4.1.15.Final", classifier = "linux-x86_64")
+
 
     api("com.google.guava:guava:27.0-jre")
     api("org.freemarker:freemarker:2.3.23")

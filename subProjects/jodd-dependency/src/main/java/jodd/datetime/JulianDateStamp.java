@@ -299,7 +299,7 @@ public class JulianDateStamp implements Serializable, Cloneable {
 
 	/**
 	 * Returns Reduced Julian Date (RJD), used by astronomers.
-	 * RJD = JD − 2400000
+	 * RJD = JD - 2400000
 	 */
 	public JulianDateStamp getReducedJulianDate() {
 		return new JulianDateStamp(integer - 2400000, fraction);
@@ -311,7 +311,7 @@ public class JulianDateStamp implements Serializable, Cloneable {
 
 	/**
 	 * Returns Modified Julian Date (MJD), where date starts from midnight rather than noon.
-	 * RJD = JD − 2400000.5
+	 * RJD =JD − 2400000.5
 	 */
 	public JulianDateStamp getModifiedJulianDate() {
 		return new JulianDateStamp(integer - 2400000, fraction - 0.5);
