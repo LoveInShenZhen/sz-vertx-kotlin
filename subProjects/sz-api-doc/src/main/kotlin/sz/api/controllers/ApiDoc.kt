@@ -27,6 +27,7 @@ class ApiDoc : ApiController() {
         return html
     }
 
+    @Comment("非 api 的 http 路由列表")
     fun pageIndex(): String {
         val apis = DefinedApis(this.httpContext.request().host(), false)
         val html = ResourceTemplate.process(DefinedApis::class.java, "/ApiDocTemplates/ApiIndex.html", apis)
