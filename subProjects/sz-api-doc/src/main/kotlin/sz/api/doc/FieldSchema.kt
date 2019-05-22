@@ -113,7 +113,6 @@ class FieldSchema {
                 } else if (isBasicType(it.returnType)) {
                     propSchema.fields.clear()
                 } else {
-                    Logger.debug(propSchema.java_type_name)
                     resolveFields(Application.classLoader.loadClass(propSchema.java_type_name).kotlin, propSchema)
                 }
             }
