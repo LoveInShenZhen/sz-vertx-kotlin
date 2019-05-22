@@ -17,9 +17,15 @@ open class ReplyBase {
     @Comment("ret=0时, 返回OK, 非0时, 返回错误描述信息")
     var errmsg: String = "OK"
 
-    fun SampleData() {
-        ret = 0
-        errmsg = "OK"
+    open fun SampleData() {
+        if (this.javaClass.name == ReplyBase::class.java.name) {
+            ret = 0
+            errmsg = "OK"
+        } else {
+            // 是子类, 提示研发工程师override 实现此方法, 配合自动生成文档接口中的sample数据
+            ret = -1
+            errmsg = "请在 ${this.javaClass.name} 实现 override fun SampleData() {...} 方法, 配合自动生成文档接口中的sample数据"
+        }
     }
 
     fun onError(ex: Throwable) {

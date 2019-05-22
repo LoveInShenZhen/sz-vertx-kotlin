@@ -1,9 +1,11 @@
 package sz.api.doc
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import sz.scaffold.Application
 import sz.scaffold.annotations.Comment
 import sz.scaffold.tools.console.PrettyTree
 import sz.scaffold.tools.console.TreeNode
+import sz.scaffold.tools.logger.Logger
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.javaType
@@ -85,9 +87,7 @@ class FieldSchema {
                     if (elementSchema.level < maxLevel && isSimpleObject(elementKClass)) {
                         resolveFields(elementKClass, elementSchema)
                     }
-                }
-
-                if (isMap(it.returnType)) {
+                } else if (isMap(it.returnType)) {
                     val keyKClass = mapKeyType(it.returnType).kotlin
                     val keySchema = FieldSchema()
                     keySchema.level = propSchema.level + 1
@@ -110,10 +110,11 @@ class FieldSchema {
                     if (valueSchema.level < maxLevel && isSimpleObject(valueKClass)) {
                         resolveFields(valueKClass, valueSchema)
                     }
-                }
-
-                if (isBasicType(it.returnType)) {
+                } else if (isBasicType(it.returnType)) {
                     propSchema.fields.clear()
+                } else {
+                    Logger.debug(propSchema.java_type_name)
+                    resolveFields(Application.classLoader.loadClass(propSchema.java_type_name).kotlin, propSchema)
                 }
             }
         }

@@ -111,15 +111,21 @@ fun isBasicType(kClass: KClass<*>): Boolean {
 fun isBasicType(kType: KType):Boolean{
     val rawType = ClassUtil.getRawType(kType.javaType)
     return isOneOfTypes(rawType,
-            Int::class.java,
-            Number::class.java,
-            CharSequence::class.java,
-            LocalDate::class.java,
-            LocalDateTime::class.java,
-            LocalTime::class.java,
-            Date::class.java,
-            java.sql.Date::class.java,
-            Calendar::class.java)
+        Byte::class.java,
+        Short::class.java,
+        Byte::class.java,
+        Int::class.java,
+        Long::class.java,
+        Float::class.java,
+        Double::class.java,
+        Number::class.java,
+        CharSequence::class.java,
+        LocalDate::class.java,
+        LocalDateTime::class.java,
+        LocalTime::class.java,
+        Date::class.java,
+        java.sql.Date::class.java,
+        Calendar::class.java)
 }
 
 fun isContainerType(kClass: KClass<*>): Boolean {
