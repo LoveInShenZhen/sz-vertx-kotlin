@@ -21,12 +21,11 @@ import sz.scaffold.dispatchers.IDispatcherFactory
 import sz.scaffold.tools.BizLogicException
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.json.Json
+import sz.scaffold.tools.json.Json.toStrMap
 import sz.scaffold.tools.json.toJsonPretty
 import sz.scaffold.tools.logger.Logger
 import java.io.File
-import java.io.StringReader
 import java.math.BigDecimal
-import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
@@ -295,18 +294,19 @@ data class ApiRoute(val method: HttpMethod,
         }
 
         fun parse(routeDef: String): ApiRoute {
-            val routeRegex = """(GET|POST|HEAD)\s+(/\S*)\s+(\S+)\s*(\(.*\))?$""".toRegex()
+            val routeRegex = """(GET|POST|HEAD)\s+(/\S*)\s+(\S+)\s*(\{.*\})?$""".toRegex()
             if (routeRegex.matches(routeDef)) {
                 val parts = routeRegex.matchEntire(routeDef)!!.groupValues
                 val method = parts[1].trim()
                 val path = parts[2].trim()
                 val controllerClassPath = parts[3].trim()
-                val defaultArgs = parts[4].trim()
-                    .removePrefix("(")
-                    .removeSuffix(")")
-                    .split(", ")
-                    .map { it.trim() }
-                    .joinToString("\n")
+
+                val defaultsPart = parts[4].trim()
+                val defaultArgs = if (defaultsPart.isEmpty()) {
+                    mapOf()
+                } else {
+                    toStrMap(defaultsPart)
+                }
 
                 val controllerClassName = controllerClassPath.split(".").dropLast(1).joinToString(".")
                 val controllerKClazz = loadKClass(controllerClassName)
@@ -320,14 +320,11 @@ data class ApiRoute(val method: HttpMethod,
                     throw SzException("控制器方法不能够重名/重载: $controllerClassPath")
                 }
 
-                val props = Properties()
-                props.load(StringReader(defaultArgs))
-
                 return ApiRoute(method = HttpMethod.valueOf(method),
                     path = path,
                     controllerKClass = controllerKClazz,
                     controllerFun = funList.first(),
-                    defaults = props.map { Pair(it.key.toString(), it.value.toString()) }.toMap())
+                    defaults = defaultArgs)
 
             } else {
                 throw SzException("route definition syntax error: $routeDef")
