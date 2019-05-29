@@ -20,26 +20,26 @@ import kotlin.reflect.jvm.javaType
 //
 class ApiInfo
 constructor(
-    val host: String = "localhost:9000",
+        val host: String = "localhost:9000",
 
-    @Comment("API url")
-    val url: String,
+        @Comment("API url")
+        val url: String,
 
-    @Comment("API http method: GET or POST")
-    val httpMethod: String,
+        @Comment("API http method: GET or POST")
+        val httpMethod: String,
 
-    @Comment("API 对应的 Controller 类名称")
-    val controllerClass: String,
+        @Comment("API 对应的 Controller 类名称")
+        val controllerClass: String,
 
-    @Comment("API 对应的 Controller 类下的方法名称")
-    val methodName: String,
+        @Comment("API 对应的 Controller 类下的方法名称")
+        val methodName: String,
 
-    replyKClass: KClass<*>,
+        replyKClass: KClass<*>,
 
-    postDataKClass: KClass<*>?,
+        postDataKClass: KClass<*>?,
 
-    @Comment("为true表示是api, 否则是普通http链接")
-    val is_json_api: Boolean) {
+        @Comment("为true表示是api, 否则是普通http链接")
+        val is_json_api: Boolean) {
 
     @Comment("返回Replay 对应的 java class name")
     var replyClass: String = ""
@@ -85,7 +85,11 @@ constructor(
 
         replySampleData = SampleJsonData(replyKClass)
 
-        analyse()
+        try {
+            analyse()
+        } catch (ex: Exception) {
+            Logger.debug("analyes:WARN ${this.url} Abnormal")
+        }
     }
 
     fun toMarkdownStr(str: String): String {
@@ -115,17 +119,17 @@ constructor(
         }
 
         this.params = method.parameters
-            .filter { it.name != null }
-            .map {
-                var paramDesc = ""
-                val paramComment = it.annotations.find { it is Comment }
-                if (paramComment != null && paramComment is Comment) {
-                    paramDesc = paramComment.value
+                .filter { it.name != null }
+                .map {
+                    var paramDesc = ""
+                    val paramComment = it.annotations.find { it is Comment }
+                    if (paramComment != null && paramComment is Comment) {
+                        paramDesc = paramComment.value
+                    }
+                    ParameterInfo(name = it.name!!,
+                            desc = paramDesc,
+                            type = it.type.javaType.typeName.split(".").last())
                 }
-                ParameterInfo(name = it.name!!,
-                    desc = paramDesc,
-                    type = it.type.javaType.typeName.split(".").last())
-            }
 
 //        val jsonApiAnno = method.annotations.find { it is JsonApi } as JsonApi
 //
@@ -165,17 +169,17 @@ constructor(
     fun PostFormFieldInfos(): List<ParameterInfo> {
         if (this.IsPostFormApi() && this.postDataClass.isNotBlank()) {
             return Class.forName(this.postDataClass).kotlin.memberProperties
-                .filter { it.visibility == KVisibility.PUBLIC && it.findAnnotation<JsonIgnore>() == null }
-                .map {
-                    var paramDesc = ""
-                    val paramComment = it.annotations.find { it is Comment }
-                    if (paramComment != null && paramComment is Comment) {
-                        paramDesc = paramComment.value
+                    .filter { it.visibility == KVisibility.PUBLIC && it.findAnnotation<JsonIgnore>() == null }
+                    .map {
+                        var paramDesc = ""
+                        val paramComment = it.annotations.find { it is Comment }
+                        if (paramComment != null && paramComment is Comment) {
+                            paramDesc = paramComment.value
+                        }
+                        ParameterInfo(name = it.name,
+                                desc = paramDesc,
+                                type = it.returnType.javaType.typeName.split(".").last())
                     }
-                    ParameterInfo(name = it.name,
-                        desc = paramDesc,
-                        type = it.returnType.javaType.typeName.split(".").last())
-                }
         } else {
             return emptyList()
         }
@@ -184,23 +188,23 @@ constructor(
     fun PostJsonFieldInfos(): List<ParameterInfo> {
         if (this.IsPostJsonApi() && this.postDataClass.isNotBlank()) {
             return Class.forName(this.postDataClass).kotlin.memberProperties
-                .filter { it.visibility == KVisibility.PUBLIC && it.findAnnotation<JsonIgnore>() == null }
-                .map {
-                    var paramDesc = ""
-                    val paramComment = it.annotations.find { it is Comment }
-                    if (paramComment != null && paramComment is Comment) {
-                        paramDesc = paramComment.value
+                    .filter { it.visibility == KVisibility.PUBLIC && it.findAnnotation<JsonIgnore>() == null }
+                    .map {
+                        var paramDesc = ""
+                        val paramComment = it.annotations.find { it is Comment }
+                        if (paramComment != null && paramComment is Comment) {
+                            paramDesc = paramComment.value
+                        }
+                        ParameterInfo(name = it.name,
+                                desc = paramDesc,
+                                type = it.returnType.javaType.typeName.split(".").last())
                     }
-                    ParameterInfo(name = it.name,
-                        desc = paramDesc,
-                        type = it.returnType.javaType.typeName.split(".").last())
-                }
         } else {
             return emptyList()
         }
     }
 
-    fun postJsonSchema() : String {
+    fun postJsonSchema(): String {
 //        FieldSchema.resolveFields(Class.forName(this.replyClass).kotlin, replyInfo)
         val jsonSchema = FieldSchema()
         jsonSchema.level = 0
@@ -231,8 +235,10 @@ constructor(
         val PostJson = "POST JSON"
         val PostForm = "POST FORM"
         val Get = "GET"
-        val apiTestPath = Application.loadApiRouteFromRouteFiles().find { it.controllerKClass == ApiDoc::class && it.controllerFun.name == "apiTest" }?.path ?: ""
-        val pageTestPath = Application.loadApiRouteFromRouteFiles().find { it.controllerKClass == ApiDoc::class && it.controllerFun.name == "pageTest" }?.path ?: ""
+        val apiTestPath = Application.loadApiRouteFromRouteFiles().find { it.controllerKClass == ApiDoc::class && it.controllerFun.name == "apiTest" }?.path
+                ?: ""
+        val pageTestPath = Application.loadApiRouteFromRouteFiles().find { it.controllerKClass == ApiDoc::class && it.controllerFun.name == "pageTest" }?.path
+                ?: ""
 
         private fun defaultSampleJson(kClass: KClass<*>): String {
             try {
@@ -249,8 +255,8 @@ constructor(
                 return "没有在@PostJson 注解里指定 PostJson 对应的Class, 请自行脑补需要Post的 json"
             }
             val sampleDataFunc = kClass.memberFunctions
-                .find { it.name == "SampleData" }
-                ?: return "请在 ${kClass.qualifiedName} 实现 fun SampleData() {...}方法}"
+                    .find { it.name == "SampleData" }
+                    ?: return "请在 ${kClass.qualifiedName} 实现 fun SampleData() {...}方法}"
 
             if (sampleDataFunc.parameters.size != 1) {
                 return "请在 ${kClass.qualifiedName} 实现 fun SampleData() {...}方法,(备注:无参数)"
