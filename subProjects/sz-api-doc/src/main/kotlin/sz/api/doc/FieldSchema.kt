@@ -9,6 +9,8 @@ import sz.scaffold.tools.logger.Logger
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.javaType
+import kotlin.reflect.jvm.jvmErasure
+import kotlin.reflect.jvm.jvmName
 
 //
 // Created by kk on 17/8/24.
@@ -29,8 +31,8 @@ class FieldSchema {
     @Comment("字段的Json数据类型")
     var type: String = ""
 
-    @Comment("字段对应的java类型名称")
-    var java_type_name: String = ""
+    @Comment("字段对应的kotlin类型")
+    var kotlin_class: KClass<*>? = null
 
     @Comment("包含的字段, key: 字段名(name)")
     var fields: MutableMap<String, FieldSchema> = mutableMapOf()
@@ -68,7 +70,7 @@ class FieldSchema {
                 propSchema.name = it.name
                 propSchema.desc = propertyDesc(it.annotations)
                 propSchema.type = jsonType(it.returnType).typeName
-                propSchema.java_type_name = it.returnType.javaType.typeName
+                propSchema.kotlin_class = it.returnType.jvmErasure //it.returnType.javaType.typeName
 
                 ownnerSchema.fields.put(propSchema.name, propSchema)
 
@@ -80,7 +82,7 @@ class FieldSchema {
                     elementSchema.name = "element"
                     elementSchema.desc = "Element of List"
                     elementSchema.type = elementKClass.simpleName!!
-                    elementSchema.java_type_name = elementKClass.java.typeName
+                    elementSchema.kotlin_class = elementKClass //elementKClass.java.typeName
 
                     propSchema.fields.put(elementSchema.name, elementSchema)
 
@@ -94,7 +96,7 @@ class FieldSchema {
                     keySchema.name = "key"
                     keySchema.desc = "Key of Map"
                     keySchema.type = keyKClass.simpleName!!
-                    keySchema.java_type_name = keyKClass.java.typeName
+                    keySchema.kotlin_class = keyKClass //keyKClass.java.typeName
 
                     val valueKClass = mapValueType(it.returnType).kotlin
                     val valueSchema = FieldSchema()
@@ -102,7 +104,7 @@ class FieldSchema {
                     valueSchema.name = "value"
                     valueSchema.desc = "Value of Map"
                     valueSchema.type = valueKClass.simpleName!!
-                    valueSchema.java_type_name = valueKClass.java.typeName
+                    valueSchema.kotlin_class = valueKClass //valueKClass.java.typeName
 
                     propSchema.fields.put(keySchema.name, keySchema)
                     propSchema.fields.put(valueSchema.name, valueSchema)
@@ -113,7 +115,8 @@ class FieldSchema {
                 } else if (isBasicType(it.returnType)) {
                     propSchema.fields.clear()
                 } else {
-                    resolveFields(Application.classLoader.loadClass(propSchema.java_type_name).kotlin, propSchema)
+
+                    resolveFields(propSchema.kotlin_class!!, propSchema)
                 }
             }
         }

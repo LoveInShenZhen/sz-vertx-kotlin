@@ -75,7 +75,7 @@ constructor(
         replyInfo.name = "reply"
         replyInfo.desc = ""
         replyInfo.type = JsonDataType.OBJECT.typeName
-        replyInfo.java_type_name = replyClass
+        replyInfo.kotlin_class = replyKClass
 
         postDataSample = if (postDataKClass != null && IsPostJsonApi()) {
             SampleJsonData(postDataKClass)
@@ -207,7 +207,7 @@ constructor(
         jsonSchema.name = "Post Json Schema"
         jsonSchema.desc = ""
         jsonSchema.type = JsonDataType.OBJECT.typeName
-        jsonSchema.java_type_name = this.postDataClass
+        jsonSchema.kotlin_class = Class.forName(this.postDataClass).kotlin
 
         FieldSchema.resolveFields(Class.forName(this.postDataClass).kotlin, jsonSchema)
 
