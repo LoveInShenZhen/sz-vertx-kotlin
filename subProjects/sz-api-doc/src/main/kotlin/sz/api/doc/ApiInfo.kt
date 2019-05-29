@@ -88,7 +88,7 @@ constructor(
         try {
             analyse()
         } catch (ex: Exception) {
-            Logger.debug("analyes:WARN ${this.url} Abnormal")
+            Logger.warn("ApiInfo analyse:WARN ${this.url} Abnormal")
         }
     }
 
