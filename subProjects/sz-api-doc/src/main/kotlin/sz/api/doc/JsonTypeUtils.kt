@@ -1,5 +1,6 @@
 package sz.api.doc
 
+import jodd.datetime.JDateTime
 import jodd.util.ClassUtil
 import org.apache.commons.lang3.reflect.TypeUtils
 import java.time.LocalDate
@@ -125,6 +126,7 @@ fun isBasicType(kClass: KClass<*>): Boolean {
         LocalTime::class.java,
         Date::class.java,
         java.sql.Date::class.java,
+        JDateTime::class.java,
         Calendar::class.java)
 }
 
@@ -152,6 +154,7 @@ fun isBasicType(kType: KType): Boolean {
         LocalTime::class.java,
         Date::class.java,
         java.sql.Date::class.java,
+        JDateTime::class.java,
         Calendar::class.java)
 }
 
