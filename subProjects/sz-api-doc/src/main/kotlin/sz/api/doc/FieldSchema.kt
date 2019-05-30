@@ -32,6 +32,7 @@ class FieldSchema {
     var type: String = ""
 
     @Comment("字段对应的kotlin类型")
+    @JsonIgnore
     var kotlin_class: KClass<*>? = null
 
     @Comment("包含的字段, key: 字段名(name)")
