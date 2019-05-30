@@ -22,7 +22,7 @@ plugins {
 dependencies {
     api(project(":subProjects:sz-scaffold"))
 
-    api("com.zaxxer:HikariCP:3.2.0")
+    api("com.zaxxer:HikariCP:3.3.1")
     api("io.ebean:ebean:11.32.1")
     api("io.ebean:ebean-querybean:11.32.1")
     api("mysql:mysql-connector-java:5.1.46")

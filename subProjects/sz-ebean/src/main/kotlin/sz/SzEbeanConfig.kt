@@ -145,7 +145,10 @@ private fun Config.toProperties(): Properties {
     val props = Properties()
     this.root().forEach { key, cfgValue ->
         if (key in hikariConfigKeys) {
-            props.setProperty(key, cfgValue.unwrapped().toString())
+            val value = cfgValue.unwrapped()
+            if (value != null) {
+                props.setProperty(key, cfgValue.unwrapped().toString())
+            }
         }
     }
     return props
