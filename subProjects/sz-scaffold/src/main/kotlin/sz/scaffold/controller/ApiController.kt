@@ -1,7 +1,10 @@
 package sz.scaffold.controller
 
 import io.vertx.ext.web.RoutingContext
+import jodd.bean.BeanCopy
 import jodd.http.HttpUtil
+import sz.scaffold.tools.json.toJsonNode
+import sz.scaffold.tools.json.toObj
 import java.net.URLDecoder
 
 //
@@ -49,14 +52,25 @@ open class ApiController {
     }
 
     fun formFields(needDecode: Boolean = false, enc: String = "UTF-8"): Map<String, String> {
-        val bodyStr = this.httpContext.getBodyAsString(contentCharset())
-        val form = HttpUtil.parseQuery(bodyStr, false)
-        if (needDecode) {
-            return form.map { Pair<String, String>(it.key, URLDecoder.decode(it.value, enc)) }.toMap()
-        } else {
-            return form.map { Pair<String, String>(it.key, it.value) }.toMap()
-        }
+        return httpContext.request().formAttributes().map {
+            if (needDecode) {
+                Pair<String, String>(it.key, URLDecoder.decode(it.value, enc))
+            } else {
+                Pair<String, String>(it.key,it.value)
+            }
+        }.toMap()
+    }
 
+    inline fun <reified BeanType> postJsonToBean(): BeanType {
+        return this.httpContext.getBodyAsString(contentCharset()).toJsonNode().toObj(BeanType::class.java)
+    }
+
+    inline fun <reified BeanType> postFormToBean(needDecode: Boolean = false, enc: String = "UTF-8"): BeanType {
+        val formMap = formFields(needDecode, enc)
+        val bean = BeanType::class.java.newInstance()
+        val beanCopy = BeanCopy.fromMap(formMap).toBean(bean)
+        beanCopy.copy()
+        return bean
     }
 
     fun redirect(newLocation: String) {

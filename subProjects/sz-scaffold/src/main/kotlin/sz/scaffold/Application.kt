@@ -344,24 +344,12 @@ object Application {
     }
 
     private fun bodyHandlerOptions(): BodyHandlerOptions {
-        val cfgPath = "app.httpServer.bodyHandler"
-        if (config.hasPath(cfgPath)) {
-            val httpCfg = config.getConfig(cfgPath)
-
-            val cfgMap = httpCfg.root().map {
-                if (it.key == "bodyLimit") {
-                    Pair<String, Any>(it.key, it.value.unwrapped().toString().toLong())
-                } else {
-                    Pair<String, Any>(it.key, it.value.unwrapped())
-                }
-            }.toMap()
-
-            return BodyHandlerOptions(JsonObject(cfgMap))
-        } else {
-            return BodyHandlerOptions()
+        return BodyHandlerOptions().apply {
+            this.bodyLimit = config.getLong("app.httpServer.bodyHandler.bodyLimit")
+            this.mergeFormAttributes = config.getBoolean("app.httpServer.bodyHandler.mergeFormAttributes")
+            this.deleteUploadedFilesOnEnd = config.getBoolean("app.httpServer.bodyHandler.deleteUploadedFilesOnEnd")
+            this.uploadsDirectory = FileNameUtil.concat(appHome, config.getString("app.httpServer.bodyHandler.uploadsDirectory"))
         }
-
-
     }
 
     private fun queryPid(): Long {
