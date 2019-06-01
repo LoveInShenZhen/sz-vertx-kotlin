@@ -24,7 +24,7 @@ open class ReplyBase {
         } else {
             // 是子类, 提示研发工程师override 实现此方法, 配合自动生成文档接口中的sample数据
             ret = -1
-            errmsg = "请在 ${this.javaClass.name} 实现 override fun SampleData() {...} 方法, 配合自动生成文档接口中的sample数据"
+            errmsg = "请在 ${this.javaClass.name} 实现 override fun SampleData() { TODO() } 方法, 配合自动生成文档接口中的sample数据"
         }
     }
 
