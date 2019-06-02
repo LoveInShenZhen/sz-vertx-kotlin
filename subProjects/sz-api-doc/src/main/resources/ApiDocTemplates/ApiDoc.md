@@ -11,6 +11,7 @@
 <#list apiInfo.params as param>
 > * **${param.toMarkdownStr(param.name)}** : ${param.type}, ${param.toMarkdownStr(param.desc!)}
 </#list>
+
 <#if apiInfo.IsPostJsonApi() >
 * Post Json Data 样例:
 
