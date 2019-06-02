@@ -226,7 +226,9 @@
             </div>
             <!--Post Form 方式 -->
         </#if>
-
+    <div class="controls">
+        <pre id="errMsg"></pre>
+    </div>
     </fieldset>
 </div>
 <div class='displaynone' id='hf_summit'></div>
@@ -255,6 +257,7 @@
                 } else {
                     var  highLight = Prism.highlight(JSON.stringify(data, null, 2), Prism.languages.json, 'json');
                     $("#response").html(highLight);
+                    showMultipleLinesErrMsg(data);
                 }
 
             }
@@ -263,6 +266,7 @@
 
     function ClearOutput() {
         $("#response").html('<code># 点击 "测试" 按钮, 等待返回结果</code>');
+        $('#errMsg').text('');
     }
 
     function testPostAPI() {
@@ -290,6 +294,7 @@
             success: function (data) {
                 var  highLight = Prism.highlight(JSON.stringify(data, null, 2), Prism.languages.json, 'json');
                 $("#postresponse").html(highLight);
+                showMultipleLinesErrMsg(data);
             }
         });
     }
@@ -308,12 +313,20 @@
             success: function (data) {
                 var  highLight = Prism.highlight(JSON.stringify(data, null, 2), Prism.languages.json, 'json');
                 $("#postresponse").html(highLight);
+                showMultipleLinesErrMsg(data);
             }
         })
     }
 
     function ClearPostOutput() {
         $("#postresponse").html('<code># 点击 "测试" 按钮, 等待返回结果</code>');
+        $('#errMsg').text('');
+    }
+    
+    function showMultipleLinesErrMsg(reply) {
+        if (reply.ret != 0) {
+            $('#errMsg').text(reply.errmsg);
+        }
     }
 
 </script>
