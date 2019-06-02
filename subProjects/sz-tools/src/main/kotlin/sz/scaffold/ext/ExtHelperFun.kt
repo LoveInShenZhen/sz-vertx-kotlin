@@ -2,10 +2,13 @@ package sz.scaffold.ext
 
 import jodd.exception.ExceptionUtil
 import sz.scaffold.tools.logger.AnsiColor
+import java.util.*
 
 //
 // Created by kk on 17/8/24.
 //
+
+val zeroUUID = UUID.fromString("00000000-0000-0000-0000-000000000000")
 
 fun String?.escapeMarkdown(): String {
     if (this.isNullOrBlank()) return ""
