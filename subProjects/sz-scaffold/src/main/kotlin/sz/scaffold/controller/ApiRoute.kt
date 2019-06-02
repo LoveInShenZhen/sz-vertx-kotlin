@@ -75,11 +75,10 @@ data class ApiRoute(val method: HttpMethod,
             return
         }
 
-        val args = controllerFun.buildCallArgs(apiController, paramDatas)
-
         GlobalScope.launchOnVertx {
             coroutineScope {
                 launch(workerDispatcher) {
+                    val args = controllerFun.buildCallArgs(apiController, paramDatas)
                     val wrapperAction = buildWrappedAction(httpContext, args)
                     // 通过控制器方法的返回类型, 是否是ReplyBase或者其子类型, 来判断是否是 json api 方法
                     if (controllerFun.returnType.isSubtypeOf(ReplyBase::class.createType())) {
@@ -125,6 +124,28 @@ data class ApiRoute(val method: HttpMethod,
                         }
                     }
 
+                    if (!response.ended()) {
+                        response.end()
+                    }
+                }.invokeOnCompletion { ex ->
+                    if (ex != null) {
+                        val reply = ReplyBase()
+                        val reason = ExceptionUtil.findCause(ex, BizLogicException::class.java)
+                        if (reason != null) {
+                            reply.onError(reason)
+                        } else {
+                            reply.onError(ex)
+                        }
+                        if (httpContext.queryParams(mapOf()).containsKey("callback")) {
+                            response.putHeader("Content-Type", "text/javascript; charset=utf-8")
+                            val callback = httpContext.queryParams(mapOf()).getValue("callback")
+                            val body = "$callback(${reply.toJsonPretty()});"
+                            response.write(body)
+                        } else {
+                            response.putHeader("Content-Type", "application/json; charset=utf-8")
+                            response.write(reply.toJsonPretty())
+                        }
+                    }
                     if (!response.ended()) {
                         response.end()
                     }
