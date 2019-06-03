@@ -237,6 +237,7 @@
 <script src="http://loveinshenzhen.github.io/prism/prism.js"></script>
 <script type="text/javascript">
     function testAPI() {
+        $('#errMsg').text('');
         var apiurl = $("legend").html();
         var query_str = $("#ajax_form").serialize();
         var json_api_url = apiurl + "?" + query_str + "&timetamp=" + new Date().getTime();
@@ -268,6 +269,7 @@
     }
 
     function testPostAPI() {
+        $('#errMsg').text('');
         var apiurl = $("legend").html();
         var query_str = $("#ajax_form").serialize();
         var json_api_url = apiurl + "?" + query_str + "&timetamp=" + new Date().getTime();;
@@ -298,6 +300,7 @@
     }
 
     function testPostFormAPI() {
+        $('#errMsg').text('');
         var apiurl = $("legend").html();
         var query_str = $("#ajax_form").serialize();
         var json_api_url = apiurl + "?" + query_str + "&timetamp=" + new Date().getTime();;
