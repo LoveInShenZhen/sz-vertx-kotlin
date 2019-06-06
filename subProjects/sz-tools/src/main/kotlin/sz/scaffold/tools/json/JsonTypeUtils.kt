@@ -11,11 +11,13 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.jvm.javaType
 
-/**
- * Created by kk on 16/9/7.
- */
+//
+// Created by kk on 17/8/24.
+//
+
 
 enum class JsonDataType(val typeName: String) {
+    BOOLEAN("Boolean"),
     NUMBER("Number"),
     STRING("String"),
     DATETIME("DateTime String"),
@@ -27,6 +29,7 @@ enum class JsonDataType(val typeName: String) {
 fun jsonType(kType: KType): JsonDataType {
 
     return when {
+        isBoolean(kType) -> JsonDataType.BOOLEAN
         isNumber(kType) -> JsonDataType.NUMBER
         isDateTime(kType) -> JsonDataType.DATETIME
         isString(kType) -> JsonDataType.STRING
@@ -38,21 +41,38 @@ fun jsonType(kType: KType): JsonDataType {
 }
 
 fun isOneOfTypes(lookupClass: Class<*>, vararg targetClasses: Class<*>): Boolean {
-    return targetClasses.any { ClassUtil.isTypeOf(lookupClass, it) }
+    for (tclass in targetClasses) {
+        if (ClassUtil.isTypeOf(lookupClass, tclass)) {
+            return true
+        }
+    }
+
+    return false
+}
+
+fun isBoolean(kType: KType): Boolean {
+    if (kType == Boolean::class) {
+        return true
+    }
+    val rawType = ClassUtil.getRawType(kType.javaType)
+    if (rawType == Boolean::class.java) {
+        return true
+    }
+    return false
 }
 
 fun isNumber(kType: KType): Boolean {
     val rawType = ClassUtil.getRawType(kType.javaType)
 
     return isOneOfTypes(rawType,
-            Byte::class.java,
-            Short::class.java,
-            Byte::class.java,
-            Int::class.java,
-            Long::class.java,
-            Float::class.java,
-            Double::class.java,
-            Number::class.java)
+        Byte::class.java,
+        Short::class.java,
+        Byte::class.java,
+        Int::class.java,
+        Long::class.java,
+        Float::class.java,
+        Double::class.java,
+        Number::class.java)
 }
 
 fun isString(kType: KType): Boolean {
@@ -74,46 +94,68 @@ fun isString(kType: KType): Boolean {
 fun isDateTime(kType: KType): Boolean {
     val rawType = ClassUtil.getRawType(kType.javaType)
     return isOneOfTypes(rawType,
-            LocalDate::class.java,
-            LocalDateTime::class.java,
-            LocalTime::class.java,
-            Date::class.java,
-            java.sql.Date::class.java,
-            Calendar::class.java,
-            JDateTime::class.java)
+        LocalDate::class.java,
+        LocalDateTime::class.java,
+        LocalTime::class.java,
+        Date::class.java,
+        java.sql.Date::class.java,
+        Calendar::class.java,
+        jodd.datetime.JDateTime::class.java)
 }
 
 fun isBasicType(kClass: KClass<*>): Boolean {
     return isOneOfTypes(kClass.javaObjectType,
-            Byte::class.java,
-            Short::class.java,
-            Byte::class.java,
-            Int::class.java,
-            Long::class.java,
-            Float::class.java,
-            Double::class.java,
-            Number::class.java,
-            CharSequence::class.java,
-            LocalDate::class.java,
-            LocalDateTime::class.java,
-            LocalTime::class.java,
-            Date::class.java,
-            java.sql.Date::class.java,
-            Calendar::class.java)
+        Byte::class.java,
+        java.lang.Byte::class.java,
+        Short::class.java,
+        java.lang.Short::class.java,
+        Int::class.java,
+        java.lang.Integer::class.java,
+        Long::class.java,
+        java.lang.Long::class.java,
+        Float::class.java,
+        java.lang.Float::class.java,
+        Double::class.java,
+        java.lang.Double::class.java,
+        Number::class.java,
+        Boolean::class.java,
+        java.lang.Boolean::class.java,
+        CharSequence::class.java,
+        LocalDate::class.java,
+        LocalDateTime::class.java,
+        LocalTime::class.java,
+        Date::class.java,
+        java.sql.Date::class.java,
+        JDateTime::class.java,
+        Calendar::class.java)
 }
 
-fun isBasicType(kType: KType):Boolean{
+fun isBasicType(kType: KType): Boolean {
     val rawType = ClassUtil.getRawType(kType.javaType)
     return isOneOfTypes(rawType,
-            Int::class.java,
-            Number::class.java,
-            CharSequence::class.java,
-            LocalDate::class.java,
-            LocalDateTime::class.java,
-            LocalTime::class.java,
-            Date::class.java,
-            java.sql.Date::class.java,
-            Calendar::class.java)
+        Byte::class.java,
+        java.lang.Byte::class.java,
+        Short::class.java,
+        java.lang.Short::class.java,
+        Int::class.java,
+        java.lang.Integer::class.java,
+        Long::class.java,
+        java.lang.Long::class.java,
+        Float::class.java,
+        java.lang.Float::class.java,
+        Double::class.java,
+        java.lang.Double::class.java,
+        Number::class.java,
+        Boolean::class.java,
+        java.lang.Boolean::class.java,
+        CharSequence::class.java,
+        LocalDate::class.java,
+        LocalDateTime::class.java,
+        LocalTime::class.java,
+        Date::class.java,
+        java.sql.Date::class.java,
+        JDateTime::class.java,
+        Calendar::class.java)
 }
 
 fun isContainerType(kClass: KClass<*>): Boolean {
@@ -122,9 +164,9 @@ fun isContainerType(kClass: KClass<*>): Boolean {
     }
 
     return isOneOfTypes(kClass.javaObjectType,
-            Map::class.java,
-            Set::class.java,
-            List::class.java)
+        kotlin.collections.Map::class.java,
+        kotlin.collections.Set::class.java,
+        kotlin.collections.List::class.java)
 }
 
 fun isSimpleObject(kClass: KClass<*>): Boolean {
@@ -137,7 +179,7 @@ fun isSimpleObject(kClass: KClass<*>): Boolean {
 
 fun isMap(kType: KType): Boolean {
     val rawType = ClassUtil.getRawType(kType.javaType)
-    return isOneOfTypes(rawType, Map::class.java)
+    return isOneOfTypes(rawType, kotlin.collections.Map::class.java)
 }
 
 fun mapKeyType(kType: KType): Class<*> {
@@ -153,8 +195,8 @@ fun mapValueType(kType: KType): Class<*> {
 fun isList(kType: KType): Boolean {
     val rawType = ClassUtil.getRawType(kType.javaType)
     return isOneOfTypes(rawType,
-            List::class.java,
-            Set::class.java)
+        kotlin.collections.List::class.java,
+        kotlin.collections.Set::class.java)
 }
 
 fun isArray(kType: KType): Boolean {
@@ -165,7 +207,3 @@ fun isArray(kType: KType): Boolean {
 fun listElementType(kType: KType): Class<*> {
     return ClassUtil.getComponentType(kType.javaType, 0)
 }
-
-
-
-

@@ -5,6 +5,7 @@ import sz.api.controllers.ApiDoc
 import sz.scaffold.Application
 import sz.scaffold.annotations.Comment
 import sz.scaffold.ext.escapeMarkdown
+import sz.scaffold.tools.json.JsonDataType
 import sz.scaffold.tools.json.toJsonPretty
 import sz.scaffold.tools.logger.Logger
 import kotlin.reflect.KClass
@@ -130,19 +131,6 @@ constructor(
                     desc = paramDesc,
                     type = it.type.javaType.typeName.split(".").last())
             }
-
-//        val jsonApiAnno = method.annotations.find { it is JsonApi } as JsonApi
-//
-//        if (postDataClass.isNotBlank()) {
-//            if (jsonApiAnno.ApiMethodType == ApiInfo.PostForm) {
-//                // todo 构造 form 表单
-//            }
-//
-//            if (jsonApiAnno.ApiMethodType == ApiInfo.PostJson) {
-//                // todo 构造 post 的 JSON 字符串
-//            }
-//        }
-
     }
 
     private fun analyseReply() {
@@ -205,7 +193,6 @@ constructor(
     }
 
     fun postJsonSchema(): String {
-//        FieldSchema.resolveFields(Class.forName(this.replyClass).kotlin, replyInfo)
         val jsonSchema = FieldSchema()
         jsonSchema.level = 0
         jsonSchema.name = "Post Json Schema"

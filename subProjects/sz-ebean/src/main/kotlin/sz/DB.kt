@@ -2,10 +2,13 @@ package sz
 
 import io.ebean.Ebean
 import io.ebean.EbeanServer
+import io.ebean.SqlRow
 import io.ebean.TxScope
 import io.ebean.annotation.TxIsolation
 import io.ebeaninternal.server.transaction.DefaultTransactionThreadLocal
 import io.ebeaninternal.server.transaction.TransactionMap
+import jodd.bean.BeanUtil
+import jodd.datetime.JDateTime
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import org.apache.commons.lang3.reflect.FieldUtils
@@ -16,9 +19,12 @@ import sz.scaffold.ext.camelCaseToLowCaseSeprated
 import sz.scaffold.tools.BizLogicException
 import sz.scaffold.tools.logger.Logger
 import java.math.BigDecimal
+import java.util.*
 import javax.persistence.Entity
 import javax.persistence.Table
 import kotlin.concurrent.getOrSet
+import kotlin.reflect.KClass
+import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.memberProperties
 
 internal class IndexInfo(var indexName: String) {
@@ -376,4 +382,38 @@ class SuspendEbeanServer(private val db: EbeanServer) {
             }
         }
     }
+}
+
+@Suppress("IMPLICIT_CAST_TO_ANY")
+fun <TBean : Any> SqlRow.toBean(beanClass: KClass<TBean>): TBean {
+    val bean = beanClass.createInstance()
+    val beanUtil = BeanUtil.pojo
+
+    this.forEach { name, value ->
+        if (beanUtil.hasProperty(bean, name)) {
+            //                Logger.debug("==> name: $name, value: $value, type: ${value?.javaClass?.name}")
+            val propValue = when (val propType = beanUtil.getPropertyType(bean, name)) {
+                java.lang.String::class.java -> this.getString(name)
+                Int::class.java, java.lang.Integer::class.java -> this.getInteger(name)
+                Long::class.java, java.lang.Long::class.java -> this.getLong(name)
+                Float::class.java, java.lang.Float::class.java -> this.getFloat(name)
+                Double::class.java, java.lang.Double::class.java -> this.getDouble(name)
+                Boolean::class.java, java.lang.Boolean::class.java -> this.getBoolean(name)
+                BigDecimal::class.java -> this.getBigDecimal(name)
+                JDateTime::class.java -> if (value == null) null else JDateTime(this.getUtilDate(name))
+                Date::class.java -> this.getUtilDate(name)
+                UUID::class.java -> this.getUUID(name)
+                java.sql.Date::class.java -> this.getDate(name)
+                java.sql.Timestamp::class.java -> this.getTimestamp(name)
+                else -> throw BizLogicException("SqlRow.toBean() 方法不支持转换 Bean Class 中类型为 ${propType.name} 的属性, 请联系开发人员")
+            }
+            beanUtil.setProperty(bean, name, propValue)
+        }
+    }
+
+    return bean
+}
+
+fun <TBean : Any> List<SqlRow>.toBeans(beanClass: KClass<TBean>): List<TBean> {
+    return this.map { it.toBean(beanClass) }
 }

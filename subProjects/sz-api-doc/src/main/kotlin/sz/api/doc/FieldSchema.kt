@@ -1,16 +1,13 @@
 package sz.api.doc
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import sz.scaffold.Application
 import sz.scaffold.annotations.Comment
 import sz.scaffold.tools.console.PrettyTree
 import sz.scaffold.tools.console.TreeNode
-import sz.scaffold.tools.logger.Logger
+import sz.scaffold.tools.json.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
-import kotlin.reflect.jvm.javaType
 import kotlin.reflect.jvm.jvmErasure
-import kotlin.reflect.jvm.jvmName
 
 //
 // Created by kk on 17/8/24.
