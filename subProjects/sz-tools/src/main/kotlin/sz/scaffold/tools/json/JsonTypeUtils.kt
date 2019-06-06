@@ -3,6 +3,7 @@ package sz.scaffold.tools.json
 import jodd.datetime.JDateTime
 import jodd.util.ClassUtil
 import org.apache.commons.lang3.reflect.TypeUtils
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -72,7 +73,8 @@ fun isNumber(kType: KType): Boolean {
         Long::class.java,
         Float::class.java,
         Double::class.java,
-        Number::class.java)
+        Number::class.java,
+        BigDecimal::class.java)
 }
 
 fun isString(kType: KType): Boolean {
@@ -118,6 +120,7 @@ fun isBasicType(kClass: KClass<*>): Boolean {
         Double::class.java,
         java.lang.Double::class.java,
         Number::class.java,
+        BigDecimal::class.java,
         Boolean::class.java,
         java.lang.Boolean::class.java,
         CharSequence::class.java,
@@ -146,6 +149,7 @@ fun isBasicType(kType: KType): Boolean {
         Double::class.java,
         java.lang.Double::class.java,
         Number::class.java,
+        BigDecimal::class.java,
         Boolean::class.java,
         java.lang.Boolean::class.java,
         CharSequence::class.java,
