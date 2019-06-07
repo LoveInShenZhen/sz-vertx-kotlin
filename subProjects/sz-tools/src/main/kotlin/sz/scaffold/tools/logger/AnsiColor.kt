@@ -83,5 +83,13 @@ enum class AnsiColor(val code: String) {
         fun yellow(str: String): String {
             return "${YELLOW.code}$str${RESET.code}"
         }
+
+        private val regex by lazy {
+            values().map { it.code.replace("[", """\[""") }.joinToString("|").toRegex()
+        }
+
+        fun String.cleanColor(): String {
+            return this.replace(regex, "")
+        }
     }
 }
