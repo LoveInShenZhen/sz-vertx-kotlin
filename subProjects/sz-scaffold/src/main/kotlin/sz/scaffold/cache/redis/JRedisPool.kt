@@ -4,8 +4,7 @@ import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisPool
 import redis.clients.jedis.JedisPoolConfig
 import sz.scaffold.Application
-import sz.scaffold.ext.existThenApply
-import sz.scaffold.ext.getStringOrNll
+import sz.scaffold.ext.*
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.logger.Logger
 
@@ -28,12 +27,12 @@ class JRedisPool(val name: String) {
 
     init {
         _jedisPool = JedisPool(poolConfig(),
-                Application.config.getString("redis.$name.host"),
-                Application.config.getInt("redis.$name.port"),
-                Application.config.getInt("redis.$name.timeout"),
+                Application.config.getStringOrElse("redis.$name.host", "127.0.0.1"),
+                Application.config.getIntOrElse("redis.$name.port", 6379),
+                Application.config.getIntOrElse("redis.$name.timeout", 2000),
                 Application.config.getStringOrNll("redis.$name.password"),
-                Application.config.getInt("redis.$name.database"),
-                Application.config.getBoolean("redis.$name.ssl")
+                Application.config.getIntOrElse("redis.$name.database", 0),
+                Application.config.getBooleanOrElse("redis.$name.ssl", false)
         )
         Logger.debug("初始化 JedisPool ($name)             [OK]")
     }
