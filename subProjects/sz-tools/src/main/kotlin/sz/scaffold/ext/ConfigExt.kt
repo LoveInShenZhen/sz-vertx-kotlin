@@ -43,6 +43,14 @@ fun Config.getIntOrElse(path: String, defaultValue: Int): Int {
     }
 }
 
+fun Config.getLongOrElse(path: String, defaultValue: Long): Long {
+    if (this.hasPath(path)) {
+        return this.getLong(path)
+    } else {
+        return defaultValue
+    }
+}
+
 fun Config.getBooleanOrElse(path: String, defaultValue: Boolean): Boolean {
     if (this.hasPath(path)) {
         return this.getBoolean(path)
