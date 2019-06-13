@@ -16,19 +16,20 @@ dependencies {
     api("io.vertx:vertx-codegen:3.7.1")
     api("io.vertx:vertx-ignite:3.7.1")
     api("io.vertx:vertx-zookeeper:3.7.1")
+    api("io.vertx:vertx-redis-client:3.7.1")
     api("io.vertx:vertx-lang-kotlin:3.7.1") {
         this.exclude(group = "org.jetbrains.kotlin")
     }
     api("io.vertx:vertx-lang-kotlin-coroutines:3.7.1") {
         this.exclude(group = "org.jetbrains.kotlin")
     }
+
     // 参考: https://vertx.io/docs/vertx-core/kotlin/#_native_transports
     api(group = "io.netty", name = "netty-transport-native-epoll", version = "4.1.15.Final", classifier = "linux-x86_64")
 
-
+    api("org.apache.commons:commons-pool2:2.6.2")
     api("com.google.guava:guava:27.0-jre")
     api("org.freemarker:freemarker:2.3.23")
-    api("redis.clients:jedis:2.9.0")
     api("com.github.ben-manes.caffeine:caffeine:2.6.2")
 
     configurations.all {
