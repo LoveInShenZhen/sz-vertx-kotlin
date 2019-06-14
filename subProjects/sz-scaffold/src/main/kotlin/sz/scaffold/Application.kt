@@ -13,7 +13,6 @@ import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.ext.web.handler.CookieHandler
-import io.vertx.spi.cluster.ignite.IgniteClusterManager
 import io.vertx.spi.cluster.zookeeper.ZookeeperClusterManager
 import jodd.exception.ExceptionUtil
 import jodd.io.FileNameUtil
@@ -140,21 +139,18 @@ object Application {
 
         if (this._vertoptions!!.eventBusOptions.isClustered) {
             // 集群方式
-            val clusterManagerName = this.config.getString("app.vertx.clusterManager")
+            if (config.hasPath("app.vertx.clusterManager") && config.getString("app.vertx.clusterManager") == "Ignite") {
+                throw SzException("app.vertx.clusterManager 配置不再使用, 并且集群只支持使用 Zookeeper 方式创建和管理集群")
+            }
 
-            Logger.debug("Vertx 集群方式, Cluster Manager: $clusterManagerName")
+            Logger.debug("当前为: Vertx 集群模式")
             val future = CompletableFuture<Vertx>()
 
-            when (clusterManagerName) {
-                "Ignite" -> this._vertoptions!!.clusterManager = IgniteClusterManager()
-                "Zookeeper" -> this._vertoptions!!.clusterManager = ZookeeperClusterManager()
-                else -> throw SzException("app.vertx.clusterManager 配置错误, 只支持: Ignite 和 Zookeeper")
-            }
+            this._vertoptions!!.clusterManager = ZookeeperClusterManager()
 
             Vertx.clusteredVertx(this._vertoptions) { event: AsyncResult<Vertx> ->
                 if (event.failed()) {
-                    Logger.error("创建集群方式Vertx失败:\n${ExceptionUtil.exceptionChainToString(event.cause())}")
-                    throw SzException("创建集群方式Vertx失败: ${event.cause().message}")
+                    throw SzException("创建集群模式Vertx失败: ${event.cause().message}")
                 } else {
                     future.complete(event.result())
                 }
@@ -162,7 +158,7 @@ object Application {
             return future.get()
         } else {
             // 非集群方式
-            Logger.debug("Vertx 非集群方式")
+            Logger.debug("当前为: Vertx 单机模式")
             return Vertx.vertx(this._vertoptions)
         }
 

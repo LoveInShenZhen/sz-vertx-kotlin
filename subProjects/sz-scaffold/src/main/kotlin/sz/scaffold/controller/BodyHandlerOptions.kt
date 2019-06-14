@@ -1,10 +1,8 @@
 package sz.scaffold.controller
 
-import io.vertx.codegen.annotations.DataObject
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.handler.BodyHandler
 
-@DataObject(generateConverter = true)
 class BodyHandlerOptions {
     var bodyLimit: Long = BodyHandler.DEFAULT_BODY_LIMIT
 
