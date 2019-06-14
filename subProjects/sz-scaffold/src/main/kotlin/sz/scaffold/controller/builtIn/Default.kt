@@ -5,7 +5,6 @@ import jodd.util.CommandLine
 import sz.scaffold.Application
 import sz.scaffold.annotations.Comment
 import sz.scaffold.controller.ApiController
-import sz.scaffold.tools.logger.Logger
 import java.lang.management.ManagementFactory
 import java.net.InetAddress
 
@@ -16,7 +15,7 @@ import java.net.InetAddress
 @Comment("内置默认的控制器内,提供一些关于系统信息的查询功能")
 class Default : ApiController() {
 
-    fun hello() : String {
+    fun hello(): String {
         this.contentType("text/plain")
         return "hello"
     }
@@ -60,9 +59,9 @@ class Default : ApiController() {
         var maxMemorySize = heapUsage.max
         var usedMemorySize = heapUsage.used
 
-        info.appendln("    Init Memory: ${initMemorySize/1024/1024} MB")
-        info.appendln("    Max Memory:  ${maxMemorySize/1024/1024} MB")
-        info.appendln("    Used Memory: ${usedMemorySize/1024/1024} MB")
+        info.appendln("    Init Memory: ${initMemorySize / 1024 / 1024} MB")
+        info.appendln("    Max Memory:  ${maxMemorySize / 1024 / 1024} MB")
+        info.appendln("    Used Memory: ${usedMemorySize / 1024 / 1024} MB")
         info.appendln()
 
         val nonHeapUsage = mxBean.nonHeapMemoryUsage
@@ -72,9 +71,9 @@ class Default : ApiController() {
         maxMemorySize = nonHeapUsage.max
         usedMemorySize = nonHeapUsage.used
 
-        info.appendln("    Init Memory: ${initMemorySize/1024/1024} MB")
-        info.appendln("    Max Memory:  ${maxMemorySize/1024/1024} MB")
-        info.appendln("    Used Memory: ${usedMemorySize/1024/1024} MB")
+        info.appendln("    Init Memory: ${initMemorySize / 1024 / 1024} MB")
+        info.appendln("    Max Memory:  ${maxMemorySize / 1024 / 1024} MB")
+        info.appendln("    Used Memory: ${usedMemorySize / 1024 / 1024} MB")
         info.appendln("-".repeat(64))
 
         info.appendln("  HostName: ${InetAddress.getLocalHost().hostName}")
@@ -103,7 +102,7 @@ class Default : ApiController() {
             val cmdResult = ulimitCmd.run()
             info.appendln("ulimit info:")
             info.appendln(cmdResult.output)
-        } catch (ex:Exception) {
+        } catch (ex: Exception) {
             info.appendln("Can not get ulimit info: ${ex.message}")
         }
 
