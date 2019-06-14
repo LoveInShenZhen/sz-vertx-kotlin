@@ -5,6 +5,7 @@ import jodd.util.CommandLine
 import sz.scaffold.Application
 import sz.scaffold.annotations.Comment
 import sz.scaffold.controller.ApiController
+import sz.scaffold.tools.logger.Logger
 import java.lang.management.ManagementFactory
 import java.net.InetAddress
 
@@ -84,12 +85,14 @@ class Default : ApiController() {
         info.appendln(Application.vertxOptions.toString())
 
 
-
+        info.appendln("-".repeat(64))
         if (Application.vertxOptions.eventBusOptions.isClustered) {
-            info.appendln("-".repeat(64))
             // 集群方式
+            info.appendln("当前为: Vertx 集群模式")
             info.appendln("    Node Id: ${Application.vertxOptions.clusterManager.nodeID}")
             info.appendln("    Nodes: ${Application.vertxOptions.clusterManager.nodes.toList()}")
+        } else {
+            info.appendln("当前为: Vertx 单机模式")
         }
 
         info.appendln("-".repeat(64))
