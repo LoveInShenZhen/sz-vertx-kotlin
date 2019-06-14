@@ -5,7 +5,6 @@ import jodd.util.CommandLine
 import sz.scaffold.Application
 import sz.scaffold.annotations.Comment
 import sz.scaffold.controller.ApiController
-import sz.scaffold.tools.logger.Logger
 import java.lang.management.ManagementFactory
 import java.net.InetAddress
 
@@ -89,8 +88,6 @@ class Default : ApiController() {
         if (Application.vertxOptions.eventBusOptions.isClustered) {
             info.appendln("-".repeat(64))
             // 集群方式
-            val clusterManagerName = Application.config.getString("app.vertx.clusterManager")
-            info.appendln("Vertx 集群方式, Cluster Manager: $clusterManagerName")
             info.appendln("    Node Id: ${Application.vertxOptions.clusterManager.nodeID}")
             info.appendln("    Nodes: ${Application.vertxOptions.clusterManager.nodes.toList()}")
         }
