@@ -220,23 +220,25 @@ object Application {
     // 从 conf/route.websocket 文件, 加载 webSocket 配置
     fun setupWebSocketHandler(httpServer: HttpServer) {
         val routeFile = getFile("conf/route.websocket")
-        val routeRegex = """(/\S*)\s+(\S+)\s*$""".toRegex()
-        val lines = routeFile.readLines().map { it.trim() }
-            .filter { it.startsWith("#").not() && it.startsWith("//").not() && it.isNotBlank()}
-        if (lines.isNotEmpty()) {
-            val webSocketRootHandler = WebSocketFilter()
-            lines.forEach { line ->
-                if (routeRegex.matches(line)) {
-                    val parts = routeRegex.matchEntire(line)!!.groupValues
-                    val path = parts[1].trim()
-                    val handlerClassName = parts[2].trim()
-                    webSocketRootHandler.addPathAndHandler(path, handlerClassName)
-                } else {
-                    throw SzException("websocket route definition syntax error: $line")
+        if (routeFile.exists()) {
+            val routeRegex = """(/\S*)\s+(\S+)\s*$""".toRegex()
+            val lines = routeFile.readLines().map { it.trim() }
+                .filter { it.startsWith("#").not() && it.startsWith("//").not() && it.isNotBlank()}
+            if (lines.isNotEmpty()) {
+                val webSocketRootHandler = WebSocketFilter()
+                lines.forEach { line ->
+                    if (routeRegex.matches(line)) {
+                        val parts = routeRegex.matchEntire(line)!!.groupValues
+                        val path = parts[1].trim()
+                        val handlerClassName = parts[2].trim()
+                        webSocketRootHandler.addPathAndHandler(path, handlerClassName)
+                    } else {
+                        throw SzException("websocket route definition syntax error: $line")
+                    }
                 }
-            }
 
-            httpServer.websocketHandler(webSocketRootHandler)
+                httpServer.websocketHandler(webSocketRootHandler)
+            }
         }
     }
 
