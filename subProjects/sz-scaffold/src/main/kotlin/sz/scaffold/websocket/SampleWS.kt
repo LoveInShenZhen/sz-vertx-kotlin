@@ -12,7 +12,7 @@ import sz.scaffold.tools.logger.Logger
 //
 class SampleWS : WebSocketHandler {
     override fun handle(webSocket: ServerWebSocket) {
-        val consumer = Application.vertx.eventBus().consumer<String>("SampleWS") {
+        val consumer = Application.vertx.eventBus().consumer<String>(eventBusAddress) {
             Logger.debug("输出事件消息:${it.body()}")
             webSocket.writeTextMessage(it.body())
         }.exceptionHandler {
@@ -45,5 +45,13 @@ class SampleWS : WebSocketHandler {
 
         Logger.debug("[${JDateTime()}] 收到 client 端的 web socket 请求, accept it")
         webSocket.accept()
+    }
+
+    companion object {
+        val eventBusAddress = "websocket.SampleWS"
+
+        fun publishMsgToAllClients(msg: String) {
+            Application.vertx.eventBus().publish(eventBusAddress, msg)
+        }
     }
 }
