@@ -26,6 +26,7 @@ import sz.scaffold.redis.kedis.pool.KedisPool
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.logger.AnsiColor
 import sz.scaffold.tools.logger.Logger
+import sz.scaffold.websocket.WebSocketFilter
 import java.io.File
 import java.lang.management.ManagementFactory
 import java.net.InetAddress
@@ -216,12 +217,34 @@ object Application {
         return apiRoutes
     }
 
-    fun runHttpServer() {
+    // 从 conf/route.websocket 文件, 加载 webSocket 配置
+    fun setupWebSocketHandler(httpServer: HttpServer) {
+        val routeFile = getFile("conf/route.websocket")
+        val routeRegex = """(/\S*)\s+(\S+)\s*$""".toRegex()
+        val lines = routeFile.readLines().map { it.trim() }
+            .filter { it.startsWith("#").not() && it.startsWith("//").not() && it.isNotBlank()}
+        if (lines.isNotEmpty()) {
+            val webSocketRootHandler = WebSocketFilter()
+            lines.forEach { line ->
+                if (routeRegex.matches(line)) {
+                    val parts = routeRegex.matchEntire(line)!!.groupValues
+                    val path = parts[1].trim()
+                    val handlerClassName = parts[2].trim()
+                    webSocketRootHandler.addPathAndHandler(path, handlerClassName)
+                } else {
+                    throw SzException("websocket route definition syntax error: $line")
+                }
+            }
 
-        getHttpServer().listen()
+            httpServer.websocketHandler(webSocketRootHandler)
+        }
     }
 
-    fun getHttpServer(): HttpServer {
+    fun runHttpServer() {
+        createHttpServer().listen()
+    }
+
+    private fun createHttpServer(): HttpServer {
 
         val httpServerOptions = this.httpServerOptions()
         val httpServer = vertx.createHttpServer(httpServerOptions)
@@ -257,8 +280,9 @@ object Application {
             } catch (ex: Exception) {
                 it.response().end("${ex.message}\n\n${ExceptionUtil.exceptionChainToString(ex)}")
             }
-
         }
+
+        setupWebSocketHandler(httpServer)
 
         Logger.debug("Start http server at: ${httpServerOptions.host}:${httpServerOptions.port}")
         return httpServer
