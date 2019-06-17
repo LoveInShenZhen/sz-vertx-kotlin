@@ -225,7 +225,7 @@ object Application {
             val lines = routeFile.readLines().map { it.trim() }
                 .filter { it.startsWith("#").not() && it.startsWith("//").not() && it.isNotBlank()}
             if (lines.isNotEmpty()) {
-                val webSocketRootHandler = WebSocketFilter()
+                val webSocketRootHandler = WebSocketFilter(vertx)
                 lines.forEach { line ->
                     if (routeRegex.matches(line)) {
                         val parts = routeRegex.matchEntire(line)!!.groupValues
