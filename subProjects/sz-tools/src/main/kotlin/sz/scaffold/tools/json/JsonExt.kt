@@ -21,3 +21,17 @@ fun String.toJsonNode(): JsonNode {
 fun <A> JsonNode.toObj(clazz: Class<A>): A {
     return Json.fromJsonNode(this, clazz)
 }
+
+/**
+ * 将JsonNode对象转换成指定类型的Bean对象
+ */
+inline fun <reified T> JsonNode.toBean(): T {
+    return Json.fromJsonNode(this, T::class.java)
+}
+
+/**
+ * 将json字符串转换成指定类型的Bean对象
+ */
+inline fun <reified T> String.toBean(): T {
+    return this.toJsonNode().toObj(T::class.java)
+}
