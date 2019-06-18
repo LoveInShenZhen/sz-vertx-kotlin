@@ -29,7 +29,8 @@ dependencies {
     api("org.apache.commons:commons-pool2:2.6.2")
     api("com.google.guava:guava:27.0-jre")
     api("org.freemarker:freemarker:2.3.23")
-    api("com.github.ben-manes.caffeine:caffeine:2.6.2")
+    api("com.github.ben-manes.caffeine:caffeine:2.7.0")
+//    api("com.github.ben-manes.caffeine:guava:2.7.0")
 
     configurations.all {
         this.exclude(group = "org.slf4j", module = "slf4j-log4j12")

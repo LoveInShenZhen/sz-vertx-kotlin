@@ -71,14 +71,13 @@ object Json {
     }
 
     fun formatJson(jsonStr: String): String {
-        val jsonNode = Json.parse(jsonStr)
+        val jsonNode = parse(jsonStr)
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode)
     }
 
     fun <A> fromJsonString(jsonStr: String, clazz: Class<A>): A {
-        val node = Json.parse(jsonStr)
         try {
-            return mapper.treeToValue(node, clazz)
+            return mapper.readValue<A>(jsonStr, clazz)
         } catch (e: Exception) {
             throw RuntimeException(e)
         }
@@ -86,9 +85,8 @@ object Json {
     }
 
     inline fun <reified A : Any> fromJsonString(jsonStr: String): A {
-        val node = Json.parse(jsonStr)
         try {
-            return mapper.treeToValue(node, A::class.java)
+            return mapper.readValue<A>(jsonStr, A::class.java)
         } catch (e: Exception) {
             throw RuntimeException(e)
         }
@@ -110,7 +108,7 @@ object Json {
 
     fun toStrMap(jsonStr: String): Map<String, String> {
         val map = mutableMapOf<String, String>()
-        val jsonNode = Json.parse(jsonStr)
+        val jsonNode = parse(jsonStr)
         jsonNode.fields().forEach { map.put(it.key, it.value.asText()) }
         return map
     }

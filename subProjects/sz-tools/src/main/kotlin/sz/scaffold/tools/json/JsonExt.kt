@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.JsonNode
 //
 
 fun Any.toJsonPretty(): String {
-    if (this is String) return this
     return Json.toJsonStrPretty(this)
 }
 
@@ -35,8 +34,5 @@ inline fun <reified T> JsonNode.toBean(): T {
  * 将json字符串转换成指定类型的Bean对象
  */
 inline fun <reified T> String.toBean(): T {
-    if (T::class.java == String::class.java) {
-        return this as T
-    }
-    return this.toJsonNode().toObj(T::class.java)
+    return Json.mapper.readValue(this, T::class.java)
 }
