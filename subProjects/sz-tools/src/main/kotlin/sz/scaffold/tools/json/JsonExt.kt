@@ -1,5 +1,6 @@
 package sz.scaffold.tools.json
 
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 
 //
@@ -27,12 +28,20 @@ fun <A> JsonNode.toObj(clazz: Class<A>): A {
  * 将JsonNode对象转换成指定类型的Bean对象
  */
 inline fun <reified T> JsonNode.toBean(): T {
-    return Json.fromJsonNode(this, T::class.java)
+    return this.toJsonPretty().toBean()
 }
 
 /**
  * 将json字符串转换成指定类型的Bean对象
  */
 inline fun <reified T> String.toBean(): T {
-    return Json.mapper.readValue(this, T::class.java)
+    return Json.mapper.readValue(this, object : TypeReference<T>() {})
+}
+
+inline fun <reified T> String.toBeanList(): List<T> {
+    return Json.mapper.readValue(this, object : TypeReference<MutableList<T>>() {})
+}
+
+inline fun <reified T> String.toBeanMap(): Map<String, T> {
+    return Json.mapper.readValue(this, object : TypeReference<MutableMap<String, T>>() {})
 }
