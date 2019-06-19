@@ -2,6 +2,8 @@ package sz.scaffold
 
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
+import io.netty.util.internal.logging.InternalLoggerFactory
+import io.netty.util.internal.logging.Slf4JLoggerFactory
 import io.vertx.core.AsyncResult
 import io.vertx.core.Vertx
 import io.vertx.core.VertxOptions
@@ -77,24 +79,27 @@ object Application {
 
     init {
         writePidFile()
-
-        Logger.debug("current dir: ${File("").absolutePath}")
+        InternalLoggerFactory.setDefaultFactory(Slf4JLoggerFactory.INSTANCE)
 
         val confFolder = File(FileNameUtil.concat(SystemUtils.getUserDir().absolutePath, "conf"))
         if (confFolder.exists()) {
             appHome = SystemUtils.getUserDir().absolutePath
-            Logger.debug("appHome is UserDir: $appHome")
         } else {
             if (SystemUtils.getUserDir().name == "bin") {
                 appHome = SystemUtils.getUserDir().parent
-                Logger.debug("appHome find by bin folder path: $appHome")
             } else {
                 val jarFile = ClassLoaderUtil.getDefaultClasspath().find { it.name.startsWith("kotlin-stdlib-") }
                     ?: throw SzException("class path 里不包含 kotlin-stdlib-*.jar, 请检查build.gradle")
                 appHome = File(jarFile.parent).parent
-                Logger.debug("appHome find by class lib folder path: $appHome")
             }
         }
+
+        val logbackXmlPath = FileNameUtil.concat(appHome, "conf${File.separator}logback.xml")
+        setupConfPathProperty("logback.configurationFile", logbackXmlPath)
+
+        Logger.debug("current dir: ${File("").absolutePath}")
+        Logger.debug("appHome : $appHome")
+        Logger.debug("""-Dlogback.configurationFile : ${System.getProperty("logback.configurationFile")}""")
 
         val confPath = FileNameUtil.concat(appHome, "conf${File.separator}application.conf")
         if (File(confPath).exists().not()) {
@@ -106,9 +111,8 @@ object Application {
 
         config = ConfigFactory.load()
 
-        val logbackXmlPath = FileNameUtil.concat(appHome, "conf${File.separator}logback.xml")
-        setupConfPathProperty("logback.configurationFile", logbackXmlPath)
-        Logger.debug("""-Dlogback.configurationFile : ${System.getProperty("logback.configurationFile")}""")
+//        val vertxLogCfgPath = FileNameUtil.concat(appHome, "conf${File.separator}vertx-default-jul-logging.properties")
+//        setupConfPathProperty("java.util.logging.config.file", vertxLogCfgPath)
 
         this.regOnStartHandler(Int.MIN_VALUE) {
             Logger.debug("Application start ...", AnsiColor.GREEN)
