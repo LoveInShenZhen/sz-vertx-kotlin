@@ -96,12 +96,19 @@ object Application {
             }
         }
 
-        val confPath = FileNameUtil.concat(appHome, "conf/application.conf")
-        if (File(confPath).exists()) {
-            Logger.debug("""System.setProperty("config.file", "conf/application.conf") # application.conf full path = $confPath""")
-            System.setProperty("config.file", confPath)
+        val confPath = FileNameUtil.concat(appHome, "conf${File.separator}application.conf")
+        if (File(confPath).exists().not()) {
+            throw SzException("appHome 路径推断错误, 因为 [$confPath] 不存在")
         }
+
+        setupConfPathProperty("config.file", confPath)
+        Logger.debug("""-Dconfig.file : ${System.getProperty("config.file")}""")
+
         config = ConfigFactory.load()
+
+        val logbackXmlPath = FileNameUtil.concat(appHome, "conf${File.separator}logback.xml")
+        setupConfPathProperty("logback.configurationFile", logbackXmlPath)
+        Logger.debug("""-Dlogback.configurationFile : ${System.getProperty("logback.configurationFile")}""")
 
         this.regOnStartHandler(Int.MIN_VALUE) {
             Logger.debug("Application start ...", AnsiColor.GREEN)
@@ -126,6 +133,19 @@ object Application {
         }
     }
 
+    private fun setupConfPathProperty(propName: String, default: String) {
+        if (System.getProperties().containsKey(propName)) {
+            // 外部指定了 property 的值, 检查值的有效性
+            val path = System.getProperty(propName)
+            if (File(path).exists().not()) {
+                throw SzException("-D$propName 指定的文件不存在. [$path]")
+            }
+        } else {
+            // 未指定, 则指定为我们的默认值
+            System.setProperty(propName, default)
+        }
+    }
+
     fun setupVertx(appVertx: Vertx? = null) {
         if (_vertx != null) {
             throw SzException("Application 的 vertx 已经初始化过了, 请勿重复初始化")
@@ -147,7 +167,9 @@ object Application {
             Logger.debug("当前为: Vertx 集群模式")
             val future = CompletableFuture<Vertx>()
 
-            this._vertoptions!!.clusterManager = ZookeeperClusterManager()
+            val zooConfigJson = File(FileNameUtil.concat(appHome, "conf${File.separator}zookeeper.json")).readText()
+            val zookeeperConfig = JsonObject(zooConfigJson)
+            this._vertoptions!!.clusterManager = ZookeeperClusterManager(zookeeperConfig)
 
             Vertx.clusteredVertx(this._vertoptions) { event: AsyncResult<Vertx> ->
                 if (event.failed()) {
@@ -223,7 +245,7 @@ object Application {
         if (routeFile.exists()) {
             val routeRegex = """(/\S*)\s+(\S+)\s*$""".toRegex()
             val lines = routeFile.readLines().map { it.trim() }
-                .filter { it.startsWith("#").not() && it.startsWith("//").not() && it.isNotBlank()}
+                .filter { it.startsWith("#").not() && it.startsWith("//").not() && it.isNotBlank() }
             if (lines.isNotEmpty()) {
                 val webSocketRootHandler = WebSocketFilter(vertx)
                 lines.forEach { line ->
@@ -246,7 +268,7 @@ object Application {
         createHttpServer().listen()
     }
 
-    private fun createHttpServer(): HttpServer {
+    fun createHttpServer(): HttpServer {
 
         val httpServerOptions = this.httpServerOptions()
         val httpServer = vertx.createHttpServer(httpServerOptions)
@@ -353,7 +375,7 @@ object Application {
             }
         }.toMap()
 
-        val httpServerOptions =  HttpServerOptions(JsonObject(cfgMap))
+        val httpServerOptions = HttpServerOptions(JsonObject(cfgMap))
         if (SystemInfo().isLinux) {
             // Vert.x can run with native transports (when available) on BSD (OSX) and Linux:
             // 参考: https://vertx.io/docs/vertx-core/kotlin/#_native_transports
