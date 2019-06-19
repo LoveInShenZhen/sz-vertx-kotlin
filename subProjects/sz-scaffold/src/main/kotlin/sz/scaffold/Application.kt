@@ -85,7 +85,8 @@ object Application {
         if (confFolder.exists()) {
             appHome = SystemUtils.getUserDir().absolutePath
         } else {
-            if (SystemUtils.getUserDir().name == "bin") {
+            if (SystemUtils.getUserDir().name == "bin" &&
+                SystemUtils.getUserDir().parentFile.hasFile("conf${File.separator}application.conf")) {
                 appHome = SystemUtils.getUserDir().parent
             } else {
                 val jarFile = ClassLoaderUtil.getDefaultClasspath().find { it.name.startsWith("kotlin-stdlib-") }
@@ -341,7 +342,7 @@ object Application {
     }
 
     private fun buildVertxOptions(): VertxOptions {
-        val vertxOptFile = File(FileNameUtil.concat(this.appHome, "conf/vertxOptions.json"))
+        val vertxOptFile = File(FileNameUtil.concat(this.appHome, "conf${File.separator}vertxOptions.json"))
         if (FileUtil.isExistingFile(vertxOptFile)) {
             // conf/vertxOptions.json 配置文件存在, 则根据配置文件, 设置 VertxOptions
             val jsonOpts = JsonObject(FileUtil.readString(vertxOptFile))
@@ -421,5 +422,10 @@ object Application {
 
     fun initRedisPool() {
         KedisPool.initPool()
+    }
+
+    private fun File.hasFile(path: String): Boolean {
+        val fullPath = FileNameUtil.concat(this.path, path)
+        return File(fullPath).exists()
     }
 }
