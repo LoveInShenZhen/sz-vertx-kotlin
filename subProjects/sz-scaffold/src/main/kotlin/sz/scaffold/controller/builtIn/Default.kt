@@ -95,8 +95,8 @@ class Default : ApiController() {
         }
 
         info.appendln("-".repeat(64))
-
-        val ulimitCmd = CommandLine.cmd("ulimit").args("-a").outPrefix("    ")
+        // sh -c 'ulimit -a'
+        val ulimitCmd = CommandLine.cmd("sh").args("-c", "ulimit -a").outPrefix("    ")
 
         try {
             val cmdResult = ulimitCmd.run()
