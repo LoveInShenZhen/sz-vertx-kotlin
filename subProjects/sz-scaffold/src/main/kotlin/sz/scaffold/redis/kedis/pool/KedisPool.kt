@@ -1,17 +1,18 @@
 package sz.scaffold.redis.kedis.pool
 
-import sz.scaffold.redis.kedis.KedisPoolConfig
 import io.vertx.core.Vertx
 import io.vertx.core.net.SocketAddress
 import io.vertx.kotlin.core.net.netClientOptionsOf
 import io.vertx.kotlin.redis.client.redisOptionsOf
+import io.vertx.redis.client.RedisClientType
 import io.vertx.redis.client.RedisOptions
+import io.vertx.redis.client.RedisRole
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import sz.scaffold.Application
 import sz.scaffold.ext.getIntOrElse
-import sz.scaffold.ext.getStringOrElse
 import sz.scaffold.ext.getStringOrNll
+import sz.scaffold.redis.kedis.KedisPoolConfig
 import sz.scaffold.tools.SzException
 
 //
@@ -59,12 +60,7 @@ class KedisPool(vertx: Vertx, val redisOptions: RedisOptions, val poolConfig: Ke
             if (Application.config.hasPath("redis.$name").not()) {
                 throw SzException("Please check application.conf, there is no config path for 'redis.$name'")
             }
-            val config = Application.config.getConfig("redis.$name")
-            val redisOptions = redisOptionsOf(endpoint = SocketAddress.inetSocketAddress(config.getIntOrElse("port", 6379), config.getStringOrElse("host", "127.0.0.1")),
-                netClientOptions = netClientOptionsOf(connectTimeout = config.getIntOrElse("timeout", 2000)),
-                password = config.getStringOrNll("password"),
-                select = config.getIntOrElse("database", 0))
-
+            val redisOptions = redisOptionsByName(name)
             val poolConfig = if (Application.config.hasPath("redis.$name.pool")) {
                 KedisPoolConfig.buildFrom(Application.config.getConfig("redis.$name.pool"))
             } else {
@@ -72,6 +68,32 @@ class KedisPool(vertx: Vertx, val redisOptions: RedisOptions, val poolConfig: Ke
             }
 
             return KedisPool(vertx = Application.vertx, redisOptions = redisOptions, poolConfig = poolConfig)
+        }
+
+        private fun redisOptionsByName(name: String): RedisOptions {
+            val config = Application.config.getConfig("redis.$name")
+            return when (config.getString("workingMode")) {
+                "STANDALONE" -> redisOptionsOf(type = RedisClientType.STANDALONE,
+                    endpoint = SocketAddress.inetSocketAddress(config.getInt("port"), config.getString("host")),
+                    netClientOptions = netClientOptionsOf(connectTimeout = config.getInt("timeout")),
+                    password = config.getStringOrNll("password"),
+                    select = config.getIntOrElse("database", 0))
+
+                "SENTINEL" -> redisOptionsOf(type = RedisClientType.SENTINEL,
+                    endpoints = config.getStringList("servers").map { endpointOf(it) },
+                    masterName = config.getString("masterName"),
+                    role = RedisRole.MASTER)
+
+                "CLUSTER" -> redisOptionsOf(type = RedisClientType.CLUSTER,
+                    endpoints = config.getStringList("servers").map { endpointOf(it) })
+
+                else -> throw SzException("无效的 redis workingMode 设置")
+            }
+        }
+
+        private fun endpointOf(server: String): SocketAddress {
+            val parts = server.split(":")
+            return SocketAddress.inetSocketAddress(parts[1].toInt(), parts[0])
         }
 
         fun byName(name: String): KedisPool {
