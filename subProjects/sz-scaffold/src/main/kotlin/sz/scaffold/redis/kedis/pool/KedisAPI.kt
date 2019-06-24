@@ -3,6 +3,7 @@ package sz.scaffold.redis.kedis.pool
 import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
 import io.vertx.kotlin.coroutines.awaitResult
+import io.vertx.redis.client.Redis
 import io.vertx.redis.client.RedisAPI
 import io.vertx.redis.client.Response
 import kotlinx.coroutines.withTimeout
@@ -12,7 +13,7 @@ import sz.scaffold.tools.logger.Logger
 //
 // Created by kk on 2019-06-10.
 //
-class KedisAPI(private val delegate: RedisAPI, private val operationTimeout: Long) : AutoCloseable {
+class KedisAPI(private val delegate: RedisAPI, private val connClient: Redis, private val operationTimeout: Long) : AutoCloseable {
 
 
     private var clientIsBroken = false
@@ -46,6 +47,10 @@ class KedisAPI(private val delegate: RedisAPI, private val operationTimeout: Lon
             }
 
         }
+    }
+
+    internal fun closeRedisClient() {
+        connClient.close()
     }
 
     fun returnToPool() {

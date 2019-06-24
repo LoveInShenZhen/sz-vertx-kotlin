@@ -8,7 +8,6 @@ import io.vertx.redis.client.RedisOptions
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.pool2.BasePooledObjectFactory
 import org.apache.commons.pool2.PooledObject
-import sz.scaffold.tools.logger.Logger
 
 //
 // Created by kk on 2019-06-11.
@@ -23,20 +22,23 @@ class KedisAPIPooledObjectFactory(private val vertx: Vertx,
 
     override fun create(): KedisAPI = runBlocking {
         val client = Redis.createClient(vertx, redisOptions).connectAwait()
-        val redisApi = KedisAPI(RedisAPI.api(client), operationTimeout)
+        val kedisApi = KedisAPI(RedisAPI.api(client), client, operationTimeout)
         client.exceptionHandler {
-            redisApi.markBroken()
-            client.close()
+            kedisApi.markBroken()
 //            Logger.debug("[exceptionHandler - markBroken and close] - Redis client occur exception: $it")
         }.endHandler {
-            redisApi.markBroken()
+            kedisApi.markBroken()
 //            Logger.debug("[endHandler - markBroken and close]")
         }
 //        Logger.debug("[KedisAPIPooledObjectFactory] create a redis client")
-        redisApi
+        kedisApi
     }
 
     override fun validateObject(p: PooledObject<KedisAPI>): Boolean {
         return p.`object`.broken.not()
+    }
+
+    override fun destroyObject(p: PooledObject<KedisAPI>) {
+        p.`object`.closeRedisClient()
     }
 }
