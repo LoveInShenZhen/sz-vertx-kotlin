@@ -1,5 +1,6 @@
 package sz.scaffold.redis.kedis.pool
 
+import com.typesafe.config.Config
 import io.vertx.core.Vertx
 import io.vertx.core.net.SocketAddress
 import io.vertx.kotlin.core.net.netClientOptionsOf
@@ -11,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import sz.scaffold.Application
 import sz.scaffold.ext.getIntOrElse
-import sz.scaffold.ext.getStringOrNll
+import sz.scaffold.ext.getStringOrElse
 import sz.scaffold.redis.kedis.KedisPoolConfig
 import sz.scaffold.tools.SzException
 
@@ -72,11 +73,11 @@ class KedisPool(vertx: Vertx, val redisOptions: RedisOptions, val poolConfig: Ke
 
         private fun redisOptionsByName(name: String): RedisOptions {
             val config = Application.config.getConfig("redis.$name")
-            return when (config.getString("workingMode")) {
+            return when (config.getStringOrElse("workingMode", "STANDALONE")) {
                 "STANDALONE" -> redisOptionsOf(type = RedisClientType.STANDALONE,
-                    endpoint = SocketAddress.inetSocketAddress(config.getInt("port"), config.getString("host")),
-                    netClientOptions = netClientOptionsOf(connectTimeout = config.getInt("timeout")),
-                    password = config.getStringOrNll("password"),
+                    endpoint = SocketAddress.inetSocketAddress(config.getIntOrElse("port", 6379), config.getString("host")),
+                    netClientOptions = netClientOptionsOf(connectTimeout = config.getIntOrElse("timeout", 2000)),
+                    password = config.getStringEmptyAsNull("password"),
                     select = config.getIntOrElse("database", 0))
 
                 "SENTINEL" -> redisOptionsOf(type = RedisClientType.SENTINEL,
@@ -106,6 +107,19 @@ class KedisPool(vertx: Vertx, val redisOptions: RedisOptions, val poolConfig: Ke
 
         fun default(): KedisPool {
             return byName("default")
+        }
+
+        private fun Config.getStringEmptyAsNull(path: String): String? {
+            if (this.hasPath(path)) {
+                val value = this.getString(path)
+                if (value.isEmpty()) {
+                    return null
+                } else {
+                    return value
+                }
+            } else {
+                return null
+            }
         }
     }
 }
