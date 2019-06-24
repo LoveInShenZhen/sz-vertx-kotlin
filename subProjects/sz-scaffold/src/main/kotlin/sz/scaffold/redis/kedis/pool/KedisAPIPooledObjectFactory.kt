@@ -8,6 +8,7 @@ import io.vertx.redis.client.RedisOptions
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.pool2.BasePooledObjectFactory
 import org.apache.commons.pool2.PooledObject
+import sz.scaffold.tools.logger.Logger
 
 //
 // Created by kk on 2019-06-11.
@@ -25,7 +26,7 @@ class KedisAPIPooledObjectFactory(private val vertx: Vertx,
         val kedisApi = KedisAPI(RedisAPI.api(client), client, operationTimeout)
         client.exceptionHandler {
             kedisApi.markBroken()
-//            Logger.debug("[exceptionHandler - markBroken and close] - Redis client occur exception: $it")
+            Logger.debug("[exceptionHandler - markBroken and close] - Redis client occur exception: $it")
         }.endHandler {
             kedisApi.markBroken()
 //            Logger.debug("[endHandler - markBroken and close]")
