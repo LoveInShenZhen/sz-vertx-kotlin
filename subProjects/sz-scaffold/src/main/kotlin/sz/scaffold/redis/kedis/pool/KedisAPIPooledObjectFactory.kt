@@ -40,6 +40,7 @@ class KedisAPIPooledObjectFactory(private val vertx: Vertx,
     }
 
     override fun destroyObject(p: PooledObject<KedisAPI>) {
+        Logger.debug("Factory destroyObject")
         p.`object`.closeRedisClient()
     }
 }

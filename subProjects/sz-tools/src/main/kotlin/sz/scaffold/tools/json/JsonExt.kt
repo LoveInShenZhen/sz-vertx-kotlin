@@ -45,3 +45,7 @@ inline fun <reified T> String.toBeanList(): List<T> {
 inline fun <reified T> String.toBeanMap(): Map<String, T> {
     return Json.mapper.readValue(this, object : TypeReference<MutableMap<String, T>>() {})
 }
+
+inline fun <reified KeyType, reified ValueType> String.toMutableMap(): MutableMap<KeyType, ValueType> {
+    return Json.mapper.readValue(this, object : TypeReference<MutableMap<KeyType, ValueType>>() {})
+}
