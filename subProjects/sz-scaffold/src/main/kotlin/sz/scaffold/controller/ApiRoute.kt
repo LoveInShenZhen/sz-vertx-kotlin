@@ -91,7 +91,7 @@ data class ApiRoute(val method: HttpMethod,
                                 response.write(actionResult.toJsonPretty())
                             }
                         } catch (ex: Exception) {
-                            Logger.debug(ExceptionUtil.exceptionStackTraceToString(ex))
+                            Logger.debug(ExceptionUtil.exceptionChainToString(ex))
                             val reply = ReplyBase()
                             val reason = ExceptionUtil.findCause(ex, BizLogicException::class.java)
                             if (reason != null) {

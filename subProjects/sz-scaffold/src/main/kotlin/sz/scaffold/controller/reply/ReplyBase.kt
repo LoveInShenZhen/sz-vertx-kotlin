@@ -34,7 +34,7 @@ open class ReplyBase {
             this.errmsg = ex.message!!
         } else {
             this.ret = -1
-            this.errmsg = ExceptionUtil.exceptionStackTraceToString(ex)
+            this.errmsg = ExceptionUtil.exceptionChainToString(ex)
         }
     }
 
