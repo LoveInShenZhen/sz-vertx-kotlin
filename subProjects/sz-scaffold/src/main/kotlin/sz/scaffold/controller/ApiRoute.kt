@@ -2,9 +2,11 @@ package sz.scaffold.controller
 
 import com.fasterxml.jackson.databind.JsonNode
 import io.vertx.core.http.HttpMethod
+import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import jodd.exception.ExceptionUtil
+import jodd.util.ClassUtil
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
@@ -14,6 +16,7 @@ import sz.scaffold.annotations.PostForm
 import sz.scaffold.annotations.PostJson
 import sz.scaffold.aop.actions.Action
 import sz.scaffold.aop.annotations.WithAction
+import sz.scaffold.aop.interceptors.GlobalInterceptorBase
 import sz.scaffold.controller.profiler.ApiProfiler
 import sz.scaffold.controller.reply.ReplyBase
 import sz.scaffold.coroutines.launchOnVertx
@@ -368,22 +371,41 @@ data class ApiRoute(val method: HttpMethod,
     }
 }
 
-internal data class Interceptor(val configAnno: Annotation, val actionClass: KClass<*>) {
+internal data class Interceptor(val config: Any, val actionClass: KClass<*>) {
 
     fun chainedWith(httpContext: RoutingContext, delegateAction: Action<*>): Action<*> {
         val actionInstance = actionClass.createInstance() as Action<*>
-        actionInstance.init(configAnno, httpContext, delegateAction)
+        actionInstance.init(config, httpContext, delegateAction)
         return actionInstance
     }
 
     companion object {
         fun buildOf(controllerFun: KFunction<*>): List<Interceptor> {
-            return controllerFun.annotations.filter {
+            val interceptors = mutableListOf<Interceptor>()
+            val annoInterceptors =  controllerFun.annotations.filter {
                 val ano = controllerFun.javaMethod!!.getAnnotation(it.annotationClass.java)
                 return@filter ano.annotationClass.findAnnotation<WithAction>() != null
-            }.reversed().map {
+            }.map {
                 val withAnno = it.annotationClass.findAnnotation<WithAction>()!!
                 Interceptor(it, withAnno.value)
+            }
+
+            interceptors.addAll(globalInterceptors)
+            interceptors.addAll(annoInterceptors)
+
+            return interceptors.reversed()
+        }
+
+        private val globalInterceptors: List<Interceptor> by lazy {
+            val interceptorsCfg = Application.config.getConfigList("app.httpServer.interceptors")
+
+            interceptorsCfg.map { cfg ->
+                val clazz = Application.classLoader.loadClass(cfg.getString("className"))
+                if (ClassUtil.isTypeOf(clazz, GlobalInterceptorBase::class.java).not()) {
+                    throw SzException("${clazz.name} is not sub class of GlobalInterceptorBase")
+                }
+                val interceptorCfg = JsonObject(cfg.getObject("config").unwrapped())
+                Interceptor(interceptorCfg, clazz.kotlin)
             }
         }
     }
