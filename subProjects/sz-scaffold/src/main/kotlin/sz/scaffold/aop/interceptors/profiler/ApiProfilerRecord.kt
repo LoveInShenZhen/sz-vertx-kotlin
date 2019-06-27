@@ -1,4 +1,4 @@
-package sz.scaffold.controller.profiler
+package sz.scaffold.aop.interceptors.profiler
 
 import io.vertx.ext.web.RoutingContext
 

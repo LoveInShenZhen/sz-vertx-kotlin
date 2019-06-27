@@ -17,7 +17,6 @@ import sz.scaffold.annotations.PostJson
 import sz.scaffold.aop.actions.Action
 import sz.scaffold.aop.annotations.WithAction
 import sz.scaffold.aop.interceptors.GlobalInterceptorBase
-import sz.scaffold.controller.profiler.ApiProfiler
 import sz.scaffold.controller.reply.ReplyBase
 import sz.scaffold.coroutines.launchOnVertx
 import sz.scaffold.dispatchers.IDispatcherFactory
@@ -86,7 +85,7 @@ data class ApiRoute(val method: HttpMethod,
                     // 通过控制器方法的返回类型, 是否是ReplyBase或者其子类型, 来判断是否是 json api 方法
                     if (controllerFun.returnType.isSubtypeOf(ReplyBase::class.createType())) {
                         try {
-                            val actionResult = ApiProfiler.runAction(wrapperAction)
+                            val actionResult = wrapperAction.call()
                             if (isJsonpRequest(httpContext, actionResult)) {
                                 onJsonp(httpContext, actionResult!!)
                             } else if (actionResult is ReplyBase) {
@@ -116,7 +115,7 @@ data class ApiRoute(val method: HttpMethod,
                     } else {
                         // 其他普通的 http 请求(非 api 请求)
                         try {
-                            val result = ApiProfiler.runAction(wrapperAction)
+                            val result = wrapperAction.call()
                             onNormal(httpContext, result)
 
                         } catch (ex: Exception) {
@@ -382,7 +381,7 @@ internal data class Interceptor(val config: Any, val actionClass: KClass<*>) {
     companion object {
         fun buildOf(controllerFun: KFunction<*>): List<Interceptor> {
             val interceptors = mutableListOf<Interceptor>()
-            val annoInterceptors =  controllerFun.annotations.filter {
+            val annoInterceptors = controllerFun.annotations.filter {
                 val ano = controllerFun.javaMethod!!.getAnnotation(it.annotationClass.java)
                 return@filter ano.annotationClass.findAnnotation<WithAction>() != null
             }.map {
