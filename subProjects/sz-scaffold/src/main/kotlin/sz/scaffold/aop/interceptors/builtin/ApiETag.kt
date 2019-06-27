@@ -9,7 +9,6 @@ import sz.scaffold.aop.annotations.WithAction
 import sz.scaffold.controller.ContentTypes
 import sz.scaffold.controller.reply.ReplyBase
 import sz.scaffold.tools.json.toShortJson
-import sz.scaffold.tools.logger.Logger
 
 @WithAction(ApiETagAction::class)
 @Target(AnnotationTarget.FUNCTION)
@@ -31,7 +30,6 @@ class ApiETagAction : Action<ApiETag>() {
                 // 304
                 response.statusCode = 304
                 response.putHeader("Content-Type", ContentTypes.Json)
-                Logger.debug("ETAG 检查,内容未发生变化, 返回 304")
                 null
             } else {
                 result
@@ -41,7 +39,7 @@ class ApiETagAction : Action<ApiETag>() {
         }
     }
 
-    private fun etagOfRequest():String {
+    private fun etagOfRequest(): String {
         val headers = this.httpContext.request().headers()
         if (headers.contains("If-None-Match")) {
             return headers.get("If-None-Match")

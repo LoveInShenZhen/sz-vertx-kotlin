@@ -240,7 +240,7 @@
         $('#errMsg').text('');
         var apiurl = $("legend").html();
         var query_str = $("#ajax_form").serialize();
-        var json_api_url = apiurl + "?" + query_str + "&timetamp=" + new Date().getTime();
+        var json_api_url = apiurl + "?" + query_str;
 
         $.ajax({
             url: json_api_url,
@@ -272,7 +272,7 @@
         $('#errMsg').text('');
         var apiurl = $("legend").html();
         var query_str = $("#ajax_form").serialize();
-        var json_api_url = apiurl + "?" + query_str + "&timetamp=" + new Date().getTime();;
+        var json_api_url = apiurl + "?" + query_str;
 
         var jsondata = $("#requestJson").val();
         try {
@@ -303,7 +303,7 @@
         $('#errMsg').text('');
         var apiurl = $("legend").html();
         var query_str = $("#ajax_form").serialize();
-        var json_api_url = apiurl + "?" + query_str + "&timetamp=" + new Date().getTime();;
+        var json_api_url = apiurl + "?" + query_str;
 
         $("#post_form").attr("action", json_api_url);
 
