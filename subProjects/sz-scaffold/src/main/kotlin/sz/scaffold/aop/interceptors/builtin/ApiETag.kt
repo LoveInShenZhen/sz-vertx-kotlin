@@ -24,7 +24,6 @@ class ApiETagAction : Action<ApiETag>() {
             val response = this.httpContext.response()
             val currentEtag = DigestEngine.sha1().digestString(result.toShortJson())
             response.putHeader("ETag", currentEtag)
-            response.putHeader("Cache-Control", "no-cache")
 
             val reqEtag = etagOfRequest()
 

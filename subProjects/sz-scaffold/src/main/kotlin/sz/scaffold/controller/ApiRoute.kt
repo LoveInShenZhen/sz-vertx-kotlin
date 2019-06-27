@@ -85,10 +85,12 @@ data class ApiRoute(val method: HttpMethod,
                     // 通过控制器方法的返回类型, 是否是ReplyBase或者其子类型, 来判断是否是 json api 方法
                     if (controllerFun.returnType.isSubtypeOf(ReplyBase::class.createType())) {
                         try {
+                            // 对于api请求, 要求浏览器端不缓存
+                            response.putHeader("Cache-Control", "no-cache")
                             val actionResult = wrapperAction.call()
                             if (actionResult != null) {
                                 if (isJsonpRequest(httpContext, actionResult)) {
-                                    onJsonp(httpContext, actionResult!!)
+                                    onJsonp(httpContext, actionResult)
                                 } else if (actionResult is ReplyBase) {
                                     response.putHeader("Content-Type", "application/json; charset=utf-8")
                                     response.write(actionResult.toJsonPretty())
