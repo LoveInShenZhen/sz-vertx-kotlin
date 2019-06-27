@@ -86,11 +86,13 @@ data class ApiRoute(val method: HttpMethod,
                     if (controllerFun.returnType.isSubtypeOf(ReplyBase::class.createType())) {
                         try {
                             val actionResult = wrapperAction.call()
-                            if (isJsonpRequest(httpContext, actionResult)) {
-                                onJsonp(httpContext, actionResult!!)
-                            } else if (actionResult is ReplyBase) {
-                                response.putHeader("Content-Type", "application/json; charset=utf-8")
-                                response.write(actionResult.toJsonPretty())
+                            if (actionResult != null) {
+                                if (isJsonpRequest(httpContext, actionResult)) {
+                                    onJsonp(httpContext, actionResult!!)
+                                } else if (actionResult is ReplyBase) {
+                                    response.putHeader("Content-Type", "application/json; charset=utf-8")
+                                    response.write(actionResult.toJsonPretty())
+                                }
                             }
                         } catch (ex: Exception) {
                             Logger.debug(ExceptionUtil.exceptionChainToString(ex))
