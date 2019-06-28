@@ -6,8 +6,11 @@ package sz.scaffold.aop.interceptors.builtin
 
 import sz.scaffold.aop.actions.Action
 import sz.scaffold.aop.annotations.WithAction
+import sz.scaffold.controller.ApiRoute.Companion.queryParams
+import sz.scaffold.controller.ContentTypes
 import sz.scaffold.controller.reply.ReplyBase
 import sz.scaffold.errors.builtin.SzErrors
+import sz.scaffold.tools.json.Json
 
 @WithAction(QpsLimiterAction::class)
 @Target(AnnotationTarget.FUNCTION)
@@ -25,10 +28,25 @@ class QpsLimiterAction : Action<QpsLimiter>() {
         } else {
             val reply = ReplyBase()
             reply.ret = SzErrors.ExceedQpsLimit.code
-            reply.errmsg = "${SzErrors.ExceedQpsLimit.desc } [max ${limiter.rate} 次/秒]"
-            return reply
+            reply.errmsg = "${SzErrors.ExceedQpsLimit.desc} [max ${limiter.rate} 次/秒]"
+            if (isJsonpRequest()) {
+                onJsonp(reply)
+                return null
+            } else {
+                return reply
+            }
         }
-        // 当前拦截器要做的事情已经做完, 则把请求继续交给下一个 delegate 来处理
+    }
 
+    private fun onJsonp(result: Any) {
+        val response = httpContext.response()
+        response.putHeader("Content-Type", ContentTypes.JavaScript)
+        val callback = httpContext.queryParams(mapOf()).getValue("callback")
+        val body = "$callback(${Json.toJsonStrPretty(result)});"
+        response.write(body)
+    }
+
+    private fun isJsonpRequest(): Boolean {
+        return httpContext.queryParams(mapOf()).containsKey("callback")
     }
 }
