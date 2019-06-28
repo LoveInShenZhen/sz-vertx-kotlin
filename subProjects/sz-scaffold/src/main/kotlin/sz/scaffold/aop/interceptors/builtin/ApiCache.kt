@@ -11,7 +11,6 @@ import sz.scaffold.aop.annotations.WithAction
 import sz.scaffold.cache.redis.RedisCacheApi
 import sz.scaffold.controller.ContentTypes
 import sz.scaffold.tools.json.toShortJson
-import sz.scaffold.tools.logger.Logger
 
 @WithAction(ApiCacheAction::class)
 @Target(AnnotationTarget.FUNCTION)
@@ -38,11 +37,7 @@ class ApiCacheAction : Action<ApiCache>() {
             ""
         }
 
-        Logger.debug("queryParamsTxt: $queryParamsTxt")
-        Logger.debug("bodyParams: $bodyParams")
-
         val cacheKey = "ApiCache@${request.path()}@${request.method().name}@${DigestEngine.sha1().digestString(queryParamsTxt + bodyParams)}"
-        Logger.debug("cacheKey: $cacheKey")
         val cache = RedisCacheApi(this.config.cacheName)
         val cacheValue = cache.getOrNullAwait(cacheKey)
 
@@ -50,14 +45,12 @@ class ApiCacheAction : Action<ApiCache>() {
             val result = delegate.call()
             result?.let {
                 cache.setAwait(cacheKey, it.toShortJson(), this.config.expireTimeInMs)
-                Logger.debug("缓存Api结果,expire: ${this.config.expireTimeInMs}, key: $cacheKey")
             }
             return result
         } else {
             val response = this.httpContext.response()
             response.putHeader("Content-Type", ContentTypes.Json)
             response.write(cacheValue)
-            Logger.debug("直接获取缓存结果:\n${cacheValue}")
             return null
         }
     }
