@@ -10,7 +10,7 @@ import sz.scaffold.aop.actions.Action
 import sz.scaffold.aop.annotations.WithAction
 import sz.scaffold.cache.redis.RedisCacheApi
 import sz.scaffold.controller.ContentTypes
-import sz.scaffold.tools.json.toShortJson
+import sz.scaffold.controller.reply.ReplyBase
 
 @WithAction(ApiCacheAction::class)
 @Target(AnnotationTarget.FUNCTION)
@@ -42,10 +42,8 @@ class ApiCacheAction : Action<ApiCache>() {
         val cacheValue = cache.getOrNullAwait(cacheKey)
 
         if (cacheValue == null) {
-            val result = delegate.call()
-            result?.let {
-                cache.setAwait(cacheKey, it.toShortJson(), this.config.expireTimeInMs)
-            }
+            val result = delegate.call() as ReplyBase
+            cache.setAwait(cacheKey, result.toString(), this.config.expireTimeInMs)
             return result
         } else {
             val response = this.httpContext.response()
