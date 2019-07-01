@@ -109,6 +109,11 @@ class KedisPool(vertx: Vertx, val redisOptions: RedisOptions, val poolConfig: Ke
             return byName("default")
         }
 
+        fun exists(name: String): Boolean {
+            if (name.isBlank()) return true
+            return Application.config.hasPath("redis.$name")
+        }
+
         private fun Config.getStringEmptyAsNull(path: String): String? {
             if (this.hasPath(path)) {
                 val value = this.getString(path)

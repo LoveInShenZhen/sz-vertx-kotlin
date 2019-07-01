@@ -124,4 +124,23 @@ class RedisCacheApi(val name: String = "default") : CacheApi, AsyncCacheApi {
             Logger.error(ex.localizedMessage)
         }
     }
+
+    companion object {
+
+        private val instences = mutableMapOf<String, RedisCacheApi>()
+
+        fun byName(name: String): RedisCacheApi {
+            val cacheName = if (name.isBlank()) "default" else name
+            return instences.getOrPut(cacheName) {
+                if (KedisPool.exists(cacheName).not()) {
+                    throw SzException("名称: $cacheName 对应的Redis配置不存在, 请检查配置文件.")
+                }
+                RedisCacheApi(cacheName)
+            }
+        }
+
+        fun default(): RedisCacheApi {
+            return byName("default")
+        }
+    }
 }
