@@ -1,7 +1,6 @@
 package sz.EntityBean
 
 import io.ebean.Finder
-import io.ebean.Model
 import io.ebean.bean.EntityBean
 import sz.DB
 import sz.scaffold.tools.logger.Logger
@@ -52,7 +51,7 @@ abstract class BaseModel {
     companion object {
         inline fun <reified I, reified T> finder(dsName: String): Finder<I, T> {
             Logger.debug("create finder for ${T::class.java.name}, dataSource: $dsName")
-            return Finder<I, T>(T::class.java, dsName)
+            return Finder(T::class.java, dsName)
         }
     }
 }

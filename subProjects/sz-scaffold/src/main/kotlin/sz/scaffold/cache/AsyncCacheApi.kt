@@ -1,6 +1,7 @@
 package sz.scaffold.cache
 
 import jodd.datetime.JDateTime
+import sz.scaffold.cache.redis.RedisCacheApi
 
 //
 // Created by kk on 2019-06-14.
@@ -31,4 +32,10 @@ interface AsyncCacheApi {
     }
 
     suspend fun delAwait(key: String)
+
+    companion object {
+
+        val redisCache = RedisCacheApi()
+
+    }
 }

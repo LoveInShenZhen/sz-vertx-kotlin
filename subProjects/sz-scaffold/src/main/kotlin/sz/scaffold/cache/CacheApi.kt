@@ -34,8 +34,8 @@ interface CacheApi {
     fun del(key: String)
 
     companion object {
+
         val redisCache = RedisCacheApi()
-//        val localCache = TODO()
 
     }
 }
