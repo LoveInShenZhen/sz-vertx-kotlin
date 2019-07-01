@@ -139,8 +139,8 @@ class RedisCacheApi(val name: String = "default") : CacheApi, AsyncCacheApi {
             }
         }
 
-        fun default(): RedisCacheApi {
-            return byName("default")
+        val default: RedisCacheApi by lazy {
+            byName("default")
         }
     }
 }

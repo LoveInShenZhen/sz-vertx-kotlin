@@ -36,7 +36,7 @@ interface AsyncCacheApi {
     companion object {
 
         // 默认的 redis 缓存
-        val redisCache = RedisCacheApi.default()
+        val redisCache = RedisCacheApi.default
 
     }
 }
