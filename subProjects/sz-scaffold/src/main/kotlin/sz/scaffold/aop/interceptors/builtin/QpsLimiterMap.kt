@@ -2,8 +2,7 @@ package sz.scaffold.aop.interceptors.builtin
 
 import com.google.common.util.concurrent.RateLimiter
 import sz.scaffold.Application
-import sz.scaffold.tools.json.toJsonPretty
-import sz.scaffold.tools.logger.Logger
+import sz.scaffold.tools.SzException
 import kotlin.reflect.full.findAnnotation
 
 /**
@@ -11,26 +10,19 @@ import kotlin.reflect.full.findAnnotation
  */
 @Suppress("UnstableApiUsage")
 object QpsLimiterMap {
-    private val map = mutableMapOf<String, RateLimiter>()
+    // key: route path
+    private val apiRateLimiterMap: Map<String, RateLimiter>
 
-    // 全局限流器应该只有一个, 选择最后一个有效
-    val globalQpsLimiter: RateLimiter? by lazy {
-        val cfg = Application.config.getConfigList("app.httpServer.interceptors").filter {
-            it.getString("className") == GlobalQpsLimiter::class.java.name
-        }.lastOrNull()
-        Logger.debug("====>\n${cfg?.root()?.unwrapped()?.toJsonPretty()}")
-        if (cfg == null) {
-            return@lazy null
-        } else {
-            return@lazy RateLimiter.create(cfg.getDouble("config.qps"))
-        }
-    }
+    // key: name of limter
+    private val namedRateLimiters: Map<String, RateLimiter>
 
     init {
-        initMapByConfig()
+        apiRateLimiterMap = apiRateLimiterMapByConfig()
+        namedRateLimiters = globalRateLimitersByConfig()
     }
 
-    private fun initMapByConfig() {
+    private fun apiRateLimiterMapByConfig(): Map<String, RateLimiter> {
+        val map = mutableMapOf<String, RateLimiter>()
         Application.loadApiRouteFromRouteFiles().forEach { apiRoute ->
             val annQpsLimiter = apiRoute.controllerFun.findAnnotation<QpsLimiter>()
             if (annQpsLimiter != null) {
@@ -38,13 +30,37 @@ object QpsLimiterMap {
                 map[apiRoute.path] = limiter
             }
         }
+        return map
     }
 
-    fun limiterOf(routePath: String): RateLimiter {
-        return map[routePath]!!
+    //{
+    //    className = "sz.scaffold.aop.interceptors.builtin.GlobalQpsLimiter"
+    //    config = {
+    //        name = "nameOfLimiter"
+    //        qps = 150
+    //        includes = ["/**"]
+    //        excludes = []
+    //    }
+    //}
+    private fun globalRateLimitersByConfig(): Map<String, RateLimiter> {
+        return Application.config.getConfigList("app.httpServer.interceptors").filter {
+            it.getString("className") == GlobalQpsLimiter::class.java.name
+        }.map {
+            val rateLimiter = RateLimiter.create(it.getDouble("config.qps"))
+            val name = it.getString("config.name")
+            Pair(name, rateLimiter)
+        }.toMap()
     }
 
-    fun getLimiterOrNull(routePath: String): RateLimiter? {
-        return map[routePath]
+    fun apiLimiterOf(routePath: String): RateLimiter {
+        return apiRateLimiterMap.getOrElse(routePath) {
+            throw SzException("No rateLimiter found for path: $routePath")
+        }
+    }
+
+    fun namedLimiterOf(name: String): RateLimiter {
+        return namedRateLimiters.getOrElse(name) {
+            throw SzException("No rateLimiter found for name: $name")
+        }
     }
 }
