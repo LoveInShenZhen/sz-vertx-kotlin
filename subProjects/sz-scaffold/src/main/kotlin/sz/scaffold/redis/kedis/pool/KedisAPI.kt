@@ -6,9 +6,11 @@ import io.vertx.kotlin.coroutines.awaitResult
 import io.vertx.redis.client.Redis
 import io.vertx.redis.client.RedisAPI
 import io.vertx.redis.client.Response
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.withTimeout
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.logger.Logger
+import java.util.NoSuchElementException
 
 //
 // Created by kk on 2019-06-10.
@@ -53,10 +55,6 @@ class KedisAPI(private val delegate: RedisAPI, private val connClient: Redis, pr
         connClient.close()
     }
 
-    fun returnToPool() {
-        close()
-    }
-
     private suspend fun <T> awaitWithTimeout(timeOut: Long, block: (h: Handler<AsyncResult<T>>) -> Unit): T {
         try {
             return if (timeOut > 0L) {
@@ -65,7 +63,10 @@ class KedisAPI(private val delegate: RedisAPI, private val connClient: Redis, pr
                 awaitResult(block)
             }
         } catch (ex: Throwable) {
-            markBroken()
+            if ((ex is NoSuchElementException || ex is TimeoutCancellationException).not()) {
+//                Logger.debug("redis client markBroken by: ${ex.message}")
+                markBroken()
+            }
             throw ex
         }
     }

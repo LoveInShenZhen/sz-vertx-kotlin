@@ -389,6 +389,9 @@ object Application {
             httpServerOptions.isTcpQuickAck = config.getBoolean("app.httpServer.networkOptions.tcpQuickAck")
             httpServerOptions.isReusePort = config.getBoolean("app.httpServer.networkOptions.reusePort")
         }
+        if (SystemInfo().isMacOsX) {
+            httpServerOptions.isReusePort = config.getBoolean("app.httpServer.networkOptions.reusePort")
+        }
 
         return httpServerOptions
     }

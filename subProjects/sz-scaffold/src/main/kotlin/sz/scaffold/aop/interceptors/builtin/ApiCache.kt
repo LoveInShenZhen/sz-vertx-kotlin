@@ -39,11 +39,11 @@ class ApiCacheAction : Action<ApiCache>() {
 
         val cacheKey = "ApiCache@${request.path()}@${request.method().name}@${DigestEngine.sha1().digestString(queryParamsTxt + bodyParams)}"
         val cache = RedisCacheApi(this.config.cacheName)
-        val cacheValue = cache.getOrNullAwait(cacheKey)
+        val cacheValue = cache.getOrNull(cacheKey)
 
         if (cacheValue == null) {
             val result = delegate.call() as ReplyBase
-            cache.setAwait(cacheKey, result.toString(), this.config.expireTimeInMs)
+            cache.set(cacheKey, result.toString(), this.config.expireTimeInMs)
             return result
         } else {
             val response = this.httpContext.response()
