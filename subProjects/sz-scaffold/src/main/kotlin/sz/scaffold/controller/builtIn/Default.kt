@@ -5,6 +5,8 @@ import jodd.util.CommandLine
 import sz.scaffold.Application
 import sz.scaffold.annotations.Comment
 import sz.scaffold.controller.ApiController
+import sz.scaffold.controller.ContentTypes
+import sz.scaffold.tools.json.toJsonPretty
 import java.lang.management.ManagementFactory
 import java.net.InetAddress
 
@@ -16,8 +18,17 @@ import java.net.InetAddress
 class Default : ApiController() {
 
     fun hello(): String {
-        this.contentType("text/plain")
-        return "hello"
+        this.contentType(ContentTypes.Html)
+        return """
+<html>
+<body>
+    <ul>
+        <li><a href="/api/builtin/doc/apiIndex">api 列表</a></li>
+        <li><a href="/api/builtin/doc/pageIndex">非 api 链接列表</a></li>
+        <li><a href="/api/builtin/sysInfo">系统信息</a></li>
+    </ul>
+</body>
+</html>""".trimIndent()
     }
 
     @Comment("返回系统信息")
@@ -93,6 +104,11 @@ class Default : ApiController() {
         } else {
             info.appendln("当前为: Vertx 单机模式")
         }
+
+        info.appendln("-".repeat(64))
+        info.appendln("当前应用配置 application.conf:")
+        info.appendln(Application.config.root().unwrapped().toJsonPretty())
+        info.appendln()
 
         info.appendln("-".repeat(64))
         // sh -c 'ulimit -a'

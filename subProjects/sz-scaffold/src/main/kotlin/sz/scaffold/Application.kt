@@ -317,7 +317,7 @@ object Application {
 
         setupWebSocketHandler(httpServer)
 
-        Logger.debug("Start http server at: ${httpServerOptions.host}:${httpServerOptions.port}")
+        Logger.debug("Start http server at: http://localhost:${httpServerOptions.port}")
         return httpServer
     }
 
