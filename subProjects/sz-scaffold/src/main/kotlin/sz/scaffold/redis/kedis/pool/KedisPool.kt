@@ -112,7 +112,6 @@ class KedisPool(vertx: Vertx, val redisOptions: RedisOptions, val poolConfig: Ke
             } else {
                 Application.config.getConfig("redis.default.netClientOptions")
             }
-//            Logger.debug("redis net client options:\n${JsonObject(config.root().unwrapped()).toJsonPretty()}")
             return NetClientOptions(JsonObject(config.root().unwrapped()))
         }
 
