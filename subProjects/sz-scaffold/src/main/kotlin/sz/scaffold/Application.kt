@@ -107,8 +107,12 @@ object Application {
             throw SzException("appHome 路径推断错误, 因为 [$confPath] 不存在")
         }
 
-        setupConfPathProperty("config.file", confPath)
-        Logger.debug("""-Dconfig.file : ${System.getProperty("config.file")}""")
+        if (System.getProperties().containsKey("config.url")) {
+            Logger.debug("""-Dconfig.url : ${System.getProperty("config.url")}""")
+        } else {
+            setupConfPathProperty("config.file", confPath)
+            Logger.debug("""-Dconfig.file : ${System.getProperty("config.file")}""")
+        }
 
         config = ConfigFactory.load()
 
