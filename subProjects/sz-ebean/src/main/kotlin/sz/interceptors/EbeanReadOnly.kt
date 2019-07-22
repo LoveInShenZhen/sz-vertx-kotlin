@@ -27,7 +27,7 @@ class EbeanReadOnlyAction : Action<EbeanReadOnly>() {
     override suspend fun call(): Any? {
         return coroutineScope {
             val dsName = dataSourceOf(config.dataSourceTag)
-            withContext(this.coroutineContext + DB.transactionCoroutineContext() + DB.dataSourceCoroutineContext(dsName)) {
+            withContext(this.coroutineContext + DB.transactionCoroutineContext() + DB.dataSourceCoroutineContext(dsName) + SzEbeanConfig.ebeanCoroutineDispatcher) {
                 val db = DB.byDataSource(dsName)
                 val tran = db.beginTransaction(config.isolation)
                 try {

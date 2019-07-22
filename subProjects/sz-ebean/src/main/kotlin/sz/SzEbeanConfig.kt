@@ -8,12 +8,15 @@ import com.zaxxer.hikari.HikariDataSource
 import io.ebean.EbeanServerFactory
 import io.ebean.config.ServerConfig
 import jodd.introspector.ClassIntrospector
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.asCoroutineDispatcher
 import sz.SzEbeanConfig.hikariConfigKeys
 import sz.scaffold.Application
 import sz.scaffold.ext.getStringListOrEmpty
 import sz.scaffold.tools.BizLogicException
 import sz.scaffold.tools.logger.Logger
 import java.util.*
+import java.util.concurrent.Executors
 
 //
 // Created by kk on 17/8/20.
@@ -23,17 +26,17 @@ object SzEbeanConfig {
     private val ebeanConfig: Config = Application.config.getConfig("ebean")
     private val defaultDatasourceName: String
     private val _ebeanServerConfigs = mutableMapOf<String, ServerConfig>()
+    private var workerPoolSize = 0
+
+
+    val ebeanCoroutineDispatcher: CoroutineDispatcher by lazy {
+        Executors.newWorkStealingPool(workerPoolSize).asCoroutineDispatcher()
+    }
 
     val ebeanServerConfigs: Map<String, ServerConfig>
         get() = _ebeanServerConfigs
 
     val hasDbConfiged: Boolean
-
-    private var _hikariConfig: HikariConfig? = null
-    val hikariConfig: HikariConfig
-        get() {
-            return _hikariConfig!!
-        }
 
     val hikariConfigKeys by lazy {
         val classDescriptor = ClassIntrospector.get().lookup(HikariConfig::class.java)
@@ -60,8 +63,9 @@ object SzEbeanConfig {
             val dataSourceName = it
             val dataSourceConfig = dataSources.getConfig(it)
             val dataSourceProps = dataSourceConfig.toProperties()
-            _hikariConfig = HikariConfig(dataSourceProps)
-            val ds = HikariDataSource(_hikariConfig)
+            val hikariConfig = HikariConfig(dataSourceProps)
+            val ds = HikariDataSource(hikariConfig)
+            workerPoolSize += ds.maximumPoolSize
 
             val ebeanServerCfg = ServerConfig()
             ebeanServerCfg.name = dataSourceName

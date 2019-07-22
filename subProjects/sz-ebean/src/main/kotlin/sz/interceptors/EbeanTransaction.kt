@@ -8,6 +8,7 @@ import io.ebean.annotation.TxIsolation
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import sz.DB
+import sz.SzEbeanConfig
 import sz.scaffold.aop.actions.Action
 import sz.scaffold.aop.annotations.WithAction
 
@@ -24,7 +25,7 @@ class EbeanTransactionAction : Action<EbeanTransaction>() {
     override suspend fun call(): Any? {
         // 将请求的协程上下文包装在Ebean的上下文中
         return coroutineScope {
-            withContext(this.coroutineContext + DB.transactionCoroutineContext() + DB.dataSourceCoroutineContext(config.dataSourceName)) {
+            withContext(this.coroutineContext + DB.transactionCoroutineContext() + DB.dataSourceCoroutineContext(config.dataSourceName) + SzEbeanConfig.ebeanCoroutineDispatcher) {
                 val db = DB.byDataSource(config.dataSourceName)
                 val tran = db.beginTransaction(config.isolation)
                 try {

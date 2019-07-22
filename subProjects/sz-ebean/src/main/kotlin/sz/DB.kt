@@ -237,6 +237,7 @@ object DB {
         return byDataSource(currentDataSource())
     }
 
+    @Deprecated("""请改为使用 DB.byDataSource("dsName").runInTransactionAwait() """)
     fun RunInTransaction(dataSource: String = "", readOnly: Boolean = false, body: (ebeanServer: EbeanServer) -> Unit) {
         try {
             setCurrentDataSource(dataSource)
@@ -248,6 +249,7 @@ object DB {
         }
     }
 
+    @Deprecated("""请改为使用 DB.byDataSource("dsName").callInTransactionAwait() """)
     fun <T> RunInTransaction(dataSource: String = "", readOnly: Boolean = false, body: (ebeanServer: EbeanServer) -> T): T {
         try {
             setCurrentDataSource(dataSource)
@@ -308,6 +310,27 @@ fun EbeanServer.RunInTransaction(readOnly: Boolean = false, body: () -> Unit) {
     }
 }
 
+suspend fun EbeanServer.runInTransactionAwait(readOnly: Boolean = false, body: () -> Unit) {
+    val db = this
+    coroutineScope {
+        withContext(this.coroutineContext + DB.transactionCoroutineContext() + DB.dataSourceCoroutineContext(db.name) + SzEbeanConfig.ebeanCoroutineDispatcher) {
+            val tran = db.beginTransaction(TxIsolation.READ_COMMITED)
+            tran.isReadOnly = readOnly
+            try {
+                val result = body()
+                tran.commit()
+                return@withContext result
+            } catch (e: Exception) {
+                tran.rollback(e)
+//                    Logger.debug("rollback: $tran for reason: ${e.message}")
+                throw e
+            } finally {
+                tran.end()
+            }
+        }
+    }
+}
+
 fun <T> EbeanServer.RunInTransaction(readOnly: Boolean = false, body: () -> T): T {
     try {
         DB.setCurrentDataSource(this.name)
@@ -316,72 +339,33 @@ fun <T> EbeanServer.RunInTransaction(readOnly: Boolean = false, body: () -> T): 
     } finally {
         DB.resetCurrentDataSource()
     }
+}
 
+suspend fun <T> EbeanServer.callInTransactionAwait(readOnly: Boolean = false, body: () -> T): T {
+    val db = this
+    return coroutineScope {
+        withContext(this.coroutineContext + DB.transactionCoroutineContext() + DB.dataSourceCoroutineContext(db.name) + SzEbeanConfig.ebeanCoroutineDispatcher) {
+            val tran = db.beginTransaction(TxIsolation.READ_COMMITED)
+            tran.isReadOnly = readOnly
+            try {
+                val result = body()
+                tran.commit()
+                return@withContext result
+            } catch (e: Exception) {
+                tran.rollback(e)
+//                    Logger.debug("rollback: $tran for reason: ${e.message}")
+                throw e
+            } finally {
+                tran.end()
+            }
+        }
+    }
 }
 
 fun EbeanServer.tableExists(tableName: String): Boolean {
     val rows = this.createSqlQuery("SHOW TABLES").findList()
     val count = rows.count { it.values.first() == tableName }
     return count > 0
-}
-
-fun EbeanServer.suspend(): SuspendEbeanServer {
-    return SuspendEbeanServer(this)
-}
-
-class SuspendEbeanServer(private val db: EbeanServer) {
-
-    suspend fun <R> callWithTransaction(readOnly: Boolean = false, body: () -> R): R {
-        return db.callWithTransaction(readOnly, body)
-    }
-
-    suspend fun runWithTransaction(readOnly: Boolean = false, body: () -> Unit) {
-        return db.runWithTransaction(readOnly, body)
-    }
-
-    private suspend fun <R> EbeanServer.callWithTransaction(readOnly: Boolean = false, body: () -> R): R {
-        val db = this
-        return coroutineScope {
-            withContext(this.coroutineContext + DB.transactionCoroutineContext() + DB.dataSourceCoroutineContext(db.name)) {
-                val tran = db.beginTransaction(TxIsolation.READ_COMMITED)
-                tran.isReadOnly = readOnly
-                try {
-                    val result = body()
-                    tran.commit()
-                    Logger.debug("commit: $tran")
-                    return@withContext result
-                } catch (e: Exception) {
-                    tran.rollback(e)
-//                    Logger.debug("rollback: $tran for reason: ${e.message}")
-                    throw e
-                } finally {
-                    tran.end()
-                }
-            }
-        }
-    }
-
-    private suspend fun EbeanServer.runWithTransaction(readOnly: Boolean = false, body: () -> Unit) {
-        val db = this
-        coroutineScope {
-            withContext(this.coroutineContext + DB.transactionCoroutineContext() + DB.dataSourceCoroutineContext(db.name)) {
-                val tran = db.beginTransaction(TxIsolation.READ_COMMITED)
-                tran.isReadOnly = readOnly
-                try {
-                    val result = body()
-                    tran.commit()
-                    Logger.debug("commit: $tran")
-                    return@withContext result
-                } catch (e: Exception) {
-                    tran.rollback(e)
-//                    Logger.debug("rollback: $tran for reason: ${e.message}")
-                    throw e
-                } finally {
-                    tran.end()
-                }
-            }
-        }
-    }
 }
 
 @Suppress("IMPLICIT_CAST_TO_ANY")
