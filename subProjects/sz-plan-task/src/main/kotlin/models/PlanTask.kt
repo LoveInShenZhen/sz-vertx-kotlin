@@ -10,6 +10,7 @@ import sz.EntityBean.BaseModel
 import sz.PlanTaskService
 import sz.RunInTransaction
 import sz.annotations.DBIndexed
+import sz.runInTransaction
 import sz.scaffold.Application
 import sz.scaffold.tools.json.toJsonPretty
 import java.sql.Timestamp
@@ -66,7 +67,7 @@ class PlanTask : BaseModel() {
         }
 
         fun addTask(task: Runnable, requireSeq: Boolean = false, seqType: String = "", planRunTime: JDateTime? = null, tag: String = "") {
-            DB.Default().RunInTransaction {
+            DB.Default().runInTransaction {
                 val planTask = PlanTask()
                 planTask.require_seq = requireSeq
                 planTask.seq_type = seqType
@@ -83,7 +84,7 @@ class PlanTask : BaseModel() {
         }
 
         fun addSingletonTask(task: Runnable, requireSeq: Boolean = false, seqType: String = "", planRunTime: JDateTime? = null, tag: String = "") {
-            DB.Default().RunInTransaction {
+            DB.Default().runInTransaction {
                 val className = task.javaClass.name
                 val oldTasks = finder().query().where()
                     .eq("class_name", className)
@@ -101,7 +102,7 @@ class PlanTask : BaseModel() {
         }
 
         fun ResetTaskStatus() {
-            DB.Default().RunInTransaction {
+            DB.Default().runInTransaction {
                 val sql = "update `plan_task` set `task_status`=:init_status where `task_status`=:old_status"
                 DB.Default().createSqlUpdate(sql)
                     .setParameter("init_status", TaskStatus.WaitingInDB.code)

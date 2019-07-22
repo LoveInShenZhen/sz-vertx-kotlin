@@ -105,16 +105,16 @@ object PlanTaskService {
                 if (stopNow) break
 
                 try {
-                    DB.Default().RunInTransaction {
+                    DB.Default().runInTransaction {
                         val endTime = JDateTime().addSecond(taskLoaderWaitTime + 1)
                         val tasks = PlanTask.where()
-                                .eq("require_seq", requireSeq)
-                                .eq("task_status", TaskStatus.WaitingInDB.code)
-                                .or()
-                                .le("plan_run_time", endTime)
-                                .isNull("plan_run_time")
-                                .endOr()
-                                .findList()
+                            .eq("require_seq", requireSeq)
+                            .eq("task_status", TaskStatus.WaitingInDB.code)
+                            .or()
+                            .le("plan_run_time", endTime)
+                            .isNull("plan_run_time")
+                            .endOr()
+                            .findList()
 
                         tasks.forEach {
                             it.task_status = TaskStatus.WaitingInQueue.code
@@ -192,19 +192,19 @@ object PlanTaskService {
             val runObj = DeserializeJsonData(task)
             if (runObj != null) {
                 try {
-                    DB.Default().RunInTransaction {
+                    DB.Default().runInTransaction {
                         runObj.run()    // 执行任务
                         val originTask = PlanTask.finder().query().where().idEq(task.id).findOneOrEmpty()
-                        originTask.ifPresent {theTask ->
+                        originTask.ifPresent { theTask ->
                             theTask.delete()
                         }
 
                     }
                 } catch (ex: Exception) {
                     // 任务执行发生错误, 标记任务状态, 记录
-                    DB.Default().RunInTransaction {
+                    DB.Default().runInTransaction {
                         val originTask = PlanTask.finder().query().where().idEq(task.id).findOneOrEmpty()
-                        originTask.ifPresent {theTask ->
+                        originTask.ifPresent { theTask ->
                             theTask.task_status = TaskStatus.Error.code
                             theTask.remarks = ExceptionUtil.exceptionStackTraceToString(ex)
                             theTask.save()
@@ -212,9 +212,9 @@ object PlanTaskService {
                     }
                 }
             } else {
-                DB.Default().RunInTransaction {
+                DB.Default().runInTransaction {
                     val originTask = PlanTask.finder().query().where().idEq(task.id).findOneOrEmpty()
-                    originTask.ifPresent {theTask ->
+                    originTask.ifPresent { theTask ->
                         theTask.task_status = TaskStatus.Error.code
                         theTask.remarks = "反序列化任务失败"
                         theTask.save()

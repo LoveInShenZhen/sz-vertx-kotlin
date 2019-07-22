@@ -237,8 +237,12 @@ object DB {
         return byDataSource(currentDataSource())
     }
 
-    @Deprecated("""请改为使用 DB.byDataSource("dsName").runInTransactionAwait() """)
+    @Deprecated("""请改为使用 DB.byDataSource("dsName").runInTransaction(...) """, ReplaceWith("runInTransaction(dataSource, readOnly, body)", "sz.DB.runInTransaction"))
     fun RunInTransaction(dataSource: String = "", readOnly: Boolean = false, body: (ebeanServer: EbeanServer) -> Unit) {
+        runInTransaction(dataSource, readOnly, body)
+    }
+
+    fun runInTransaction(dataSource: String = "", readOnly: Boolean = false, body: (ebeanServer: EbeanServer) -> Unit) {
         try {
             setCurrentDataSource(dataSource)
             val ebserver = byDataSource(dataSource)
@@ -249,8 +253,12 @@ object DB {
         }
     }
 
-    @Deprecated("""请改为使用 DB.byDataSource("dsName").callInTransactionAwait() """)
+    @Deprecated("""请改为使用 DB.byDataSource("dsName").callInTransaction(...) """, ReplaceWith("callInTransaction(dataSource, readOnly, body)", "sz.DB.callInTransaction"))
     fun <T> RunInTransaction(dataSource: String = "", readOnly: Boolean = false, body: (ebeanServer: EbeanServer) -> T): T {
+        return callInTransaction(dataSource, readOnly, body)
+    }
+
+    fun <T> callInTransaction(dataSource: String = "", readOnly: Boolean = false, body: (ebeanServer: EbeanServer) -> T): T {
         try {
             setCurrentDataSource(dataSource)
             val ebserver = byDataSource(dataSource)
@@ -259,7 +267,6 @@ object DB {
         } finally {
             resetCurrentDataSource()
         }
-
     }
 
     // 创建一个新的 ebean transaction 协程上下文
@@ -300,7 +307,12 @@ fun BigDecimal?.safeValue(): BigDecimal {
     return this ?: BigDecimal.ZERO
 }
 
+@Deprecated("rename to runInTransaction(...)", ReplaceWith("runInTransaction(readOnly, body)"))
 fun EbeanServer.RunInTransaction(readOnly: Boolean = false, body: () -> Unit) {
+    runInTransaction(readOnly, body)
+}
+
+fun EbeanServer.runInTransaction(readOnly: Boolean = false, body: () -> Unit) {
     try {
         DB.setCurrentDataSource(this.name)
         val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED).setReadOnly(readOnly)
@@ -331,7 +343,12 @@ suspend fun EbeanServer.runInTransactionAwait(readOnly: Boolean = false, body: (
     }
 }
 
+@Deprecated("rename to callInTransaction(...)", ReplaceWith("callInTransaction(readOnly, body)"))
 fun <T> EbeanServer.RunInTransaction(readOnly: Boolean = false, body: () -> T): T {
+    return callInTransaction(readOnly, body)
+}
+
+fun <T> EbeanServer.callInTransaction(readOnly: Boolean = false, body: () -> T): T {
     try {
         DB.setCurrentDataSource(this.name)
         val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED).setReadOnly(readOnly)
