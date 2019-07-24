@@ -3,7 +3,7 @@ package sz.scaffold.sequenceId.vertcles
 import io.vertx.core.Vertx
 import io.vertx.core.eventbus.MessageConsumer
 import io.vertx.core.shareddata.Lock
-import io.vertx.kotlin.core.eventbus.sendAwait
+import io.vertx.kotlin.core.eventbus.requestAwait
 import io.vertx.kotlin.core.shareddata.getAsyncMapAwait
 import io.vertx.kotlin.core.shareddata.getAwait
 import io.vertx.kotlin.core.shareddata.getLockAwait
@@ -148,7 +148,7 @@ class SeqIdServiceVerticle : CoroutineVerticle() {
         }
 
         suspend fun nextIdAwait(): Long {
-            return Application.vertx.eventBus().sendAwait<Long>(idServiceBusAddress, "").body()
+            return Application.vertx.eventBus().requestAwait<Long>(idServiceBusAddress, "").body()
         }
     }
 

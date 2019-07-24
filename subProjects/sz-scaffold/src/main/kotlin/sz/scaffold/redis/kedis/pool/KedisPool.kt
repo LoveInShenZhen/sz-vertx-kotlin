@@ -34,6 +34,7 @@ class KedisPool(vertx: Vertx, val redisOptions: RedisOptions, val poolConfig: Ke
         return kedisApi
     }
 
+    @Suppress("DEPRECATION")
     suspend fun borrowAwait(): KedisAPI {
         val borrowFuture = Future.future<KedisAPI>()
         borrowExecutor.submit {

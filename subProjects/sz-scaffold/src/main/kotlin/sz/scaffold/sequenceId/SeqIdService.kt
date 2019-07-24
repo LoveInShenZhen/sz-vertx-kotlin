@@ -1,6 +1,6 @@
 package sz.scaffold.sequenceId
 
-import io.vertx.kotlin.core.eventbus.sendAwait
+import io.vertx.kotlin.core.eventbus.requestAwait
 import sz.scaffold.Application
 import sz.scaffold.sequenceId.vertcles.SeqIdServiceVerticle
 
@@ -10,6 +10,6 @@ import sz.scaffold.sequenceId.vertcles.SeqIdServiceVerticle
 object SeqIdService {
 
     suspend fun nexIdAwait(): Long {
-        return Application.vertx.eventBus().sendAwait<Long>(SeqIdServiceVerticle.idServiceBusAddress, "").body()
+        return Application.vertx.eventBus().requestAwait<Long>(SeqIdServiceVerticle.idServiceBusAddress, "").body()
     }
 }
