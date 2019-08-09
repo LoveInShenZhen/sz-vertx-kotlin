@@ -1,4 +1,4 @@
-package sz.scaffold.tools
+package sz.crypto
 
 import jodd.util.Base64
 import org.bouncycastle.util.io.pem.PemObject
