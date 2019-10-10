@@ -11,15 +11,15 @@ dependencies {
 
     // android gradle依赖：implementation 和compile的区别
     // 参考: https://www.jianshu.com/p/f34c179bc9d0 根据需要选择使用不同的依赖设定方式
-    api("io.vertx:vertx-core:3.8.1")
-    api("io.vertx:vertx-web:3.8.1")
-//    api("io.vertx:vertx-codegen:3.8.1")
-    api("io.vertx:vertx-zookeeper:3.8.1")
-    api("io.vertx:vertx-redis-client:3.8.1")
-    api("io.vertx:vertx-lang-kotlin:3.8.1") {
+    api("io.vertx:vertx-core:3.8.2")
+    api("io.vertx:vertx-web:3.8.2")
+//    api("io.vertx:vertx-codegen:3.8.2")
+    api("io.vertx:vertx-zookeeper:3.8.2")
+    api("io.vertx:vertx-redis-client:3.8.2")
+    api("io.vertx:vertx-lang-kotlin:3.8.2") {
         this.exclude(group = "org.jetbrains.kotlin")
     }
-    api("io.vertx:vertx-lang-kotlin-coroutines:3.8.1") {
+    api("io.vertx:vertx-lang-kotlin-coroutines:3.8.2") {
         this.exclude(group = "org.jetbrains.kotlin")
     }
 
@@ -28,7 +28,7 @@ dependencies {
     api(group = "io.netty", name = "netty-transport-native-kqueue", version = "4.1.15.Final", classifier = "osx-x86_64")
 
     api("org.apache.commons:commons-pool2:2.6.2")
-    api("com.google.guava:guava:27.0-jre")
+    api("com.google.guava:guava:28.1-jre")
     api("org.freemarker:freemarker:2.3.23")
     api("com.github.ben-manes.caffeine:caffeine:2.7.0")
 //    api("com.github.ben-manes.caffeine:guava:2.7.0")

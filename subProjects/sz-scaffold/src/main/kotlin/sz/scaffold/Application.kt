@@ -14,7 +14,6 @@ import io.vertx.core.impl.VertxImpl
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
-import io.vertx.ext.web.handler.CookieHandler
 import io.vertx.spi.cluster.zookeeper.ZookeeperClusterManager
 import jodd.exception.ExceptionUtil
 import jodd.io.FileNameUtil
@@ -290,8 +289,6 @@ object Application {
             .setBodyLimit(bodyHandlerOptions.bodyLimit)
             .setDeleteUploadedFilesOnEnd(bodyHandlerOptions.deleteUploadedFilesOnEnd)
             .setUploadsDirectory(bodyHandlerOptions.uploadsDirectory))
-
-        router.route().handler(CookieHandler.create())
 
         loadApiRouteFromRouteFiles().forEach {
             it.addToRoute(router)
