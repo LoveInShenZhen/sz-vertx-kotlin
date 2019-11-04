@@ -12,7 +12,7 @@ plugins {
 
 allprojects {
     group = "com.github.kklongming"
-    version = "2.0.0-dev"
+    version = "3.0.0-dev"
 
     System.getProperty("version")?.apply {
         version = this
