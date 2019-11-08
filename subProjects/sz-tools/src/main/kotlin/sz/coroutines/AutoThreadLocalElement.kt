@@ -12,15 +12,17 @@ class AutoThreadLocalElement<T>(
 ) : ThreadContextElement<T> {
     override val key: CoroutineContext.Key<*> = ThreadLocalKey(threadLocal)
 
+    @Suppress("UNCHECKED_CAST")
     override fun updateThreadContext(context: CoroutineContext): T {
-        val oldState = threadLocal.get()
+//        val oldState = threadLocal.get()
         threadLocal.set(value)
-        return oldState
+
+        return null as T
     }
 
     override fun restoreThreadContext(context: CoroutineContext, oldState: T) {
         value = threadLocal.get()
-        threadLocal.set(oldState)
+        threadLocal.remove()
     }
 
     // this method is overridden to perform value comparison (==) on key

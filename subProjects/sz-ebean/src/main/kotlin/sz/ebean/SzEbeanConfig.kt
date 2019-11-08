@@ -1,4 +1,4 @@
-package sz
+package sz.ebean
 
 import com.google.common.reflect.ClassPath
 import com.typesafe.config.Config
@@ -8,30 +8,28 @@ import com.zaxxer.hikari.HikariDataSource
 import io.ebean.EbeanServerFactory
 import io.ebean.config.ServerConfig
 import jodd.introspector.ClassIntrospector
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.asCoroutineDispatcher
-import sz.SzEbeanConfig.hikariConfigKeys
+import sz.ebean.SzEbeanConfig.hikariConfigKeys
 import sz.scaffold.Application
 import sz.scaffold.ext.getStringListOrEmpty
 import sz.scaffold.tools.BizLogicException
 import sz.scaffold.tools.logger.Logger
 import java.util.*
-import java.util.concurrent.Executors
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.ThreadPoolExecutor
+import java.util.concurrent.TimeUnit
 
 //
 // Created by kk on 17/8/20.
 //
+@Suppress("MemberVisibilityCanBePrivate", "ObjectPropertyName", "unused")
 object SzEbeanConfig {
 
     private val ebeanConfig: Config = Application.config.getConfig("ebean")
     private val defaultDatasourceName: String
     private val _ebeanServerConfigs = mutableMapOf<String, ServerConfig>()
-    private var workerPoolSize = 0
+    private val workerPoolMap = mutableMapOf<String, ThreadPoolExecutor>()
 
-
-    val ebeanCoroutineDispatcher: CoroutineDispatcher by lazy {
-        Executors.newWorkStealingPool(workerPoolSize).asCoroutineDispatcher()
-    }
 
     val ebeanServerConfigs: Map<String, ServerConfig>
         get() = _ebeanServerConfigs
@@ -65,7 +63,8 @@ object SzEbeanConfig {
             val dataSourceProps = dataSourceConfig.toProperties()
             val hikariConfig = HikariConfig(dataSourceProps)
             val ds = HikariDataSource(hikariConfig)
-            workerPoolSize += ds.maximumPoolSize
+
+            workerPoolMap[dataSourceName] = ThreadPoolExecutor(0, ds.maximumPoolSize, 60, TimeUnit.SECONDS, LinkedBlockingQueue<Runnable>(1024))
 
             val ebeanServerCfg = ServerConfig()
             ebeanServerCfg.name = dataSourceName
@@ -79,11 +78,12 @@ object SzEbeanConfig {
 
             EbeanServerFactory.create(ebeanServerCfg)
 
-            _ebeanServerConfigs.put(dataSourceName, ebeanServerCfg)
+            _ebeanServerConfigs[dataSourceName] = ebeanServerCfg
         }
     }
 
     private val _dataSourceByTagCache = mutableMapOf("" to arrayOf(""))
+
     fun dataSourceByTag(tag: String): Array<String> {
         return _dataSourceByTagCache.getOrPut(tag) {
             val dataSources = ebeanConfig.getConfig("dataSources")
@@ -142,6 +142,10 @@ object SzEbeanConfig {
 
     fun isHsqldb(dataSource: String = "default"): Boolean {
         return jdbcUrl(dataSource).startsWith("jdbc:hsqldb:")
+    }
+
+    fun workerOf(dataSource: String): ExecutorService {
+        return workerPoolMap[dataSource] ?: throw RuntimeException("Invalid data source name: $dataSource")
     }
 }
 

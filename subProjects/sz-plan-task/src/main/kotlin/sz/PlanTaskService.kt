@@ -1,10 +1,14 @@
 package sz
 
+import io.ebean.EbeanServer
 import io.vertx.core.eventbus.MessageConsumer
 import jodd.datetime.JDateTime
 import jodd.exception.ExceptionUtil
 import models.PlanTask
 import models.TaskStatus
+import sz.ebean.DB
+import sz.ebean.runInScopedTransaction
+import sz.ebean.tableExists
 import sz.scaffold.Application
 import sz.scaffold.ext.getIntOrElse
 import sz.scaffold.tools.json.Json
@@ -17,6 +21,7 @@ import java.util.concurrent.TimeUnit
 //
 // Created by kk on 17/8/25.
 //
+@Suppress("MemberVisibilityCanBePrivate", "FunctionName")
 object PlanTaskService {
 
     private val parallelWorkerCount: Int
@@ -29,18 +34,18 @@ object PlanTaskService {
     private var parallerPlanningTaskLoader: Thread? = null
 
     private val taskNotifier = Object()
-    private val taskLoaderWaitTime = 60
+    private const val taskLoaderWaitTime = 60
     private var stopNow: Boolean = true
 
-    val eventBusAddress = "sz.app.plantask.newtask"
+    const val eventBusAddress = "sz.app.plantask.newtask"
     private var eventConsumer: MessageConsumer<Any>? = null
 
     var isRunning: Boolean = false
         private set
 
-    fun Start() {
+    fun start() {
         try {
-            if (!enabled()) {
+            if (enabled.not()) {
                 Logger.debug("PlanTaskServer 不能运行. 请检查配置和数据库是否就绪")
                 return
             }
@@ -49,15 +54,15 @@ object PlanTaskService {
 
             stopNow = false
 
-            seqPlanningTaskLoader = BuildPlanningTaskLoader(true, seqPlanningWorker)
-            parallerPlanningTaskLoader = BuildPlanningTaskLoader(false, parallelPlanningWorker)
+            seqPlanningTaskLoader = buildPlanningTaskLoader(true, seqPlanningWorker)
+            parallerPlanningTaskLoader = buildPlanningTaskLoader(false, parallelPlanningWorker)
 
             seqPlanningTaskLoader!!.start()
             parallerPlanningTaskLoader!!.start()
 
             isRunning = true
 
-            PlanTask.ResetTaskStatus()
+            PlanTask.resetTaskStatus()
 
             eventConsumer = Application.vertx.eventBus().consumer(eventBusAddress) { _ -> notifyNewTask() }
 
@@ -71,7 +76,7 @@ object PlanTaskService {
         }
     }
 
-    fun Stop() {
+    fun stop() {
         Logger.info("Try to stop paln task service ...")
         if (!isRunning) return
         stopNow = true
@@ -98,16 +103,16 @@ object PlanTaskService {
         }
     }
 
-    private fun BuildPlanningTaskLoader(requireSeq: Boolean, worker: ScheduledExecutorService): Thread {
+    private fun buildPlanningTaskLoader(requireSeq: Boolean, worker: ScheduledExecutorService): Thread {
         return Thread(Runnable {
             val loadedTasks = mutableListOf<PlanTask>()
             while (true) {
                 if (stopNow) break
 
                 try {
-                    DB.Default().runInTransaction {
+                    taskDB.runInScopedTransaction {
                         val endTime = JDateTime().addSecond(taskLoaderWaitTime + 1)
-                        val tasks = PlanTask.where()
+                        val tasks = PlanTask.finder().query().where()
                             .eq("require_seq", requireSeq)
                             .eq("task_status", TaskStatus.WaitingInDB.code)
                             .or()
@@ -119,7 +124,7 @@ object PlanTaskService {
                         tasks.forEach {
                             it.task_status = TaskStatus.WaitingInQueue.code
                         }
-                        DB.Default().saveAll(tasks)
+                        taskDB.saveAll(tasks)
 
                         loadedTasks.clear()
                         loadedTasks.addAll(tasks)
@@ -127,7 +132,7 @@ object PlanTaskService {
 
                     if (loadedTasks.size > 0) {
                         loadedTasks.forEach {
-                            SchedulePlanTask(it, worker)
+                            schedulePlanTask(it, worker)
                         }
                     } else {
                         // 在 endTime 之前没有需要执行的 task, 尝试等待新任务, 释放 cpu
@@ -151,13 +156,13 @@ object PlanTaskService {
         })
     }
 
-    private fun SchedulePlanTask(task: PlanTask, worker: ScheduledExecutorService) {
+    private fun schedulePlanTask(task: PlanTask, worker: ScheduledExecutorService) {
         val now = JDateTime()
         if (task.plan_run_time == null) {
             // plan_run_time 为 null 表示立即执行
             worker.submit {
                 try {
-                    process_task(task)
+                    processTask(task)
                 } catch (ex: Exception) {
                     Logger.error(ExceptionUtil.exceptionStackTraceToString(ex))
                 }
@@ -170,16 +175,16 @@ object PlanTaskService {
 
         worker.schedule({
             try {
-                process_task(task)
+                processTask(task)
             } catch (ex: Exception) {
                 Logger.error(ExceptionUtil.exceptionStackTraceToString(ex))
             }
         },
-                delay,
-                TimeUnit.MILLISECONDS)
+            delay,
+            TimeUnit.MILLISECONDS)
     }
 
-    private fun DeserializeJsonData(task: PlanTask): Runnable? {
+    private fun deserializeJsonData(task: PlanTask): Runnable? {
         try {
             return Json.fromJsonString(task.json_data!!, Class.forName(task.class_name)) as Runnable
         } catch (ex: Exception) {
@@ -187,22 +192,21 @@ object PlanTaskService {
         }
     }
 
-    private fun process_task(task: PlanTask) {
+    private fun processTask(task: PlanTask) {
         try {
-            val runObj = DeserializeJsonData(task)
+            val runObj = deserializeJsonData(task)
             if (runObj != null) {
                 try {
-                    DB.Default().runInTransaction {
+                    taskDB.runInScopedTransaction {
                         runObj.run()    // 执行任务
                         val originTask = PlanTask.finder().query().where().idEq(task.id).findOneOrEmpty()
                         originTask.ifPresent { theTask ->
                             theTask.delete()
                         }
-
                     }
                 } catch (ex: Exception) {
                     // 任务执行发生错误, 标记任务状态, 记录
-                    DB.Default().runInTransaction {
+                    taskDB.runInScopedTransaction {
                         val originTask = PlanTask.finder().query().where().idEq(task.id).findOneOrEmpty()
                         originTask.ifPresent { theTask ->
                             theTask.task_status = TaskStatus.Error.code
@@ -212,7 +216,7 @@ object PlanTaskService {
                     }
                 }
             } else {
-                DB.Default().runInTransaction {
+                taskDB.runInScopedTransaction {
                     val originTask = PlanTask.finder().query().where().idEq(task.id).findOneOrEmpty()
                     originTask.ifPresent { theTask ->
                         theTask.task_status = TaskStatus.Error.code
@@ -232,10 +236,14 @@ object PlanTaskService {
         }
     }
 
-    fun enabled(): Boolean {
-        return Application.config.hasPath("service.planTask")
-                && Application.config.getBoolean("service.planTask")
-                && DB.Default().tableExists("plan_task")
+    val taskDB: EbeanServer by lazy {
+        DB.byDataSource(PlanTask.dataSourceName)
+    }
+
+    val enabled: Boolean by lazy {
+        Application.config.hasPath("service.planTask.enable")
+            && Application.config.getBoolean("service.planTask.enable")
+            && taskDB.tableExists("plan_task")
     }
 
 }

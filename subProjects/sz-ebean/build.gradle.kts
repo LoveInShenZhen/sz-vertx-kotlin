@@ -1,33 +1,33 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-buildscript {
-    repositories {
-        maven {
-            url = uri("https://plugins.gradle.org/m2/")
-        }
-    }
-    dependencies {
-        classpath("gradle.plugin.io.ebean:ebean-gradle-plugin:11.36.1")
-    }
-}
+//buildscript {
+//    repositories {
+//        maven {
+//            url = uri("https://plugins.gradle.org/m2/")
+//        }
+//    }
+//    dependencies {
+//        classpath("gradle.plugin.io.ebean:ebean-gradle-plugin:11.36.1")
+//    }
+//}
 
 
 plugins {
     id("org.jetbrains.kotlin.jvm")
     id("maven-publish")
-    id("io.ebean").version("11.36.1")
+    id("io.ebean").version("12.1.1")
     kotlin("kapt")
 }
 
 dependencies {
     api(project(":subProjects:sz-scaffold"))
 
-    api("com.zaxxer:HikariCP:3.3.1")
-    api("io.ebean:ebean:11.32.1")
-    api("io.ebean:ebean-querybean:11.32.1")
-    api("mysql:mysql-connector-java:5.1.46")
+    api("io.ebean:ebean:12.1.2")
+    api("io.ebean:ebean-querybean:12.1.2")
+//    kapt("io.ebean:kotlin-querybean-generator:12.1.1")
 
-    kapt("io.ebean:kotlin-querybean-generator:11.4.1")
+    api("com.zaxxer:HikariCP:3.3.1")
+    api("mysql:mysql-connector-java:5.1.46")
 
 }
 
@@ -57,12 +57,12 @@ publishing {
     }
 }
 
-ebean {
-    debugLevel = 2
-    queryBeans = true
-    kotlin = true
-    generatorVersion = "11.4"
-}
+//ebean {
+//    debugLevel = 2
+//    queryBeans = true
+//    kotlin = true
+////    generatorVersion = "11.4"
+//}
 
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {

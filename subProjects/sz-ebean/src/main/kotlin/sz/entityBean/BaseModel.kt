@@ -1,8 +1,9 @@
-package sz.EntityBean
+package sz.entityBean
 
+import io.ebean.ExpressionList
 import io.ebean.Finder
 import io.ebean.bean.EntityBean
-import sz.DB
+import sz.ebean.DB
 import sz.scaffold.tools.logger.Logger
 import javax.persistence.MappedSuperclass
 
@@ -12,39 +13,45 @@ import javax.persistence.MappedSuperclass
 @MappedSuperclass
 abstract class BaseModel {
 
-    fun markAsDirty(dsName: String = DB.currentDataSource()) {
-        DB.byDataSource(dsName).markAsDirty(this)
+    private var _dataSource: String = DB.currentDataSource()
+
+    fun dataSource(dataSource: String) {
+        this._dataSource = dataSource
+    }
+
+    fun markAsDirty(dataSource: String = this._dataSource) {
+        DB.byDataSource(dataSource).markAsDirty(this)
     }
 
     fun markPropertyUnset(propertyName: String) {
         (this as EntityBean)._ebean_getIntercept().setPropertyLoaded(propertyName, false)
     }
 
-    fun save(dsName: String = DB.currentDataSource()) {
+    fun save(dsName: String = this._dataSource) {
         DB.byDataSource(dsName).save(this)
     }
 
-    fun flush(dsName: String = DB.currentDataSource()) {
+    fun flush(dsName: String = this._dataSource) {
         DB.byDataSource(dsName).flush()
     }
 
-    fun update(dsName: String = DB.currentDataSource()) {
+    fun update(dsName: String = this._dataSource) {
         DB.byDataSource(dsName).update(this)
     }
 
-    fun insert(dsName: String = DB.currentDataSource()) {
+    fun insert(dsName: String = this._dataSource) {
         DB.byDataSource(dsName).insert(this)
     }
 
-    fun delete(dsName: String = DB.currentDataSource()): Boolean {
+    fun delete(dsName: String = this._dataSource): Boolean {
         return DB.byDataSource(dsName).delete(this)
     }
 
-    fun deletePermanent(dsName: String = DB.currentDataSource()): Boolean {
+    fun deletePermanent(dsName: String = this._dataSource): Boolean {
         return DB.byDataSource(dsName).deletePermanent(this)
     }
 
-    fun refresh(dsName: String = DB.currentDataSource()) {
+    fun refresh(dsName: String = this._dataSource) {
         return DB.byDataSource(dsName).refresh(this)
     }
 

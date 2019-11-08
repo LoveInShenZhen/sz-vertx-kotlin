@@ -1,28 +1,16 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-buildscript {
-    repositories {
-        maven {
-            url = uri("https://plugins.gradle.org/m2/")
-        }
-    }
-    dependencies {
-        classpath("gradle.plugin.io.ebean:ebean-gradle-plugin:11.36.1")
-    }
-}
-
-
 plugins {
     id("org.jetbrains.kotlin.jvm")
     id("maven-publish")
-    id("io.ebean").version("11.36.1")
+    id("io.ebean").version("12.1.1")
     kotlin("kapt")
 }
 
 dependencies {
     api(project(":subProjects:sz-ebean"))
 
-    kapt("io.ebean:kotlin-querybean-generator:11.4.1")
+//    kapt("io.ebean:kotlin-querybean-generator:12.1.1")
 
 }
 
@@ -54,9 +42,9 @@ publishing {
 
 ebean {
     debugLevel = 2
-    queryBeans = true
+//    queryBeans = false
     kotlin = true
-    generatorVersion = "11.4"
+//    generatorVersion = "11.4"
 }
 
 val compileKotlin: KotlinCompile by tasks

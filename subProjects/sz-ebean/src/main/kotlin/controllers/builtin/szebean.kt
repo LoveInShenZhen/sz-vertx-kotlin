@@ -2,8 +2,8 @@ package controllers.builtin
 
 import io.ebeaninternal.api.SpiEbeanServer
 import io.ebeaninternal.dbmigration.model.CurrentModel
-import sz.DB
-import sz.DbIndex
+import sz.ebean.DB
+import sz.ebean.DbIndex
 import sz.scaffold.annotations.Comment
 import sz.scaffold.controller.ApiController
 
@@ -18,7 +18,7 @@ class szebean : ApiController() {
     fun CreateIndexSql(@Comment("数据源名称, 为空时,表示默认数据源") dataSource: String = ""): String {
         val db = DB.byDataSource(dataSource)
         this.contentType("text/plain; charset=UTF-8")
-        return DbIndex(db).GetCreateIndexSql()
+        return DbIndex(db).createIndexSql()
     }
 
     @Comment("生成创建数据库表结构的SQL")
