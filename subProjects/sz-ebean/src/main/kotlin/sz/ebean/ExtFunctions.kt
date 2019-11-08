@@ -8,10 +8,8 @@ import io.ebean.TxScope
 import io.ebean.annotation.TxIsolation
 import jodd.bean.BeanUtil
 import jodd.datetime.JDateTime
-import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.future.await
 import sz.scaffold.tools.BizLogicException
-import java.lang.RuntimeException
 import java.math.BigDecimal
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -38,91 +36,28 @@ fun EbeanServer.tableExists(tableName: String): Boolean {
     return count > 0
 }
 
-suspend fun EbeanServer.runInTransactionAwait(readOnly: Boolean = false, body: () -> Unit) {
-    val ebeanServer = this
-    val worker = SzEbeanConfig.workerOf(ebeanServer.name)
-    val ebeanFuture = CompletableFuture.runAsync(Runnable {
-        DB.initDataSourceContext()
-        DB.setDataSourceContext(ebeanServer.name)
-
-        val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED).setReadOnly(readOnly)
-        ebeanServer.beginTransaction(txScope).use { transaction ->
-            body()
-            transaction.commit()
-        }
-    }, worker)
-
-    ebeanFuture.await()
-}
-
-suspend fun <T> EbeanServer.callInTransactionAwait(readOnly: Boolean = false, body: () -> T): T {
+suspend fun <T> EbeanServer.runTransactionAwait(readOnly: Boolean = false, body: (ebeanServer: EbeanServer) -> T): T {
     val ebeanServer = this
     val worker = SzEbeanConfig.workerOf(ebeanServer.name)
 
     val ebeanFuture = CompletableFuture.supplyAsync(Supplier<T> {
-        DB.initDataSourceContext()
-        DB.setDataSourceContext(ebeanServer.name)
+        try {
+            DB.initDataSourceContext()
+            DB.setDataSourceContext(ebeanServer.name)
 
-        val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED).setReadOnly(readOnly)
-        ebeanServer.beginTransaction(txScope).use { transaction ->
-            val result = body()
-            transaction.commit()
-            result
+            val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED).setReadOnly(readOnly)
+            ebeanServer.beginTransaction(txScope).use { transaction ->
+                val result = body(ebeanServer)
+                transaction.commit()
+                result
+            }
+        } finally {
+            DB.unsetDataSourceContext()
         }
+
     }, worker)
 
     return ebeanFuture.await()
-}
-
-/**
- * 该方法不能运行在协程下.
- * 提供该方法的目的, 是处理事务嵌套事务的情况
- * 该方法应该嵌套在 [suspend fun EbeanServer.runInTransaction(...)] 方法内
- */
-fun runInScopedTransaction(dataSource: String? = null, readOnly: Boolean = false, body: () -> Unit) {
-    try {
-        if (dataSource != null) {
-            DB.setDataSourceContext(dataSource)
-        }
-
-        val ebeanServer = DB.byContext()
-        val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED).setReadOnly(readOnly)
-        ebeanServer.beginTransaction(txScope).use { transaction ->
-            body()
-            transaction.commit()
-        }
-
-    } finally {
-        if (dataSource != null) {
-            DB.unsetDataSourceContext(dataSource)
-        }
-    }
-}
-
-/**
- * 该方法不能运行在协程下.
- * 提供该方法的目的, 是处理事务嵌套事务的情况.
- * 该方法应该嵌套在 [suspend fun EbeanServer.runInTransaction(...)] 方法内
- */
-fun <T> callInScopedTransaction(dataSource: String? = null, readOnly: Boolean = false, body: () -> T): T {
-    try {
-        if (dataSource != null) {
-            DB.setDataSourceContext(dataSource)
-        }
-
-        val ebeanServer = DB.byContext()
-        val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED).setReadOnly(readOnly)
-        ebeanServer.beginTransaction(txScope).use { transaction ->
-            val result = body()
-            transaction.commit()
-            return result
-        }
-
-    } finally {
-        if (dataSource != null) {
-            DB.unsetDataSourceContext(dataSource)
-        }
-    }
 }
 
 internal object RoundRobinCounter {
@@ -132,16 +67,19 @@ internal object RoundRobinCounter {
 /**
  * 读写分离部署方式下, 针对纯查询的接口进行负载均衡
  * 1 主(写) 多 从(读), 将查询请求均衡到从数据库
+ * 在当前线程上执行JDBC, 所以会阻塞当前线程. 不要在协程方法(suspend)里调用此方法
+ * 如果在协程方法里, 请使用 [queryOnlyAwait]
+ *
  */
-fun <T> queryOnly(readOnlyDataSourceList: List<String>, body: () -> T): T {
+fun <T> queryOnlyBlocking(readOnlyDataSourceList: List<String>, body: (ebeanServer: EbeanServer) -> T): T {
     if (readOnlyDataSourceList.isEmpty()) {
         throw RuntimeException("readOnlyDataSourceList can not be empty.")
     }
     val ebeanServer = DB.byDataSource(readOnlyDataSourceList[abs(RoundRobinCounter.counter.getAndIncrement() % readOnlyDataSourceList.size).toInt()])
-    return ebeanServer.callInScopedTransaction(readOnly = true, body = body)
+    return ebeanServer.runTransactionBlocking(readOnly = true, body = body)
 }
 
-suspend fun <T> queryOnlyAwait(readOnlyDataSourceList: List<String>, body: () -> T): T {
+suspend fun <T> queryOnlyAwait(readOnlyDataSourceList: List<String>, body: (ebeanServer: EbeanServer) -> T): T {
     if (readOnlyDataSourceList.isEmpty()) {
         throw RuntimeException("readOnlyDataSourceList can not be empty.")
     }
@@ -150,38 +88,36 @@ suspend fun <T> queryOnlyAwait(readOnlyDataSourceList: List<String>, body: () ->
     val worker = SzEbeanConfig.workerOf(ebeanServer.name)
 
     val ebeanFuture = CompletableFuture.supplyAsync(Supplier<T> {
-        DB.initDataSourceContext()
-        val result = ebeanServer.callInScopedTransaction(readOnly = true, body = body)
-        result
+        try {
+            DB.initDataSourceContext()
+            DB.setDataSourceContext(ebeanServer.name)
+
+            val result = ebeanServer.runTransactionBlocking(readOnly = true, body = body)
+            result
+        } finally {
+            DB.unsetDataSourceContext()
+        }
+
     }, worker)
 
     return ebeanFuture.await()
 }
 
-fun EbeanServer.runInScopedTransaction(readOnly: Boolean = false, body: () -> Unit) {
+/**
+ * 在当前线程上执行JDBC, 所以会阻塞当前线程. 不要在协程方法(suspend)里调用此方法
+ * 如果在协程方法里, 请使用 [EbeanServer.runTransactionAwait]
+ */
+fun <T> EbeanServer.runTransactionBlocking(readOnly: Boolean = false, body: (ebeanServer: EbeanServer) -> T): T {
     try {
         DB.setDataSourceContext(this.name)
         val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED).setReadOnly(readOnly)
         this.beginTransaction(txScope).use { transaction ->
-            body()
-            transaction.commit()
-        }
-    } finally {
-        DB.unsetDataSourceContext(this.name)
-    }
-}
-
-fun <T> EbeanServer.callInScopedTransaction(readOnly: Boolean = false, body: () -> T): T {
-    try {
-        DB.setDataSourceContext(this.name)
-        val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED).setReadOnly(readOnly)
-        this.beginTransaction(txScope).use { transaction ->
-            val result = body()
+            val result = body(this)
             transaction.commit()
             return result
         }
     } finally {
-        DB.unsetDataSourceContext(this.name)
+        DB.unsetDataSourceContext()
     }
 }
 

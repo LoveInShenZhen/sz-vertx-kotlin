@@ -4,6 +4,7 @@ package sz.ebean
 
 import io.ebean.Ebean
 import io.ebean.EbeanServer
+import io.ebean.Finder
 import sz.scaffold.tools.BizLogicException
 import java.util.*
 import kotlin.concurrent.getOrSet
@@ -33,6 +34,9 @@ object DB {
      */
     fun currentDataSource(): String {
         val nameStack = dsNameStack.get()
+        if (nameStack.empty()) {
+            throw RuntimeException("当前线程: [${Thread.currentThread().name}] 没有初始化EBean数据源设置 dataSourceName, 请调用 DB.setDataSourceContext(...)")
+        }
         return nameStack.peek()
     }
 
@@ -41,26 +45,16 @@ object DB {
      */
     fun setDataSourceContext(newDsName: String) {
         val nameStack = dsNameStack.getOrSet { Stack() }
-        if (nameStack.empty()) {
-            nameStack.push(newDsName)
-        } else {
-            val currentDs = nameStack.peek()
-            if (currentDs != newDsName) {
-                nameStack.push(newDsName)
-            }
-        }
+        nameStack.push(newDsName)
     }
 
     /**
      * 在当前Ebean工作线程上下文取消之前设置的 dataSourceName
      */
-    fun unsetDataSourceContext(currentDsName: String) {
+    fun unsetDataSourceContext() {
         val nameStack = dsNameStack.getOrSet { Stack() }
         if (nameStack.empty().not()) {
-            val currentDs = nameStack.peek()
-            if (currentDs == currentDsName) {
-                nameStack.pop()
-            }
+            nameStack.pop()
         }
     }
 
@@ -68,8 +62,7 @@ object DB {
      * 初始化当前Ebean工作线程的记录数据源的上下文
      */
     fun initDataSourceContext() {
-        val nameStack = Stack<String>()
-        dsNameStack.set(nameStack)
+        dsNameStack.set(Stack())
     }
 
     fun clearDataSourceContext() {
@@ -77,5 +70,10 @@ object DB {
     }
 
     private val dsNameStack = ThreadLocal<Stack<String>>()
+
+    inline fun <reified I, reified T> finder(dsName: String): Finder<I, T> {
+//        Logger.debug("create finder for ${T::class.java.name}, dataSource: $dsName")
+        return Finder(T::class.java, dsName)
+    }
 }
 

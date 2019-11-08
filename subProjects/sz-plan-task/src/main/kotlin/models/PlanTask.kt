@@ -1,16 +1,15 @@
 package models
 
 import io.ebean.EbeanServer
-import io.ebean.ExpressionList
 import io.ebean.Finder
+import io.ebean.Model
 import io.ebean.annotation.WhenCreated
 import io.ebean.annotation.WhenModified
 import jodd.datetime.JDateTime
 import sz.PlanTaskService
 import sz.annotations.DBIndexed
 import sz.ebean.DB
-import sz.ebean.runInScopedTransaction
-import sz.entityBean.BaseModel
+import sz.ebean.runTransactionBlocking
 import sz.scaffold.Application
 import sz.scaffold.ext.getStringOrElse
 import sz.scaffold.tools.json.toJsonPretty
@@ -23,7 +22,7 @@ import javax.persistence.*
 @Suppress("MemberVisibilityCanBePrivate", "PropertyName")
 @Entity
 @Table(name = "plan_task")
-class PlanTask : BaseModel() {
+class PlanTask(dataSource: String = dataSourceName) : Model(dataSource) {
 
     @Id
     var id: Long = 0
@@ -62,10 +61,6 @@ class PlanTask : BaseModel() {
     @Column(columnDefinition = "TEXT COMMENT '发生异常情况的时候, 用于记录额外信息'")
     var remarks: String? = null
 
-    init {
-        this.dataSource(dataSourceName)
-    }
-
     companion object {
 
         val dataSourceName: String by lazy {
@@ -73,7 +68,7 @@ class PlanTask : BaseModel() {
         }
 
         fun finder(): Finder<Long, PlanTask> {
-            return finder(dataSourceName)
+            return DB.finder(dataSourceName)
         }
 
         val taskDB: EbeanServer by lazy {
@@ -81,7 +76,7 @@ class PlanTask : BaseModel() {
         }
 
         fun addTask(task: Runnable, requireSeq: Boolean = false, seqType: String = "", planRunTime: JDateTime? = null, tag: String = "") {
-            taskDB.runInScopedTransaction {
+            taskDB.runTransactionBlocking {
                 val planTask = PlanTask()
                 planTask.require_seq = requireSeq
                 planTask.seq_type = seqType
@@ -98,7 +93,7 @@ class PlanTask : BaseModel() {
         }
 
         fun addSingletonTask(task: Runnable, requireSeq: Boolean = false, seqType: String = "", planRunTime: JDateTime? = null, tag: String = "") {
-            taskDB.runInScopedTransaction {
+            taskDB.runTransactionBlocking { ebeanServer ->
                 val className = task.javaClass.name
                 val oldTasks = finder().query().where()
                     .eq("class_name", className)
@@ -106,7 +101,7 @@ class PlanTask : BaseModel() {
                     .findList()
 
                 // 先删除在数据库等待的旧任务
-                DB.byContext().deleteAll(oldTasks)
+                ebeanServer.deleteAll(oldTasks)
                 // 添加新版任务
                 addTask(task, requireSeq, seqType, planRunTime, tag)
 
@@ -116,9 +111,9 @@ class PlanTask : BaseModel() {
         }
 
         fun resetTaskStatus() {
-            taskDB.runInScopedTransaction {
+            taskDB.runTransactionBlocking { ebeanServer ->
                 val sql = "update `plan_task` set `task_status`=:init_status where `task_status`=:old_status"
-                DB.byContext().createSqlUpdate(sql)
+                ebeanServer.createSqlUpdate(sql)
                     .setParameter("init_status", TaskStatus.WaitingInDB.code)
                     .setParameter("old_status", TaskStatus.WaitingInQueue.code)
                     .execute()

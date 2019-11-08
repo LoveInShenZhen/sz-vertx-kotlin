@@ -7,7 +7,7 @@ import jodd.exception.ExceptionUtil
 import models.PlanTask
 import models.TaskStatus
 import sz.ebean.DB
-import sz.ebean.runInScopedTransaction
+import sz.ebean.runTransactionBlocking
 import sz.ebean.tableExists
 import sz.scaffold.Application
 import sz.scaffold.ext.getIntOrElse
@@ -110,7 +110,7 @@ object PlanTaskService {
                 if (stopNow) break
 
                 try {
-                    taskDB.runInScopedTransaction {
+                    taskDB.runTransactionBlocking {
                         val endTime = JDateTime().addSecond(taskLoaderWaitTime + 1)
                         val tasks = PlanTask.finder().query().where()
                             .eq("require_seq", requireSeq)
@@ -197,7 +197,7 @@ object PlanTaskService {
             val runObj = deserializeJsonData(task)
             if (runObj != null) {
                 try {
-                    taskDB.runInScopedTransaction {
+                    taskDB.runTransactionBlocking {
                         runObj.run()    // 执行任务
                         val originTask = PlanTask.finder().query().where().idEq(task.id).findOneOrEmpty()
                         originTask.ifPresent { theTask ->
@@ -206,7 +206,7 @@ object PlanTaskService {
                     }
                 } catch (ex: Exception) {
                     // 任务执行发生错误, 标记任务状态, 记录
-                    taskDB.runInScopedTransaction {
+                    taskDB.runTransactionBlocking {
                         val originTask = PlanTask.finder().query().where().idEq(task.id).findOneOrEmpty()
                         originTask.ifPresent { theTask ->
                             theTask.task_status = TaskStatus.Error.code
@@ -216,7 +216,7 @@ object PlanTaskService {
                     }
                 }
             } else {
-                taskDB.runInScopedTransaction {
+                taskDB.runTransactionBlocking {
                     val originTask = PlanTask.finder().query().where().idEq(task.id).findOneOrEmpty()
                     originTask.ifPresent { theTask ->
                         theTask.task_status = TaskStatus.Error.code

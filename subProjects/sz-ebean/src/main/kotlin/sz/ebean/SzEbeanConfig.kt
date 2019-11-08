@@ -8,16 +8,14 @@ import com.zaxxer.hikari.HikariDataSource
 import io.ebean.EbeanServerFactory
 import io.ebean.config.ServerConfig
 import jodd.introspector.ClassIntrospector
+import org.apache.commons.lang3.concurrent.BasicThreadFactory
 import sz.ebean.SzEbeanConfig.hikariConfigKeys
 import sz.scaffold.Application
 import sz.scaffold.ext.getStringListOrEmpty
 import sz.scaffold.tools.BizLogicException
 import sz.scaffold.tools.logger.Logger
 import java.util.*
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.ThreadPoolExecutor
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.*
 
 //
 // Created by kk on 17/8/20.
@@ -64,7 +62,17 @@ object SzEbeanConfig {
             val hikariConfig = HikariConfig(dataSourceProps)
             val ds = HikariDataSource(hikariConfig)
 
-            workerPoolMap[dataSourceName] = ThreadPoolExecutor(0, ds.maximumPoolSize, 60, TimeUnit.SECONDS, LinkedBlockingQueue<Runnable>(1024))
+            val threadFactory = BasicThreadFactory.Builder()
+                .wrappedFactory(Executors.defaultThreadFactory())
+                .namingPattern("ebean-worker-$dataSourceName-%d")
+                .build()
+
+            workerPoolMap[dataSourceName] = ThreadPoolExecutor(0,
+                ds.maximumPoolSize,
+                60,
+                TimeUnit.SECONDS,
+                LinkedBlockingQueue<Runnable>(1024),
+                threadFactory)
 
             val ebeanServerCfg = ServerConfig()
             ebeanServerCfg.name = dataSourceName
