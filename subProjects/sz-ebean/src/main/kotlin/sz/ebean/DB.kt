@@ -71,6 +71,10 @@ object DB {
 
     private val dsNameStack = ThreadLocal<Stack<String>>()
 
+    suspend fun <T> runTransactionAwait(dataSource: String = "", readOnly: Boolean = false, body: (ebeanServer: EbeanServer) -> T): T {
+        return byDataSource(dataSource).runTransactionAwait(readOnly, body)
+    }
+
     inline fun <reified I, reified T> finder(dsName: String): Finder<I, T> {
 //        Logger.debug("create finder for ${T::class.java.name}, dataSource: $dsName")
         return Finder(T::class.java, dsName)
