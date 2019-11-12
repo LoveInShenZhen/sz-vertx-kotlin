@@ -1,4 +1,4 @@
-package sz.scaffold.redis.kedis.pool
+package sz.scaffold.redis.kedis
 
 import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
@@ -8,51 +8,31 @@ import io.vertx.redis.client.RedisAPI
 import io.vertx.redis.client.Response
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.withTimeout
-import sz.scaffold.tools.SzException
-import sz.scaffold.tools.logger.Logger
-import java.util.NoSuchElementException
+import sz.objectPool.PooledObject
 
 //
 // Created by kk on 2019-06-10.
 //
-class KedisAPI(private val delegate: RedisAPI, private val connClient: Redis, private val operationTimeout: Long) : AutoCloseable {
+class KedisAPI(private val delegate: RedisAPI, private val redisClient: Redis, private val operationTimeout: Long) : AutoCloseable {
 
-
-    private var clientIsBroken = false
-    private var creditor: KedisAPIPool? = null
-
-    val broken
-        get() = clientIsBroken
+    private var poolBox: PooledObject<KedisAPI>? = null
 
     fun markBroken() {
-        clientIsBroken = true
+        poolBox?.markBroken()
     }
 
-    fun setupCreditor(pool: KedisAPIPool): KedisAPI {
-        creditor = pool
+    fun connectWithBox(box: PooledObject<KedisAPI>): KedisAPI {
+        poolBox = box
         return this
     }
 
     override fun close() {
-        creditor?.let {
-            try {
-                if (broken) {
-//                    Logger.debug("[KedisAPI] client is broken, call invalidateObject")
-                    it.invalidateObject(this)
-                } else {
-//                    Logger.debug("[KedisAPI] client is normal, call returnObject")
-                    it.returnObject(this)
-                }
-            } catch (ex: Exception) {
-                Logger.error("Could not return the resource to the pool")
-                throw SzException("Could not return the resource to the pool", ex)
-            }
-
-        }
+        poolBox?.close()
     }
 
-    internal fun closeRedisClient() {
-        connClient.close()
+    internal fun destory() {
+        poolBox = null
+        redisClient.close()
     }
 
     private suspend fun <T> awaitWithTimeout(timeOut: Long, block: (h: Handler<AsyncResult<T>>) -> Unit): T {
@@ -63,7 +43,11 @@ class KedisAPI(private val delegate: RedisAPI, private val connClient: Redis, pr
                 awaitResult(block)
             }
         } catch (ex: Throwable) {
-            if ((ex is NoSuchElementException || ex is TimeoutCancellationException).not()) {
+//            if ((ex is NoSuchElementException || ex is TimeoutCancellationException).not()) {
+////                Logger.debug("redis client markBroken by: ${ex.message}")
+//                markBroken()
+//            }
+            if ((ex is TimeoutCancellationException).not()) {
 //                Logger.debug("redis client markBroken by: ${ex.message}")
                 markBroken()
             }

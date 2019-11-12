@@ -23,7 +23,7 @@ import jodd.util.ClassLoaderUtil
 import org.apache.commons.lang3.SystemUtils
 import sz.scaffold.controller.ApiRoute
 import sz.scaffold.controller.BodyHandlerOptions
-import sz.scaffold.redis.kedis.pool.KedisPool
+import sz.scaffold.redis.kedis.KedisPool
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.logger.AnsiColor
 import sz.scaffold.tools.logger.Logger

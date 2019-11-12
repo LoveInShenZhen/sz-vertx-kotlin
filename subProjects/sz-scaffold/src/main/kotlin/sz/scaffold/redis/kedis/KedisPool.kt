@@ -1,54 +1,27 @@
-package sz.scaffold.redis.kedis.pool
+package sz.scaffold.redis.kedis
 
 import com.typesafe.config.Config
-import io.vertx.core.Future
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.core.net.NetClientOptions
 import io.vertx.core.net.SocketAddress
-import io.vertx.kotlin.coroutines.await
 import io.vertx.kotlin.redis.client.redisOptionsOf
 import io.vertx.redis.client.RedisClientType
 import io.vertx.redis.client.RedisOptions
 import io.vertx.redis.client.RedisRole
+import sz.objectPool.ObjectPool
 import sz.scaffold.Application
 import sz.scaffold.ext.getIntOrElse
 import sz.scaffold.ext.getStringOrElse
-import sz.scaffold.redis.kedis.KedisPoolConfig
 import sz.scaffold.tools.SzException
-import java.util.concurrent.Executors
 
 //
 // Created by kk on 2019-06-11.
 //
-class KedisPool(vertx: Vertx, val redisOptions: RedisOptions, val poolConfig: KedisPoolConfig) {
-
-    private val internalPool = KedisAPIPool(factory = KedisAPIPooledObjectFactory(vertx, redisOptions, poolConfig.operationTimeout),
-        poolConfig = poolConfig)
-
-    private val borrowExecutor = Executors.newSingleThreadExecutor()
-
-    fun borrow(): KedisAPI {
-        val kedisApi = internalPool.borrowObject()
-        kedisApi.setupCreditor(internalPool)
-        return kedisApi
-    }
-
-    @Suppress("DEPRECATION")
-    suspend fun borrowAwait(): KedisAPI {
-        val borrowFuture = Future.future<KedisAPI>()
-        borrowExecutor.submit {
-            try {
-                val kedisApi = internalPool.borrowObject()
-                kedisApi.setupCreditor(internalPool)
-//                Logger.debug("internalPool.borrowObject() successed.")
-                borrowFuture.complete(kedisApi)
-            } catch (ex: Exception) {
-                borrowFuture.fail(ex)
-            }
-        }
-        return borrowFuture.await()
-    }
+class KedisPool(vertx: Vertx,
+                val redisOptions: RedisOptions,
+                val poolConfig: KedisPoolConfig
+) : ObjectPool<KedisAPI>(poolConfig.objectPoolConfig, KedisAPIPooledObjectFactory(vertx, redisOptions, poolConfig.operationTimeout)) {
 
     companion object {
 

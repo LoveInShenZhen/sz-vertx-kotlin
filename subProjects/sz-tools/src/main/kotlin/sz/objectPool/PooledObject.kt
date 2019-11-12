@@ -5,7 +5,8 @@ import java.io.Closeable
 //
 // Created by kk on 2019/10/23.
 //
-class PooledObject<T>(val obj: T, private val pool: ObjectPool<T>) : Closeable {
+@Suppress("MemberVisibilityCanBePrivate")
+class PooledObject<T>(val target: T, private val pool: ObjectPool<T>) : Closeable {
 
     internal var status = PooledObjectStatus.Idle
     internal val createTimeMs = System.currentTimeMillis()
@@ -22,14 +23,13 @@ class PooledObject<T>(val obj: T, private val pool: ObjectPool<T>) : Closeable {
     }
 
     val identityHashCode: Int by lazy {
-        System.identityHashCode(obj)
+        System.identityHashCode(target)
     }
 
     override fun close() {
         if (status == PooledObjectStatus.Using) {
             status = PooledObjectStatus.Returning
-            val pooledObj = this
-            pool.returnObject(pooledObj)
+            pool.returnObject(this)
         }
     }
 

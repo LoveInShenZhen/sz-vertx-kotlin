@@ -8,7 +8,7 @@ import io.vertx.core.http.HttpMethod
 import jodd.crypt.DigestEngine
 import sz.scaffold.aop.actions.Action
 import sz.scaffold.aop.annotations.WithAction
-import sz.scaffold.cache.redis.RedisCacheApi
+import sz.scaffold.cache.redis.RedisCache
 import sz.scaffold.controller.ContentTypes
 import sz.scaffold.controller.reply.ReplyBase
 
@@ -38,7 +38,7 @@ class ApiCacheAction : Action<ApiCache>() {
         }
 
         val cacheKey = "ApiCache@${request.path()}@${request.method().name}@${DigestEngine.sha1().digestString(queryParamsTxt + bodyParams)}"
-        val cache = RedisCacheApi(this.config.cacheName)
+        val cache = RedisCache(this.config.cacheName)
         val cacheValue = cache.getOrNull(cacheKey)
 
         if (cacheValue == null) {

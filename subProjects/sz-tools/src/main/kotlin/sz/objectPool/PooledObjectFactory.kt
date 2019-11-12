@@ -8,12 +8,12 @@ import java.lang.Exception
 //
 abstract class PooledObjectFactory<T> {
 
-    abstract fun createObject(): T
+    abstract suspend fun createObjectAwait(): T
 
-    fun wrapObject(pool: ObjectPool<T>): PooledObject<T>? {
+    open suspend fun wrapObject(pool: ObjectPool<T>): PooledObject<T>? {
         try {
-            val obj = createObject()
-            return PooledObject(obj = obj, pool = pool)
+            val obj = createObjectAwait()
+            return PooledObject(target = obj, pool = pool)
         } catch (ex:Exception) {
             Logger.warn("Create ${this.javaClass.name} object failed.\n$ex")
             return null
@@ -21,7 +21,7 @@ abstract class PooledObjectFactory<T> {
 
     }
 
-    open fun onDestoryObject(obj: T) {
+    open fun destoryObject(target: T) {
 //        Logger.debug("Destory pooled object: [${System.identityHashCode(obj)}]")
     }
 }

@@ -1,7 +1,6 @@
 package sz.scaffold.cache
 
 import jodd.datetime.JDateTime
-import sz.scaffold.cache.redis.RedisCacheApi
 
 //
 // Created by kk on 2019-06-14.
@@ -16,27 +15,20 @@ interface AsyncCacheApi {
 
     suspend fun getOrNullAwait(key: String): String?
 
-    suspend fun setAwait(key: String, objJson: String, expirationInMs: Long)
+    suspend fun setAwait(key: String, valueTxt: String, expirationInMs: Long)
 
-    suspend fun setAwait(key: String, objJson: String)
+    suspend fun setAwait(key: String, valueTxt: String)
 
-    suspend fun setAwait(key: String, objJson: String, cleaningTime: JDateTime) {
+    suspend fun setAwait(key: String, valueTxt: String, cleaningTime: JDateTime) {
         val now = JDateTime().convertToDate().time
         val diffTime = cleaningTime.convertToDate().time - now
         if (diffTime <= 0) {
-            setAwait(key, objJson)
+            setAwait(key, valueTxt)
         } else {
-            setAwait(key, objJson, diffTime)
+            setAwait(key, valueTxt, diffTime)
         }
 
     }
 
     suspend fun delAwait(key: String)
-
-    companion object {
-
-        // 默认的 redis 缓存
-        val redisCache = RedisCacheApi.default
-
-    }
 }

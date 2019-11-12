@@ -12,7 +12,8 @@ import kotlin.concurrent.fixedRateTimer
 //
 // Created by kk on 2019/10/23.
 //
-class ObjectPool<T>(val config: PoolConfig, val factory: PooledObjectFactory<T>, val name: String = "Unnamed") {
+@Suppress("MemberVisibilityCanBePrivate")
+open class ObjectPool<T>(val config: PoolConfig, val factory: PooledObjectFactory<T>, val name: String = "Unnamed") {
 
     private val idleChannel = Channel<PooledObject<T>>(config.maxTotal)
 
@@ -55,7 +56,7 @@ class ObjectPool<T>(val config: PoolConfig, val factory: PooledObjectFactory<T>,
         return pooledObj
     }
 
-    suspend fun borrowObject(timeOutMs: Long = 0): PooledObject<T> {
+    suspend fun borrowAwait(timeOutMs: Long = config.borrowTimeoutMs): PooledObject<T> {
         return if (timeOutMs > 0) {
             withTimeout(timeOutMs) {
                 borrowObjectAwait()
@@ -66,7 +67,7 @@ class ObjectPool<T>(val config: PoolConfig, val factory: PooledObjectFactory<T>,
 
     }
 
-    fun borrowBlocking(timeOutMs: Long = 0): PooledObject<T> {
+    fun borrowBlocking(timeOutMs: Long = config.borrowTimeoutMs): PooledObject<T> {
         return runBlocking {
             if (timeOutMs > 0) {
                 withTimeout(timeOutMs) {
@@ -107,7 +108,7 @@ class ObjectPool<T>(val config: PoolConfig, val factory: PooledObjectFactory<T>,
     private fun doDestory(pooledObject: PooledObject<T>) {
         GlobalScope.launch(Dispatchers.IO) {
             try {
-                factory.onDestoryObject(pooledObject.obj)
+                factory.destoryObject(pooledObject.target)
             } catch (ex: Exception) {
                 Logger.warn("${factory.javaClass.name}.onDestoryObject(...) failed.\n$ex")
             }
@@ -160,9 +161,14 @@ class ObjectPool<T>(val config: PoolConfig, val factory: PooledObjectFactory<T>,
 //                    Logger.debug("==> 执行驱逐策略, 本次驱逐 $count 个")
                     for (i in 1..count) {
                         GlobalScope.launch {
-                            pool.borrowObject().use {
-                                it.markBroken()
+                            try {
+                                pool.borrowAwait().use {
+                                    it.markBroken()
+                                }
+                            } catch (ex:Exception) {
+                                Logger.warn("Object Pool: [${name}] evictionChecking failed by exception:\n$ex")
                             }
+
                         }
                     }
                 }
@@ -202,7 +208,7 @@ class ObjectPool<T>(val config: PoolConfig, val factory: PooledObjectFactory<T>,
         idleObjMap.toList().forEach {
             try {
                 idleObjMap.remove(it.first)
-                factory.onDestoryObject(it.second.obj)
+                factory.destoryObject(it.second.target)
             } catch (ex: Exception) {
                 Logger.warn("${factory.javaClass.name}.onDestoryObject(...) failed.\n$ex")
             }
