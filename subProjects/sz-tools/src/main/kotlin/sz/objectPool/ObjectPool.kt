@@ -117,7 +117,7 @@ open class ObjectPool<T : Any>(val config: PoolConfig, val factory: PooledObject
 
     fun returnObject(pooledObject: PooledObject<T>) {
         GlobalScope.launch {
-            Logger.debug("return object: $pooledObject")
+//            Logger.debug("return object: $pooledObject")
             if (pooledObject.broken) {
                 pooledObject.status = PooledObjectStatus.Broken
                 counterMutex.withLock {
