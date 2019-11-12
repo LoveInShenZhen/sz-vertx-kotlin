@@ -1,12 +1,11 @@
 package sz.objectPool
 
 import sz.scaffold.tools.logger.Logger
-import java.lang.Exception
 
 //
 // Created by kk on 2019/10/23.
 //
-abstract class PooledObjectFactory<T> {
+abstract class PooledObjectFactory<T : Any> {
 
     abstract suspend fun createObjectAwait(): T
 
@@ -14,7 +13,7 @@ abstract class PooledObjectFactory<T> {
         try {
             val obj = createObjectAwait()
             return PooledObject(target = obj, pool = pool)
-        } catch (ex:Exception) {
+        } catch (ex: Exception) {
             Logger.warn("Create ${this.javaClass.name} object failed.\n$ex")
             return null
         }

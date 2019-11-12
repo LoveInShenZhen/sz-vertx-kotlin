@@ -9,6 +9,7 @@ import io.vertx.redis.client.Response
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.withTimeout
 import sz.objectPool.PooledObject
+import sz.scaffold.tools.logger.Logger
 
 //
 // Created by kk on 2019-06-10.
@@ -31,6 +32,7 @@ class KedisAPI(private val delegate: RedisAPI, private val redisClient: Redis, p
     }
 
     internal fun destory() {
+        Logger.debug("Destory redis client: ${poolBox?.identityHashCode}")
         poolBox = null
         redisClient.close()
     }

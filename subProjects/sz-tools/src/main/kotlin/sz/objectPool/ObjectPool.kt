@@ -13,7 +13,7 @@ import kotlin.concurrent.fixedRateTimer
 // Created by kk on 2019/10/23.
 //
 @Suppress("MemberVisibilityCanBePrivate")
-open class ObjectPool<T>(val config: PoolConfig, val factory: PooledObjectFactory<T>, val name: String = "Unnamed") {
+open class ObjectPool<T : Any>(val config: PoolConfig, val factory: PooledObjectFactory<T>, val name: String = "Unnamed") {
 
     private val idleChannel = Channel<PooledObject<T>>(config.maxTotal)
 
@@ -117,6 +117,7 @@ open class ObjectPool<T>(val config: PoolConfig, val factory: PooledObjectFactor
 
     fun returnObject(pooledObject: PooledObject<T>) {
         GlobalScope.launch {
+            Logger.debug("return object: $pooledObject")
             if (pooledObject.broken) {
                 pooledObject.status = PooledObjectStatus.Broken
                 counterMutex.withLock {
@@ -165,7 +166,7 @@ open class ObjectPool<T>(val config: PoolConfig, val factory: PooledObjectFactor
                                 pool.borrowAwait().use {
                                     it.markBroken()
                                 }
-                            } catch (ex:Exception) {
+                            } catch (ex: Exception) {
                                 Logger.warn("Object Pool: [${name}] evictionChecking failed by exception:\n$ex")
                             }
 

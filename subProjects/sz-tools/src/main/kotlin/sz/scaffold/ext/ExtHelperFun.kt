@@ -2,6 +2,10 @@ package sz.scaffold.ext
 
 import jodd.exception.ExceptionUtil
 import sz.scaffold.tools.logger.AnsiColor
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.*
 
 //
@@ -97,4 +101,18 @@ fun String.toCamelCase(firstCharUppercase: Boolean, separator: Char): String {
     }
 
     return sb.toString()
+}
+
+fun LocalDateTime.toEpochMs(zoneOffset: ZoneOffset = Zone.systemZoneOffset): Long {
+    return this.toInstant(zoneOffset).toEpochMilli()
+}
+
+fun epochMsToLocalDateTime(epochMs: Long, zoneOffset: ZoneOffset = Zone.systemZoneOffset): LocalDateTime {
+    return LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMs), zoneOffset)
+}
+
+object Zone {
+    val systemZoneOffset: ZoneOffset by lazy {
+        OffsetDateTime.now().offset
+    }
 }
