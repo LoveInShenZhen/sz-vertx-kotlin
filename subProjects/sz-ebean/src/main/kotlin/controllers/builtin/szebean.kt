@@ -11,6 +11,7 @@ import sz.scaffold.controller.ApiController
 // Created by kk on 17/8/23.
 //
 
+@Suppress("FunctionName", "ClassName")
 @Comment("内置的Ebean工具接口方法")
 class szebean : ApiController() {
 
@@ -30,7 +31,8 @@ class szebean : ApiController() {
         val sqlScript = ddl.createDdl
         val pos = sqlScript.indexOf("create table")
 
-        return sqlScript.drop(pos) + "\n\n" + DbIndex(spiServer).alterTableUseUtf8mb4()
+//        return sqlScript.drop(pos) + "\n\n" + DbIndex(spiServer).alterTableUseUtf8mb4()
+        return sqlScript.drop(pos)
     }
 
     @Comment("生成删除数据库表结构的SQL")
