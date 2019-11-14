@@ -24,8 +24,11 @@ import java.util.concurrent.*
 object SzEbeanConfig {
 
     private val ebeanConfig: Config = Application.config.getConfig("ebean")
-    private val defaultDatasourceName: String
+
+    private val defaultDatasourceName = ebeanConfig.getString("defaultDatasource")
+
     private val _ebeanServerConfigs = mutableMapOf<String, ServerConfig>()
+
     private val workerPoolMap = mutableMapOf<String, ThreadPoolExecutor>()
 
 
@@ -46,7 +49,6 @@ object SzEbeanConfig {
     }
 
     init {
-        defaultDatasourceName = ebeanConfig.getString("defaultDatasource")
         val dataSources = ebeanConfig.getConfig("dataSources")
         hasDbConfiged = dataSources.root().size > 0
     }
@@ -135,20 +137,20 @@ object SzEbeanConfig {
         return modelClassSet
     }
 
-    fun jdbcUrl(dataSource: String = "default"): String {
+    fun jdbcUrl(dataSource: String = defaultDatasourceName): String {
         val dsConfig = ebeanConfig.getConfig("dataSources.$dataSource")
         return dsConfig.getString("jdbcUrl")
     }
 
-    fun isMySql(dataSource: String = "default"): Boolean {
+    fun isMySql(dataSource: String = defaultDatasourceName): Boolean {
         return jdbcUrl(dataSource).startsWith("jdbc:mysql:")
     }
 
-    fun isH2(dataSource: String = "default"): Boolean {
+    fun isH2(dataSource: String = defaultDatasourceName): Boolean {
         return jdbcUrl(dataSource).startsWith("jdbc:h2:")
     }
 
-    fun isHsqldb(dataSource: String = "default"): Boolean {
+    fun isHsqldb(dataSource: String = defaultDatasourceName): Boolean {
         return jdbcUrl(dataSource).startsWith("jdbc:hsqldb:")
     }
 

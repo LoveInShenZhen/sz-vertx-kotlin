@@ -1,9 +1,8 @@
 package controllers.builtin
 
-import io.ebeaninternal.api.SpiEbeanServer
-import io.ebeaninternal.dbmigration.model.CurrentModel
 import sz.ebean.DB
-import sz.ebean.DbIndex
+import sz.ebean.DDL
+import sz.ebean.runTransactionAwait
 import sz.scaffold.annotations.Comment
 import sz.scaffold.controller.ApiController
 
@@ -16,31 +15,52 @@ import sz.scaffold.controller.ApiController
 class szebean : ApiController() {
 
     @Comment("生成创建/更新索引的SQL语句")
-    fun CreateIndexSql(@Comment("数据源名称, 为空时,表示默认数据源") dataSource: String = ""): String {
-        val db = DB.byDataSource(dataSource)
+    suspend fun CreateIndexSql(@Comment("数据源名称, 为空时,表示默认数据源") dataSource: String = ""): String {
         this.contentType("text/plain; charset=UTF-8")
-        return DbIndex(db).createIndexSql()
+        return DB.byDataSource(dataSource).runTransactionAwait {
+            DDL.createIndexDdl(dataSource)
+        }
     }
 
     @Comment("生成创建数据库表结构的SQL")
-    fun CreateTablesSql(@Comment("数据源名称, 为空时,表示默认数据源") dataSource: String = ""): String {
-        val spiServer = DB.byDataSource(dataSource) as SpiEbeanServer
-        val ddl = CurrentModel(spiServer)
+    suspend fun CreateTablesSql(@Comment("数据源名称, 为空时,表示默认数据源") dataSource: String = ""): String {
         this.contentType("text/plain; charset=UTF-8")
+        return DB.byDataSource(dataSource).runTransactionAwait {
+            DDL.createDdl(dataSource)
+        }
+//        val spiServer = DB.byDataSource(dataSource) as SpiEbeanServer
+//        val ddl = CurrentModel(spiServer)
 
-        val sqlScript = ddl.createDdl
-        val pos = sqlScript.indexOf("create table")
+
+//        val sqlScript = ddl.createDdl
+//        val pos = sqlScript.indexOf("create table")
 
 //        return sqlScript.drop(pos) + "\n\n" + DbIndex(spiServer).alterTableUseUtf8mb4()
-        return sqlScript.drop(pos)
+//        return sqlScript.drop(pos)
     }
 
     @Comment("生成删除数据库表结构的SQL")
-    fun DropTablesSql(@Comment("数据源名称, 为空时,表示默认数据源") dataSource: String = ""): String {
-        val spiServer = DB.byDataSource(dataSource) as SpiEbeanServer
-        val ddl = CurrentModel(spiServer)
+    suspend fun DropTablesSql(@Comment("数据源名称, 为空时,表示默认数据源") dataSource: String = ""): String {
         this.contentType("text/plain; charset=UTF-8")
-        return ddl.dropAllDdl
+        return DB.byDataSource(dataSource).runTransactionAwait {
+            DDL.dropAllDdl(dataSource)
+        }
+//        val spiServer = DB.byDataSource(dataSource) as SpiEbeanServer
+//        val ddl = CurrentModel(spiServer)
+//
+//        return ddl.dropAllDdl
+    }
+
+    @Comment("清空数据库,重新创建表")
+    suspend fun evolution(@Comment("数据源名称, 为空时,表示默认数据源") dataSource: String = ""): String {
+        this.contentType("text/plain; charset=UTF-8")
+        return DB.byDataSource(dataSource).runTransactionAwait {
+            it.createSqlUpdate(DDL.dropAllDdl(dataSource)).execute()
+            it.createSqlUpdate(DDL.createDdl(dataSource)).execute()
+            it.createSqlUpdate(DDL.createIndexDdl(dataSource)).execute()
+
+            "数据库重置成功"
+        }
     }
 
 }

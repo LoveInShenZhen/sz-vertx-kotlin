@@ -95,7 +95,7 @@ class DbIndex(private val dbServer: EbeanServer) {
 
     fun alterTableUseUtf8mb4(): String {
         val sb = StringBuilder()
-        sb.append("# 修改表的默认字符集和所有列的字符集为 utf8mb4\n")
+        sb.append("-- 修改表的默认字符集和所有列的字符集为 utf8mb4\n")
         val classes = SzEbeanConfig.ebeanServerConfigs.get(dbServer.name)!!.classes
         for (modelClass in classes) {
             if (isEntityClass(modelClass)) {
