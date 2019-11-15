@@ -17,14 +17,14 @@ dependencies {
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1")
     api(project(":subProjects:jodd-dependency"))
 
-    api("com.fasterxml.jackson.module:jackson-module-jsonSchema:2.9.8")
-    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8") {
+    api("com.fasterxml.jackson.module:jackson-module-jsonSchema:2.10.1")
+    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.1") {
         this.exclude(group = "org.jetbrains.kotlin")
     }
-    api("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.9.8")
-    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.8")
-    api("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.8")
-    api("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.9.8")
+    api("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.10.1")
+    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.10.1")
+    api("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.10.1")
+    api("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.10.1")
 
     api("com.typesafe:config:1.3.4")
     api("ch.qos.logback:logback-classic:1.2.3")
