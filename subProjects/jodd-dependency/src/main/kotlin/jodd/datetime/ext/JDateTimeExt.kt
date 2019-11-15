@@ -1,6 +1,7 @@
 package jodd.datetime.ext
 
 import jodd.datetime.JDateTime
+import java.util.*
 
 //
 // Created by kk on 2018/10/14.
@@ -31,4 +32,8 @@ fun JDateTime.lastDayOfYear(): JDateTime {
     result.day = result.monthLength
 
     return result
+}
+
+fun Date.toJDateTime(): JDateTime {
+    return JDateTime(this)
 }
