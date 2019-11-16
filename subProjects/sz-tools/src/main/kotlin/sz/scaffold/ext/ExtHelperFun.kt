@@ -1,6 +1,7 @@
 package sz.scaffold.ext
 
 import jodd.exception.ExceptionUtil
+import jodd.io.FileNameUtil
 import sz.scaffold.tools.logger.AnsiColor
 import java.time.Instant
 import java.time.LocalDateTime
@@ -115,4 +116,20 @@ object Zone {
     val systemZoneOffset: ZoneOffset by lazy {
         OffsetDateTime.now().offset
     }
+}
+
+fun filePathJoin(vararg paths: String): String {
+    if (paths.isEmpty()) {
+        throw RuntimeException("no parameters")
+    }
+
+    if (paths.size == 1) {
+        return paths[0]
+    }
+
+    var result = paths[0]
+    for (index in 1 until paths.size) {
+        result = FileNameUtil.concat(result, paths[index])
+    }
+    return result
 }

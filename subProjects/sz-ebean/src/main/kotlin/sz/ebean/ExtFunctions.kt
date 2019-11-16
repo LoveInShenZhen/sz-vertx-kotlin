@@ -32,7 +32,7 @@ fun BigDecimal?.safeValue(): BigDecimal {
  */
 fun EbeanServer.tableExists(tableName: String): Boolean {
     val rows = this.createSqlQuery("SHOW TABLES").findList()
-    val count = rows.count { it.values.first() == tableName }
+    val count = rows.count { it.values.first().toString().equals(tableName, true) }
     return count > 0
 }
 
