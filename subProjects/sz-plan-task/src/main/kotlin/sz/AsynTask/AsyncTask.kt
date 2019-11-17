@@ -19,12 +19,17 @@ class AsyncTask {
     }
 
     companion object {
+
         fun build(task: Runnable): AsyncTask {
             val asyncTask = AsyncTask()
             asyncTask.className = task.javaClass.name
             asyncTask.data = task.toJsonPretty()
 
             return asyncTask
+        }
+
+        fun submit(task: Runnable) {
+            build(task).send()
         }
     }
 

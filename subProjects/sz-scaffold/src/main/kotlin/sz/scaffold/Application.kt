@@ -38,6 +38,7 @@ import java.util.concurrent.ExecutorService
 //
 // Created by kk on 17/8/19.
 //
+@Suppress("MemberVisibilityCanBePrivate", "HasPlatformType", "ObjectPropertyName")
 object Application {
 
     private val startHandlers = mutableMapOf<Int, MutableList<() -> Unit>>()

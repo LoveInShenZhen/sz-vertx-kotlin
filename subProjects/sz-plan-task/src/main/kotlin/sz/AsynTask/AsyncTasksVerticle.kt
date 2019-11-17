@@ -11,6 +11,7 @@ import sz.scaffold.tools.logger.Logger
 //
 // Created by kk on 17/9/10.
 //
+
 class AsyncTasksVerticle : AbstractVerticle() {
 
     private var consumer: MessageConsumer<String>? = null
@@ -19,7 +20,7 @@ class AsyncTasksVerticle : AbstractVerticle() {
         Logger.debug("AsyncTasksVerticle start. context: ${this.context} Threa Id: ${Thread.currentThread().id}")
         consumer = this.vertx.eventBus().consumer<String>(address) { message ->
             this.vertx.executeBlocking<Unit>({ future ->
-                Logger.debug("AsyncTasksVerticle received message. Threa Id: ${Thread.currentThread().id} msg:\n${message.body()}")
+//                Logger.debug("AsyncTasksVerticle received message. Threa Id: ${Thread.currentThread().id} msg:\n${message.body()}")
                 val asyncTask = Json.fromJsonString(message.body(), AsyncTask::class.java)
                 val task = Json.fromJsonString(asyncTask.data, Class.forName(asyncTask.className)) as Runnable
                 task.run()
@@ -29,15 +30,6 @@ class AsyncTasksVerticle : AbstractVerticle() {
                     Logger.warn(ExceptionUtil.exceptionChainToString(result.cause()))
                 }
             })
-//            try {
-//                Logger.debug("AsyncTasksVerticle received message. Threa Id: ${Thread.currentThread().id} msg:\n${message.body()}")
-//                val asyncTask = Json.fromJsonString(message.body(), AsyncTask::class.java)
-//                val task = Json.fromJsonString(asyncTask.data, Class.forName(asyncTask.className)) as Runnable
-//
-//                task.run()
-//            } catch (ex: Exception) {
-//                Logger.warn(ExceptionUtil.exceptionChainToString(ex))
-//            }
         }
     }
 
@@ -50,7 +42,7 @@ class AsyncTasksVerticle : AbstractVerticle() {
 
     companion object {
 
-        val address = "sz.app.asyncTask"
+        const val address = "sz.app.asyncTask"
         private var deoloyId = ""
         private var vertxRef: Vertx? = null
 

@@ -9,6 +9,7 @@ import jodd.datetime.JDateTime
 import sz.PlanTaskService
 import sz.annotations.DBIndexed
 import sz.ebean.DB
+import sz.ebean.runTransactionAwait
 import sz.ebean.runTransactionBlocking
 import sz.scaffold.Application
 import sz.scaffold.ext.getStringOrElse
@@ -19,7 +20,7 @@ import javax.persistence.*
 //
 // Created by kk on 17/8/25.
 //
-@Suppress("MemberVisibilityCanBePrivate", "PropertyName")
+@Suppress("MemberVisibilityCanBePrivate", "PropertyName", "DuplicatedCode")
 @Entity
 @Table(name = "plan_task")
 class PlanTask(dataSource: String = dataSourceName) : Model(dataSource) {
@@ -75,24 +76,34 @@ class PlanTask(dataSource: String = dataSourceName) : Model(dataSource) {
             DB.byDataSource(dataSourceName)
         }
 
-        fun addTask(task: Runnable, requireSeq: Boolean = false, seqType: String = "", planRunTime: JDateTime? = null, tag: String = "") {
+        private fun newTask(task: Runnable, requireSeq: Boolean = false, seqType: String = "", planRunTime: JDateTime? = null, tag: String = "") {
+            val planTask = PlanTask()
+            planTask.require_seq = requireSeq
+            planTask.seq_type = seqType
+            planTask.plan_run_time = planRunTime
+            planTask.task_status = TaskStatus.WaitingInDB.code
+            planTask.class_name = task.javaClass.name
+            planTask.json_data = task.toJsonPretty()
+            planTask.tag = tag
+
+            planTask.save()
+        }
+
+        fun addTaskBlocking(task: Runnable, requireSeq: Boolean = false, seqType: String = "", planRunTime: JDateTime? = null, tag: String = "") {
             taskDB.runTransactionBlocking {
-                val planTask = PlanTask()
-                planTask.require_seq = requireSeq
-                planTask.seq_type = seqType
-                planTask.plan_run_time = planRunTime
-                planTask.task_status = TaskStatus.WaitingInDB.code
-                planTask.class_name = task.javaClass.name
-                planTask.json_data = task.toJsonPretty()
-                planTask.tag = tag
-
-                planTask.save()
+                newTask(task, requireSeq, seqType, planRunTime, tag)
             }
-
             notifyNewTask()
         }
 
-        fun addSingletonTask(task: Runnable, requireSeq: Boolean = false, seqType: String = "", planRunTime: JDateTime? = null, tag: String = "") {
+        suspend fun addTaskAwait(task: Runnable, requireSeq: Boolean = false, seqType: String = "", planRunTime: JDateTime? = null, tag: String = "") {
+            taskDB.runTransactionAwait {
+                newTask(task, requireSeq, seqType, planRunTime, tag)
+            }
+            notifyNewTask()
+        }
+
+        fun addSingletonTaskBlocking(task: Runnable, requireSeq: Boolean = false, seqType: String = "", planRunTime: JDateTime? = null, tag: String = "") {
             taskDB.runTransactionBlocking { ebeanServer ->
                 val className = task.javaClass.name
                 val oldTasks = finder().query().where()
@@ -102,9 +113,27 @@ class PlanTask(dataSource: String = dataSourceName) : Model(dataSource) {
 
                 // 先删除在数据库等待的旧任务
                 ebeanServer.deleteAll(oldTasks)
-                // 添加新版任务
-                addTask(task, requireSeq, seqType, planRunTime, tag)
 
+                // 添加新版任务
+                newTask(task, requireSeq, seqType, planRunTime, tag)
+            }
+
+            notifyNewTask()
+        }
+
+        suspend fun addSingletonTaskAwait(task: Runnable, requireSeq: Boolean = false, seqType: String = "", planRunTime: JDateTime? = null, tag: String = "") {
+            taskDB.runTransactionAwait { ebeanServer ->
+                val className = task.javaClass.name
+                val oldTasks = finder().query().where()
+                    .eq("class_name", className)
+                    .`in`("task_status", TaskStatus.WaitingInDB.code, TaskStatus.WaitingInQueue.code)
+                    .findList()
+
+                // 先删除在数据库等待的旧任务
+                ebeanServer.deleteAll(oldTasks)
+
+                // 添加新版任务
+                newTask(task, requireSeq, seqType, planRunTime, tag)
             }
 
             notifyNewTask()
