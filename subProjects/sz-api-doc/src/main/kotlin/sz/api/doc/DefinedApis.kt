@@ -1,8 +1,6 @@
 package sz.api.doc
 
-import sz.api.controllers.ApiDoc
 import sz.scaffold.Application
-import sz.scaffold.annotations.PostForm
 import sz.scaffold.annotations.PostJson
 import sz.scaffold.controller.ApiRoute
 import kotlin.reflect.full.findAnnotation
