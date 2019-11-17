@@ -1,5 +1,6 @@
 package sz.api.doc
 
+import sz.api.controllers.ApiDoc
 import sz.scaffold.Application
 import sz.scaffold.annotations.PostJson
 import sz.scaffold.controller.ApiRoute
@@ -16,7 +17,7 @@ class DefinedApis(val host: String = "localhost:9000", val isJsonApi: Boolean = 
 
     init {
         Application.loadApiRouteFromRouteFiles().filter {
-            it.isJsonApi() == isJsonApi
+            it.isJsonApi() == isJsonApi && it.controllerKClass != ApiDoc::class
         }.forEach {
             addApi(it)
         }

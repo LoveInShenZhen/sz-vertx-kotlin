@@ -26,6 +26,8 @@ class Default : ApiController() {
         <li><a href="/api/builtin/doc/apiIndex">api 列表</a></li>
         <li><a href="/api/builtin/doc/pageIndex">非 api 链接列表</a></li>
         <li><a href="/api/builtin/sysInfo">系统信息</a></li>
+        <li><a href="/api/builtin/doc/apiDocMarkdown">api 文档的markdown格式</a></li>
+        <li><a href="/api/builtin/doc/apiDocHtml">api 文档的html格式</a></li>
     </ul>
 </body>
 </html>""".trimIndent()

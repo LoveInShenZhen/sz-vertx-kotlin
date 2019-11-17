@@ -4,9 +4,7 @@ import jodd.datetime.JDateTime
 import jodd.util.ClassUtil
 import org.apache.commons.lang3.reflect.TypeUtils
 import java.math.BigDecimal
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
+import java.time.*
 import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
@@ -82,7 +80,8 @@ fun isString(kType: KType): Boolean {
 
     if (isOneOfTypes(rawType,
             String::class.java,
-            CharSequence::class.java)) {
+            CharSequence::class.java,
+            UUID::class.java)) {
         return true
     }
 
@@ -102,7 +101,10 @@ fun isDateTime(kType: KType): Boolean {
         Date::class.java,
         java.sql.Date::class.java,
         Calendar::class.java,
-        jodd.datetime.JDateTime::class.java)
+        jodd.datetime.JDateTime::class.java,
+        OffsetDateTime::class.java,
+        OffsetTime::class.java,
+        ZonedDateTime::class.java)
 }
 
 fun isBasicType(kClass: KClass<*>): Boolean {
@@ -131,7 +133,11 @@ fun isBasicType(kClass: KClass<*>): Boolean {
         Date::class.java,
         java.sql.Date::class.java,
         JDateTime::class.java,
-        Calendar::class.java)
+        Calendar::class.java,
+        UUID::class.java,
+        OffsetDateTime::class.java,
+        OffsetTime::class.java,
+        ZonedDateTime::class.java)
 }
 
 fun isBasicType(kType: KType): Boolean {
@@ -161,7 +167,11 @@ fun isBasicType(kType: KType): Boolean {
         Date::class.java,
         java.sql.Date::class.java,
         JDateTime::class.java,
-        Calendar::class.java)
+        Calendar::class.java,
+        UUID::class.java,
+        OffsetDateTime::class.java,
+        OffsetTime::class.java,
+        ZonedDateTime::class.java)
 }
 
 fun isContainerType(kClass: KClass<*>): Boolean {
