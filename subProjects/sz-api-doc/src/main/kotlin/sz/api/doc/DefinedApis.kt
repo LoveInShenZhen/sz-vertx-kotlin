@@ -11,13 +11,14 @@ import kotlin.reflect.jvm.jvmErasure
 //
 // Created by kk on 17/8/24.
 //
+@Suppress("MemberVisibilityCanBePrivate")
 class DefinedApis(val host: String = "localhost:9000", val isJsonApi: Boolean = true) {
 
     var groups: MutableList<ApiGroup> = mutableListOf()
 
     init {
         Application.loadApiRouteFromRouteFiles().filter {
-            it.isJsonApi() == isJsonApi && it.controllerKClass != ApiDoc::class
+            it.isJsonApi() == isJsonApi
         }.forEach {
             addApi(it)
         }
