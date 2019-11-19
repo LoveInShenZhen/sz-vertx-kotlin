@@ -121,11 +121,11 @@ object Application {
 //        setupConfPathProperty("java.util.logging.config.file", vertxLogCfgPath)
 
         this.regOnStartHandler(Int.MIN_VALUE) {
-            Logger.debug("Application start ...", AnsiColor.GREEN)
+            Logger.info("Application start ...", AnsiColor.GREEN)
         }
 
         this.regOnStopHanlder(Int.MAX_VALUE) {
-            Logger.debug("Application stop ...", AnsiColor.GREEN)
+            Logger.info("Application stop ...", AnsiColor.GREEN)
             val stopVertxFuture = CompletableFuture<Boolean>()
             vertx.close { res ->
                 if (res.failed()) {
