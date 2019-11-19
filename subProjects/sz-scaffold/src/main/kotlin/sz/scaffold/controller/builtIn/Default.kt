@@ -21,6 +21,13 @@ class Default : ApiController() {
         this.contentType(ContentTypes.Html)
         return """
 <html>
+<head>
+<style type="text/css">
+    body {
+        background: #e3dede;
+    }
+</style>
+</head>
 <body>
     <ul>
         <li><a href="/api/builtin/doc/apiIndex">api 列表</a></li>
