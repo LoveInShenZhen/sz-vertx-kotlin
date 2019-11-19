@@ -20,12 +20,12 @@ fun String?.escapeMarkdown(): String {
     return this.replace("_", """\_""").replace("*", """\*""")
 }
 
-fun String.Colorization(color: AnsiColor? = AnsiColor.BLUE, bgColog: AnsiColor? = null): String {
+fun String.colorization(color: AnsiColor? = AnsiColor.BLUE, bgColog: AnsiColor? = null): String {
     if (color == null && bgColog == null) return this
     return "${color?.code ?: ""}${bgColog?.code ?: ""}${this}${AnsiColor.RESET.code}"
 }
 
-fun Exception.ChainToString(): String {
+fun Exception.chainToString(): String {
     return ExceptionUtil.exceptionChainToString(this)
 }
 

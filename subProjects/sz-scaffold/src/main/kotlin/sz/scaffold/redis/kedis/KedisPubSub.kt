@@ -12,7 +12,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
-import sz.scaffold.ext.ChainToString
+import sz.scaffold.ext.chainToString
 import sz.scaffold.tools.logger.AnsiColor
 import sz.scaffold.tools.logger.Logger
 
@@ -88,7 +88,7 @@ class KedisPubSub(val vertx: Vertx, val options: RedisOptions, val reConnectInte
                     try {
                         handler.invoke(it)
                     } catch (ex: Exception) {
-                        Logger.error(ex.ChainToString())
+                        Logger.error(ex.chainToString())
                     }
                 }
                 shutdownClient()

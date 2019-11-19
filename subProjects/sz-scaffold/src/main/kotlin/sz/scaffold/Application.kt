@@ -23,6 +23,7 @@ import jodd.util.ClassLoaderUtil
 import org.apache.commons.lang3.SystemUtils
 import sz.scaffold.controller.ApiRoute
 import sz.scaffold.controller.BodyHandlerOptions
+import sz.scaffold.ext.filePathJoin
 import sz.scaffold.redis.kedis.KedisPool
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.logger.AnsiColor
@@ -81,7 +82,7 @@ object Application {
         writePidFile()
         InternalLoggerFactory.setDefaultFactory(Slf4JLoggerFactory.INSTANCE)
 
-        val confFolder = File(FileNameUtil.concat(SystemUtils.getUserDir().absolutePath, "conf"))
+        val confFolder = File(filePathJoin(SystemUtils.getUserDir().absolutePath, "conf"))
         if (confFolder.exists()) {
             appHome = SystemUtils.getUserDir().absolutePath
         } else {
@@ -95,14 +96,14 @@ object Application {
             }
         }
 
-        val logbackXmlPath = FileNameUtil.concat(appHome, "conf${File.separator}logback.xml")
+        val logbackXmlPath = filePathJoin(appHome, "conf", "logback.xml")
         setupConfPathProperty("logback.configurationFile", logbackXmlPath)
 
         Logger.debug("current dir: ${File("").absolutePath}")
         Logger.debug("appHome : $appHome")
         Logger.debug("""-Dlogback.configurationFile : ${System.getProperty("logback.configurationFile")}""")
 
-        val confPath = FileNameUtil.concat(appHome, "conf${File.separator}application.conf")
+        val confPath = filePathJoin(appHome, "conf", "application.conf")
         if (File(confPath).exists().not()) {
             throw SzException("appHome 路径推断错误, 因为 [$confPath] 不存在")
         }
@@ -176,7 +177,7 @@ object Application {
             Logger.debug("当前为: Vertx 集群模式")
             val future = CompletableFuture<Vertx>()
 
-            val zooConfigJson = File(FileNameUtil.concat(appHome, "conf${File.separator}zookeeper.json")).readText()
+            val zooConfigJson = File(filePathJoin(appHome, "conf", "zookeeper.json")).readText()
             val zookeeperConfig = JsonObject(zooConfigJson)
             this._vertoptions!!.clusterManager = ZookeeperClusterManager(zookeeperConfig)
 
@@ -230,7 +231,7 @@ object Application {
     }
 
     fun getFile(relativePath: String): File {
-        return File(FileNameUtil.concat(appHome, relativePath))
+        return File(filePathJoin(appHome, relativePath))
     }
 
     // 从 conf/route 文件, 以及 conf/sub_routes/*.route 子路由文件里加载路由配置
@@ -344,7 +345,7 @@ object Application {
     }
 
     private fun buildVertxOptions(): VertxOptions {
-        val vertxOptFile = File(FileNameUtil.concat(this.appHome, "conf${File.separator}vertxOptions.json"))
+        val vertxOptFile = File(filePathJoin(this.appHome, "conf", "vertxOptions.json"))
         if (FileUtil.isExistingFile(vertxOptFile)) {
             // conf/vertxOptions.json 配置文件存在, 则根据配置文件, 设置 VertxOptions
             val jsonOpts = JsonObject(FileUtil.readString(vertxOptFile))
@@ -403,7 +404,7 @@ object Application {
             this.bodyLimit = config.getLong("app.httpServer.bodyHandler.bodyLimit")
             this.mergeFormAttributes = config.getBoolean("app.httpServer.bodyHandler.mergeFormAttributes")
             this.deleteUploadedFilesOnEnd = config.getBoolean("app.httpServer.bodyHandler.deleteUploadedFilesOnEnd")
-            this.uploadsDirectory = FileNameUtil.concat(appHome, config.getString("app.httpServer.bodyHandler.uploadsDirectory"))
+            this.uploadsDirectory = filePathJoin(appHome, config.getString("app.httpServer.bodyHandler.uploadsDirectory"))
         }
     }
 
