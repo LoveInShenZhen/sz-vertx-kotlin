@@ -12,7 +12,7 @@ import sz.scaffold.controller.reply.ReplyBase
 class SampleWSController : ApiController() {
 
     @Comment("广播消息给所有连接中的webSocket客户端")
-    fun publishMsgToWebSocketClients(@Comment("消息内容") msg: String): ReplyBase {
+    suspend fun publishMsgToWebSocketClients(@Comment("消息内容") msg: String): ReplyBase {
         val reply = ReplyBase()
         SampleWS.publishMsgToAllClients(msg)
         return reply
