@@ -6,9 +6,10 @@ import sz.scaffold.Application
 import sz.scaffold.tools.logger.AnsiColor
 import sz.scaffold.tools.logger.Logger
 
-//
-// Created by kk on 2019-06-17.
-//
+/**
+ * 注: 该类的实现必须是线程安全的.
+ *     fun handle(webSocket: ServerWebSocket) 方法会被多个线程同时调用
+ */
 class SampleWS : WebSocketHandler {
     override fun handle(webSocket: ServerWebSocket) {
         val consumer = Application.vertx.eventBus().consumer<String>(eventBusAddress) {
