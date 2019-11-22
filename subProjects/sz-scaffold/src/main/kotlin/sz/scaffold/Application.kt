@@ -14,6 +14,7 @@ import io.vertx.core.impl.VertxImpl
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
+import io.vertx.ext.web.handler.StaticHandler
 import io.vertx.spi.cluster.zookeeper.ZookeeperClusterManager
 import jodd.exception.ExceptionUtil
 import jodd.io.FileNameUtil
@@ -218,6 +219,9 @@ object Application {
     private fun checkApiRoutes(apiRoutes: List<ApiRoute>) {
         val routeMap = mutableMapOf<String, Int>()
         apiRoutes.forEach {
+            if (it.path.startsWith("/static/")) {
+                throw SzException("/static/* 是专门用于处理静态文件资源, 请更换路由路径定义: ${it.path}")
+            }
             val key = "${it.method.name}  ${it.path}"
             val count = routeMap.getOrDefault(key, 0)
             routeMap[key] = count + 1
@@ -286,6 +290,9 @@ object Application {
 
         val router = Router.router(vertx)
 
+        // /static/* , 该 path 是约定专门用于处理静态文件的
+        router.route("/static/*").handler(StaticHandler.create())
+
         router.route().handler(BodyHandler.create()
             .setMergeFormAttributes(bodyHandlerOptions.mergeFormAttributes)
             .setBodyLimit(bodyHandlerOptions.bodyLimit)
@@ -301,10 +308,13 @@ object Application {
                 // enable chunked responses because we will be adding data as
                 // we execute over other handlers. This is only required once and
                 // only if several handlers do output.
-                it.response().isChunked = true
 
-                if (it.method() == HttpMethod.POST) {
-                    it.isExpectMultipart = true
+                // 排除 /static/* , 该 path 是约定专门用于处理静态文件的
+                if (it.path().startsWith("/static/").not()) {
+                    it.response().isChunked = true
+                    if (it.method() == HttpMethod.POST) {
+                        it.isExpectMultipart = true
+                    }
                 }
 
 //                router.accept(it)
