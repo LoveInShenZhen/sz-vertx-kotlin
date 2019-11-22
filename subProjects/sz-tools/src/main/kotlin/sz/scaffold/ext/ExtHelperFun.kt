@@ -3,6 +3,7 @@ package sz.scaffold.ext
 import jodd.exception.ExceptionUtil
 import jodd.io.FileNameUtil
 import sz.scaffold.tools.logger.AnsiColor
+import java.io.File
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
@@ -132,4 +133,14 @@ fun filePathJoin(vararg paths: String): String {
         result = FileNameUtil.concat(result, paths[index])
     }
     return result
+}
+
+fun changeWorkingDir(dirPath: String) {
+    val directory = File(dirPath).absoluteFile
+    if (directory.exists() || directory.mkdirs()) {
+        System.setProperty("user.dir", directory.absolutePath)
+        System.setProperty("vertx.cwd", directory.absolutePath)
+    } else {
+        throw RuntimeException("Faild to change user.dir to $dirPath")
+    }
 }

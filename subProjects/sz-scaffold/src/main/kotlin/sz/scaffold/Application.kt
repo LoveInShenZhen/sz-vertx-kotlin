@@ -24,6 +24,7 @@ import jodd.util.ClassLoaderUtil
 import org.apache.commons.lang3.SystemUtils
 import sz.scaffold.controller.ApiRoute
 import sz.scaffold.controller.BodyHandlerOptions
+import sz.scaffold.ext.changeWorkingDir
 import sz.scaffold.ext.filePathJoin
 import sz.scaffold.redis.kedis.KedisPool
 import sz.scaffold.tools.SzException
@@ -100,9 +101,13 @@ object Application {
         val logbackXmlPath = filePathJoin(appHome, "conf", "logback.xml")
         setupConfPathProperty("logback.configurationFile", logbackXmlPath)
 
-        Logger.debug("current dir: ${File("").absolutePath}")
+        val currentDir = File("").absolutePath
+        Logger.debug("current dir: $currentDir")
         Logger.debug("appHome : $appHome")
         Logger.debug("""-Dlogback.configurationFile : ${System.getProperty("logback.configurationFile")}""")
+
+        Logger.debug("Change working dir to appHome")
+        changeWorkingDir(appHome)
 
         val confPath = filePathJoin(appHome, "conf", "application.conf")
         if (File(confPath).exists().not()) {
