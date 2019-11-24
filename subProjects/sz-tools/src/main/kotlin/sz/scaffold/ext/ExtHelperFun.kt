@@ -105,6 +105,14 @@ fun String.toCamelCase(firstCharUppercase: Boolean, separator: Char): String {
     return sb.toString()
 }
 
+fun Boolean.failed(): Boolean {
+    return this.not()
+}
+
+fun Boolean.successful(): Boolean {
+    return this
+}
+
 fun LocalDateTime.toEpochMs(zoneOffset: ZoneOffset = Zone.systemZoneOffset): Long {
     return this.toInstant(zoneOffset).toEpochMilli()
 }
