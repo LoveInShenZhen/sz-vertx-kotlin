@@ -105,11 +105,17 @@ fun String.toCamelCase(firstCharUppercase: Boolean, separator: Char): String {
     return sb.toString()
 }
 
+/**
+ * 为了条件判断时, 让代码语义更加直观, 增加的扩展方法
+ */
 fun Boolean.failed(): Boolean {
     return this.not()
 }
 
-fun Boolean.successful(): Boolean {
+/**
+ * 为了条件判断时, 让代码语义更加直观, 增加的扩展方法
+ */
+fun Boolean.succeed(): Boolean {
     return this
 }
 
