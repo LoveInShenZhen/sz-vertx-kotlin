@@ -150,16 +150,20 @@ object Application {
     }
 
     private fun setupConfPathProperty(propName: String, default: String) {
-        if (System.getProperties().containsKey(propName)) {
-            // 外部指定了 property 的值, 检查值的有效性
-            val path = System.getProperty(propName)
-            if (File(path).exists().not()) {
-                throw SzException("-D$propName 指定的文件不存在. [$path]")
-            }
-        } else {
+        if (System.getProperties().containsKey(propName).not()) {
             // 未指定, 则指定为我们的默认值
             System.setProperty(propName, default)
         }
+//        if (System.getProperties().containsKey(propName)) {
+//            // 外部指定了 property 的值, 检查值的有效性
+//            val path = System.getProperty(propName)
+//            if (File(path).exists().not()) {
+//                throw SzException("-D$propName 指定的文件不存在. [$path]")
+//            }
+//        } else {
+//            // 未指定, 则指定为我们的默认值
+//            System.setProperty(propName, default)
+//        }
     }
 
     fun setupVertx(appVertx: Vertx? = null) {
