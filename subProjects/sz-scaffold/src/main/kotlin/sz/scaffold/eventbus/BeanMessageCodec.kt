@@ -35,7 +35,7 @@ class BeanMessageCodec<BeanType : Any>(private val beanClass: Class<BeanType>) :
     }
 
     override fun name(): String {
-        return "BeanMessageCodec#${beanClass.name}"
+        return beanClass.name
     }
 
 }
