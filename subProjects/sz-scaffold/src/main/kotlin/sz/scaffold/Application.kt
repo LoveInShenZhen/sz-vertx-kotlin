@@ -429,9 +429,9 @@ object Application {
     }
 
     private fun logClusterNodeId() {
-        if (Application.vertxOptions.eventBusOptions.isClustered) {
-            Logger.info("NodeId: ${Application.vertxOptions.clusterManager.nodeID}")
-            Logger.info("Cluster Nodes: ${Application.vertxOptions.clusterManager.nodes.joinToString(", ")}")
+        if (vertxOptions.eventBusOptions.isClustered) {
+            Logger.info("NodeId: ${vertxOptions.clusterManager.nodeID}")
+            Logger.info("Cluster Nodes: ${vertxOptions.clusterManager.nodes.joinToString(", ")}")
         }
     }
 
