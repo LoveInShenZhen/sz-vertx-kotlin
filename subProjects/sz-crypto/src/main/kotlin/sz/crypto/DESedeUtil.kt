@@ -10,12 +10,12 @@ import javax.crypto.spec.SecretKeySpec
 //
 // Created by kk on 2019/11/27.
 //
-@Suppress("MemberVisibilityCanBePrivate", "DuplicatedCode")
-object AesUtil {
+@Suppress("DuplicatedCode", "MemberVisibilityCanBePrivate")
+object DESedeUtil {
 
-    private const val algorithm = "AES"
-    private const val cipherTransformation = "AES/ECB/PKCS5Padding"
-    private const val keysize = 128                                 // 密钥长度 128 位, 32 字节
+    private const val algorithm = "DESede"
+    private const val cipherTransformation = "DESede/ECB/PKCS5Padding"
+    private const val keysize = 168
 
     private fun buildKey(pwd: String, charset: Charset = Charsets.UTF_8): SecretKeySpec {
         val kgen = KeyGenerator.getInstance(algorithm)
