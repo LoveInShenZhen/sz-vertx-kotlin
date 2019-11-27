@@ -1,6 +1,6 @@
 package sz.crypto
 
-import jodd.util.Base64
+import org.bouncycastle.util.encoders.Base64
 import org.bouncycastle.util.io.pem.PemObject
 import org.bouncycastle.util.io.pem.PemReader
 import org.bouncycastle.util.io.pem.PemWriter
@@ -18,7 +18,7 @@ import kotlin.math.min
 // Created by kk on 17/9/12.
 //
 @Suppress("MemberVisibilityCanBePrivate", "DuplicatedCode")
-object RSAUtil {
+object RsaUtil {
 
     private const val rsaAlgorithm = "SHA1withRSA"
     private const val cipherTransformation = "RSA/ECB/PKCS1Padding"
@@ -86,7 +86,7 @@ object RSAUtil {
 
         signature.update(data.toByteArray(charset))
 
-        return Base64.encodeToString(signature.sign())
+        return Base64.toBase64String(signature.sign())
     }
 
     /**
@@ -130,7 +130,7 @@ object RSAUtil {
     fun encrypt(plainTxt: String, pubKey: PublicKey, charset: Charset = Charsets.UTF_8): String {
         val plainBytes = plainTxt.toByteArray(charset)
         val encryptedBytes = encrypt(plainBytes = plainBytes, pubKey = pubKey)
-        return Base64.encodeToString(encryptedBytes)
+        return Base64.toBase64String(encryptedBytes)
     }
 
     /**

@@ -15,7 +15,6 @@ plugins {
 dependencies {
     // Use the Kotlin JDK 8 standard library.
     implementation(kotlin("stdlib-jdk8"))
-    api(project(":subProjects:jodd-dependency"))
     api("org.bouncycastle:bcprov-jdk15on:1.58")
 
     // Use the Kotlin test library.
