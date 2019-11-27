@@ -4,19 +4,27 @@ import jodd.util.Base64
 import org.bouncycastle.util.io.pem.PemObject
 import org.bouncycastle.util.io.pem.PemReader
 import org.bouncycastle.util.io.pem.PemWriter
+import java.io.ByteArrayOutputStream
 import java.io.StringReader
 import java.io.StringWriter
 import java.nio.charset.Charset
 import java.security.*
 import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
+import javax.crypto.Cipher
+import kotlin.math.min
 
 //
 // Created by kk on 17/9/12.
 //
+@Suppress("MemberVisibilityCanBePrivate", "DuplicatedCode")
 object RSAUtil {
 
-    val rsaAlgorithm = "SHA1withRSA"
+    private const val rsaAlgorithm = "SHA1withRSA"
+    private const val cipherTransformation = "RSA/ECB/PKCS1Padding"
+    private const val maxPlainBytesSize = 96                                // 最大明文字节数
+    private const val keySize = 1024                                        // 密钥长度
+    private const val encryptedBlockSize = keySize / 8                      // 加密后, 密文块的字节数
 
     /**
      * 创建一对公私秘钥, 并转化成 PEM 格式的文本字符串, 放在返回结果的Pair里
@@ -25,7 +33,7 @@ object RSAUtil {
     fun createPemKeyPair(): Pair<String, String> {
         val keyGen = KeyPairGenerator.getInstance("RSA")
         val secRandom = SecureRandom()
-        keyGen.initialize(1024, secRandom)
+        keyGen.initialize(keySize, secRandom)
 
         val keyPair = keyGen.genKeyPair()
 
@@ -113,5 +121,71 @@ object RSAUtil {
     fun verify(mapData: Map<String, String>, signBase64: String, pubKey: PublicKey, charset: Charset = Charsets.UTF_8): Boolean {
         val beSigned = mapData.toSortedMap().map { "${it.key}=${it.value}" }.joinToString("&")
         return verify(beSigned, signBase64, pubKey, charset)
+    }
+
+    /**
+     * 用公钥对文本数据进行加密
+     * @return 返回加密后,经过base64编码后的字符串
+     */
+    fun encrypt(plainTxt: String, pubKey: PublicKey, charset: Charset = Charsets.UTF_8): String {
+        val plainBytes = plainTxt.toByteArray(charset)
+        val encryptedBytes = encrypt(plainBytes = plainBytes, pubKey = pubKey)
+        return Base64.encodeToString(encryptedBytes)
+    }
+
+    /**
+     * 用私钥进行解密
+     * @return 返回解密后的明文
+     */
+    fun decrypt(encryptedTxt: String, privateKey: PrivateKey, charset: Charset = Charsets.UTF_8): String {
+        val encryptedBytes = Base64.decode(encryptedTxt)
+        val plainBytes = decrypt(encryptedBytes = encryptedBytes, privateKey = privateKey)
+        return plainBytes.toString(charset)
+    }
+
+    /**
+     * 用公钥对字节(数组)数据进行加密
+     * @return 返回加密后的字节数组
+     */
+    fun encrypt(plainBytes: ByteArray, pubKey: PublicKey): ByteArray {
+        val cipher = Cipher.getInstance(cipherTransformation)
+        cipher.init(Cipher.ENCRYPT_MODE, pubKey)
+
+        var offset = 0
+        var leftBytesSize = plainBytes.size
+        var len = min(maxPlainBytesSize, leftBytesSize)
+
+        return ByteArrayOutputStream(plainBytes.size * 2).use { bufs ->
+            while (offset < plainBytes.size) {
+                bufs.write(cipher.doFinal(plainBytes, offset, len))
+                offset += len
+                leftBytesSize -= len
+                len = min(maxPlainBytesSize, leftBytesSize)
+            }
+            bufs.toByteArray()
+        }
+    }
+
+    /**
+     * 用私钥对密文字节(数组)数据进行解密
+     * @return 返回解密后的明文字节数组
+     */
+    fun decrypt(encryptedBytes: ByteArray, privateKey: PrivateKey): ByteArray {
+        val cipher = Cipher.getInstance(cipherTransformation)
+        cipher.init(Cipher.DECRYPT_MODE, privateKey)
+
+        var offset = 0
+        var leftBytesSize = encryptedBytes.size
+        var len = min(encryptedBlockSize, leftBytesSize)
+
+        return ByteArrayOutputStream(encryptedBytes.size * 2).use { bufs ->
+            while (offset < encryptedBytes.size) {
+                bufs.write(cipher.doFinal(encryptedBytes, offset, len))
+                offset += len
+                leftBytesSize -= len
+                len = min(encryptedBlockSize, leftBytesSize)
+            }
+            bufs.toByteArray()
+        }
     }
 }
