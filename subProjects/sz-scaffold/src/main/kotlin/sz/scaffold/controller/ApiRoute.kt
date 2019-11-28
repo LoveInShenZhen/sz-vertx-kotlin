@@ -38,6 +38,7 @@ import kotlin.reflect.jvm.javaMethod
 //
 // Created by kk on 17/8/16.
 //
+@Suppress("DuplicatedCode")
 data class ApiRoute(val method: HttpMethod,
                     val path: String,
                     val controllerKClass: KClass<*>,
@@ -251,6 +252,23 @@ data class ApiRoute(val method: HttpMethod,
     }
 
     companion object {
+
+        private val builtinRouteControllers: Set<String> by lazy {
+            setOf(
+                "sz.scaffold.controller.builtIn.Default.sysInfo",
+                "controllers.builtin.szebean.CreateTablesSql",
+                "controllers.builtin.szebean.DropTablesSql",
+                "controllers.builtin.szebean.CreateIndexSql",
+                "controllers.builtin.szebean.evolution",
+                "sz.api.controllers.ApiDoc.apiIndex",
+                "sz.api.controllers.ApiDoc.apiTest",
+                "sz.api.controllers.ApiDoc.apiDocMarkdown",
+                "sz.api.controllers.ApiDoc.apiDocHtml",
+                "sz.api.controllers.ApiDoc.pageIndex",
+                "sz.api.controllers.ApiDoc.pageTest"
+            )
+        }
+
         private fun KParameter.ParserVal(data: Map<String, String>): Any? {
             if (this.kind != KParameter.Kind.VALUE) {
                 throw SzException("参数种类为: ${this.kind}")
@@ -312,15 +330,25 @@ data class ApiRoute(val method: HttpMethod,
         }
 
         fun parseFromFile(routeFile: File): List<ApiRoute> {
-            return routeFile.readLines()
+            val routes = routeFile.readLines()
                 .map { it.trim() }
                 .filter {
                     // 排除 注释行 和 空行
                     !it.startsWith("#") && !it.startsWith("//") && it.isNotBlank()
                 }.map { parse(it) }
+
+            if (Application.hideBuiltinPages) {
+                // need exclude builtin route
+                return routes.filter { route ->
+                    val methodFullName = "${route.controllerKClass.qualifiedName}.${route.controllerFun.name}"
+                    builtinRouteControllers.contains(methodFullName).not()
+                }
+            } else {
+                return routes
+            }
         }
 
-        fun parse(routeDef: String): ApiRoute {
+        private fun parse(routeDef: String): ApiRoute {
             val routeRegex = """(GET|POST|HEAD)\s+(/\S*)\s+(\S+)\s*(\{.*\})?$""".toRegex()
             if (routeRegex.matches(routeDef)) {
                 val parts = routeRegex.matchEntire(routeDef)!!.groupValues

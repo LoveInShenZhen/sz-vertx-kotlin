@@ -50,6 +50,7 @@ object Application {
     val config: Config
     val appHome: String
     val classLoader = Application::class.java.classLoader
+    val hideBuiltinPages: Boolean
 
     private var _vertx: Vertx? = null
 
@@ -123,8 +124,7 @@ object Application {
 
         config = ConfigFactory.load()
 
-//        val vertxLogCfgPath = FileNameUtil.concat(appHome, "conf${File.separator}vertx-default-jul-logging.properties")
-//        setupConfPathProperty("java.util.logging.config.file", vertxLogCfgPath)
+        hideBuiltinPages = config.getBoolean("app.httpServer.hideBuiltinPages")
 
         this.regOnStartHandler(Int.MIN_VALUE) {
             Logger.info("Application start ...", AnsiColor.GREEN)

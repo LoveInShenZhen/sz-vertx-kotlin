@@ -19,6 +19,16 @@ class Default : ApiController() {
 
     fun hello(): String {
         this.contentType(ContentTypes.Html)
+        val builtInLinks = if (Application.hideBuiltinPages) "" else """
+            <ul>
+                <li><a href="/api/builtin/doc/apiIndex">api 列表</a></li>
+                <li><a href="/api/builtin/doc/pageIndex">非 api 链接列表</a></li>
+                <li><a href="/api/builtin/sysInfo">系统信息</a></li>
+                <li><a href="/api/builtin/doc/apiDocMarkdown">api 文档的markdown格式</a></li>
+                <li><a href="/api/builtin/doc/apiDocHtml">api 文档的html格式</a></li>
+            </ul>
+        """.trimIndent()
+
         return """
 <html>
 <head>
@@ -29,13 +39,8 @@ class Default : ApiController() {
 </style>
 </head>
 <body>
-    <ul>
-        <li><a href="/api/builtin/doc/apiIndex">api 列表</a></li>
-        <li><a href="/api/builtin/doc/pageIndex">非 api 链接列表</a></li>
-        <li><a href="/api/builtin/sysInfo">系统信息</a></li>
-        <li><a href="/api/builtin/doc/apiDocMarkdown">api 文档的markdown格式</a></li>
-        <li><a href="/api/builtin/doc/apiDocHtml">api 文档的html格式</a></li>
-    </ul>
+    <p>欢迎使用 SZ 后端开发框架 <a href="http://loveinshenzhen.github.io/#/sz_framework/introduction">文档请看</a></p>
+$builtInLinks
 </body>
 </html>""".trimIndent()
     }
