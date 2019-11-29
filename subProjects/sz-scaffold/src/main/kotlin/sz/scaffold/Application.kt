@@ -34,6 +34,8 @@ import sz.scaffold.websocket.WebSocketFilter
 import java.io.File
 import java.lang.management.ManagementFactory
 import java.net.InetAddress
+import java.net.URL
+import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutorService
 
@@ -53,6 +55,9 @@ object Application {
     val hideBuiltinPages: Boolean
 
     private var _vertx: Vertx? = null
+    private const val vertxOptionsUrlPropertyKey = "sz.vertxOptions.url"
+    private const val zookeeperSysPropertyKey = "vertx.zookeeper.config"
+    private const val propertiesUrlKey = "sz.properties.url"
 
     val vertx: Vertx
         get() {
@@ -84,6 +89,8 @@ object Application {
     init {
         writePidFile()
         InternalLoggerFactory.setDefaultFactory(Slf4JLoggerFactory.INSTANCE)
+
+        loadProperties()
 
         val confFolder = File(filePathJoin(SystemUtils.getUserDir().absolutePath, "conf"))
         if (confFolder.exists()) {
@@ -149,9 +156,28 @@ object Application {
         }
     }
 
+    private fun loadProperties() {
+        try {
+            val propertiesUr = System.getProperty(propertiesUrlKey, "")
+
+            if (propertiesUr.isNotBlank()) {
+                val url = URL(propertiesUr)
+                url.openStream().use {
+                    val properties = Properties()
+                    properties.load(it)
+                    properties.forEach { prop ->
+                        System.setProperty(prop.key.toString(), prop.value.toString())
+                    }
+                }
+            }
+        } catch (ex: Exception) {
+            throw RuntimeException("Faild to load gloabl properties. Please check whether the config -D$propertiesUrlKey is valid.")
+        }
+    }
+
     private fun setupConfPathProperty(propName: String, default: String) {
         if (System.getProperties().containsKey(propName).not()) {
-            // 未指定, 则指定为我们的默认值
+            // If it is not specified, it will be specified as our default value
             System.setProperty(propName, default)
         }
     }
@@ -174,16 +200,22 @@ object Application {
                 throw SzException("app.vertx.clusterManager 配置不再使用, 并且集群只支持使用 Zookeeper 方式创建和管理集群")
             }
 
-            Logger.debug("当前为: Vertx 集群模式")
+            Logger.debug("Currently: Vertx cluster mode")
             val future = CompletableFuture<Vertx>()
 
-            val zooConfigJson = File(filePathJoin(appHome, "conf", "zookeeper.json")).readText()
-            val zookeeperConfig = JsonObject(zooConfigJson)
-            this._vertoptions!!.clusterManager = ZookeeperClusterManager(zookeeperConfig)
+//            val zooConfigJson = File(filePathJoin(appHome, "conf", "zookeeper.json")).readText()
+//            val zookeeperConfig = JsonObject(zooConfigJson)
+
+            if (System.getProperty(zookeeperSysPropertyKey, "").isBlank()) {
+                // 启动时, 未设置 -Dvertx.zookeeper.config, 则设置为 conf 目录下的 zookeeper.json
+                System.setProperty(zookeeperSysPropertyKey, filePathJoin(appHome, "conf", "zookeeper.json"))
+            }
+
+            this._vertoptions!!.clusterManager = ZookeeperClusterManager()
 
             Vertx.clusteredVertx(this._vertoptions) { event: AsyncResult<Vertx> ->
                 if (event.failed()) {
-                    throw SzException("创建集群模式Vertx失败: ${event.cause().message}")
+                    throw SzException("Failed to create cluster mode Vertx: ${event.cause().message}")
                 } else {
                     future.complete(event.result())
                 }
@@ -191,7 +223,7 @@ object Application {
             return future.get()
         } else {
             // 非集群方式
-            Logger.debug("当前为: Vertx 单机模式")
+            Logger.debug("Currently: Vertx standalone mode")
             return Vertx.vertx(this._vertoptions)
         }
 
@@ -354,30 +386,56 @@ object Application {
     }
 
     private fun buildVertxOptions(): VertxOptions {
-        val vertxOptFile = File(filePathJoin(this.appHome, "conf", "vertxOptions.json"))
-        if (FileUtil.isExistingFile(vertxOptFile)) {
-            // conf/vertxOptions.json 配置文件存在, 则根据配置文件, 设置 VertxOptions
-            val jsonOpts = JsonObject(FileUtil.readString(vertxOptFile))
-            val opts = VertxOptions(jsonOpts)
+        try {
+            val configUrl = System.getProperty(vertxOptionsUrlPropertyKey, "")
 
-            // 需要修正 clusterHost, 不然不同主机节点之间的 EventBus 不会互通
-            val hostIp = InetAddress.getLocalHost().hostAddress
-            // conf/vertxOptions.json 文件里 如果有配置 clusterHost, 则以配置文件的为有效
-            // 否则, 以获取到的主机的IP地址为 clusterHost
-            // 如果获取不到主机的IP地址, 则继续使用默认的 localhost
-            if (jsonOpts.containsKey("clusterHost").not() && hostIp.isNullOrBlank().not()) {
-                // 配置文件中不包含 clusterHost 配置项, 并且获取到的主机IP不为空
-                opts.eventBusOptions.host = hostIp
+            val configContent = if (configUrl.isNotBlank()) {
+                // 如果启动程序时, 为-Dsz.vertxOptions.uri 设定了一个配置地址
+                // 则根据该地址获得 vertx options 的配置文件内容
+                URL(configUrl).openStream().use { inputStream ->
+                    inputStream.bufferedReader().use { reader ->
+                        reader.readText()
+                    }
+                }
+            } else {
+                // 否则, 以此路径 conf/vertxOptions.json 获得 vertx options 的配置文件
+                val localConfigFile = File(filePathJoin(this.appHome, "conf", "vertxOptions.json"))
+                if (FileUtil.isExistingFile(localConfigFile)) {
+                    // 该文件存在, 则读取其内容
+                    localConfigFile.readText()
+                } else {
+                    // 文件不存在
+                    ""
+                }
             }
-            return opts
-        } else {
-            val opts = VertxOptions()
-            val hostIp = InetAddress.getLocalHost().hostAddress
-            if (hostIp.isNullOrBlank().not()) {
-                // 获取到的主机IP不为空
-                opts.eventBusOptions.host = hostIp
+
+            if (configContent.isNotBlank()) {
+                // 配置文件内容不为空
+                val jsonOpts = JsonObject(configContent)
+                val opts = VertxOptions(jsonOpts)
+
+                // 需要修正 clusterHost, 不然不同主机节点之间的 EventBus 不会互通
+                val hostIp = InetAddress.getLocalHost().hostAddress
+                // conf/vertxOptions.json 文件里 如果有配置 clusterHost, 则以配置文件的为有效
+                // 否则, 以获取到的主机的IP地址为 clusterHost
+                // 如果获取不到主机的IP地址, 则继续使用默认的 localhost
+                if (jsonOpts.containsKey("clusterHost").not() && hostIp.isNullOrBlank().not()) {
+                    // 配置文件中不包含 clusterHost 配置项, 并且获取到的主机IP不为空
+                    opts.eventBusOptions.host = hostIp
+                }
+                return opts
+            } else {
+                // 配置文件内容为空, 则创建默认配置
+                val opts = VertxOptions()
+                val hostIp = InetAddress.getLocalHost().hostAddress
+                if (hostIp.isNullOrBlank().not()) {
+                    // 获取到的主机IP不为空
+                    opts.eventBusOptions.host = hostIp
+                }
+                return opts
             }
-            return opts
+        } catch (ex: Exception) {
+            throw RuntimeException("Failed to create vertx options: ${ex.message}")
         }
     }
 

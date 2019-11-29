@@ -85,7 +85,7 @@ open class ApiController {
     //    proxy_set_header   X-Real-IP        $remote_addr;
     //    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
 
-    fun ClientIp(): String {
+    fun clientIp(): String {
         val realIp = this.httpContext.request().getHeader("X-Real-IP")
         val forwardIp = this.httpContext.request().getHeader("X-Forwarded-For")
 
@@ -93,8 +93,10 @@ open class ApiController {
             return realIp
         }
 
+        // 参考: https://help.aliyun.com/knowledge_detail/40535.html?spm=5176.13394938.0.0.1ce64c27rAvyll
+        // 参考: https://help.aliyun.com/knowledge_detail/63121.html?spm=a2c4g.11186623.4.5.7ea45005khRtom
         if (forwardIp.isNullOrBlank().not()) {
-            return forwardIp
+            return forwardIp.split(",").first().trim()
         }
 
         return this.httpContext.request().remoteAddress().toString()
