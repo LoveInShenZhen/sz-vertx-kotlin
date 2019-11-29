@@ -99,6 +99,6 @@ open class ApiController {
             return forwardIp.split(",").first().trim()
         }
 
-        return this.httpContext.request().remoteAddress().toString()
+        return this.httpContext.request().remoteAddress().host()
     }
 }
