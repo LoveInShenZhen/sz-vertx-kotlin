@@ -11,9 +11,9 @@ dependencies {
 
     // android gradle依赖：implementation 和compile的区别
     // 参考: https://www.jianshu.com/p/f34c179bc9d0 根据需要选择使用不同的依赖设定方式
-    api("org.jodd:jodd-core:5.0.11")
-    api("org.jodd:jodd-bean:5.0.11")
-    api("org.jodd:jodd-http:5.0.11")
+    api("org.jodd:jodd-core:5.0.13")
+    api("org.jodd:jodd-bean:5.0.13")
+    api("org.jodd:jodd-http:5.0.13")
 }
 
 tasks.register<Jar>("sourcesJar") {
