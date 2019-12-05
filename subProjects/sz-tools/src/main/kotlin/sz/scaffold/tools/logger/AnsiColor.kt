@@ -87,9 +87,20 @@ enum class AnsiColor(val code: String) {
 }
 
 private val regex by lazy {
-    AnsiColor.values().map { it.code.replace("[", """\[""") }.joinToString("|").toRegex()
+    AnsiColor.values().joinToString("|") { it.code.replace("[", """\[""") }.toRegex()
 }
 
 fun String.cleanColor(): String {
     return this.replace(regex, "")
+}
+
+/**
+ * 为字符串包装命令行颜色
+ */
+fun String.cliColor(color: AnsiColor? = AnsiColor.BLUE, bgColog: AnsiColor? = null): String {
+    return if (color != null || bgColog != null) {
+        "${color?.code ?: ""}${bgColog?.code ?: ""}${this}${AnsiColor.RESET.code}"
+    } else {
+        this
+    }
 }
