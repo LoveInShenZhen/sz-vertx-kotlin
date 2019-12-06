@@ -9,18 +9,20 @@ import io.ebean.EbeanServerFactory
 import io.ebean.config.ServerConfig
 import jodd.introspector.ClassIntrospector
 import org.apache.commons.lang3.concurrent.BasicThreadFactory
+import sz.crypto.RsaUtil
 import sz.ebean.SzEbeanConfig.hikariConfigKeys
 import sz.scaffold.Application
 import sz.scaffold.ext.getStringListOrEmpty
 import sz.scaffold.tools.BizLogicException
 import sz.scaffold.tools.logger.Logger
+import java.io.File
 import java.util.*
 import java.util.concurrent.*
 
 //
 // Created by kk on 17/8/20.
 //
-@Suppress("MemberVisibilityCanBePrivate", "ObjectPropertyName", "unused")
+@Suppress("MemberVisibilityCanBePrivate", "ObjectPropertyName", "unused", "LiftReturnOrAssignment")
 object SzEbeanConfig {
 
     private val ebeanConfig: Config = Application.config.getConfig("ebean")
@@ -48,6 +50,11 @@ object SzEbeanConfig {
         }.toSet()
     }
 
+    private val privateKey by lazy {
+        val privateKeyFile = File(ebeanConfig.getString("privateKeyFile"))
+        RsaUtil.privateKeyFromPem(privateKeyFile.readText())
+    }
+
     init {
         val dataSources = ebeanConfig.getConfig("dataSources")
         hasDbConfiged = dataSources.root().size > 0
@@ -61,6 +68,7 @@ object SzEbeanConfig {
             val dataSourceName = it
             val dataSourceConfig = dataSources.getConfig(it)
             val dataSourceProps = dataSourceConfig.toProperties()
+            decryptPassword(dataSourceProps)
             val hikariConfig = HikariConfig(dataSourceProps)
             val ds = HikariDataSource(hikariConfig)
 
@@ -106,6 +114,19 @@ object SzEbeanConfig {
                 throw BizLogicException("没有匹配此tag: '$tag' 的dataSource, 请检查 application.conf 相关配置")
             }
             dsNames
+        }
+    }
+
+    private fun decryptPassword(props: Properties): Properties {
+        if (ebeanConfig.getBoolean("encryptPasswd")) {
+            // 数据库密码为加密后的密文, 需要进行解密
+            if (props.containsKey("password")) {
+                val encryptedTxt = props.getProperty("password")
+                props.setProperty("password", RsaUtil.decrypt(encryptedTxt, privateKey))
+            }
+            return props
+        } else {
+            return props
         }
     }
 

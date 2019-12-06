@@ -21,6 +21,7 @@ plugins {
 
 dependencies {
     api(project(":subProjects:sz-scaffold"))
+    api(project(":subProjects:sz-crypto"))
 
     api("io.ebean:ebean:12.1.2")
     api("io.ebean:ebean-querybean:12.1.2")
