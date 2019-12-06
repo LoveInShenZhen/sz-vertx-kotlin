@@ -8,6 +8,7 @@ plugins {
 
 dependencies {
     api(project(":subProjects:sz-tools"))
+    api(project(":subProjects:sz-crypto"))
 
     // android gradle依赖：implementation 和compile的区别
     // 参考: https://www.jianshu.com/p/f34c179bc9d0 根据需要选择使用不同的依赖设定方式

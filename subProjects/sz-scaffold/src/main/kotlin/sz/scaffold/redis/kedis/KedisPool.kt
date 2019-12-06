@@ -9,11 +9,13 @@ import io.vertx.kotlin.redis.client.redisOptionsOf
 import io.vertx.redis.client.RedisClientType
 import io.vertx.redis.client.RedisOptions
 import io.vertx.redis.client.RedisRole
+import sz.crypto.RsaUtil
 import sz.objectPool.ObjectPool
 import sz.scaffold.Application
 import sz.scaffold.ext.getIntOrElse
 import sz.scaffold.ext.getStringOrElse
 import sz.scaffold.tools.SzException
+import java.io.File
 
 //
 // Created by kk on 2019-06-11.
@@ -27,28 +29,39 @@ class KedisPool(vertx: Vertx,
 
         private val pools = mutableMapOf<String, KedisPool>()
 
+        private val globalConfig = Application.config.getConfig("redis.globalConfig")
+
+        private val serversConfig = Application.config.getConfig("redis.servers")
+
+        private val encryptPasswd = globalConfig.getBoolean("encryptPasswd")
+
+        private val privateKey by lazy {
+            val privateKeyFile = File(globalConfig.getString("privateKeyFile"))
+            RsaUtil.privateKeyFromPem(privateKeyFile.readText())
+        }
+
+
         init {
             initPool()
         }
 
         fun initPool() {
-            val config = Application.config.getConfig("redis")
-            config.root().keys.forEach {
-                byName(it)
+            serversConfig.root().keys.forEach {serverName ->
+                byName(serverName)
             }
         }
 
         private fun defaultPoolConfig(): KedisPoolConfig {
-            return KedisPoolConfig.buildFrom(Application.config.getConfig("redis.default.pool"))
+            return KedisPoolConfig.buildFrom(serversConfig.getConfig("default.pool"))
         }
 
         private fun createKedisPoolByName(name: String): KedisPool {
-            if (Application.config.hasPath("redis.$name").not()) {
-                throw SzException("Please check application.conf, there is no config path for 'redis.$name'")
+            if (serversConfig.hasPath(name).not()) {
+                throw SzException("Please check application.conf, there is no config path for 'redis.servers.$name'")
             }
             val redisOptions = redisOptionsByName(name)
-            val poolConfig = if (Application.config.hasPath("redis.$name.pool")) {
-                KedisPoolConfig.buildFrom(Application.config.getConfig("redis.$name.pool"))
+            val poolConfig = if (serversConfig.hasPath("$name.pool")) {
+                KedisPoolConfig.buildFrom(serversConfig.getConfig("$name.pool"))
             } else {
                 defaultPoolConfig()
             }
@@ -57,34 +70,39 @@ class KedisPool(vertx: Vertx,
         }
 
         private fun redisOptionsByName(name: String): RedisOptions {
-            val config = Application.config.getConfig("redis.$name")
+            val config = serversConfig.getConfig(name)
             return when (config.getStringOrElse("workingMode", "STANDALONE")) {
                 "STANDALONE" -> redisOptionsOf(type = RedisClientType.STANDALONE,
                     endpoint = SocketAddress.inetSocketAddress(config.getIntOrElse("port", 6379), config.getString("host")),
                     netClientOptions = createNetclientOptions(name),
-                    password = config.getStringEmptyAsNull("password"),
+                    password = config.getPassword("password"),
                     select = config.getIntOrElse("database", 0))
 
                 "SENTINEL" -> redisOptionsOf(type = RedisClientType.SENTINEL,
                     endpoints = config.getStringList("servers").map { endpointOf(it) },
                     netClientOptions = createNetclientOptions(name),
+                    password = config.getPassword("password"),
+                    select = config.getIntOrElse("database", 0),
                     masterName = config.getString("masterName"),
                     role = RedisRole.MASTER)
 
                 "CLUSTER" -> redisOptionsOf(type = RedisClientType.CLUSTER,
                     endpoints = config.getStringList("servers").map { endpointOf(it) },
-                    netClientOptions = createNetclientOptions(name))
+                    netClientOptions = createNetclientOptions(name),
+                    password = config.getPassword("password"),
+                    select = config.getIntOrElse("database", 0))
 
                 else -> throw SzException("无效的 redis workingMode 设置")
             }
         }
 
         private fun createNetclientOptions(name: String): NetClientOptions {
-            val configPath = "redis.$name.netClientOptions"
-            val config = if (Application.config.hasPath(configPath)) {
-                Application.config.getConfig(configPath)
+            val configPath = "$name.netClientOptions"
+            val config = if (serversConfig.hasPath(configPath)) {
+                serversConfig.getConfig(configPath)
             } else {
-                Application.config.getConfig("redis.default.netClientOptions")
+                // 由 name 指定的 server 没有特别设置 netClientOptions, 就以默认 server 的 netClientOptions 配置为准
+                serversConfig.getConfig("default.netClientOptions")
             }
             return NetClientOptions(JsonObject(config.root().unwrapped()))
         }
@@ -107,20 +125,39 @@ class KedisPool(vertx: Vertx,
         }
 
         fun exists(name: String): Boolean {
+            // 空字符串, 代表默认的 Redis Server
             if (name.isBlank()) return true
-            return Application.config.hasPath("redis.$name")
+            return serversConfig.hasPath(name)
         }
 
         private fun Config.getStringEmptyAsNull(path: String): String? {
-            if (this.hasPath(path)) {
+            return if (this.hasPath(path)) {
                 val value = this.getString(path)
                 if (value.isEmpty()) {
-                    return null
+                    null
                 } else {
-                    return value
+                    value
                 }
             } else {
-                return null
+                // 未配置该项, 返回 null
+                null
+            }
+        }
+
+        private fun Config.getPassword(path: String): String? {
+            val pwd = this.getStringEmptyAsNull(path)
+            return if (encryptPasswd) {
+                // 密码为密文
+                if (pwd.isNullOrBlank()) {
+                    // 密码为空
+                    null
+                } else {
+                    // 解密, 还原成明文
+                    RsaUtil.decrypt(pwd, privateKey)
+                }
+            } else {
+                // 密码为明文
+                pwd
             }
         }
     }
