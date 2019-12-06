@@ -46,7 +46,7 @@ class KedisPool(vertx: Vertx,
         }
 
         fun initPool() {
-            serversConfig.root().keys.forEach {serverName ->
+            serversConfig.root().keys.forEach { serverName ->
                 byName(serverName)
             }
         }
