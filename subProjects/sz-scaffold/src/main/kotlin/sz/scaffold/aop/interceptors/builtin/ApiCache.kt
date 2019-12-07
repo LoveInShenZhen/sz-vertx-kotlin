@@ -18,7 +18,7 @@ import sz.scaffold.controller.reply.ReplyBase
 annotation class ApiCache(
     val expireTimeInMs: Long,
     val cacheName: String = "default",
-    val excludeQueryParams: Array<String> = arrayOf("_")
+    val excludeQueryParams: Array<String> = ["_"]
 )
 
 class ApiCacheAction : Action<ApiCache>() {
@@ -27,9 +27,7 @@ class ApiCacheAction : Action<ApiCache>() {
         val request = this.httpContext.request()
         val excludes = this.config.excludeQueryParams.toSet()
         val queryParamsTxt = request.params()
-            .filter { excludes.contains(it.key).not() }
-            .map { "${it.key}=${it.value}" }
-            .joinToString("&")
+            .filter { excludes.contains(it.key).not() }.joinToString("&") { "${it.key}=${it.value}" }
 
         val bodyParams = if (request.method() == HttpMethod.POST) {
             this.httpContext.bodyAsString + request.formAttributes().joinToString("&") { "${it.key}=${it.value}" }
@@ -41,15 +39,15 @@ class ApiCacheAction : Action<ApiCache>() {
         val cache = RedisCache(this.config.cacheName)
         val cacheValue = cache.getOrNull(cacheKey)
 
-        if (cacheValue == null) {
+        return if (cacheValue == null) {
             val result = delegate.call() as ReplyBase
             cache.set(cacheKey, result.toString(), this.config.expireTimeInMs)
-            return result
+            result
         } else {
             val response = this.httpContext.response()
             response.putHeader("Content-Type", ContentTypes.Json)
             response.write(cacheValue)
-            return null
+            null
         }
     }
 }
