@@ -4,12 +4,14 @@
 <#list group.apiInfoList as apiInfo>
 #### ${apiInfo.methodName}
 * **功能描述**: ${apiInfo.toMarkdownStr(apiInfo.apiComment)}
-* **API URL**: ${apiInfo.toMarkdownStr(apiInfo.url)}
+* **API PATH**: ${apiInfo.toMarkdownStr(apiInfo.url)}
 * **HTTP Method**: ${apiInfo.httpMethod}
 
 * Query参数说明:
+    | 参数名称 | 参数类型 | 描述 |
+    |  ----  | ----  | ---- |
 <#list apiInfo.params as param>
-> * **${param.toMarkdownStr(param.name)}** : ${param.type}, ${param.toMarkdownStr(param.desc!)}
+    | **${param.toMarkdownStr(param.name)}** | ${param.type} | ${param.toMarkdownStr(param.desc!)} |
 </#list>
 
 <#if apiInfo.IsPostJsonApi() >
