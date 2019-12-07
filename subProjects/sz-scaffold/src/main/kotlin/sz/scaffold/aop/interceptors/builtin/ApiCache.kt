@@ -8,9 +8,9 @@ import io.vertx.core.http.HttpMethod
 import jodd.crypt.DigestEngine
 import sz.scaffold.aop.actions.Action
 import sz.scaffold.aop.annotations.WithAction
-import sz.scaffold.cache.redis.RedisCache
+import sz.scaffold.cache.redis.RedisAsyncCache
 import sz.scaffold.controller.ContentTypes
-import sz.scaffold.controller.reply.ReplyBase
+import sz.scaffold.tools.json.toShortJson
 
 @WithAction(ApiCacheAction::class)
 @Target(AnnotationTarget.FUNCTION)
@@ -36,12 +36,14 @@ class ApiCacheAction : Action<ApiCache>() {
         }
 
         val cacheKey = "ApiCache@${request.path()}@${request.method().name}@${DigestEngine.sha1().digestString(queryParamsTxt + bodyParams)}"
-        val cache = RedisCache(this.config.cacheName)
-        val cacheValue = cache.getOrNull(cacheKey)
+        val cache = RedisAsyncCache(this.config.cacheName)
+        val cacheValue = cache.getOrNullAwait(cacheKey)
 
         return if (cacheValue == null) {
-            val result = delegate.call() as ReplyBase
-            cache.set(cacheKey, result.toString(), this.config.expireTimeInMs)
+            val result = delegate.call()
+            if (result != null) {
+                cache.setAwait(cacheKey, result.toShortJson(), this.config.expireTimeInMs)
+            }
             result
         } else {
             val response = this.httpContext.response()

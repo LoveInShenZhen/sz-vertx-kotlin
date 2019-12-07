@@ -24,7 +24,7 @@ import sz.scaffold.tools.BizLogicException
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.json.Json
 import sz.scaffold.tools.json.Json.toStrMap
-import sz.scaffold.tools.json.toJsonPretty
+import sz.scaffold.tools.json.toShortJson
 import sz.scaffold.tools.logger.Logger
 import java.io.File
 import java.math.BigDecimal
@@ -73,7 +73,7 @@ data class ApiRoute(val method: HttpMethod,
             missingParameters.forEach {
                 response.write("missing query parameter: ${it.name}\n")
             }
-            response.putHeader("Content-Type", "text/plain; charset=utf-8")
+            response.putHeader("Content-Type", ContentTypes.Text)
             response.end()
             return
         }
@@ -93,8 +93,8 @@ data class ApiRoute(val method: HttpMethod,
                                 if (isJsonpRequest(httpContext, actionResult)) {
                                     onJsonp(httpContext, actionResult)
                                 } else if (actionResult is ReplyBase) {
-                                    response.putHeader("Content-Type", "application/json; charset=utf-8")
-                                    response.write(actionResult.toJsonPretty())
+                                    response.putHeader("Content-Type", ContentTypes.Json)
+                                    response.write(actionResult.toShortJson())
                                 }
                             }
                         } catch (ex: Exception) {
@@ -107,13 +107,13 @@ data class ApiRoute(val method: HttpMethod,
                                 reply.onError(ex)
                             }
                             if (httpContext.queryParams(mapOf()).containsKey("callback")) {
-                                response.putHeader("Content-Type", "text/javascript; charset=utf-8")
+                                response.putHeader("Content-Type", ContentTypes.JavaScript)
                                 val callback = httpContext.queryParams(mapOf()).getValue("callback")
-                                val body = "$callback(${reply.toJsonPretty()});"
+                                val body = "$callback(${reply.toShortJson()});"
                                 response.write(body)
                             } else {
-                                response.putHeader("Content-Type", "application/json; charset=utf-8")
-                                response.write(reply.toJsonPretty())
+                                response.putHeader("Content-Type", ContentTypes.Json)
+                                response.write(reply.toShortJson())
                             }
                         }
 
@@ -124,7 +124,7 @@ data class ApiRoute(val method: HttpMethod,
                             onNormal(httpContext, result)
 
                         } catch (ex: Exception) {
-                            response.putHeader("Content-Type", "text/plain; charset=utf-8")
+                            response.putHeader("Content-Type", ContentTypes.Text)
                             val reason = if (ex.cause == null) ex else ex.cause
                             Logger.debug("非API请求处理发生异常, \n${ExceptionUtil.exceptionChainToString(reason)}")
                             response.end("${ex.message}\n\n${ExceptionUtil.exceptionChainToString(reason)}")
@@ -144,13 +144,13 @@ data class ApiRoute(val method: HttpMethod,
                             reply.onError(ex)
                         }
                         if (httpContext.queryParams(mapOf()).containsKey("callback")) {
-                            response.putHeader("Content-Type", "text/javascript; charset=utf-8")
+                            response.putHeader("Content-Type", ContentTypes.JavaScript)
                             val callback = httpContext.queryParams(mapOf()).getValue("callback")
-                            val body = "$callback(${reply.toJsonPretty()});"
+                            val body = "$callback(${reply.toShortJson()});"
                             response.write(body)
                         } else {
-                            response.putHeader("Content-Type", "application/json; charset=utf-8")
-                            response.write(reply.toJsonPretty())
+                            response.putHeader("Content-Type", ContentTypes.Json)
+                            response.write(reply.toShortJson())
                         }
                     }
                     if (!response.ended()) {
@@ -176,7 +176,7 @@ data class ApiRoute(val method: HttpMethod,
 
     private fun onJsonp(httpContext: RoutingContext, result: Any) {
         val response = httpContext.response()
-        response.putHeader("Content-Type", "text/javascript; charset=utf-8")
+        response.putHeader("Content-Type", ContentTypes.JavaScript)
         val callback = httpContext.queryParams(mapOf()).getValue("callback")
         val body = "$callback(${Json.toJsonStrPretty(result)});"
         response.write(body)
@@ -195,8 +195,8 @@ data class ApiRoute(val method: HttpMethod,
         }
 
         if (result is ReplyBase || result is JsonNode) {
-            response.write(Json.toJsonStrPretty(result))
-            response.putHeader("Content-Type", "application/json; charset=utf-8")
+            response.write(result.toShortJson())
+            response.putHeader("Content-Type", ContentTypes.Json)
         } else if (result is String) {
             response.write(result.toString())
         }
