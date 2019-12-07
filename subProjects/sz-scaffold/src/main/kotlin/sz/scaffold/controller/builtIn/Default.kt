@@ -39,7 +39,7 @@ class Default : ApiController() {
 </style>
 </head>
 <body>
-    <p>欢迎使用 SZ 后端开发框架 <a href="https://loveinshenzhen.github.io/#/sz_framework/introduction">文档请看</a></p>
+    <p>欢迎使用 SZ 后端快速开发框架 <a href="https://loveinshenzhen.github.io/#/sz_framework/introduction">文档请看</a></p>
 $builtInLinks
 </body>
 </html>""".trimIndent()
