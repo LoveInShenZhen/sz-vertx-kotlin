@@ -1,4 +1,4 @@
-package models.config
+package sz.ebean.registeredClass
 
 import io.ebean.config.ScalarTypeConverter
 import jodd.datetime.JDateTime

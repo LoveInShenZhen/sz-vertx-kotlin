@@ -9,12 +9,15 @@ import io.ebean.annotation.TxIsolation
 import jodd.bean.BeanUtil
 import jodd.datetime.JDateTime
 import kotlinx.coroutines.future.await
+import sz.scaffold.ext.camelCaseToLowCaseSeprated
 import sz.scaffold.tools.BizLogicException
 import java.math.BigDecimal
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.atomic.AtomicLong
 import java.util.function.Supplier
+import javax.persistence.Entity
+import javax.persistence.Table
 import kotlin.math.abs
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
@@ -153,4 +156,21 @@ fun <TBean : Any> SqlRow.toBean(beanClass: KClass<TBean>): TBean {
 
 fun <TBean : Any> List<SqlRow>.toBeans(beanClass: KClass<TBean>): List<TBean> {
     return this.map { it.toBean(beanClass) }
+}
+
+fun isEntityClass(modelClass: Class<*>): Boolean {
+    val annoEntity = modelClass.getAnnotation(Entity::class.java)
+    return annoEntity != null
+}
+
+fun getTableName(modelClass: Class<*>): String {
+    modelClass.getAnnotation(Entity::class.java) ?: throw BizLogicException("不是实体类")
+
+    val annoTable = modelClass.getAnnotation(Table::class.java)
+    if (annoTable != null && annoTable.name.isNotBlank()) {
+        return annoTable.name
+    } else {
+        return modelClass.simpleName.camelCaseToLowCaseSeprated('_')
+    }
+
 }

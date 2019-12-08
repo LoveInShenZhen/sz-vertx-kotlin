@@ -4,10 +4,7 @@ import io.ebean.Ebean
 import io.ebean.EbeanServer
 import sz.annotations.DBIndexed
 import sz.scaffold.ext.camelCaseToLowCaseSeprated
-import sz.scaffold.tools.BizLogicException
 import sz.scaffold.tools.logger.Logger
-import javax.persistence.Entity
-import javax.persistence.Table
 import kotlin.reflect.full.memberProperties
 
 //
@@ -104,24 +101,6 @@ class DbIndex(private val dbServer: EbeanServer) {
             }
         }
         return sb.toString()
-    }
-
-
-    private fun isEntityClass(modelClass: Class<*>): Boolean {
-        val annoEntity = modelClass.getAnnotation(Entity::class.java)
-        return annoEntity != null
-    }
-
-    private fun getTableName(modelClass: Class<*>): String {
-        modelClass.getAnnotation(Entity::class.java) ?: throw BizLogicException("不是实体类")
-
-        val annoTable = modelClass.getAnnotation(Table::class.java)
-        if (annoTable != null && annoTable.name.isNotBlank()) {
-            return annoTable.name
-        } else {
-            return modelClass.simpleName.camelCaseToLowCaseSeprated('_')
-        }
-
     }
 
     private fun getIndexedFieldNames(modelClass: Class<*>): Set<String> {

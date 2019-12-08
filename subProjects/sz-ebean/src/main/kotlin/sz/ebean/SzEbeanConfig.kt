@@ -11,6 +11,7 @@ import jodd.introspector.ClassIntrospector
 import org.apache.commons.lang3.concurrent.BasicThreadFactory
 import sz.crypto.RsaUtil
 import sz.ebean.SzEbeanConfig.hikariConfigKeys
+import sz.ebean.registeredClass.JDateTimeConverter
 import sz.scaffold.Application
 import sz.scaffold.ext.getStringListOrEmpty
 import sz.scaffold.tools.BizLogicException
@@ -142,9 +143,13 @@ object SzEbeanConfig {
         models.forEach {
             if (it.endsWith(".*")) {
                 val packagePath = it.dropLast(2)
-                ClassPath.from(Application.classLoader).getTopLevelClassesRecursive(packagePath).forEach { classInfo ->
-                    modelClassSet.add(classInfo.load())
-                }
+                ClassPath.from(Application.classLoader).getTopLevelClassesRecursive(packagePath)
+                    .map { classInfo -> classInfo.load() }
+                    .filter { clazz -> isEntityClass(clazz) }
+                    .forEach { clazz ->
+                        Logger.debug("ebean add class: ${clazz.name}")
+                        modelClassSet.add(clazz)
+                    }
             } else {
                 try {
                     val clazz = Application.classLoader.loadClass(it)
@@ -155,6 +160,7 @@ object SzEbeanConfig {
 
             }
         }
+        modelClassSet.add(JDateTimeConverter::class.java)
         return modelClassSet
     }
 

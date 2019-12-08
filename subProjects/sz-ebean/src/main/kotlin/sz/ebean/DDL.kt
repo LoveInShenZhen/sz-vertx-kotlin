@@ -28,5 +28,4 @@ object DDL {
         val db = DB.byDataSource(dataSource)
         return DbIndex(db).createIndexSql()
     }
-
 }
