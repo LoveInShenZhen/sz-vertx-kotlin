@@ -10,12 +10,20 @@ import javax.crypto.spec.SecretKeySpec
 //
 // Created by kk on 2019/11/27.
 //
-@Suppress("MemberVisibilityCanBePrivate", "DuplicatedCode")
-object AesUtil {
 
-    private const val algorithm = "AES"
-    private const val cipherTransformation = "AES/ECB/PKCS5Padding"
-    private const val keysize = 128                                 // 密钥长度 128 位, 32 字节
+/**
+ * @param keysize: 密钥长度, 可选值(128, 192, 256), 默认128
+ * @param cipherTransformation the standard name of the requested key algorithm.
+ * See the KeyGenerator section in the <a href=
+ * "{@docRoot}/../technotes/guides/security/StandardNames.html#KeyGenerator">
+ * Java Cryptography Architecture Standard Algorithm Name Documentation</a>
+ * for information about standard algorithm names.
+ */
+@Suppress("MemberVisibilityCanBePrivate", "DuplicatedCode")
+class AesUtil(val keysize: Int = 128,
+              val cipherTransformation: String = "AES/ECB/PKCS5Padding") {
+
+    private val algorithm = "AES"
 
     private fun buildKey(pwd: String, charset: Charset = Charsets.UTF_8): SecretKeySpec {
         val kgen = KeyGenerator.getInstance(algorithm)
@@ -53,5 +61,12 @@ object AesUtil {
         val encryptedBytes = Base64.decode(encryptedTxt)
         val plainBytes = decrypt(encryptedBytes, pwd, charset)
         return plainBytes.toString(charset)
+    }
+
+    companion object {
+
+        val Aes128 = AesUtil(128)
+        val Aes192 = AesUtil(192)
+        val Aes256 = AesUtil(256)
     }
 }
