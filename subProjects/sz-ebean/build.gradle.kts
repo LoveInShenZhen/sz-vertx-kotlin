@@ -28,7 +28,7 @@ dependencies {
 //    kapt("io.ebean:kotlin-querybean-generator:12.1.1")
 
     api("com.zaxxer:HikariCP:3.3.1")
-    api("mysql:mysql-connector-java:5.1.46")
+    api("mysql:mysql-connector-java:8.0.18")
 
 }
 
