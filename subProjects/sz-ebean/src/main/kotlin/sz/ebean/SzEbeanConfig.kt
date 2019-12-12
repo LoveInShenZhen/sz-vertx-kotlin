@@ -8,6 +8,10 @@ import com.zaxxer.hikari.HikariDataSource
 import io.ebean.EbeanServerFactory
 import io.ebean.config.ServerConfig
 import jodd.introspector.ClassIntrospector
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.apache.commons.lang3.concurrent.BasicThreadFactory
 import sz.crypto.RsaUtil
 import sz.ebean.SzEbeanConfig.hikariConfigKeys
@@ -30,10 +34,13 @@ object SzEbeanConfig {
 
     private val defaultDatasourceName = ebeanConfig.getString("defaultDatasource")
 
-    private val _ebeanServerConfigs = mutableMapOf<String, ServerConfig>()
+    private val _ebeanServerConfigs = ConcurrentHashMap<String, ServerConfig>()
 
-    private val workerPoolMap = mutableMapOf<String, ThreadPoolExecutor>()
+    private val workerPoolMap = ConcurrentHashMap<String, ThreadPoolExecutor>()
 
+    private var _defaultDatasourceReady = false
+    val defaultDatasourceReady
+        get() = _defaultDatasourceReady
 
     val ebeanServerConfigs: Map<String, ServerConfig>
         get() = _ebeanServerConfigs
@@ -65,39 +72,56 @@ object SzEbeanConfig {
         val dataSources = ebeanConfig.getConfig("dataSources")
         val modelClassSet = ebeanModels()
 
-        dataSources.root().keys.forEach {
-            val dataSourceName = it
-            val dataSourceConfig = dataSources.getConfig(it)
-            val dataSourceProps = dataSourceConfig.toProperties()
-            decryptPassword(dataSourceProps)
-            val hikariConfig = HikariConfig(dataSourceProps)
-            val ds = HikariDataSource(hikariConfig)
+        dataSources.root().keys.forEach { dataSourceName ->
 
-            val threadFactory = BasicThreadFactory.Builder()
-                .wrappedFactory(Executors.defaultThreadFactory())
-                .namingPattern("ebean-worker-$dataSourceName-%d")
-                .build()
+            GlobalScope.launch(Dispatchers.IO) {
+                while (true) {
+                    try {
+                        val dataSourceConfig = dataSources.getConfig(dataSourceName)
+                        val dataSourceProps = dataSourceConfig.toProperties()
+                        decryptPassword(dataSourceProps)
+                        val hikariConfig = HikariConfig(dataSourceProps)
+                        val ds = HikariDataSource(hikariConfig)
 
-            workerPoolMap[dataSourceName] = ThreadPoolExecutor(0,
-                ds.maximumPoolSize,
-                60,
-                TimeUnit.SECONDS,
-                LinkedBlockingQueue<Runnable>(1024),
-                threadFactory)
+                        val ebeanServerCfg = ServerConfig()
+                        ebeanServerCfg.name = dataSourceName
+                        ebeanServerCfg.loadFromProperties()
+                        ebeanServerCfg.dataSource = ds
+                        ebeanServerCfg.isDefaultServer = ebeanServerCfg.name == defaultDatasourceName
+                        ebeanServerCfg.addModelClasses(modelClassSet)
 
-            val ebeanServerCfg = ServerConfig()
-            ebeanServerCfg.name = dataSourceName
-            ebeanServerCfg.loadFromProperties()
-            ebeanServerCfg.dataSource = ds
+                        EbeanServerFactory.create(ebeanServerCfg)
+                        _ebeanServerConfigs[dataSourceName] = ebeanServerCfg
 
-            ebeanServerCfg.isDefaultServer = ebeanServerCfg.name == defaultDatasourceName
+                        val threadFactory = BasicThreadFactory.Builder()
+                            .wrappedFactory(Executors.defaultThreadFactory())
+                            .namingPattern("ebean-worker-$dataSourceName-%d")
+                            .build()
 
+                        workerPoolMap[dataSourceName] = ThreadPoolExecutor(0,
+                            ds.maximumPoolSize,
+                            60,
+                            TimeUnit.SECONDS,
+                            LinkedBlockingQueue<Runnable>(1024),
+                            threadFactory)
 
-            ebeanServerCfg.addModelClasses(modelClassSet)
+                        if (ebeanServerCfg.isDefaultServer) {
+                            _defaultDatasourceReady = true
+                        }
+                        break
 
-            EbeanServerFactory.create(ebeanServerCfg)
+                    } catch (ex: Exception) {
+                        workerPoolMap[dataSourceName]?.let {
+                            it.shutdown()
+                            workerPoolMap.remove(dataSourceName)
+                        }
+                        Logger.warn("Failed to initialize ebean data source [$dataSourceName]. Cause by: ${ex.message} Try again after 5 seconds.")
+                        delay(5000)
+                    }
+                }
 
-            _ebeanServerConfigs[dataSourceName] = ebeanServerCfg
+                Logger.info("Successfully initialize the ebean data source [$dataSourceName].")
+            }
         }
     }
 

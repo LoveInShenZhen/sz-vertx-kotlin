@@ -5,7 +5,6 @@ package sz.ebean
 import io.ebean.Ebean
 import io.ebean.EbeanServer
 import io.ebean.Finder
-import sz.scaffold.tools.BizLogicException
 import java.util.*
 import kotlin.concurrent.getOrSet
 
@@ -14,10 +13,14 @@ object DB {
 
     fun byDataSource(dsName: String = ""): EbeanServer {
         if (dsName.isBlank()) {
-            return Ebean.getDefaultServer()
+            return if (SzEbeanConfig.defaultDatasourceReady) {
+                Ebean.getDefaultServer()
+            } else {
+                throw RuntimeException("Ebean default data source is not available.")
+            }
         }
         if (SzEbeanConfig.ebeanServerConfigs.containsKey(dsName).not()) {
-            throw BizLogicException("""Invalid dataSource name: "$dsName", please check application.conf""")
+            throw RuntimeException("Ebean data source is not available or it is a invalid data source name [$dsName], please check application.conf")
         }
         return Ebean.getServer(dsName)!!
     }
