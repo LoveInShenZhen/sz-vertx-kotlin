@@ -136,7 +136,7 @@ object SzEbeanConfig {
             }.toSet().toTypedArray()
 
             if (dsNames.isEmpty()) {
-                throw BizLogicException("没有匹配此tag: '$tag' 的dataSource, 请检查 application.conf 相关配置")
+                throw BizLogicException("There is no data source that matches this tag [$tag], please check application.conf.")
             }
             dsNames
         }
@@ -179,7 +179,7 @@ object SzEbeanConfig {
                     val clazz = Application.classLoader.loadClass(it)
                     modelClassSet.add(clazz)
                 } catch (ex: Exception) {
-                    Logger.error("Load class: [$it] failed. For reason: ${ex.message}")
+                    Logger.error("Failed to load class [$it] cause by: ${ex.message}")
                 }
 
             }
@@ -206,7 +206,7 @@ object SzEbeanConfig {
     }
 
     fun workerOf(dataSource: String): ExecutorService {
-        return workerPoolMap[dataSource] ?: throw RuntimeException("Invalid data source name: $dataSource")
+        return workerPoolMap[dataSource] ?: throw RuntimeException("Invalid data source name [$dataSource]")
     }
 }
 
