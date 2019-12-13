@@ -115,7 +115,7 @@ object SzEbeanConfig {
                             it.shutdown()
                             workerPoolMap.remove(dataSourceName)
                         }
-                        Logger.warn("Failed to initialize ebean data source [$dataSourceName]. Cause by: ${ex.message} Try again after 5 seconds.")
+                        Logger.warn("Failed to initialize ebean data source [$dataSourceName]. Caused by: ${ex.message} Try again after 5 seconds.")
                         delay(5000)
                     }
                 }
@@ -179,7 +179,7 @@ object SzEbeanConfig {
                     val clazz = Application.classLoader.loadClass(it)
                     modelClassSet.add(clazz)
                 } catch (ex: Exception) {
-                    Logger.error("Failed to load class [$it] cause by: ${ex.message}")
+                    Logger.error("Failed to load class [$it] caused by: ${ex.message}")
                 }
 
             }
@@ -234,6 +234,6 @@ private fun ServerConfig.addModelClass(clazz: Class<*>) {
 //        Logger.debug("add class for ebean server: $clazz")
         this.addClass(clazz)
     } catch (ex: Exception) {
-        Logger.error("ebean.dataSources.${this.name} cannot register class [${clazz.name}] in ebean server. Cause by: ${ex.message}")
+        Logger.error("ebean.dataSources.${this.name} cannot register class [${clazz.name}] in ebean server. Caused by: ${ex.message}")
     }
 }

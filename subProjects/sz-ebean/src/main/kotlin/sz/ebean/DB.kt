@@ -5,6 +5,7 @@ package sz.ebean
 import io.ebean.Ebean
 import io.ebean.EbeanServer
 import io.ebean.Finder
+import sz.scaffold.tools.BizLogicException
 import java.util.*
 import kotlin.concurrent.getOrSet
 
@@ -16,11 +17,11 @@ object DB {
             return if (SzEbeanConfig.defaultDatasourceReady) {
                 Ebean.getDefaultServer()
             } else {
-                throw RuntimeException("Ebean default data source is not available.")
+                throw BizLogicException("Ebean default data source is not available.")
             }
         }
         if (SzEbeanConfig.ebeanServerConfigs.containsKey(dsName).not()) {
-            throw RuntimeException("Ebean data source is not available or it is a invalid data source name [$dsName], please check application.conf")
+            throw BizLogicException("Ebean data source is not available or it is a invalid data source name [$dsName], please check application.conf")
         }
         return Ebean.getServer(dsName)!!
     }
@@ -38,7 +39,7 @@ object DB {
     fun currentDataSource(): String {
         val nameStack = dsNameStack.get()
         if (nameStack.empty()) {
-            throw RuntimeException("当前线程: [${Thread.currentThread().name}] 没有初始化EBean数据源设置 dataSourceName, 请调用 DB.setDataSourceContext(...)")
+            throw BizLogicException("The current thread [${Thread.currentThread().name}] has not initialized EBean data source settings, please call DB.setDataSourceContext(...) first.")
         }
         return nameStack.peek()
     }
