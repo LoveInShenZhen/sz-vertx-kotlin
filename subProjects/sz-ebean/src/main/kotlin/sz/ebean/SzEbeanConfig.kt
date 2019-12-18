@@ -171,7 +171,7 @@ object SzEbeanConfig {
                     .map { classInfo -> classInfo.load() }
                     .filter { clazz -> isEntityClass(clazz) }
                     .forEach { clazz ->
-                        Logger.debug("ebean add class: ${clazz.name}")
+//                        Logger.debug("ebean add class: ${clazz.name}")
                         modelClassSet.add(clazz)
                     }
             } else {
