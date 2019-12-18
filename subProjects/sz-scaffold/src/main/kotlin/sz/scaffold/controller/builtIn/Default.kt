@@ -67,7 +67,7 @@ $builtInLinks
         info.appendln("-".repeat(64))
         info.appendln()
 
-        info.append("jvm cleas path list:\n")
+        info.append("jvm class path list:\n")
         info.appendln("-".repeat(64))
         ClassLoaderUtil.getDefaultClasspath().forEach { file ->
             info.appendln("  ${file.absolutePath}")
