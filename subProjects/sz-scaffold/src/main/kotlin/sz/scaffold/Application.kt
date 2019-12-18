@@ -56,8 +56,8 @@ object Application {
 
     private var _vertx: Vertx? = null
     private const val vertxOptionsUrlPropertyKey = "sz.vertxOptions.url"
-    private const val zookeeperSysPropertyKey = "vertx.zookeeper.config"
-    private const val propertiesUrlKey = "sz.properties.url"
+    private const val zooConfigUrlPropertyKey = "sz.zookeeper.config.url"
+    private const val szPropertiesUrlKey = "sz.properties.url"
 
     val vertx: Vertx
         get() {
@@ -88,6 +88,10 @@ object Application {
 
     init {
         writePidFile()
+
+        // setup use SLF4JLogDelegateFactory
+        // ref: https://vertx.io/docs/vertx-core/kotlin/#_using_another_logging_framework
+        System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.SLF4JLogDelegateFactory")
         InternalLoggerFactory.setDefaultFactory(Slf4JLoggerFactory.INSTANCE)
 
         loadProperties()
@@ -158,7 +162,7 @@ object Application {
 
     private fun loadProperties() {
         try {
-            val propertiesUr = System.getProperty(propertiesUrlKey, "")
+            val propertiesUr = System.getProperty(szPropertiesUrlKey, "")
 
             if (propertiesUr.isNotBlank()) {
                 val url = URL(propertiesUr)
@@ -171,7 +175,7 @@ object Application {
                 }
             }
         } catch (ex: Exception) {
-            throw RuntimeException("Faild to load gloabl properties. Please check whether the config -D$propertiesUrlKey is valid.")
+            throw RuntimeException("Faild to load gloabl properties. Please check whether the config -D$szPropertiesUrlKey is valid.")
         }
     }
 
@@ -206,12 +210,19 @@ object Application {
 //            val zooConfigJson = File(filePathJoin(appHome, "conf", "zookeeper.json")).readText()
 //            val zookeeperConfig = JsonObject(zooConfigJson)
 
-            if (System.getProperty(zookeeperSysPropertyKey, "").isBlank()) {
-                // 启动时, 未设置 -Dvertx.zookeeper.config, 则设置为 conf 目录下的 zookeeper.json
-                System.setProperty(zookeeperSysPropertyKey, filePathJoin(appHome, "conf", "zookeeper.json"))
+            Logger.debug("$zooConfigUrlPropertyKey : ${System.getProperty(zooConfigUrlPropertyKey)}")
+            val zookeeperConfig: JsonObject = if (System.getProperty(zooConfigUrlPropertyKey, "").isBlank()) {
+                // 未设置 "sz.zookeeper.config.url" property, 则使用 conf/zookeeper.json 的 zookeeper 配置
+                val zooConfigJson = File(filePathJoin(appHome, "conf", "zookeeper.json")).readText()
+                JsonObject(zooConfigJson)
+            } else {
+                val url = URL(System.getProperty(zooConfigUrlPropertyKey))
+                url.openStream().use {
+                    JsonObject(it.bufferedReader().readText())
+                }
             }
 
-            this._vertoptions!!.clusterManager = ZookeeperClusterManager()
+            this._vertoptions!!.clusterManager = ZookeeperClusterManager(zookeeperConfig)
 
             Vertx.clusteredVertx(this._vertoptions) { event: AsyncResult<Vertx> ->
                 if (event.failed()) {
