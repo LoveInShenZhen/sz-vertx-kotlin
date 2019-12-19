@@ -2,8 +2,6 @@ package sz.scaffold
 
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
-import io.netty.util.internal.logging.InternalLoggerFactory
-import io.netty.util.internal.logging.Slf4JLoggerFactory
 import io.vertx.core.AsyncResult
 import io.vertx.core.Vertx
 import io.vertx.core.VertxOptions
@@ -62,7 +60,7 @@ object Application {
     val vertx: Vertx
         get() {
             if (_vertx == null) {
-                throw SzException("Application 还没有初始化 vertx")
+                throw SzException("Application has not initialized vertx.")
             }
             return _vertx!!
         }
@@ -81,7 +79,7 @@ object Application {
     val vertxOptions: VertxOptions
         get() {
             if (_vertoptions == null) {
-                throw SzException("Application 还没有初始化 vertx")
+                throw SzException("Application has not initialized vertx.")
             }
             return _vertoptions!!
         }
@@ -92,7 +90,6 @@ object Application {
         // setup use SLF4JLogDelegateFactory
         // ref: https://vertx.io/docs/vertx-core/kotlin/#_using_another_logging_framework
         System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.SLF4JLogDelegateFactory")
-        InternalLoggerFactory.setDefaultFactory(Slf4JLoggerFactory.INSTANCE)
 
         loadProperties()
 
@@ -188,7 +185,7 @@ object Application {
 
     fun setupVertx(appVertx: Vertx? = null) {
         if (_vertx != null) {
-            throw SzException("Application 的 vertx 已经初始化过了, 请勿重复初始化")
+            throw SzException("The vertx of Application has been initialized. Do not initialize it again.")
         }
         _vertx = appVertx ?: createVertx()
 
@@ -201,7 +198,7 @@ object Application {
         if (this._vertoptions!!.eventBusOptions.isClustered) {
             // 集群方式
             if (config.hasPath("app.vertx.clusterManager") && config.getString("app.vertx.clusterManager") == "Ignite") {
-                throw SzException("app.vertx.clusterManager 配置不再使用, 并且集群只支持使用 Zookeeper 方式创建和管理集群")
+                throw SzException("Configuration [app.vertx.clusterManager] is no longer in use, and clusters only support the creation and management of clusters using Zookeeper.")
             }
 
             Logger.debug("Currently: Vertx cluster mode")
@@ -262,7 +259,7 @@ object Application {
         val routeMap = mutableMapOf<String, Int>()
         apiRoutes.forEach {
             if (it.path.startsWith("/static/")) {
-                throw SzException("/static/* 是专门用于处理静态文件资源, 请更换路由路径定义: ${it.path}")
+                throw SzException("[/static/*] is designed to deal with static file resources, please change the routing path definition: ${it.path}")
             }
             val key = "${it.method.name}  ${it.path}"
             val count = routeMap.getOrDefault(key, 0)
@@ -271,7 +268,7 @@ object Application {
 
         val errRoutes = routeMap.filter { it.value > 1 }.map { it.key }
         if (errRoutes.isNotEmpty()) {
-            throw SzException("以下路由发生重复定义,请开发人员检查:\n${errRoutes.joinToString("\n")}")
+            throw SzException("The following routes are repeatedly defined, please check route file:\n${errRoutes.joinToString("\n")}")
         }
 
     }
