@@ -63,6 +63,8 @@ object SzEbeanConfig {
         RsaUtil.privateKeyFromPem(privateKeyFile.readText())
     }
 
+    private val workerPoolQueueMaxCapacity = ebeanConfig.getInt("workerPoolQueueMaxCapacity")
+
     init {
         val dataSources = ebeanConfig.getConfig("dataSources")
         hasDbConfiged = dataSources.root().size > 0
@@ -102,7 +104,7 @@ object SzEbeanConfig {
                             ds.maximumPoolSize,
                             60,
                             TimeUnit.SECONDS,
-                            LinkedBlockingQueue<Runnable>(1024),
+                            LinkedBlockingQueue<Runnable>(workerPoolQueueMaxCapacity),
                             threadFactory)
 
                         if (ebeanServerCfg.isDefaultServer) {
