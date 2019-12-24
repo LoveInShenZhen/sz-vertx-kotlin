@@ -1,4 +1,4 @@
-package sz
+package sz.task
 
 import io.ebean.EbeanServer
 import io.vertx.core.eventbus.MessageConsumer

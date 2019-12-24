@@ -1,4 +1,4 @@
-package tasks
+package sz.task.samples
 
 import sz.scaffold.tools.logger.AnsiColor
 import sz.scaffold.tools.logger.Logger

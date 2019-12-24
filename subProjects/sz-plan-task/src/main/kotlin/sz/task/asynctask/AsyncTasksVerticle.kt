@@ -1,4 +1,4 @@
-package sz.AsynTask
+package sz.task.asynctask
 
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.DeploymentOptions

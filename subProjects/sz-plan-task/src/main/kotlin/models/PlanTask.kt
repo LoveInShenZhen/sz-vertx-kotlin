@@ -6,7 +6,7 @@ import io.ebean.Model
 import io.ebean.annotation.WhenCreated
 import io.ebean.annotation.WhenModified
 import jodd.datetime.JDateTime
-import sz.PlanTaskService
+import sz.task.PlanTaskService
 import sz.annotations.DBIndexed
 import sz.ebean.DB
 import sz.ebean.runTransactionAwait

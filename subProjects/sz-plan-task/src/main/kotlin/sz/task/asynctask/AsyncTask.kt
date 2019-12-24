@@ -1,4 +1,4 @@
-package sz.AsynTask
+package sz.task.asynctask
 
 import sz.scaffold.Application
 import sz.scaffold.tools.json.toJsonPretty
@@ -9,6 +9,7 @@ import sz.scaffold.tools.json.toShortJson
 //
 
 // 通常是那些不包含数据库事务的异步任务
+@Suppress("MemberVisibilityCanBePrivate")
 class AsyncTask {
 
     var className: String = ""
