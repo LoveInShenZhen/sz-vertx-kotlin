@@ -26,7 +26,6 @@ import sz.scaffold.ext.changeWorkingDir
 import sz.scaffold.ext.filePathJoin
 import sz.scaffold.redis.kedis.KedisPool
 import sz.scaffold.tools.SzException
-import sz.scaffold.tools.logger.AnsiColor
 import sz.scaffold.tools.logger.Logger
 import sz.scaffold.websocket.WebSocketFilter
 import java.io.File
@@ -201,7 +200,7 @@ object Application {
                 throw SzException("Configuration [app.vertx.clusterManager] is no longer in use, and clusters only support the creation and management of clusters using Zookeeper.")
             }
 
-            Logger.debug("Currently: Vertx cluster mode")
+            Logger.info("Vertx: cluster mode")
             val future = CompletableFuture<Vertx>()
 
 //            val zooConfigJson = File(filePathJoin(appHome, "conf", "zookeeper.json")).readText()
@@ -231,7 +230,7 @@ object Application {
             return future.get()
         } else {
             // 非集群方式
-            Logger.debug("Currently: Vertx standalone mode")
+            Logger.info("Vertx: standalone mode")
             return Vertx.vertx(this._vertoptions)
         }
 
@@ -364,7 +363,7 @@ object Application {
 
         setupWebSocketHandler(httpServer)
 
-        Logger.debug("Start http server at: http://localhost:${httpServerOptions.port}")
+        Logger.info("Start http server at: http://localhost:${httpServerOptions.port}")
         return httpServer
     }
 

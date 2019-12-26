@@ -11,13 +11,30 @@ import sz.scaffold.tools.logger.AnsiColor
 @Suppress("DuplicatedCode")
 class ColoredMessage : ClassicConverter() {
     override fun convert(event: ILoggingEvent): String {
-        return when (event.level) {
-            Level.TRACE -> AnsiColor.blue(event.message)
-            Level.DEBUG -> AnsiColor.cyan(event.message)
-            Level.INFO -> AnsiColor.white(event.message)
-            Level.WARN -> AnsiColor.yellow(event.message)
-            Level.ERROR -> AnsiColor.red(event.message)
-            else -> event.message
+        return if (useColor(event.loggerName)) {
+            when (event.level) {
+//                Level.TRACE -> AnsiColor.cyan(event.message)
+                Level.DEBUG -> AnsiColor.blue(event.message)
+                Level.INFO -> AnsiColor.green(event.message)
+                Level.WARN -> AnsiColor.yellow(event.message)
+                Level.ERROR -> AnsiColor.red(event.message)
+                else -> event.message
+            }
+        } else {
+            event.message
+        }
+
+    }
+
+    private fun useColor(loggerName: String): Boolean {
+        if (loggerName == "App") return true
+
+        return if (this.optionList.isNullOrEmpty()) {
+            false
+        } else {
+            this.optionList.find {
+                loggerName.startsWith("${it}.")
+            } != null
         }
     }
 }

@@ -112,7 +112,7 @@ $builtInLinks
         info.appendln("-".repeat(64))
         if (Application.vertxOptions.eventBusOptions.isClustered) {
             // 集群方式
-            info.appendln("Currently: Vertx cluster mode [当前为: Vertx 集群模式]")
+            info.appendln("Vertx: cluster mode [当前为: Vertx 集群模式]")
             info.appendln("    Node Id: ${Application.vertxOptions.clusterManager.nodeID}")
             info.appendln("    Nodes: ${Application.vertxOptions.clusterManager.nodes.toList()}")
         } else {

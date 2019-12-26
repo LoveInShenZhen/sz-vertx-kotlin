@@ -13,11 +13,11 @@ class ColoredLevel : ClassicConverter() {
 
     override fun convert(event: ILoggingEvent): String {
         return when (event.level) {
-            Level.TRACE -> "[${AnsiColor.blue("trace")}"
-            Level.DEBUG -> "[${AnsiColor.cyan("debug")}]"
-            Level.INFO -> "[${AnsiColor.white("info")}]"
-            Level.WARN -> "[${AnsiColor.yellow("warn")}]"
-            Level.ERROR -> "[${AnsiColor.red("error")}]"
+//            Level.TRACE -> "[${AnsiColor.cyan("trace")}"
+            Level.DEBUG -> AnsiColor.blue("debug")
+            Level.INFO -> AnsiColor.green("info")
+            Level.WARN -> AnsiColor.yellow("warn")
+            Level.ERROR -> AnsiColor.red("error")
             else -> ""
         }
     }
