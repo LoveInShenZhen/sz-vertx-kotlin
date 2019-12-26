@@ -13,7 +13,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import sz.scaffold.ext.chainToString
-import sz.scaffold.tools.logger.AnsiColor
 import sz.scaffold.tools.logger.Logger
 
 //
@@ -155,7 +154,7 @@ class KedisPubSub(val vertx: Vertx, val options: RedisOptions, val reConnectInte
                             val response = withTimeout(1000) { api.pingAwait(emptyList()) }
                             Logger.debug("Ping test sucessed. $response")
                         } catch (ex: Exception) {
-                            Logger.debug("Ping test failed. $ex", AnsiColor.RED)
+                            Logger.debug("Ping test failed. $ex")
                             Logger.debug("Ping test failed, ${reConnectInterval / 1000} 秒后重试连接")
                             stopPingTest()
                             shutdownClient()

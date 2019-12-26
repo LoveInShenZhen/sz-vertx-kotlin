@@ -12,7 +12,6 @@ import sz.ebean.tableExists
 import sz.scaffold.Application
 import sz.scaffold.ext.getIntOrElse
 import sz.scaffold.tools.json.Json
-import sz.scaffold.tools.logger.AnsiColor
 import sz.scaffold.tools.logger.Logger
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -66,13 +65,13 @@ object PlanTaskService {
 
             eventConsumer = Application.vertx.eventBus().consumer(eventBusAddress) { _ -> notifyNewTask() }
 
-            Logger.info("Plan Task Service Started......", AnsiColor.GREEN)
+            Logger.info("Plan Task Service Started......")
 
         } catch (ex: Exception) {
             stopNow = true
             isRunning = false
 
-            Logger.warn("Start planTask service failed.\n${ExceptionUtil.exceptionStackTraceToString(ex)}", AnsiColor.RED_B)
+            Logger.warn("Start planTask service failed.\n${ExceptionUtil.exceptionStackTraceToString(ex)}")
         }
     }
 

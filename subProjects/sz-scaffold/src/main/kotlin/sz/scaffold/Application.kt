@@ -135,11 +135,11 @@ object Application {
         hideBuiltinPages = config.getBoolean("app.httpServer.hideBuiltinPages")
 
         this.regOnStartHandler(Int.MIN_VALUE) {
-            Logger.info("Application start ...", AnsiColor.GREEN)
+            Logger.info("Application start ...")
         }
 
         this.regOnStopHanlder(Int.MAX_VALUE) {
-            Logger.info("Application stop ...", AnsiColor.GREEN)
+            Logger.info("Application stop ...")
             val stopVertxFuture = CompletableFuture<Boolean>()
             vertx.close { res ->
                 if (res.failed()) {

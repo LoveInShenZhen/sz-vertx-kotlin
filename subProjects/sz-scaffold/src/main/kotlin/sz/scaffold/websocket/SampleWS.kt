@@ -3,7 +3,6 @@ package sz.scaffold.websocket
 import io.vertx.core.http.ServerWebSocket
 import jodd.datetime.JDateTime
 import sz.scaffold.Application
-import sz.scaffold.tools.logger.AnsiColor
 import sz.scaffold.tools.logger.Logger
 
 /**
@@ -27,7 +26,7 @@ class SampleWS : WebSocketHandler {
             // Set an exception handler on the read stream.
             Logger.warn("[${JDateTime()}] WebSocket 有异常发生:\n$it")
         }.textMessageHandler {
-            Logger.debug("[${JDateTime()}] WebSocket 接收到client 发过来的消息:\n$it", AnsiColor.YELLOW)
+            Logger.debug("[${JDateTime()}] WebSocket 接收到client 发过来的消息:\n$it")
         }.pongHandler {
             Logger.debug("[${JDateTime()}] websocket pong handler:\n${it.toString(Charsets.UTF_8)}")
         }

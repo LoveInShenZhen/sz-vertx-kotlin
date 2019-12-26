@@ -1,16 +1,18 @@
-package sz.scaffold.tools.logger
+package sz.scaffold.tools.logger.conversions
 
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.pattern.ClassicConverter
 import ch.qos.logback.classic.spi.ILoggingEvent
+import sz.scaffold.tools.logger.AnsiColor
 
 //
 // Created by kk on 17/8/20.
 //
+@Suppress("DuplicatedCode")
 class ColoredLevel : ClassicConverter() {
 
-    override fun convert(event: ILoggingEvent?): String {
-        return when (event!!.level) {
+    override fun convert(event: ILoggingEvent): String {
+        return when (event.level) {
             Level.TRACE -> "[${AnsiColor.blue("trace")}"
             Level.DEBUG -> "[${AnsiColor.cyan("debug")}]"
             Level.INFO -> "[${AnsiColor.white("info")}]"
