@@ -8,12 +8,24 @@ import com.fasterxml.jackson.databind.JsonNode
 //
 
 fun Any.toJsonPretty(): String {
+    if (this is String) return this
     return Json.toJsonStrPretty(this)
 }
 
+/**
+ * 把对象序列化成单行json字符串, 并且忽略其中为空的字段(包括 null, 空字符串, 空列表, 空map)
+ */
 fun Any.toShortJson(): String {
     if (this is String) return this
     return Json.toJsonExcludeEmptyFields(this)
+}
+
+/**
+ * 把对象序列化成单行json字符串
+ */
+fun Any.singleLineJson(): String {
+    if (this is String) return this
+    return Json.toJsonStr(this)
 }
 
 fun String.toJsonNode(): JsonNode {
