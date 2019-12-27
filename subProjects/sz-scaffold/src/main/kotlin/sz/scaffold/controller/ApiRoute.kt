@@ -24,7 +24,7 @@ import sz.scaffold.tools.BizLogicException
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.json.Json
 import sz.scaffold.tools.json.Json.toStrMap
-import sz.scaffold.tools.json.toShortJson
+import sz.scaffold.tools.json.singleLineJson
 import sz.scaffold.tools.logger.Logger
 import java.io.File
 import java.math.BigDecimal
@@ -94,7 +94,7 @@ data class ApiRoute(val method: HttpMethod,
                                     onJsonp(httpContext, actionResult)
                                 } else if (actionResult is ReplyBase) {
                                     response.putHeader("Content-Type", ContentTypes.Json)
-                                    response.write(actionResult.toShortJson())
+                                    response.write(actionResult.singleLineJson())
                                 }
                             }
                         } catch (ex: Exception) {
@@ -109,11 +109,11 @@ data class ApiRoute(val method: HttpMethod,
                             if (httpContext.queryParams(mapOf()).containsKey("callback")) {
                                 response.putHeader("Content-Type", ContentTypes.JavaScript)
                                 val callback = httpContext.queryParams(mapOf()).getValue("callback")
-                                val body = "$callback(${reply.toShortJson()});"
+                                val body = "$callback(${reply.singleLineJson()});"
                                 response.write(body)
                             } else {
                                 response.putHeader("Content-Type", ContentTypes.Json)
-                                response.write(reply.toShortJson())
+                                response.write(reply.singleLineJson())
                             }
                         }
 
@@ -146,11 +146,11 @@ data class ApiRoute(val method: HttpMethod,
                         if (httpContext.queryParams(mapOf()).containsKey("callback")) {
                             response.putHeader("Content-Type", ContentTypes.JavaScript)
                             val callback = httpContext.queryParams(mapOf()).getValue("callback")
-                            val body = "$callback(${reply.toShortJson()});"
+                            val body = "$callback(${reply.singleLineJson()});"
                             response.write(body)
                         } else {
                             response.putHeader("Content-Type", ContentTypes.Json)
-                            response.write(reply.toShortJson())
+                            response.write(reply.singleLineJson())
                         }
                     }
                     if (!response.ended()) {
@@ -195,7 +195,7 @@ data class ApiRoute(val method: HttpMethod,
         }
 
         if (result is ReplyBase || result is JsonNode) {
-            response.write(result.toShortJson())
+            response.write(result.singleLineJson())
             response.putHeader("Content-Type", ContentTypes.Json)
         } else if (result is String) {
             response.write(result.toString())
