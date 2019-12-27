@@ -2,7 +2,6 @@ package sz.scaffold.controller
 
 import io.vertx.ext.web.RoutingContext
 import jodd.bean.BeanCopy
-import jodd.http.HttpUtil
 import sz.scaffold.tools.json.toJsonNode
 import sz.scaffold.tools.json.toObj
 import java.net.URLDecoder
@@ -39,15 +38,16 @@ open class ApiController {
     }
 
     fun contentCharset(): String {
-        if (this.httpContext.request().headers().contains("Content-Type")) {
-            val charset = HttpUtil.extractContentTypeCharset(this.httpContext.request().headers().get("Content-Type"))
-            if (charset.isNullOrBlank()) {
-                return "UTF-8"
-            } else {
-                return charset
-            }
+        val contentType = this.httpContext.parsedHeaders().contentType()
+        return if (contentType.rawValue().isNullOrBlank()) {
+            "UTF-8"
         } else {
-            return "UTF-8"
+            val charsetParas = contentType.parameters().filter { it.key.equals("charset", ignoreCase = true) }.toList()
+            if (charsetParas.isEmpty()) {
+                "UTF-8"
+            } else {
+                charsetParas.first().second
+            }
         }
     }
 
@@ -56,7 +56,7 @@ open class ApiController {
             if (needDecode) {
                 Pair<String, String>(it.key, URLDecoder.decode(it.value, enc))
             } else {
-                Pair<String, String>(it.key,it.value)
+                Pair<String, String>(it.key, it.value)
             }
         }.toMap()
     }
