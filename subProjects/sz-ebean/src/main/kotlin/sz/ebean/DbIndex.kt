@@ -1,6 +1,5 @@
 package sz.ebean
 
-import io.ebean.Ebean
 import io.ebean.EbeanServer
 import sz.annotations.DBIndexed
 import sz.scaffold.ext.camelCaseToLowCaseSeprated
@@ -33,7 +32,7 @@ internal class IndexInfo(var indexName: String) {
             if (SzEbeanConfig.isH2()) {
                 sql = "SELECT t.TABLE_NAME, t.COLUMN_NAME AS Column_name, t.INDEX_NAME AS Key_name FROM INFORMATION_SCHEMA.INDEXES as t WHERE t.INDEX_TYPE_NAME != 'PRIMARY KEY' AND t.TABLE_NAME = '${tableName.toUpperCase()}'"
             }
-            val rows = dbServer.createSqlQuery(sql).findList()
+            val rows = dbServer.sqlQuery(sql).findList()
             for (row in rows) {
                 val columnName = row.getString("Column_name")
                 val indexName = row.getString("Key_name")
@@ -110,14 +109,14 @@ class DbIndex(private val dbServer: EbeanServer) {
             .toSet()
     }
 
-    private fun indexedColumns(tableName: String): Map<String, String> {
-        val sql = String.format("show index from `%s`", tableName)
-        val rows = Ebean.createSqlQuery(sql).findList()
-
-        return rows.map {
-            Pair(it.getString("Column_name"), it.getString("Key_name"))
-        }.toMap()
-    }
+//    private fun indexedColumns(tableName: String): Map<String, String> {
+//        val sql = String.format("show index from `%s`", tableName)
+//        val rows = Ebean.getDefaultServer().sqlQuery(sql).findList()
+//
+//        return rows.map {
+//            Pair(it.getString("Column_name"), it.getString("Key_name"))
+//        }.toMap()
+//    }
 
 
     private fun createIndexByModelSql(modelClass: Class<*>): String {

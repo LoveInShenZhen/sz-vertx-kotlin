@@ -6,7 +6,6 @@ import io.ebean.Model
 import io.ebean.annotation.WhenCreated
 import io.ebean.annotation.WhenModified
 import jodd.datetime.JDateTime
-import sz.task.PlanTaskService
 import sz.annotations.DBIndexed
 import sz.ebean.DB
 import sz.ebean.runTransactionAwait
@@ -14,6 +13,7 @@ import sz.ebean.runTransactionBlocking
 import sz.scaffold.Application
 import sz.scaffold.ext.getStringOrElse
 import sz.scaffold.tools.json.toJsonPretty
+import sz.task.PlanTaskService
 import java.sql.Timestamp
 import javax.persistence.*
 
@@ -142,7 +142,7 @@ class PlanTask(dataSource: String = dataSourceName) : Model(dataSource) {
         fun resetTaskStatus() {
             taskDB.runTransactionBlocking { ebeanServer ->
                 val sql = "update `plan_task` set `task_status`=:init_status where `task_status`=:old_status"
-                ebeanServer.createSqlUpdate(sql)
+                ebeanServer.sqlUpdate(sql)
                     .setParameter("init_status", TaskStatus.WaitingInDB.code)
                     .setParameter("old_status", TaskStatus.WaitingInQueue.code)
                     .execute()
