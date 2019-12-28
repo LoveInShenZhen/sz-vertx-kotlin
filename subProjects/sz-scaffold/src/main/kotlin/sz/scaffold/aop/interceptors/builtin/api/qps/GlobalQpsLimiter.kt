@@ -34,23 +34,4 @@ class GlobalQpsLimiter : GlobalInterceptorBase() {
             reply
         }
     }
-
-//    override suspend fun call(): Any? {
-//        val path = this.httpContext.request().path()
-//
-//        return if (match(path)) {
-//            // this path need qps limiter checking
-//            val limiter = QpsLimiterMap.namedLimiterOf(limiterName)
-//            if (limiter.tryAcquire()) {
-//                delegate.call()
-//            } else {
-//                val reply = ReplyBase()
-//                reply.ret = SzErrors.ExceedQpsLimit.code
-//                reply.errmsg = "${SzErrors.ExceedQpsLimit.desc} [max ${limiter.rate} 次/秒]"
-//                reply
-//            }
-//        } else {
-//            delegate.call()
-//        }
-//    }
 }
