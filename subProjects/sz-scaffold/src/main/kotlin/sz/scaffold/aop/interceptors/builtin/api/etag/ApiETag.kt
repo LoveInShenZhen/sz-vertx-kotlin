@@ -1,4 +1,4 @@
-package sz.scaffold.aop.interceptors.builtin
+package sz.scaffold.aop.interceptors.builtin.api.etag
 
 //
 // Created by kk on 2019-06-27.

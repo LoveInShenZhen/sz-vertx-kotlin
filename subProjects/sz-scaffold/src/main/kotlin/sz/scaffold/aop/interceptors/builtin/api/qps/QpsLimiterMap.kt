@@ -1,4 +1,4 @@
-package sz.scaffold.aop.interceptors.builtin
+package sz.scaffold.aop.interceptors.builtin.api.qps
 
 import com.google.common.util.concurrent.RateLimiter
 import sz.scaffold.Application
@@ -34,7 +34,7 @@ object QpsLimiterMap {
     }
 
     //{
-    //    className = "sz.scaffold.aop.interceptors.builtin.GlobalQpsLimiter"
+    //    className = "sz.scaffold.aop.interceptors.builtin.api.qps.GlobalQpsLimiter"
     //    config = {
     //        name = "nameOfLimiter"
     //        qps = 150

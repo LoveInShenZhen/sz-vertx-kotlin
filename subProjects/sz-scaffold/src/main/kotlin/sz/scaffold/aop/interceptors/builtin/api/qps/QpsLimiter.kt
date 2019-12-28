@@ -1,4 +1,6 @@
-package sz.scaffold.aop.interceptors.builtin
+@file:Suppress("UnstableApiUsage")
+
+package sz.scaffold.aop.interceptors.builtin.api.qps
 
 //
 // Created by kk on 2019-06-27.
@@ -19,21 +21,22 @@ annotation class QpsLimiter(
     val qps: Double
 )
 
+@Suppress("DuplicatedCode")
 class QpsLimiterAction : Action<QpsLimiter>() {
 
     override suspend fun call(): Any? {
         val limiter = QpsLimiterMap.apiLimiterOf(this.httpContext.request().path())
-        if (limiter.tryAcquire()) {
-            return delegate.call()
+        return if (limiter.tryAcquire()) {
+            delegate.call()
         } else {
             val reply = ReplyBase()
             reply.ret = SzErrors.ExceedQpsLimit.code
-            reply.errmsg = "${SzErrors.ExceedQpsLimit.desc} [max ${limiter.rate} 次/秒]"
+            reply.errmsg = "${SzErrors.ExceedQpsLimit.desc} [max ${limiter.rate} times/second]"
             if (isJsonpRequest()) {
                 onJsonp(reply)
-                return null
+                null
             } else {
-                return reply
+                reply
             }
         }
     }
