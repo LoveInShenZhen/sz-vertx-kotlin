@@ -55,9 +55,9 @@ class szebean : ApiController() {
     suspend fun evolution(@Comment("数据源名称, 为空时,表示默认数据源") dataSource: String = ""): String {
         this.contentType("text/plain; charset=UTF-8")
         return DB.byDataSource(dataSource).runTransactionAwait {
-            it.createSqlUpdate(DDL.dropAllDdl(dataSource)).execute()
-            it.createSqlUpdate(DDL.createDdl(dataSource)).execute()
-            it.createSqlUpdate(DDL.createIndexDdl(dataSource)).execute()
+            it.sqlUpdate(DDL.dropAllDdl(dataSource)).execute()
+            it.sqlUpdate(DDL.createDdl(dataSource)).execute()
+            it.sqlUpdate(DDL.createIndexDdl(dataSource)).execute()
 
             "数据库重置成功"
         }
