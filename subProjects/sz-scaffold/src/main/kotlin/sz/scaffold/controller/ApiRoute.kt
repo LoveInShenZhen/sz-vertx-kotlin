@@ -337,14 +337,14 @@ data class ApiRoute(val method: HttpMethod,
                     !it.startsWith("#") && !it.startsWith("//") && it.isNotBlank()
                 }.map { parse(it) }
 
-            if (Application.hideBuiltinPages) {
-                // need exclude builtin route
-                return routes.filter { route ->
+            return if (Application.inProductionMode) {
+                //Production environment need exclude builtin route
+                routes.filter { route ->
                     val methodFullName = "${route.controllerKClass.qualifiedName}.${route.controllerFun.name}"
                     builtinRouteControllers.contains(methodFullName).not()
                 }
             } else {
-                return routes
+                routes
             }
         }
 

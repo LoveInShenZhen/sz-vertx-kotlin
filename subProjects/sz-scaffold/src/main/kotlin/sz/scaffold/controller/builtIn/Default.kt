@@ -19,7 +19,7 @@ class Default : ApiController() {
 
     fun hello(): String {
         this.contentType(ContentTypes.Html)
-        val builtInLinks = if (Application.hideBuiltinPages) "" else """
+        val builtInLinks = if (Application.inProductionMode) "" else """
             <ul>
                 <li><a href="/api/builtin/doc/apiIndex">api 列表</a></li>
                 <li><a href="/api/builtin/doc/pageIndex">非 api 链接列表</a></li>

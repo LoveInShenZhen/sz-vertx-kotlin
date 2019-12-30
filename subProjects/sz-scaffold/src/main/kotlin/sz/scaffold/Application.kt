@@ -49,7 +49,7 @@ object Application {
     val config: Config
     val appHome: String
     val classLoader = Application::class.java.classLoader
-    val hideBuiltinPages: Boolean
+    val inProductionMode: Boolean
 
     private var _vertx: Vertx? = null
     private const val vertxOptionsUrlPropertyKey = "sz.vertxOptions.url"
@@ -131,7 +131,7 @@ object Application {
 
         config = ConfigFactory.load()
 
-        hideBuiltinPages = config.getBoolean("app.httpServer.hideBuiltinPages")
+        inProductionMode = config.getBoolean("app.httpServer.productionMode")
 
         this.regOnStartHandler(Int.MIN_VALUE) {
             Logger.info("Application start ...")
