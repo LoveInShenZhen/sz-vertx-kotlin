@@ -4,6 +4,7 @@ import jodd.util.ClassLoaderUtil
 import jodd.util.CommandLine
 import sz.scaffold.Application
 import sz.scaffold.annotations.Comment
+import sz.scaffold.aop.interceptors.builtin.api.DevModeOnly
 import sz.scaffold.controller.ApiController
 import sz.scaffold.controller.ContentTypes
 import sz.scaffold.tools.json.toJsonPretty
@@ -46,6 +47,7 @@ $builtInLinks
     }
 
     @Comment("返回系统信息")
+    @DevModeOnly
     fun sysInfo(): String {
         val info = StringBuilder()
 
