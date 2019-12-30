@@ -1,7 +1,9 @@
 package sz.scaffold.controller.reply
 
 import jodd.exception.ExceptionUtil
+import sz.scaffold.Application
 import sz.scaffold.annotations.Comment
+import sz.scaffold.ext.safeString
 import sz.scaffold.tools.BizLogicException
 import sz.scaffold.tools.json.Json
 
@@ -34,7 +36,7 @@ open class ReplyBase {
             this.errmsg = ex.message!!
         } else {
             this.ret = -1
-            this.errmsg = ExceptionUtil.exceptionChainToString(ex)
+            this.errmsg = if (Application.inProductionMode) ex.message.safeString() else ExceptionUtil.exceptionChainToString(ex)
         }
     }
 

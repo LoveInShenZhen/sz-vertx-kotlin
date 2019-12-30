@@ -23,7 +23,7 @@ abstract class Action<out T> {
     abstract suspend fun call(): Any?
 
     @Suppress("UNCHECKED_CAST")
-    fun init(conf: Any, context: RoutingContext, delegateAction: Action<*>) {
+    fun initialization(conf: Any, context: RoutingContext, delegateAction: Action<*>) {
         this._config = conf as T
         this._httpContext = context
         this._delegate = delegateAction

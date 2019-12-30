@@ -406,7 +406,7 @@ internal data class Interceptor(val config: Any, val actionClass: KClass<*>) {
 
     fun chainedWith(httpContext: RoutingContext, delegateAction: Action<*>): Action<*> {
         val actionInstance = actionClass.createInstance() as Action<*>
-        actionInstance.init(config, httpContext, delegateAction)
+        actionInstance.initialization(config, httpContext, delegateAction)
         return actionInstance
     }
 

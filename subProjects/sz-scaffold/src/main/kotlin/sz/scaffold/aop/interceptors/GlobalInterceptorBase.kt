@@ -10,19 +10,20 @@ import sz.scaffold.aop.actions.Action
 abstract class GlobalInterceptorBase : Action<JsonObject>() {
 
     private val includes: List<String>
-    private val excludes: List<String>
-
-    init {
-        val includesCfg = config.getJsonArray("includes").map { it.toString() }.toMutableList()
-        includes = if (includesCfg.isEmpty()) {
-            // default include all route path
-            listOf("/**")
-        } else {
-            includesCfg.toList()
+        get() {
+            val includesCfg = config.getJsonArray("includes").map { it.toString() }.toMutableList()
+            return if (includesCfg.isEmpty()) {
+                // default include all route path
+                listOf("/**")
+            } else {
+                includesCfg.toList()
+            }
         }
 
-        excludes = config.getJsonArray("excludes").map { it.toString() }
-    }
+    private val excludes: List<String>
+        get() {
+            return config.getJsonArray("excludes").map { it.toString() }
+        }
 
     protected open fun match(path: String): Boolean {
         return includes.any { Wildcard.match(path, it) } &&

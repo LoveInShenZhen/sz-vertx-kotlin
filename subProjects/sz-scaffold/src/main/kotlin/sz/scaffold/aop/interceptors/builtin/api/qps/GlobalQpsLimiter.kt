@@ -8,15 +8,22 @@ import sz.scaffold.errors.builtin.SzErrors
 // includes 和 excludes 采用通配符匹配, excludes 比 includes 的优先级高
 // Possible patterns allow to match single characters ('?') or any count of characters ('*').
 // Wildcard characters can be escaped (by an '\'). When matching path, deep tree wildcard also can be used ('**').
-//{
-//    className = "sz.scaffold.aop.interceptors.builtin.api.qps.GlobalQpsLimiter"
-//    config = {
-//        name = "nameOfLimiter"
-//        qps = 150
-//        includes = ["/**"]
-//        excludes = []
-//    }
-//}
+// app {
+//     httpServer {
+//       interceptors = [
+//         {
+//             className = "sz.scaffold.aop.interceptors.builtin.api.qps.GlobalQpsLimiter"
+//             config = {
+//             name = "nameOfLimiter"
+//             qps = 150
+//                 includes = ["/**"]
+//                 excludes = []
+//             }
+//         }
+//       ]
+//     }
+//   }
+
 
 @Suppress("UnstableApiUsage")
 class GlobalQpsLimiter : GlobalInterceptorBase() {
