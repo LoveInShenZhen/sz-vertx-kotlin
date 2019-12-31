@@ -8,6 +8,7 @@ import java.util.regex.Pattern
 //
 // Created by kk on 17/9/10.
 //
+@Suppress("MemberVisibilityCanBePrivate", "FunctionName")
 object StringChecker {
     /*********************************** 身份证验证开始  */
     /**
@@ -29,6 +30,7 @@ object StringChecker {
      * *
      * @return 有效：返回"" 无效：返回String信息
      */
+    @Suppress("LocalVariableName")
     fun IDCardValidate(IDStr: String): String {
         try {
             val ValCodeArr = arrayOf("1", "0", "X", "9", "8", "7", "6", "5", "4", "3", "2")
@@ -46,7 +48,7 @@ object StringChecker {
             } else if (IDStr.length == 15) {
                 Ai = IDStr.substring(0, 6) + "19" + IDStr.substring(6, 15)
             }
-            if (isNumeric(Ai) == false) {
+            if (isNumeric(Ai).not()) {
                 return "身份证15位号码都应为数字 ; 18位号码除最后一位外,都应为数字"
             }
             // =======================(end)========================
@@ -218,15 +220,15 @@ object StringChecker {
      * @return 验证通过返回true
      */
     fun validTelNum(str: String): Boolean {
-        var p1 = Pattern.compile("^[0][1-9]{2,3}-?[0-9]{5,10}$") // 验证带区号的
-        var p2 = Pattern.compile("^[1-9]{1}[0-9]{5,8}$") // 验证没有区号的
+        val p1 = Pattern.compile("^[0][1-9]{2,3}-?[0-9]{5,10}$") // 验证带区号的
+        val p2 = Pattern.compile("^[1-9]{1}[0-9]{5,8}$") // 验证没有区号的
 
-        if (str.length > 9) {
+        return if (str.length > 9) {
             val m = p1.matcher(str)
-            return m.matches()
+            m.matches()
         } else {
             val m = p2!!.matcher(str)
-            return m.matches()
+            m.matches()
         }
     }
 

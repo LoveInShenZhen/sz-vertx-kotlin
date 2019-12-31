@@ -4,6 +4,7 @@ package sz.scaffold.tools.console
 // Created by kk on 2019-05-18.
 //
 
+@Suppress("MemberVisibilityCanBePrivate")
 object HierarchyTxt {
     val empty = "    "
     val starte = "├── "
