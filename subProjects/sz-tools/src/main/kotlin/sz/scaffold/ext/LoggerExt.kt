@@ -1,4 +1,4 @@
-package sz.scaffold.tools.logger.ext
+package sz.scaffold.ext
 
 //
 // Created by kk on 2019/12/26.
@@ -6,6 +6,7 @@ package sz.scaffold.tools.logger.ext
 
 import org.slf4j.Logger
 import sz.scaffold.tools.json.toShortJson
+import sz.scaffold.tools.logger.Logger as SzLogger
 
 
 fun Logger.trace(item: Any) {
@@ -26,5 +27,25 @@ fun Logger.warn(item: Any) {
 
 fun Logger.error(item: Any) {
     this.error(item.toShortJson())
+}
+
+fun SzLogger.trace(item: Any) {
+    appLogger.trace(item)
+}
+
+fun SzLogger.debug(item: Any) {
+    appLogger.debug(item)
+}
+
+fun SzLogger.info(item: Any) {
+    appLogger.info(item)
+}
+
+fun SzLogger.warn(item: Any) {
+    appLogger.warn(item)
+}
+
+fun SzLogger.error(item: Any) {
+    appLogger.error(item)
 }
 

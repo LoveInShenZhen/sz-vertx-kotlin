@@ -1,4 +1,4 @@
-package sz.scaffold.aop.interceptors
+package sz.scaffold.aop.interceptors.example
 
 
 import sz.scaffold.aop.actions.Action
