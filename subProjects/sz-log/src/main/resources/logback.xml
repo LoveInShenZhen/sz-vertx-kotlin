@@ -1,0 +1,22 @@
+<!-- https://www.playframework.com/documentation/latest/SettingsLogger -->
+<configuration>
+
+    <conversionRule conversionWord="coloredLevel" converterClass="sz.scaffold.tools.logger.conversions.ColoredLevel"/>
+    <conversionRule conversionWord="coloredMsg" converterClass="sz.scaffold.tools.logger.conversions.ColoredMessage"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date{HH:mm:ss.SSS} %coloredLevel [%logger{15}] in [%thread] -
+                %coloredMsg{com.sample}%n%xException{10}
+            </pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <logger name="App" level="DEBUG">
+    </logger>
+
+</configuration>
