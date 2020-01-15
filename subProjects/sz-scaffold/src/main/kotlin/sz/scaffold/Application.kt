@@ -19,9 +19,12 @@ import jodd.io.FileNameUtil
 import jodd.io.FileUtil
 import jodd.system.SystemInfo
 import jodd.util.ClassLoaderUtil
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import org.apache.commons.lang3.SystemUtils
 import sz.scaffold.controller.ApiRoute
 import sz.scaffold.controller.BodyHandlerOptions
+import sz.scaffold.dispatchers.IDispatcherFactory
 import sz.scaffold.ext.changeWorkingDir
 import sz.scaffold.ext.filePathJoin
 import sz.scaffold.redis.kedis.KedisPool
@@ -36,6 +39,7 @@ import java.net.URL
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutorService
+import kotlinx.coroutines.runBlocking as kxRunBlocking
 
 
 //
@@ -453,5 +457,14 @@ object Application {
     private fun File.hasFile(path: String): Boolean {
         val fullPath = FileNameUtil.concat(this.path, path)
         return File(fullPath).exists()
+    }
+
+    val workerDispatcher: CoroutineDispatcher by lazy {
+        val factory = Class.forName(config.getString("app.httpServer.dispatcher.factory")).newInstance() as IDispatcherFactory
+        factory.build()
+    }
+
+    fun <T> runBlocking(block: suspend CoroutineScope.() -> T): T {
+        return kxRunBlocking(context = workerDispatcher, block = block)
     }
 }

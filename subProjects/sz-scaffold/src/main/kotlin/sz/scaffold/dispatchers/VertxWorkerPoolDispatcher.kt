@@ -7,7 +7,7 @@ import sz.scaffold.Application
 //
 // Created by kk on 2019-05-01.
 //
-class VertxWorkerPoolDispatcher: IDispatcherFactory {
+class VertxWorkerPoolDispatcher : IDispatcherFactory {
     override fun build(): CoroutineDispatcher {
         return dispatcherInstence
     }

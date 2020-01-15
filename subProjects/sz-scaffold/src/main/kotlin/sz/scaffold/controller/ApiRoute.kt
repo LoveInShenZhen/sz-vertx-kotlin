@@ -7,7 +7,6 @@ import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import jodd.exception.ExceptionUtil
 import jodd.util.ClassUtil
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -19,7 +18,6 @@ import sz.scaffold.aop.annotations.WithAction
 import sz.scaffold.aop.interceptors.GlobalInterceptorBase
 import sz.scaffold.controller.reply.ReplyBase
 import sz.scaffold.coroutines.launchOnVertx
-import sz.scaffold.dispatchers.IDispatcherFactory
 import sz.scaffold.tools.BizLogicException
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.json.Json
@@ -80,7 +78,7 @@ data class ApiRoute(val method: HttpMethod,
 
         GlobalScope.launchOnVertx {
             coroutineScope {
-                launch(workerDispatcher) {
+                launch(Application.workerDispatcher) {
                     val args = controllerFun.buildCallArgs(apiController, paramDatas)
                     val wrapperAction = buildWrappedAction(httpContext, args)
                     // 通过控制器方法的返回类型, 是否是ReplyBase或者其子类型, 来判断是否是 json api 方法
@@ -392,12 +390,6 @@ data class ApiRoute(val method: HttpMethod,
             } catch (ex: ClassNotFoundException) {
                 throw SzException("找不到控制器类: \"$className\"")
             }
-        }
-
-
-        val workerDispatcher: CoroutineDispatcher by lazy {
-            val factory = Class.forName(Application.config.getString("app.httpServer.dispatcher.factory")).newInstance() as IDispatcherFactory
-            factory.build()
         }
     }
 }

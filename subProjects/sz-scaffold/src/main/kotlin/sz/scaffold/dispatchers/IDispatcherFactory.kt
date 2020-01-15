@@ -7,6 +7,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 //
 interface IDispatcherFactory {
 
-    fun build() : CoroutineDispatcher
+    fun build(): CoroutineDispatcher
 
 }

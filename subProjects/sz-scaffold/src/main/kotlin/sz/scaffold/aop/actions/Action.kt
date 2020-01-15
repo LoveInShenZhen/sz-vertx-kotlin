@@ -29,7 +29,7 @@ abstract class Action<out T> {
         this._delegate = delegateAction
     }
 
-    fun setupHttpContext(httpContext:RoutingContext) {
+    fun setupHttpContext(httpContext: RoutingContext) {
         this._httpContext = httpContext
     }
 

@@ -9,8 +9,8 @@ import sz.scaffold.tools.logger.Logger
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class SampleCheckToken(
-        val token: String = "token",
-        val roles: IntArray = intArrayOf()
+    val token: String = "token",
+    val roles: IntArray = intArrayOf()
 )
 
 class SampleCheckTokenAction : Action<SampleCheckToken>() {
