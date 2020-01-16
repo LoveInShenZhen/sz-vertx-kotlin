@@ -240,8 +240,8 @@ object Application {
     private fun checkApiRoutes(apiRoutes: List<ApiRoute>) {
         val routeMap = mutableMapOf<String, Int>()
         apiRoutes.forEach {
-            if (it.path.startsWith("/static/")) {
-                throw SzException("[/static/*] is designed to deal with static file resources, please change the routing path definition: ${it.path}")
+            if (it.path.startsWith("/builtinstatic/")) {
+                throw SzException("[/builtinstatic/*] is designed to deal with static file resources, please change the routing path definition: ${it.path}")
             }
             val key = "${it.method.name}  ${it.path}"
             val count = routeMap.getOrDefault(key, 0)
@@ -311,8 +311,8 @@ object Application {
 
         val router = Router.router(vertx)
 
-        // /static/* , 该 path 是约定专门用于处理静态文件的
-        router.route("/static/*").handler(StaticHandler.create())
+        // /builtinstatic/* , 该 path 是约定专门用于处理静态文件的
+        router.route("/builtinstatic/*").handler(StaticHandler.create())
 
         router.route().handler(BodyHandler.create()
             .setMergeFormAttributes(bodyHandlerOptions.mergeFormAttributes)
@@ -330,8 +330,8 @@ object Application {
                 // we execute over other handlers. This is only required once and
                 // only if several handlers do output.
 
-                // 排除 /static/* , 该 path 是约定专门用于处理静态文件的
-                if (it.path().startsWith("/static/").not()) {
+                // 排除 /builtinstatic/* , 该 path 是约定专门用于处理静态文件的
+                if (it.path().startsWith("/builtinstatic/").not()) {
                     it.response().isChunked = true
                     if (it.method() == HttpMethod.POST) {
                         it.isExpectMultipart = true
