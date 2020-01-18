@@ -42,7 +42,7 @@ class SeqIdServiceVerticle : CoroutineVerticle() {
             }
         }
 
-        Logger.debug("Start SeqIdServiceVerticle, workerId: $workerId")
+        Logger.info("Start SeqIdServiceVerticle, workerId: $workerId")
     }
 
     override suspend fun stop() {
