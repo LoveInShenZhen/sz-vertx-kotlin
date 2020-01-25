@@ -294,7 +294,7 @@ object Application {
                     }
                 }
 
-                httpServer.websocketHandler(webSocketRootHandler)
+                httpServer.webSocketHandler(webSocketRootHandler)
             }
         }
     }
