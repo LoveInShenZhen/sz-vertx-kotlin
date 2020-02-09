@@ -397,17 +397,14 @@ object Application {
     }
 
     private fun httpServerOptions(): HttpServerOptions {
-        val httpCfg = config.getConfig("app.httpServer") // 资源文件里的 reference.conf 包含默认配置,所以该configPath必然存在
+        val httpCfg = config.getConfig("app.httpServer.httpOptions") // 资源文件里的 reference.conf 包含默认配置,所以该configPath必然存在
 
-        val cfgMap = httpCfg.root().map {
-            if (it.key == "port") {
-                Pair<String, Any>(it.key, it.value.unwrapped().toString().toInt())
-            } else {
-                Pair<String, Any>(it.key, it.value.unwrapped())
-            }
-        }.toMap()
+        val cfgMap = httpCfg.root().map { Pair<String, Any>(it.key, it.value.unwrapped()) }.toMap()
+        val httpOptionJson = JsonObject(cfgMap)
+        httpOptionJson.put("host", config.getString("app.httpServer.host"))
+        httpOptionJson.put("port", config.getInt("app.httpServer.port"))
 
-        val httpServerOptions = HttpServerOptions(JsonObject(cfgMap))
+        val httpServerOptions = HttpServerOptions(httpOptionJson)
         if (SystemInfo().isLinux) {
             // Vert.x can run with native transports (when available) on BSD (OSX) and Linux:
             // 参考: https://vertx.io/docs/vertx-core/kotlin/#_native_transports
