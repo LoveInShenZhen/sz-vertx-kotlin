@@ -420,6 +420,9 @@ object Application {
             httpServerOptions.isReusePort = config.getBoolean("app.httpServer.networkOptions.reusePort")
         }
 
+        httpServerOptions.maxWebSocketFrameSize = config.getInt("app.httpServer.webSocket.maxWebSocketFrameSize")
+        httpServerOptions.maxWebSocketMessageSize = config.getInt("app.httpServer.webSocket.maxWebSocketMessageSize")
+
         return httpServerOptions
     }
 
