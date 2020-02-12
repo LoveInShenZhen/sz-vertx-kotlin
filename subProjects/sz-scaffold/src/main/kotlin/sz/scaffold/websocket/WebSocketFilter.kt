@@ -31,14 +31,21 @@ class WebSocketFilter(private val vertx: Vertx) : WebSocketHandler {
     override fun handle(webSocket: ServerWebSocket) {
         try {
             val handlerInstence = pathHandlerMap.getOrDefault(webSocket.path(), rejectHandler)
-            handlerInstence.handle(AutoPingServerWebSocket(webSocket, vertx, pingInterval))
+            if (autoPingByServer) {
+                handlerInstence.handle(AutoPingServerWebSocket(webSocket, vertx, pingInterval))
+            } else {
+                handlerInstence.handle(webSocket)
+            }
         } catch (ex: Exception) {
             webSocket.close(500, ex.message)
             Logger.error(ExceptionUtil.exceptionStackTraceToString(ex))
         }
     }
 
-    private val pingInterval: Long by lazy {
-        Application.config.getLong("app.httpServer.webSocket.pingInterval")
-    }
+    private val pingInterval: Long
+        get() = Application.config.getLong("app.httpServer.webSocket.pingInterval")
+
+    private val autoPingByServer: Boolean
+        get() = Application.config.getBoolean("app.httpServer.webSocket.autoPingByServer")
+
 }
