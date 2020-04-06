@@ -35,6 +35,6 @@
 
 | 通过微信捐助                                                 | 通过支付宝捐助                                               |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ![微信](https://kklongming.github.io/res/images/wechat_donate.png) | [支付宝](https://kklongming.github.io/res/images/alipay_donate.png) |
+| ![微信](https://kklongming.github.io/res/images/wechat_donate.png) | ![支付宝](https://kklongming.github.io/res/images/alipay_donate.png) |
 
 
