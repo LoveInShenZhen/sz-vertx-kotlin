@@ -27,7 +27,7 @@ object FileTemplate {
 
     private fun templateDir(): File {
         // 约定, 所有的模板文件都放在 /conf 目录下
-        return Application.getFile("/conf")
+        return Application.getFile("${File.separator}conf")
     }
 
     // TemplatePath 为在 /conf 目录下的相对路径
