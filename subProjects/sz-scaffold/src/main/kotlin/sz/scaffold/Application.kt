@@ -261,8 +261,9 @@ object Application {
 
     // 从 conf/route 文件, 以及 conf/sub_routes/*.route 子路由文件里加载路由配置
     fun loadApiRouteFromRouteFiles(): List<ApiRoute> {
-        val routeFiles = mutableListOf(getFile("conf/route"))
-        val subRoutesFolder = getFile("conf/sub_routes")
+
+        val routeFiles = mutableListOf(getFile("conf${File.separator}route"))    // conf/route
+        val subRoutesFolder = getFile("conf${File.separator}sub_routes")                    // conf/sub_routes
         if (subRoutesFolder.exists() && subRoutesFolder.isDirectory) {
             val files = subRoutesFolder.walk().filter { it.isFile && it.extension == "route" }
             routeFiles.addAll(files)
@@ -276,7 +277,7 @@ object Application {
 
     // 从 conf/route.websocket 文件, 加载 webSocket 配置
     fun setupWebSocketHandler(httpServer: HttpServer) {
-        val routeFile = getFile("conf/route.websocket")
+        val routeFile = getFile("conf${File.separator}route.websocket")             // conf/route.websocket
         if (routeFile.exists()) {
             val routeRegex = """(/\S*)\s+(\S+)\s*$""".toRegex()
             val lines = routeFile.readLines().map { it.trim() }
