@@ -8,7 +8,6 @@ import models.PlanTask
 import models.TaskStatus
 import sz.ebean.DB
 import sz.ebean.runTransactionBlocking
-import sz.ebean.tableExists
 import sz.scaffold.Application
 import sz.scaffold.ext.getIntOrElse
 import sz.scaffold.tools.json.Json
@@ -148,7 +147,7 @@ object PlanTaskService {
                 } catch (ex: Exception) {
                     loadedTasks.clear()
                     Logger.error(ExceptionUtil.exceptionStackTraceToString(ex))
-                    Thread.sleep(60 * 1000)
+                    Thread.sleep(10 * 1000)
                 }
             }
             Logger.debug("Stop PlanningTaskLoader for requireSeq: $requireSeq")
@@ -242,7 +241,6 @@ object PlanTaskService {
     val enabled: Boolean by lazy {
         Application.config.hasPath("service.planTask.enable")
             && Application.config.getBoolean("service.planTask.enable")
-            && taskDB.tableExists("plan_task")
     }
 
 }
