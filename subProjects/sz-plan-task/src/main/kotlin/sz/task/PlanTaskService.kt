@@ -7,6 +7,7 @@ import jodd.exception.ExceptionUtil
 import models.PlanTask
 import models.TaskStatus
 import sz.ebean.DB
+import sz.ebean.SzEbeanConfig
 import sz.ebean.runTransactionBlocking
 import sz.scaffold.Application
 import sz.scaffold.ext.getIntOrElse
@@ -51,6 +52,8 @@ object PlanTaskService {
             if (isRunning) return
 
             stopNow = false
+
+            waitFroTaskDbReady()
 
             seqPlanningTaskLoader = buildPlanningTaskLoader(true, seqPlanningWorker)
             parallerPlanningTaskLoader = buildPlanningTaskLoader(false, parallelPlanningWorker)
@@ -98,6 +101,32 @@ object PlanTaskService {
             Logger.error(ExceptionUtil.exceptionStackTraceToString(ex))
         } finally {
             isRunning = false
+        }
+    }
+
+    /**
+     * 等待 PlanTask 的数据库连接就绪
+     */
+    private fun waitFroTaskDbReady() {
+        while (true) {
+            if (PlanTask.dataSourceName.isBlank()) {
+                // PlanTask 使用的是默认数据源
+                if (SzEbeanConfig.defaultDatasourceReady) {
+                    // 默认数据源已经就绪
+                    return
+                } else {
+                    // 等待 1 秒后重新检测数据源是否就绪
+                    Thread.sleep(1000)
+                    continue
+                }
+            } else if (SzEbeanConfig.ebeanServerConfigs.containsKey(PlanTask.dataSourceName)) {
+                // PlanTask 使用的是指定的数据源, 并且已经就绪
+                return
+            } else {
+                // 等待 1 秒后重新检测数据源是否就绪
+                Thread.sleep(1000)
+                continue
+            }
         }
     }
 
@@ -234,9 +263,10 @@ object PlanTaskService {
         }
     }
 
-    val taskDB: EbeanServer by lazy {
-        DB.byDataSource(PlanTask.dataSourceName)
-    }
+    val taskDB: EbeanServer
+        get() {
+            return DB.byDataSource(PlanTask.dataSourceName)
+        }
 
     val enabled: Boolean by lazy {
         Application.config.hasPath("service.planTask.enable")
