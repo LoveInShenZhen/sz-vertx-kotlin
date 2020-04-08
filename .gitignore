@@ -26,5 +26,7 @@ RUNNING_PID
 *.ipr
 *.iws
 
+**/out/
+
 # office temp files
 ~$*
