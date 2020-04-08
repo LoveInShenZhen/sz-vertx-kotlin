@@ -61,7 +61,7 @@
                     <tbody>
                         <#list group.apiInfoList as apiInfo>
                             <tr>
-                                <td>${apiInfo.url}</td>
+                                <td><a href='${apiInfo.DocPage()}' target="_blank">${apiInfo.url}</a></td>
                                 <td>${apiInfo.httpMethod}</td>
                                 <td>${apiInfo.apiComment}</td>
                                 <td><a href='${apiInfo.TestPage()}' target="_blank">点击测试</a></td>

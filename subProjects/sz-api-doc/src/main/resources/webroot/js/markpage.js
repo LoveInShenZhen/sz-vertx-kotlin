@@ -242,6 +242,15 @@ var ResConfig = {
 
     new markpage().loadResource(function() {
         this.render('#markpage');
+
+        let anchor = window.location.hash.replace("#", "");
+        if (anchor !== '') {
+            let anchor_e = document.getElementById(anchor);
+            if (anchor_e !== null) {
+                anchor_e.scrollIntoView();
+            }
+        }
+
     });
 
 })();

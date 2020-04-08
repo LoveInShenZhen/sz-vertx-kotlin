@@ -54,7 +54,7 @@ fun ApiRoute.buildApiInfo(host: String): ApiInfo {
         }
     }
 
-    return ApiInfo(host = host,
+    return ApiInfo(
         url = this.path,
         httpMethod = httpMethod,
         controllerClass = this.controllerKClass.java.name,

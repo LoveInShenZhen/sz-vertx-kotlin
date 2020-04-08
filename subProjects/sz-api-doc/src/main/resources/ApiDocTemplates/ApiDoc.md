@@ -2,7 +2,8 @@
 <#list groups as group>
 ### ${group.toMarkdownStr(group.groupName)}
 <#list group.apiInfoList as apiInfo>
-#### ${apiInfo.methodName}
+<span id="${apiInfo.anchor()}"></span>
+#### [${apiInfo.methodName}](#${apiInfo.anchor()})
 * **功能描述**: ${apiInfo.toMarkdownStr(apiInfo.apiComment)}
 * **API PATH**: ${apiInfo.toMarkdownStr(apiInfo.url)}
 * **HTTP Method**: ${apiInfo.httpMethod}

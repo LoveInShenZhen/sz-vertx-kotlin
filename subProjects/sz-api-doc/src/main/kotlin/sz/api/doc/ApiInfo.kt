@@ -21,8 +21,6 @@ import kotlin.reflect.jvm.javaType
 //
 class ApiInfo
 constructor(
-    val host: String = "localhost:9000",
-
     @Comment("API url")
     val url: String,
 
@@ -139,7 +137,15 @@ constructor(
     }
 
     fun TestPage(): String {
-        return "http://$host${pathOfTestPage()}?apiUrl=$url&httpMethod=$httpMethod"
+        return "${pathOfTestPage()}?apiUrl=$url&httpMethod=$httpMethod"
+    }
+
+    fun anchor(): String {
+        return "${controllerClass}.${methodName}".replace(".", "_")
+    }
+
+    fun DocPage(): String {
+        return "${apiDocHtmlPath}#${anchor()}"
     }
 
     fun IsGetJsonApi(): Boolean {
@@ -226,6 +232,8 @@ constructor(
             .find { it.controllerKClass == ApiDoc::class && it.controllerFun.name == "apiTest" }?.path ?: ""
         val pageTestPath = Application.loadApiRouteFromRouteFiles()
             .find { it.controllerKClass == ApiDoc::class && it.controllerFun.name == "pageTest" }?.path ?: ""
+        val apiDocHtmlPath = Application.loadApiRouteFromRouteFiles()
+            .find { it.controllerKClass == ApiDoc::class && it.controllerFun.name == "apiDocHtml" }?.path ?: ""
 
         private fun defaultSampleJson(kClass: KClass<*>): String {
             try {
