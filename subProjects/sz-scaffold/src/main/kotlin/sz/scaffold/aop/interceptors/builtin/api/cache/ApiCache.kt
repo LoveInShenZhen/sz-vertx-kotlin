@@ -8,7 +8,7 @@ import io.vertx.core.http.HttpMethod
 import jodd.crypt.DigestEngine
 import sz.scaffold.aop.actions.Action
 import sz.scaffold.aop.annotations.WithAction
-import sz.scaffold.cache.redis.RedisAsyncCache
+import sz.scaffold.cache.CacheManager
 import sz.scaffold.controller.ContentTypes
 import sz.scaffold.tools.json.toShortJson
 
@@ -17,7 +17,7 @@ import sz.scaffold.tools.json.toShortJson
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ApiCache(
     val expireTimeInMs: Long,
-    val cacheName: String = "default",
+    val cacheName: String,
     val excludeQueryParams: Array<String> = ["_"]
 )
 
@@ -36,7 +36,7 @@ class ApiCacheAction : Action<ApiCache>() {
         }
 
         val cacheKey = "ApiCache@${request.path()}@${request.method().name}@${DigestEngine.sha1().digestString(queryParamsTxt + bodyParams)}"
-        val cache = RedisAsyncCache(this.config.cacheName)
+        val cache = CacheManager.asyncCache(this.config.cacheName)
         val cacheValue = cache.getOrNullAwait(cacheKey)
 
         return if (cacheValue == null) {

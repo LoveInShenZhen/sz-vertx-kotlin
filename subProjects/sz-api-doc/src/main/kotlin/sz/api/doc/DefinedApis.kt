@@ -11,7 +11,7 @@ import kotlin.reflect.jvm.jvmErasure
 // Created by kk on 17/8/24.
 //
 @Suppress("MemberVisibilityCanBePrivate")
-class DefinedApis(val host: String = "localhost:9000", val isJsonApi: Boolean = true) {
+class DefinedApis(val isJsonApi: Boolean = true) {
 
     var groups: MutableList<ApiGroup> = mutableListOf()
 
@@ -35,14 +35,14 @@ class DefinedApis(val host: String = "localhost:9000", val isJsonApi: Boolean = 
     }
 
     private fun addApi(apiRoute: ApiRoute) {
-        val apiInfo = apiRoute.buildApiInfo(host)
+        val apiInfo = apiRoute.buildApiInfo()
         val group = apiGrouByName(apiInfo.groupName())
         group.apiInfoList.add(apiInfo)
     }
 
 }
 
-fun ApiRoute.buildApiInfo(host: String): ApiInfo {
+fun ApiRoute.buildApiInfo(): ApiInfo {
     var httpMethod = this.method.name
     if (httpMethod == "POST") {
         httpMethod = ApiInfo.PostForm

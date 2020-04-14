@@ -15,7 +15,7 @@ class ApiDoc : ApiController() {
 
     @DevModeOnly
     fun apiIndex(): String {
-        val apis = DefinedApis(this.httpContext.request().host())
+        val apis = DefinedApis()
         val html = ResourceTemplate.process(DefinedApis::class.java, "/ApiDocTemplates/ApiIndex.html", apis)
         contentType(ContentTypes.Html)
         return html
@@ -23,7 +23,7 @@ class ApiDoc : ApiController() {
 
     @DevModeOnly
     fun apiTest(apiUrl: String, httpMethod: String): String {
-        val apiInfo = DefinedApis(this.httpContext.request().host())
+        val apiInfo = DefinedApis()
             .groups.flatMap { it.apiInfoList }
             .find { it.url == apiUrl && it.httpMethod == httpMethod }
             ?: throw BizLogicException("route: $apiUrl 不存在或者http method 不匹配")
@@ -35,7 +35,7 @@ class ApiDoc : ApiController() {
     @Comment("非 api 的 http 路由列表")
     @DevModeOnly
     fun pageIndex(): String {
-        val apis = DefinedApis(this.httpContext.request().host(), false)
+        val apis = DefinedApis(isJsonApi = false)
         val html = ResourceTemplate.process(DefinedApis::class.java, "/ApiDocTemplates/ApiIndex.html", apis)
         contentType(ContentTypes.Html)
         return html
@@ -43,7 +43,7 @@ class ApiDoc : ApiController() {
 
     @DevModeOnly
     fun pageTest(apiUrl: String, httpMethod: String): String {
-        val apiInfo = DefinedApis(this.httpContext.request().host(), false)
+        val apiInfo = DefinedApis(isJsonApi = false)
             .groups.flatMap { it.apiInfoList }
             .find { it.url == apiUrl && it.httpMethod == httpMethod }
             ?: throw BizLogicException("route: $apiUrl 不存在或者http method 不匹配")
@@ -55,7 +55,7 @@ class ApiDoc : ApiController() {
     @Comment("返回api文档的markdown格式文本")
     @DevModeOnly
     fun apiDocMarkdown(): String {
-        val apis = DefinedApis(this.httpContext.request().host())
+        val apis = DefinedApis()
         val markdown = ResourceTemplate.process(DefinedApis::class.java, "/ApiDocTemplates/ApiDoc.md", apis)
         contentType(ContentTypes.Text)
         return markdown
@@ -64,7 +64,7 @@ class ApiDoc : ApiController() {
     @Comment("返回api文档的html格式文本")
     @DevModeOnly
     fun apiDocHtml(): String {
-        val apis = DefinedApis(this.httpContext.request().host())
+        val apis = DefinedApis()
         val markdown = ResourceTemplate.process(DefinedApis::class.java, "/ApiDocTemplates/ApiDoc.md", apis)
         val html = ResourceTemplate.process(DefinedApis::class.java, "/ApiDocTemplates/ApiDoc.html", mapOf("api_markdown" to markdown))
         contentType(ContentTypes.Html)

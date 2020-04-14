@@ -4,10 +4,6 @@ import jodd.exception.ExceptionUtil
 import jodd.io.FileNameUtil
 import sz.scaffold.tools.logger.AnsiColor
 import java.io.File
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
 import java.util.*
 
 //
@@ -121,20 +117,6 @@ fun Boolean.failed(): Boolean {
  */
 fun Boolean.succeed(): Boolean {
     return this
-}
-
-fun LocalDateTime.toEpochMs(zoneOffset: ZoneOffset = Zone.systemZoneOffset): Long {
-    return this.toInstant(zoneOffset).toEpochMilli()
-}
-
-fun epochMsToLocalDateTime(epochMs: Long, zoneOffset: ZoneOffset = Zone.systemZoneOffset): LocalDateTime {
-    return LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMs), zoneOffset)
-}
-
-object Zone {
-    val systemZoneOffset: ZoneOffset by lazy {
-        OffsetDateTime.now().offset
-    }
 }
 
 fun filePathJoin(vararg paths: String): String {
