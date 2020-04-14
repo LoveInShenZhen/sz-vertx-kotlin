@@ -22,12 +22,12 @@ import jodd.util.ClassLoaderUtil
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import org.apache.commons.lang3.SystemUtils
+import org.kodein.di.Kodein
 import sz.scaffold.controller.ApiRoute
 import sz.scaffold.controller.BodyHandlerOptions
 import sz.scaffold.dispatchers.IDispatcherFactory
 import sz.scaffold.ext.changeWorkingDir
 import sz.scaffold.ext.filePathJoin
-import sz.scaffold.redis.kedis.KedisPool
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.json.toShortJson
 import sz.scaffold.tools.logger.Logger
@@ -85,6 +85,20 @@ object Application {
             }
             return _vertoptions!!
         }
+
+    private var _kodein: Kodein? = null
+
+    val kodein: Kodein
+        get() {
+            if (_kodein == null) {
+                throw SzException("Application has not setup kodein.")
+            }
+            return _kodein!!
+        }
+
+    fun setupKodein(supplier: () -> Kodein) {
+        _kodein = supplier()
+    }
 
     init {
         writePidFile()
@@ -449,10 +463,6 @@ object Application {
             Logger.info("NodeId: ${vertxOptions.clusterManager.nodeID}")
             Logger.info("Cluster Nodes: ${vertxOptions.clusterManager.nodes.joinToString(", ")}")
         }
-    }
-
-    fun initRedisPool() {
-        KedisPool.initPool()
     }
 
     private fun File.hasFile(path: String): Boolean {
