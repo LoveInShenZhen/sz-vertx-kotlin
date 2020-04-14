@@ -2,6 +2,7 @@ package sz.scaffold.cache
 
 import io.vertx.core.json.JsonObject
 import sz.scaffold.Application
+import sz.scaffold.tools.SzException
 import sz.scaffold.tools.json.toShortJson
 
 //
@@ -17,16 +18,14 @@ object CacheManager {
      * get cache instence by cache name.
      */
     fun cache(cacheName: String): CacheApi {
-        val cache = cacheApiMap[cacheName]
-        return cache ?: createCache(cacheName)
+        return cacheApiMap[cacheName] ?: createCache(cacheName)
     }
 
     /**
      * get async cache instence by cache name.
      */
     fun asyncCache(cacheName: String): AsyncCacheApi {
-        val cache = asyncCacheApiMap[cacheName]
-        return cache ?: createAsyncCache(cacheName)
+        return asyncCacheApiMap[cacheName] ?: createAsyncCache(cacheName)
     }
 
     @Synchronized
@@ -50,7 +49,7 @@ object CacheManager {
 
         val cfgPath = "app.cache.configs.${cacheName}.factory"
         if (Application.config.hasPath(cfgPath).not()) {
-            throw RuntimeException("Please check application.conf to make sure that the \"factory\" class of the specified cache [$cacheName] is set correctly.")
+            throw SzException("Please check application.conf to make sure that the \"factory\" class of the specified cache [$cacheName] is set correctly.")
         }
         val factoryClassName = Application.config.getString(cfgPath)
         val factoryClass = Application.classLoader.loadClass(factoryClassName)
@@ -62,7 +61,7 @@ object CacheManager {
 
         val cfgPath = "app.cache.configs.${cacheName}.options"
         if (Application.config.hasPath(cfgPath).not()) {
-            throw RuntimeException("Please check application.conf to make sure that the options of the specified cache [$cacheName] is set correctly.")
+            throw SzException("Please check application.conf to make sure that the options of the specified cache [$cacheName] is set correctly.")
         }
         val optionsJson = Application.config.getConfig(cfgPath).root().unwrapped().toShortJson()
         return JsonObject(optionsJson)
@@ -71,7 +70,7 @@ object CacheManager {
     private fun checkCacheName(cacheName: String) {
         val cfgPath = "app.cache.configs.${cacheName}"
         if (Application.config.hasPath(cfgPath).not()) {
-            throw RuntimeException("Please check application.conf, the name of cache: [$cacheName] does not exists.")
+            throw SzException("Please check application.conf, the name of cache: [$cacheName] does not exists.")
         }
     }
 }
