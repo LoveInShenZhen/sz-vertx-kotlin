@@ -1,4 +1,4 @@
-package sz.redis.cache
+package sz.scaffold.redis.cache
 
 import io.vertx.core.json.JsonObject
 import io.vertx.redis.client.Redis

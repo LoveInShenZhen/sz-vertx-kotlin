@@ -1,4 +1,4 @@
-package sz.redis.cache
+package sz.scaffold.redis.cache
 
 import io.vertx.redis.client.Redis
 import kotlinx.coroutines.runBlocking

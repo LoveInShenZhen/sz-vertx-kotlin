@@ -1,4 +1,4 @@
-package sz.redis
+package sz.scaffold.redis
 
 import io.vertx.kotlin.redis.client.sendAwait
 import io.vertx.redis.client.*
