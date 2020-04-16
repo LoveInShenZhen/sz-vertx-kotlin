@@ -7,6 +7,7 @@ import sz.scaffold.tools.SzException
 //
 // Created by kk on 2020/4/16.
 //
+@Suppress("DuplicatedCode")
 class LocalCache(private val cacheImp: Cache<String, CacheEntry>) : CacheApi {
     override fun exists(key: String): Boolean {
         val entry = cacheImp.getIfPresent(key)
