@@ -16,14 +16,14 @@ dependencies {
     api(project(":subProjects:jodd-dependency"))
     api(project(":subProjects:sz-log"))
 
-    api("com.fasterxml.jackson.module:jackson-module-jsonSchema:2.10.1")
-    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.1") {
+    api("com.fasterxml.jackson.module:jackson-module-jsonSchema:2.10.2")
+    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.2") {
         this.exclude(group = "org.jetbrains.kotlin")
     }
-    api("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.10.1")
-    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.10.1")
-    api("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.10.1")
-    api("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.10.1")
+    api("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.10.2")
+    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.10.2")
+    api("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.10.2")
+    api("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.10.2")
 
     api("com.typesafe:config:1.3.4")
     api("org.apache.commons:commons-lang3:3.9")
