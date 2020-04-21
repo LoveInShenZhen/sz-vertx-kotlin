@@ -37,13 +37,19 @@
  * Thansk for those open source libary bellow, and you can change the url if you want, such as from cdnjs 
  **/
 var ResConfig = {
-    marx_css: 'http://cdn.bootcss.com/marx/1.3.0/marx.min.css',
-    mermaid_css: 'http://cdn.bootcss.com/mermaid/0.5.8/mermaid.min.css',
+    // marx_css: 'http://cdn.bootcss.com/marx/1.3.0/marx.min.css',
+    // mermaid_css: 'http://cdn.bootcss.com/mermaid/0.5.8/mermaid.min.css',
+    marx_css: '/builtinstatic/css/marx.min.css',
+    mermaid_css: '/builtinstatic/css/mermaid.min.css',
 
-    zepto_js: 'http://cdn.bootcss.com/zepto/1.1.6/zepto.min.js',
-    showdown_js: 'http://cdn.bootcss.com/showdown/1.3.0/showdown.min.js',
-    highlight_js: 'http://cdn.bootcss.com/highlight.js/8.9.1/highlight.min.js',
-    mermaid_js: 'http://cdn.bootcss.com/mermaid/0.5.8/mermaid.min.js'
+    // zepto_js: 'http://cdn.bootcss.com/zepto/1.1.6/zepto.min.js',
+    // showdown_js: 'http://cdn.bootcss.com/showdown/1.3.0/showdown.min.js',
+    // highlight_js: 'http://cdn.bootcss.com/highlight.js/8.9.1/highlight.min.js',
+    // mermaid_js: 'http://cdn.bootcss.com/mermaid/0.5.8/mermaid.min.js'
+    zepto_js: '/builtinstatic/js/zepto.min.js',
+    showdown_js: '/builtinstatic/js/showdown.min.js',
+    highlight_js: '/builtinstatic/js/highlight.min.js',
+    mermaid_js: '/builtinstatic/js/mermaid.min.js'
 };
 (function() {
     function markpage() {
@@ -154,7 +160,9 @@ var ResConfig = {
         this.render = function(selector) {
             var $doc = $(selector).hide();
             var theme = $doc.attr('data-highlight-theme') || 'railscasts';
-            self.loadcss('http://cdn.bootcss.com/highlight.js/8.9.1/styles/' + theme + '.min.css');
+            // self.loadcss('http://cdn.bootcss.com/highlight.js/8.9.1/styles/' + theme + '.min.css');
+            self.loadcss('/builtinstatic/css/railscasts.min.css');
+
             $('body').append('<div class="docmenu"></div><main><section class="docbody"></section></main><footer>Render By MarkPage</footer>');
             $('#markpage').hide();
             var text = $doc.html();
