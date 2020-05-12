@@ -2,6 +2,7 @@ package sz.api.doc
 
 import sz.api.controllers.ApiDoc
 import sz.scaffold.Application
+import sz.scaffold.annotations.Comment
 import sz.scaffold.annotations.PostJson
 import sz.scaffold.controller.ApiRoute
 import kotlin.reflect.full.findAnnotation
@@ -11,7 +12,7 @@ import kotlin.reflect.jvm.jvmErasure
 // Created by kk on 17/8/24.
 //
 @Suppress("MemberVisibilityCanBePrivate")
-class DefinedApis(val isJsonApi: Boolean = true) {
+class DefinedApis(@Comment("是否是 json api") val isJsonApi: Boolean = true) {
 
     var groups: MutableList<ApiGroup> = mutableListOf()
 
@@ -36,7 +37,7 @@ class DefinedApis(val isJsonApi: Boolean = true) {
 
     private fun addApi(apiRoute: ApiRoute) {
         val apiInfo = apiRoute.buildApiInfo()
-        val group = apiGrouByName(apiInfo.groupName())
+        val group = apiGrouByName(apiInfo.groupName)
         group.apiInfoList.add(apiInfo)
     }
 
@@ -55,7 +56,7 @@ fun ApiRoute.buildApiInfo(): ApiInfo {
     }
 
     return ApiInfo(
-        url = this.path,
+        path = this.path,
         httpMethod = httpMethod,
         controllerClass = this.controllerKClass.java.name,
         methodName = this.controllerFun.name,

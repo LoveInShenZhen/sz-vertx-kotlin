@@ -19,10 +19,9 @@ import kotlin.reflect.jvm.javaType
 //
 // Created by kk on 17/8/24.
 //
-class ApiInfo
-constructor(
+class ApiInfo constructor(
     @Comment("API url")
-    val url: String,
+    val path: String,
 
     @Comment("API http method: GET or POST")
     val httpMethod: String,
@@ -52,14 +51,52 @@ constructor(
     @Comment("API 描述")
     var apiComment: String = ""
 
-    @Comment("返回Replay的描述信息")
-    var replyInfo: FieldSchema
+    @Comment("Replay 的json结构")
+    @JsonIgnore
+    var replySchema: FieldSchema
+        @JsonIgnore
+        get
+
+    @Comment("Replay 的json结构描述信息")
+    val replySchemaDesc: String
+        get() {
+            return replySchema.JsonSchema()
+        }
 
     @Comment("返回结果样例")
     var replySampleData: String = ""
 
+    @Comment("Post Json 时的json结构描述信息")
+    val postJsonSchemaDesc: String
+        get() {
+            return if (IsPostJsonApi()) {
+                postJsonSchema()
+            } else {
+                ""
+            }
+        }
+
+    @Comment("Post Form 是,表单字段列表")
+    val postFormFields: List<ParameterInfo>
+        get() {
+            return if (IsPostFormApi()) {
+                PostFormFieldInfos()
+            } else {
+                listOf()
+            }
+        }
+
     @Comment("API 所有参数的描述")
     var params: List<ParameterInfo> = emptyList()
+
+    @Comment("API 分组名称")
+    val groupName: String
+        get() {
+            val controllerClazz = Class.forName(this.controllerClass)
+            val anno = controllerClazz.getAnnotation(Comment::class.java)
+            // controller 类上面如果没有 @Comment 注解, 则使用类名作为分组名称
+            return anno?.value ?: this.controllerClass
+        }
 
     init {
         replyClass = replyKClass.javaObjectType.name
@@ -69,12 +106,12 @@ constructor(
             postDataKClass.javaObjectType.name
         }
 
-        replyInfo = FieldSchema()
-        replyInfo.level = 0
-        replyInfo.name = "reply"
-        replyInfo.desc = ""
-        replyInfo.type = JsonDataType.OBJECT.typeName
-        replyInfo.kotlin_class = replyKClass
+        replySchema = FieldSchema()
+        replySchema.level = 0
+        replySchema.name = "reply"
+        replySchema.desc = ""
+        replySchema.type = JsonDataType.OBJECT.typeName
+        replySchema.kotlin_class = replyKClass
 
         postDataSample = if (postDataKClass != null && IsPostJsonApi()) {
             SampleJsonData(postDataKClass)
@@ -87,18 +124,12 @@ constructor(
         try {
             analyse()
         } catch (ex: Exception) {
-            Logger.warn("ApiInfo analyse:WARN ${this.url} Abnormal")
+            Logger.warn("ApiInfo analyse:WARN ${this.path} Abnormal")
         }
     }
 
     fun toMarkdownStr(str: String): String {
         return str.escapeMarkdown()
-    }
-
-    fun groupName(): String {
-        val controllerClazz = Class.forName(this.controllerClass)
-        val anno = controllerClazz.getAnnotation(Comment::class.java)
-        return anno?.value ?: this.controllerClass
     }
 
     private fun analyse() {
@@ -133,15 +164,15 @@ constructor(
 
     private fun analyseReply() {
         // 分析返回的 reply 的信息
-        FieldSchema.resolveFields(Class.forName(this.replyClass).kotlin, replyInfo)
+        FieldSchema.resolveFields(Class.forName(this.replyClass).kotlin, replySchema)
     }
 
     fun TestPage(): String {
-        return "${pathOfTestPage()}?apiUrl=$url&httpMethod=$httpMethod"
+        return "${pathOfTestPage()}?apiUrl=$path&httpMethod=$httpMethod"
     }
 
     fun anchor(): String {
-        return "${controllerClass}.${methodName}".replace(".", "_")
+        return "${path}.${httpMethod}".replace(".", "_").replace("/", "_")
     }
 
     fun DocPage(): String {

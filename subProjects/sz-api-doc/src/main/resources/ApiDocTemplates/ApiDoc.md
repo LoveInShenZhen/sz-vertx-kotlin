@@ -5,7 +5,7 @@
 <span id="${apiInfo.anchor()}"></span>
 #### [${apiInfo.methodName}](#${apiInfo.anchor()})
 * **功能描述**: ${apiInfo.toMarkdownStr(apiInfo.apiComment)}
-* **API PATH**: ${apiInfo.toMarkdownStr(apiInfo.url)}
+* **API PATH**: ${apiInfo.toMarkdownStr(apiInfo.path)}
 * **HTTP Method**: ${apiInfo.httpMethod}
 
 * Query参数说明:
@@ -26,7 +26,7 @@ ${apiInfo.postDataSample}
 <#if apiInfo.IsPostJsonApi() >
 * Post Json 方式提交的 json 结构:
 ```
-${apiInfo.postJsonSchema()}
+${apiInfo.postJsonSchemaDesc}
 ```
 </#if>
 
@@ -42,7 +42,7 @@ ${apiInfo.postJsonSchema()}
 * 返回结果的 JSON 结构:
 
 ```
-${apiInfo.replyInfo.JsonSchema()}
+${apiInfo.replySchemaDesc}
 ```
 
 * 返回结果样例:
