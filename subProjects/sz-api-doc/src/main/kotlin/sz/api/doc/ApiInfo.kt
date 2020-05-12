@@ -19,26 +19,31 @@ import kotlin.reflect.jvm.javaType
 //
 // Created by kk on 17/8/24.
 //
-class ApiInfo
-constructor(
-    @Comment("API url")
-    val url: String,
+@Suppress("CanBePrimaryConstructorProperty")
+class ApiInfo constructor(
+    path: String,
+    httpMethod: String,
+    controllerClass: String,
+    methodName: String,
+    replyKClass: KClass<*>,
+    postDataKClass: KClass<*>?,
+    is_json_api: Boolean,
+    defaultValues: Map<String, String>) {
+
+    @Comment("API Path")
+    val path: String = path
 
     @Comment("API http method: GET or POST")
-    val httpMethod: String,
+    val httpMethod: String = httpMethod
 
     @Comment("API 对应的 Controller 类名称")
-    val controllerClass: String,
+    val controllerClass: String = controllerClass
 
     @Comment("API 对应的 Controller 类下的方法名称")
-    val methodName: String,
-
-    replyKClass: KClass<*>,
-
-    postDataKClass: KClass<*>?,
+    val methodName: String = methodName
 
     @Comment("为true表示是api, 否则是普通http链接")
-    val is_json_api: Boolean) {
+    val is_json_api: Boolean = is_json_api
 
     @Comment("返回Replay 对应的 java class name")
     var replyClass: String = ""
@@ -52,14 +57,58 @@ constructor(
     @Comment("API 描述")
     var apiComment: String = ""
 
-    @Comment("返回Replay的描述信息")
-    var replyInfo: FieldSchema
+    @Comment("Replay 的json结构")
+    @JsonIgnore
+    var replySchema: FieldSchema
+        @JsonIgnore
+        get
+
+    @Comment("Replay 的json结构描述信息")
+    val replySchemaDesc: String
+        get() {
+            return replySchema.JsonSchema()
+        }
 
     @Comment("返回结果样例")
     var replySampleData: String = ""
 
+    @Comment("Post Json 时的json结构描述信息")
+    val postJsonSchemaDesc: String
+        get() {
+            return if (IsPostJsonApi()) {
+                postJsonSchema()
+            } else {
+                ""
+            }
+        }
+
+    @Comment("Post Form 是,表单字段列表")
+    val postFormFields: List<ParameterInfo>
+        get() {
+            return if (IsPostFormApi()) {
+                PostFormFieldInfos()
+            } else {
+                listOf()
+            }
+        }
+
     @Comment("API 所有参数的描述")
     var params: List<ParameterInfo> = emptyList()
+
+    @Comment("参数默认值")
+    @JsonIgnore
+    val defaultValues = defaultValues
+        @JsonIgnore
+        get
+
+    @Comment("API 分组名称")
+    val groupName: String
+        get() {
+            val controllerClazz = Class.forName(this.controllerClass)
+            val anno = controllerClazz.getAnnotation(Comment::class.java)
+            // controller 类上面如果没有 @Comment 注解, 则使用类名作为分组名称
+            return anno?.value ?: this.controllerClass
+        }
 
     init {
         replyClass = replyKClass.javaObjectType.name
@@ -69,12 +118,12 @@ constructor(
             postDataKClass.javaObjectType.name
         }
 
-        replyInfo = FieldSchema()
-        replyInfo.level = 0
-        replyInfo.name = "reply"
-        replyInfo.desc = ""
-        replyInfo.type = JsonDataType.OBJECT.typeName
-        replyInfo.kotlin_class = replyKClass
+        replySchema = FieldSchema()
+        replySchema.level = 0
+        replySchema.name = "reply"
+        replySchema.desc = ""
+        replySchema.type = JsonDataType.OBJECT.typeName
+        replySchema.kotlin_class = replyKClass
 
         postDataSample = if (postDataKClass != null && IsPostJsonApi()) {
             SampleJsonData(postDataKClass)
@@ -87,18 +136,12 @@ constructor(
         try {
             analyse()
         } catch (ex: Exception) {
-            Logger.warn("ApiInfo analyse:WARN ${this.url} Abnormal")
+            Logger.warn("ApiInfo analyse:WARN ${this.path} Abnormal")
         }
     }
 
     fun toMarkdownStr(str: String): String {
         return str.escapeMarkdown()
-    }
-
-    fun groupName(): String {
-        val controllerClazz = Class.forName(this.controllerClass)
-        val anno = controllerClazz.getAnnotation(Comment::class.java)
-        return anno?.value ?: this.controllerClass
     }
 
     private fun analyse() {
@@ -125,23 +168,31 @@ constructor(
                 if (paramComment != null && paramComment is Comment) {
                     paramDesc = paramComment.value
                 }
-                ParameterInfo(name = it.name!!,
+
+                val paramInfo = ParameterInfo(name = it.name!!,
                     desc = paramDesc,
                     type = it.type.javaType.typeName.split(".").last())
+
+                if (this.defaultValues.containsKey(it.name!!)) {
+                    paramInfo.required = false
+                    paramInfo.defaultValue = this.defaultValues.getValue(it.name!!)
+                }
+
+                paramInfo
             }
     }
 
     private fun analyseReply() {
         // 分析返回的 reply 的信息
-        FieldSchema.resolveFields(Class.forName(this.replyClass).kotlin, replyInfo)
+        FieldSchema.resolveFields(Class.forName(this.replyClass).kotlin, replySchema)
     }
 
     fun TestPage(): String {
-        return "${pathOfTestPage()}?apiUrl=$url&httpMethod=$httpMethod"
+        return "${pathOfTestPage()}?apiUrl=$path&httpMethod=$httpMethod"
     }
 
     fun anchor(): String {
-        return "${controllerClass}.${methodName}".replace(".", "_")
+        return "${path}.${httpMethod}".replace(".", "_").replace("/", "_")
     }
 
     fun DocPage(): String {

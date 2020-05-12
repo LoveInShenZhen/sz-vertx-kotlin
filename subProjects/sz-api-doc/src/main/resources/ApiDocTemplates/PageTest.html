@@ -47,7 +47,7 @@
 <body>
     <div class="container">
         <fieldset>
-            <legend>${url}</legend>
+            <legend>${path}</legend>
 
             <#if IsGetJsonApi()>
                 <!--Get 方式 -->
@@ -64,10 +64,10 @@
 
                                 <div class="controls">
                                     <div class="pull-left">
-                                        <input type="text" id="${api_param.name}" name="${api_param.name}">
+                                        <input type="text" id="${api_param.name}" name="${api_param.name}" value="${api_param.defaultValue!}">
                                     </div>
                                     <div class="pull-left" style="margin-left:10px;">
-                                        ${api_param.type!}, ${api_param.desc!}
+                                        ${api_param.summary()}
                                     </div>
                                 </div>
 
@@ -100,10 +100,10 @@
 
                                 <div class="controls">
                                     <div class="pull-left">
-                                        <input type="text" id="${api_param.name}" name="${api_param.name}">
+                                        <input type="text" id="${api_param.name}" name="${api_param.name}" value="${api_param.defaultValue!}">
                                     </div>
                                     <div class="pull-left" style="margin-left:10px;">
-                                        ${api_param.type!}, ${api_param.desc!}
+                                        ${api_param.summary()}
                                     </div>
                                 </div>
 
@@ -160,10 +160,10 @@
 
                                 <div class="controls">
                                     <div class="pull-left">
-                                        <input type="text" id="${api_param.name}" name="${api_param.name}">
+                                        <input type="text" id="${api_param.name}" name="${api_param.name}" value="${api_param.defaultValue!}">
                                     </div>
                                     <div class="pull-left" style="margin-left:10px;">
-                                        ${api_param.type!}, ${api_param.desc!}
+                                        ${api_param.summary()}
                                     </div>
                                 </div>
 
@@ -187,7 +187,7 @@
                                         <input type="text" id="${api_param.name}" name="${api_param.name}">
                                     </div>
                                     <div class="pull-left" style="margin-left:10px;">
-                                        ${api_param.type!}, ${api_param.desc!}
+                                        ${api_param.summary()}
                                     </div>
                                 </div>
 

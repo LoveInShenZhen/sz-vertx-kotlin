@@ -2,6 +2,7 @@ package sz.api.doc
 
 import sz.api.controllers.ApiDoc
 import sz.scaffold.Application
+import sz.scaffold.annotations.Comment
 import sz.scaffold.annotations.PostJson
 import sz.scaffold.controller.ApiRoute
 import kotlin.reflect.full.findAnnotation
@@ -11,7 +12,7 @@ import kotlin.reflect.jvm.jvmErasure
 // Created by kk on 17/8/24.
 //
 @Suppress("MemberVisibilityCanBePrivate")
-class DefinedApis(val host: String = "localhost:9000", val isJsonApi: Boolean = true) {
+class DefinedApis(@Comment("是否是 json api") val isJsonApi: Boolean = true) {
 
     var groups: MutableList<ApiGroup> = mutableListOf()
 
@@ -35,14 +36,14 @@ class DefinedApis(val host: String = "localhost:9000", val isJsonApi: Boolean = 
     }
 
     private fun addApi(apiRoute: ApiRoute) {
-        val apiInfo = apiRoute.buildApiInfo(host)
-        val group = apiGrouByName(apiInfo.groupName())
+        val apiInfo = apiRoute.buildApiInfo()
+        val group = apiGrouByName(apiInfo.groupName)
         group.apiInfoList.add(apiInfo)
     }
 
 }
 
-fun ApiRoute.buildApiInfo(host: String): ApiInfo {
+fun ApiRoute.buildApiInfo(): ApiInfo {
     var httpMethod = this.method.name
     if (httpMethod == "POST") {
         httpMethod = ApiInfo.PostForm
@@ -55,12 +56,13 @@ fun ApiRoute.buildApiInfo(host: String): ApiInfo {
     }
 
     return ApiInfo(
-        url = this.path,
+        path = this.path,
         httpMethod = httpMethod,
         controllerClass = this.controllerKClass.java.name,
         methodName = this.controllerFun.name,
         replyKClass = this.returnType().jvmErasure,
         postDataKClass = this.postBodyClass(),
-        is_json_api = this.isJsonApi()
+        is_json_api = this.isJsonApi(),
+        defaultValues = this.defaults
     )
 }
