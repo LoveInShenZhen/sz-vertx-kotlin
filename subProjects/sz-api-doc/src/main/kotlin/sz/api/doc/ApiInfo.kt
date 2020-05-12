@@ -19,25 +19,31 @@ import kotlin.reflect.jvm.javaType
 //
 // Created by kk on 17/8/24.
 //
+@Suppress("CanBePrimaryConstructorProperty")
 class ApiInfo constructor(
-    @Comment("API url")
-    val path: String,
+    path: String,
+    httpMethod: String,
+    controllerClass: String,
+    methodName: String,
+    replyKClass: KClass<*>,
+    postDataKClass: KClass<*>?,
+    is_json_api: Boolean,
+    defaultValues: Map<String, String>) {
+
+    @Comment("API Path")
+    val path: String = path
 
     @Comment("API http method: GET or POST")
-    val httpMethod: String,
+    val httpMethod: String = httpMethod
 
     @Comment("API 对应的 Controller 类名称")
-    val controllerClass: String,
+    val controllerClass: String = controllerClass
 
     @Comment("API 对应的 Controller 类下的方法名称")
-    val methodName: String,
-
-    replyKClass: KClass<*>,
-
-    postDataKClass: KClass<*>?,
+    val methodName: String = methodName
 
     @Comment("为true表示是api, 否则是普通http链接")
-    val is_json_api: Boolean) {
+    val is_json_api: Boolean = is_json_api
 
     @Comment("返回Replay 对应的 java class name")
     var replyClass: String = ""
@@ -88,6 +94,12 @@ class ApiInfo constructor(
 
     @Comment("API 所有参数的描述")
     var params: List<ParameterInfo> = emptyList()
+
+    @Comment("参数默认值")
+    @JsonIgnore
+    val defaultValues = defaultValues
+        @JsonIgnore
+        get
 
     @Comment("API 分组名称")
     val groupName: String
@@ -156,9 +168,17 @@ class ApiInfo constructor(
                 if (paramComment != null && paramComment is Comment) {
                     paramDesc = paramComment.value
                 }
-                ParameterInfo(name = it.name!!,
+
+                val paramInfo = ParameterInfo(name = it.name!!,
                     desc = paramDesc,
                     type = it.type.javaType.typeName.split(".").last())
+
+                if (this.defaultValues.containsKey(it.name!!)) {
+                    paramInfo.required = false
+                    paramInfo.defaultValue = this.defaultValues.getValue(it.name!!)
+                }
+
+                paramInfo
             }
     }
 

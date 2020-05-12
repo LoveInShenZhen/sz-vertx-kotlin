@@ -62,6 +62,7 @@ fun ApiRoute.buildApiInfo(): ApiInfo {
         methodName = this.controllerFun.name,
         replyKClass = this.returnType().jvmErasure,
         postDataKClass = this.postBodyClass(),
-        is_json_api = this.isJsonApi()
+        is_json_api = this.isJsonApi(),
+        defaultValues = this.defaults
     )
 }

@@ -72,9 +72,6 @@ class ApiDoc : ApiController() {
 
     @Comment("返回api接口信息")
     fun apiInfo(): ApiInfoReply {
-        val reply = ApiInfoReply()
-        reply.json_api_groups = DefinedApis(isJsonApi = true).groups
-        reply.non_api_groups = DefinedApis(isJsonApi = false).groups
-        return reply
+        return ApiInfoReply.instance
     }
 }
