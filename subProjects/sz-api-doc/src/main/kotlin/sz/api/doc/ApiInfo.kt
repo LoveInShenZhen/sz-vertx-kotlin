@@ -60,8 +60,6 @@ class ApiInfo constructor(
     @Comment("Replay 的json结构")
     @JsonIgnore
     var replySchema: FieldSchema
-        @JsonIgnore
-        get
 
     @Comment("Replay 的json结构描述信息")
     val replySchemaDesc: String
@@ -96,10 +94,7 @@ class ApiInfo constructor(
     var params: List<ParameterInfo> = emptyList()
 
     @Comment("参数默认值")
-    @JsonIgnore
     val defaultValues = defaultValues
-        @JsonIgnore
-        get
 
     @Comment("API 分组名称")
     val groupName: String

@@ -6,9 +6,11 @@ import sz.scaffold.tools.console.PrettyTree
 import sz.scaffold.tools.console.TreeNode
 import sz.scaffold.tools.json.*
 import kotlin.reflect.KClass
+import kotlin.reflect.KProperty1
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
 //
@@ -65,7 +67,7 @@ class FieldSchema {
 
         fun resolveFields(ownnerClass: KClass<*>, ownnerSchema: FieldSchema) {
             val maxLevel = 10
-            ownnerClass.memberProperties.filter { it.visibility == KVisibility.PUBLIC &&  it.findAnnotation<JsonIgnore>() == null && it.getter.findAnnotation<JsonIgnore>() == null }
+            ownnerClass.memberProperties.filter { jsonIgnored(it).not() }
                 .forEach {
                     val propSchema = FieldSchema()
                     propSchema.level = ownnerSchema.level + 1
@@ -130,6 +132,14 @@ class FieldSchema {
             }
 
             return ""
+        }
+
+        private fun <T : Any> jsonIgnored(prop: KProperty1<T, *>): Boolean {
+            return prop.visibility != KVisibility.PUBLIC
+                || prop.getter.visibility != KVisibility.PUBLIC
+                || prop.javaField?.getAnnotation(JsonIgnore::class.java) != null
+                || prop.getter.findAnnotation<JsonIgnore>() != null
+
         }
 
     }
