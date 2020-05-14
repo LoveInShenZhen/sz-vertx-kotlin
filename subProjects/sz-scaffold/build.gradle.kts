@@ -25,8 +25,8 @@ dependencies {
 
     // 参考: https://vertx.io/docs/vertx-core/kotlin/#_native_transports
     // 注意, 要保持版本号和vertx依赖的 netty 的版本号一致
-    api(group = "io.netty", name = "netty-transport-native-epoll", version = "4.1.42.Final", classifier = "linux-x86_64")
-    api(group = "io.netty", name = "netty-transport-native-kqueue", version = "4.1.42.Final", classifier = "osx-x86_64")
+    api(group = "io.netty", name = "netty-transport-native-epoll", version = "4.1.48.Final", classifier = "linux-x86_64")
+    api(group = "io.netty", name = "netty-transport-native-kqueue", version = "4.1.48.Final", classifier = "osx-x86_64")
 
     api("org.apache.commons:commons-pool2:2.6.2")
     api("com.google.guava:guava:28.2-jre")
