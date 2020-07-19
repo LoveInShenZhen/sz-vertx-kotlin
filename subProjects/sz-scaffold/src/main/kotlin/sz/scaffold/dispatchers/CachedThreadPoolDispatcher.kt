@@ -22,12 +22,12 @@ class CachedThreadPoolDispatcher : IDispatcherFactory {
     companion object {
         val corePoolSize: Int
             get() {
-                return Application.config.getIntOrElse("app.httpServer.dispatcher.corePoolSize", Runtime.getRuntime().availableProcessors().coerceAtLeast(4))
+                return Application.config.getIntOrElse("app.httpServer.dispatcher.corePoolSize", Runtime.getRuntime().availableProcessors().coerceAtLeast(8))
             }
 
         val maximumPoolSize: Int
             get() {
-                return Application.config.getIntOrElse("app.httpServer.dispatcher.maximumPoolSize", corePoolSize * 2)
+                return Application.config.getIntOrElse("app.httpServer.dispatcher.maximumPoolSize", corePoolSize * 4)
             }
 
         // 单位: SECONDS
