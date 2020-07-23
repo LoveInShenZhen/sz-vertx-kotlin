@@ -43,22 +43,25 @@ suspend fun <T> EbeanServer.runTransactionAwait(readOnly: Boolean = false, body:
     val ebeanServer = this
     val worker = SzEbeanConfig.workerOf(ebeanServer.name)
 
-    val ebeanFuture = CompletableFuture.supplyAsync(Supplier<T> {
+    val ebeanFuture = CompletableFuture<T>()
+    worker.submit {
         try {
             DB.initDataSourceContext()
             DB.setDataSourceContext(ebeanServer.name)
 
             val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED).setReadOnly(readOnly)
-            ebeanServer.beginTransaction(txScope).use { transaction ->
+            val tranResult = ebeanServer.beginTransaction(txScope).use { transaction ->
                 val result = body(ebeanServer)
                 transaction.commit()
                 result
             }
+            ebeanFuture.complete(tranResult)
+        } catch (ex: Throwable) {
+            ebeanFuture.completeExceptionally(ex)
         } finally {
             DB.unsetDataSourceContext()
         }
-
-    }, worker)
+    }
 
     return ebeanFuture.await()
 }

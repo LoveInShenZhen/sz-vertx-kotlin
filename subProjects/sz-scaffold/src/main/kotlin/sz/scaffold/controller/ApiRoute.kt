@@ -7,9 +7,6 @@ import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import jodd.exception.ExceptionUtil
 import jodd.util.ClassUtil
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import sz.scaffold.Application
 import sz.scaffold.annotations.PostForm
 import sz.scaffold.annotations.PostJson
@@ -17,7 +14,6 @@ import sz.scaffold.aop.actions.Action
 import sz.scaffold.aop.annotations.WithAction
 import sz.scaffold.aop.interceptors.GlobalInterceptorBase
 import sz.scaffold.controller.reply.ReplyBase
-import sz.scaffold.coroutines.launchOnVertx
 import sz.scaffold.tools.BizLogicException
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.json.Json
@@ -76,87 +72,85 @@ data class ApiRoute(val method: HttpMethod,
             return
         }
 
-        GlobalScope.launchOnVertx {
-            coroutineScope {
-                launch(Application.workerDispatcher) {
-                    val args = controllerFun.buildCallArgs(apiController, paramDatas)
-                    val wrapperAction = buildWrappedAction(httpContext, args)
-                    // 通过控制器方法的返回类型, 是否是ReplyBase或者其子类型, 来判断是否是 json api 方法
-                    if (controllerFun.returnType.isSubtypeOf(ReplyBase::class.createType())) {
-                        try {
-                            // 对于api请求, 要求浏览器端不缓存
-                            response.putHeader("Cache-Control", "no-cache")
-                            val actionResult = wrapperAction.call()
-                            if (actionResult != null) {
-                                if (isJsonpRequest(httpContext, actionResult)) {
-                                    onJsonp(httpContext, actionResult)
-                                } else if (actionResult is ReplyBase) {
-                                    response.putHeader("Content-Type", ContentTypes.Json)
-                                    response.write(actionResult.singleLineJson())
-                                }
-                            }
-                        } catch (ex: Exception) {
-                            Logger.debug(ExceptionUtil.exceptionChainToString(ex))
-                            val reply = ReplyBase()
-                            val reason = ExceptionUtil.findCause(ex, BizLogicException::class.java)
-                            if (reason != null) {
-                                reply.onError(reason)
-                            } else {
-                                reply.onError(ex)
-                            }
-                            if (httpContext.queryParams(mapOf()).containsKey("callback")) {
-                                response.putHeader("Content-Type", ContentTypes.JavaScript)
-                                val callback = httpContext.queryParams(mapOf()).getValue("callback")
-                                val body = "$callback(${reply.singleLineJson()});"
-                                response.write(body)
-                            } else {
-                                response.putHeader("Content-Type", ContentTypes.Json)
-                                response.write(reply.singleLineJson())
-                            }
-                        }
-
-                    } else {
-                        // 其他普通的 http 请求(非 api 请求)
-                        try {
-                            val result = wrapperAction.call()
-                            onNormal(httpContext, result)
-
-                        } catch (ex: Exception) {
-                            response.putHeader("Content-Type", ContentTypes.Text)
-                            val reason = if (ex.cause == null) ex else ex.cause
-                            Logger.debug("非API请求处理发生异常, \n${ExceptionUtil.exceptionChainToString(reason)}")
-                            response.end("${ex.message}\n\n${ExceptionUtil.exceptionChainToString(reason)}")
-                        }
-                    }
-
-                    if (!response.ended()) {
-                        response.end()
-                    }
-                }.invokeOnCompletion { ex ->
-                    if (ex != null) {
-                        val reply = ReplyBase()
-                        val reason = ExceptionUtil.findCause(ex, BizLogicException::class.java)
-                        if (reason != null) {
-                            reply.onError(reason)
-                        } else {
-                            reply.onError(ex)
-                        }
-                        if (httpContext.queryParams(mapOf()).containsKey("callback")) {
-                            response.putHeader("Content-Type", ContentTypes.JavaScript)
-                            val callback = httpContext.queryParams(mapOf()).getValue("callback")
-                            val body = "$callback(${reply.singleLineJson()});"
-                            response.write(body)
-                        } else {
+        Application.workerScope.async {
+            val args = controllerFun.buildCallArgs(apiController, paramDatas)
+            val wrapperAction = buildWrappedAction(httpContext, args)
+            // 通过控制器方法的返回类型, 是否是ReplyBase或者其子类型, 来判断是否是 json api 方法
+            if (controllerFun.returnType.isSubtypeOf(ReplyBase::class.createType())) {
+                try {
+                    // 对于api请求, 要求浏览器端不缓存
+                    response.putHeader("Cache-Control", "no-cache")
+                    val actionResult = wrapperAction.call()
+                    if (actionResult != null) {
+                        if (isJsonpRequest(httpContext, actionResult)) {
+                            onJsonp(httpContext, actionResult)
+                        } else if (actionResult is ReplyBase) {
                             response.putHeader("Content-Type", ContentTypes.Json)
-                            response.write(reply.singleLineJson())
+                            response.write(actionResult.singleLineJson())
                         }
                     }
-                    if (!response.ended()) {
-                        response.end()
+                } catch (ex: Exception) {
+                    Logger.debug(ExceptionUtil.exceptionChainToString(ex))
+                    val reply = ReplyBase()
+                    val reason = ExceptionUtil.findCause(ex, BizLogicException::class.java)
+                    if (reason != null) {
+                        reply.onError(reason)
+                    } else {
+                        reply.onError(ex)
+                    }
+                    if (httpContext.queryParams(mapOf()).containsKey("callback")) {
+                        response.putHeader("Content-Type", ContentTypes.JavaScript)
+                        val callback = httpContext.queryParams(mapOf()).getValue("callback")
+                        val body = "$callback(${reply.singleLineJson()});"
+                        response.write(body)
+                    } else {
+                        response.putHeader("Content-Type", ContentTypes.Json)
+                        response.write(reply.singleLineJson())
                     }
                 }
+
+            } else {
+                // 其他普通的 http 请求(非 api 请求)
+                try {
+                    val result = wrapperAction.call()
+                    onNormal(httpContext, result)
+
+                } catch (ex: Exception) {
+                    response.putHeader("Content-Type", ContentTypes.Text)
+                    val reason = if (ex.cause == null) ex else ex.cause
+                    Logger.debug("非API请求处理发生异常, \n${ExceptionUtil.exceptionChainToString(reason)}")
+                    response.end("${ex.message}\n\n${ExceptionUtil.exceptionChainToString(reason)}")
+                }
+            }
+
+            if (!response.ended()) {
+                response.end()
+            }
+        }.invokeOnCompletion { ex ->
+            if (ex != null) {
+                val reply = ReplyBase()
+                val reason = ExceptionUtil.findCause(ex, BizLogicException::class.java)
+                if (reason != null) {
+                    reply.onError(reason)
+                } else {
+                    reply.onError(ex)
+                }
+                if (httpContext.queryParams(mapOf()).containsKey("callback")) {
+                    response.putHeader("Content-Type", ContentTypes.JavaScript)
+                    val callback = httpContext.queryParams(mapOf()).getValue("callback")
+                    val body = "$callback(${reply.singleLineJson()});"
+                    response.write(body)
+                } else {
+                    response.putHeader("Content-Type", ContentTypes.Json)
+                    response.write(reply.singleLineJson())
+                }
+            }
+            if (!response.ended()) {
+                response.end()
             }
         }
+
+
     }
 
     private fun isJsonpRequest(httpContext: RoutingContext, result: Any?): Boolean {
