@@ -7,6 +7,7 @@ import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import jodd.exception.ExceptionUtil
 import jodd.util.ClassUtil
+import kotlinx.coroutines.async
 import sz.scaffold.Application
 import sz.scaffold.annotations.PostForm
 import sz.scaffold.annotations.PostJson
@@ -149,8 +150,6 @@ data class ApiRoute(val method: HttpMethod,
                 response.end()
             }
         }
-
-
     }
 
     private fun isJsonpRequest(httpContext: RoutingContext, result: Any?): Boolean {

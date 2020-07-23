@@ -465,6 +465,11 @@ object Application {
         factory.build()
     }
 
+    /// CoroutineScope for http server
+    val workerScope: CoroutineScope by lazy {
+        CoroutineScope(workerDispatcher)
+    }
+
     fun <T> runBlocking(block: suspend CoroutineScope.() -> T): T {
         return kxRunBlocking(context = workerDispatcher, block = block)
     }
