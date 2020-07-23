@@ -36,7 +36,7 @@ object SzEbeanConfig {
 
     private val _ebeanServerConfigs = ConcurrentHashMap<String, ServerConfig>()
 
-    private val workerPoolMap = ConcurrentHashMap<String, ThreadPoolExecutor>()
+    private val workerPoolMap = ConcurrentHashMap<String, ExecutorService>()
 
     private var _defaultDatasourceReady = false
     val defaultDatasourceReady
@@ -95,17 +95,7 @@ object SzEbeanConfig {
                         EbeanServerFactory.create(ebeanServerCfg)
                         _ebeanServerConfigs[dataSourceName] = ebeanServerCfg
 
-                        val threadFactory = BasicThreadFactory.Builder()
-                            .wrappedFactory(Executors.defaultThreadFactory())
-                            .namingPattern("ebean-worker-$dataSourceName-%d")
-                            .build()
-
-                        workerPoolMap[dataSourceName] = ThreadPoolExecutor(0,
-                            ds.maximumPoolSize,
-                            60,
-                            TimeUnit.SECONDS,
-                            LinkedBlockingQueue<Runnable>(workerPoolQueueMaxCapacity),
-                            threadFactory)
+                        workerPoolMap[dataSourceName] = ForkJoinPool(ds.maximumPoolSize, DbThreadFactory(dataSourceName), null, false)
 
                         if (ebeanServerCfg.isDefaultServer) {
                             _defaultDatasourceReady = true
@@ -238,4 +228,13 @@ private fun ServerConfig.addModelClass(clazz: Class<*>) {
     } catch (ex: Exception) {
         Logger.error("ebean.dataSources.${this.name} cannot register class [${clazz.name}] in ebean server. Caused by: ${ex.message}")
     }
+}
+
+class DbThreadFactory(val dsName:String) : ForkJoinPool.ForkJoinWorkerThreadFactory {
+    override fun newThread(pool: ForkJoinPool?): ForkJoinWorkerThread {
+        val thread = ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(pool)
+        thread.name = "db-$dsName-${thread.name}"
+        return thread
+    }
+
 }
