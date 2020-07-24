@@ -14,7 +14,7 @@ import kotlin.math.max
 class ForkJoinPoolDispatcher : IDispatcherFactory {
 
     val parallelism: Int by lazy {
-        Application.config.getIntOrElse("app.httpServer.dispatcher.parallelism", max(8, Runtime.getRuntime().availableProcessors()))
+        Application.config.getIntOrElse("app.httpServer.dispatcher.parallelism", max(16, Runtime.getRuntime().availableProcessors()))
     }
 
     override fun build(): CoroutineDispatcher {
