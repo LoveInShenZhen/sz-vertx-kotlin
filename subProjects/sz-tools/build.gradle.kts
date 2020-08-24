@@ -51,15 +51,25 @@ publishing {
             name = "myRepo"
             url = uri("file://$myRepo")
         }
+        maven {
+            name = "wise-repo"
+            val releasesRepoUrl = "http://aimid.wise4ai.com:8081/repository/wise-repository/"
+            val snapshotsRepoUrl = "http://aimid.wise4ai.com:8081/repository/wise-repository/"
+            url = uri(if (project.hasProperty("release")) releasesRepoUrl else snapshotsRepoUrl)
+            credentials {
+                username = "admin"
+                password = "admin@wise"
+            }
+        }
     }
 }
 
-val compileKotlin: KotlinCompile by tasks
+val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
 compileKotlin.kotlinOptions {
     jvmTarget = "1.8"
 }
 
-val compileTestKotlin: KotlinCompile by tasks
+val compileTestKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
     jvmTarget = "1.8"
 }
