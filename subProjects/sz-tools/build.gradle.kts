@@ -1,15 +1,15 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.jetbrains.kotlin.jvm")
+    kotlin("jvm")
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
     id("maven-publish")
 }
 
 dependencies {
-    api(kotlin("stdlib-jdk8"))
+//    api(kotlin("stdlib-jdk8"))
     api(kotlin("reflect"))
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.4")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.9")
 
     // android gradle依赖：implementation 和compile的区别
     // 参考: https://www.jianshu.com/p/f34c179bc9d0 根据需要选择使用不同的依赖设定方式
@@ -42,8 +42,10 @@ publishing {
         }
     }
 
+    val userHome = System.getProperty("user.home")
+
     repositories {
-        var myRepo = "/Users/kk/ssdwork/github/kklongming.github.io/repository"
+        var myRepo =  "$userHome/ssdwork/github/kklongming.github.io/repository"
         System.getProperty("myRepo")?.apply {
             myRepo = this
         }

@@ -36,14 +36,14 @@ class PooledObject<T : Any>(val target: T, private val pool: ObjectPool<T>) : Cl
 
     override fun toString(): String {
         val buf = StringBuilder()
-        buf.appendln("PooledObject:")
-        buf.appendln("  identityHashCode: $identityHashCode")
-        buf.appendln("  target type: ${target.javaClass.name}")
-        buf.appendln("  status: ${status.name}")
-        buf.appendln("  createTime: ${epochMsToLocalDateTime(createTimeMs)}")
-        buf.appendln("  lastBorrowTime: ${epochMsToLocalDateTime(lastBorrowTimeMs)}")
-        buf.appendln("  lastReturnTime: ${epochMsToLocalDateTime(lastReturnTimeMs)}")
-        buf.appendln("  isBroken: $broken")
+        buf.appendLine("PooledObject:")
+        buf.appendLine("  identityHashCode: $identityHashCode")
+        buf.appendLine("  target type: ${target.javaClass.name}")
+        buf.appendLine("  status: ${status.name}")
+        buf.appendLine("  createTime: ${epochMsToLocalDateTime(createTimeMs)}")
+        buf.appendLine("  lastBorrowTime: ${epochMsToLocalDateTime(lastBorrowTimeMs)}")
+        buf.appendLine("  lastReturnTime: ${epochMsToLocalDateTime(lastReturnTimeMs)}")
+        buf.appendLine("  isBroken: $broken")
 
         return buf.toString()
     }

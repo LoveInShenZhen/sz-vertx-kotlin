@@ -52,90 +52,90 @@ $builtInLinks
         val info = StringBuilder()
 
         info.append("system environment:\n")
-        info.appendln("-".repeat(64))
+        info.appendLine("-".repeat(64))
 
         System.getenv().forEach { k, v ->
-            info.appendln("  $k : $v")
+            info.appendLine("  $k : $v")
         }
-        info.appendln("-".repeat(64))
-        info.appendln()
+        info.appendLine("-".repeat(64))
+        info.appendLine()
 
-        info.appendln("system properties:")
-        info.appendln("-".repeat(64))
+        info.appendLine("system properties:")
+        info.appendLine("-".repeat(64))
 
         System.getProperties().forEach { k, v ->
-            info.appendln("  $k : $v")
+            info.appendLine("  $k : $v")
         }
-        info.appendln("-".repeat(64))
-        info.appendln()
+        info.appendLine("-".repeat(64))
+        info.appendLine()
 
         info.append("jvm class path list:\n")
-        info.appendln("-".repeat(64))
+        info.appendLine("-".repeat(64))
         ClassLoaderUtil.getDefaultClasspath().forEach { file ->
-            info.appendln("  ${file.absolutePath}")
+            info.appendLine("  ${file.absolutePath}")
         }
-        info.appendln("-".repeat(64))
+        info.appendLine("-".repeat(64))
 
-        info.appendln("Memory Managemen info:")
+        info.appendLine("Memory Managemen info:")
 
         val mxBean = ManagementFactory.getMemoryMXBean()
         val heapUsage = mxBean.heapMemoryUsage
-        info.appendln("  Heap Memory Usage")
+        info.appendLine("  Heap Memory Usage")
 
         var initMemorySize = heapUsage.init
         var maxMemorySize = heapUsage.max
         var usedMemorySize = heapUsage.used
 
-        info.appendln("    Init Memory: ${initMemorySize / 1024 / 1024} MB")
-        info.appendln("    Max Memory:  ${maxMemorySize / 1024 / 1024} MB")
-        info.appendln("    Used Memory: ${usedMemorySize / 1024 / 1024} MB")
-        info.appendln()
+        info.appendLine("    Init Memory: ${initMemorySize / 1024 / 1024} MB")
+        info.appendLine("    Max Memory:  ${maxMemorySize / 1024 / 1024} MB")
+        info.appendLine("    Used Memory: ${usedMemorySize / 1024 / 1024} MB")
+        info.appendLine()
 
         val nonHeapUsage = mxBean.nonHeapMemoryUsage
-        info.appendln("  NonHeap Memory Usage")
+        info.appendLine("  NonHeap Memory Usage")
 
         initMemorySize = nonHeapUsage.init
         maxMemorySize = nonHeapUsage.max
         usedMemorySize = nonHeapUsage.used
 
-        info.appendln("    Init Memory: ${initMemorySize / 1024 / 1024} MB")
-        info.appendln("    Max Memory:  ${maxMemorySize / 1024 / 1024} MB")
-        info.appendln("    Used Memory: ${usedMemorySize / 1024 / 1024} MB")
-        info.appendln("-".repeat(64))
+        info.appendLine("    Init Memory: ${initMemorySize / 1024 / 1024} MB")
+        info.appendLine("    Max Memory:  ${maxMemorySize / 1024 / 1024} MB")
+        info.appendLine("    Used Memory: ${usedMemorySize / 1024 / 1024} MB")
+        info.appendLine("-".repeat(64))
 
-        info.appendln("  HostName: ${InetAddress.getLocalHost().hostName}")
-        info.appendln("  HostIp: ${InetAddress.getLocalHost().hostAddress}")
+        info.appendLine("  HostName: ${InetAddress.getLocalHost().hostName}")
+        info.appendLine("  HostIp: ${InetAddress.getLocalHost().hostAddress}")
 
-        info.appendln("-".repeat(64))
-        info.appendln("  Vertx Options:")
-        info.appendln(Application.vertxOptions.toString())
+        info.appendLine("-".repeat(64))
+        info.appendLine("  Vertx Options:")
+        info.appendLine(Application.vertxOptions.toString())
 
 
-        info.appendln("-".repeat(64))
+        info.appendLine("-".repeat(64))
         if (Application.vertxOptions.eventBusOptions.isClustered) {
             // 集群方式
-            info.appendln("Vertx: cluster mode [当前为: Vertx 集群模式]")
-            info.appendln("    Node Id: ${Application.vertxOptions.clusterManager.nodeID}")
-            info.appendln("    Nodes: ${Application.vertxOptions.clusterManager.nodes.toList()}")
+            info.appendLine("Vertx: cluster mode [当前为: Vertx 集群模式]")
+            info.appendLine("    Node Id: ${Application.vertxOptions.clusterManager.nodeID}")
+            info.appendLine("    Nodes: ${Application.vertxOptions.clusterManager.nodes.toList()}")
         } else {
-            info.appendln("当前为: Vertx 单机模式")
+            info.appendLine("当前为: Vertx 单机模式")
         }
 
-        info.appendln("-".repeat(64))
-        info.appendln("application.conf:")
-        info.appendln(Application.config.root().unwrapped().toJsonPretty())
-        info.appendln()
+        info.appendLine("-".repeat(64))
+        info.appendLine("application.conf:")
+        info.appendLine(Application.config.root().unwrapped().toJsonPretty())
+        info.appendLine()
 
-        info.appendln("-".repeat(64))
+        info.appendLine("-".repeat(64))
         // sh -c 'ulimit -a'
         val ulimitCmd = CommandLine.cmd("sh").args("-c", "ulimit -a").outPrefix("    ")
 
         try {
             val cmdResult = ulimitCmd.run()
-            info.appendln("ulimit info:")
-            info.appendln(cmdResult.output)
+            info.appendLine("ulimit info:")
+            info.appendLine(cmdResult.output)
         } catch (ex: Exception) {
-            info.appendln("Can not get ulimit info: ${ex.message}")
+            info.appendLine("Can not get ulimit info: ${ex.message}")
         }
 
         return info.toString()
