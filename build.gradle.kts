@@ -7,7 +7,7 @@
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
-    kotlin("jvm").version("1.4.10").apply(false)
+    kotlin("jvm").version("1.4.20").apply(false)
 }
 
 allprojects {
@@ -20,6 +20,7 @@ allprojects {
 
     repositories {
         mavenLocal()
+        maven(url="https://maven.aliyun.com/repository/public/")
         mavenCentral()
         jcenter()
     }

@@ -6,3 +6,10 @@ include("subProjects:sz-scaffold")
 include("subProjects:sz-ebean")
 include("subProjects:sz-api-doc")
 include("subProjects:sz-plan-task")
+
+pluginManagement {
+    repositories {
+        maven(url = "https://maven.aliyun.com/repository/gradle-plugin")
+        gradlePluginPortal()
+    }
+}
