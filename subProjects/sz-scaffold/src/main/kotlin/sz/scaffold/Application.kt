@@ -471,7 +471,7 @@ object Application {
     }
 
     val workerDispatcher: CoroutineDispatcher by lazy {
-        val factory = Class.forName(config.getString("app.httpServer.dispatcher.factory")).newInstance() as IDispatcherFactory
+        val factory = Class.forName(config.getString("app.httpServer.dispatcher.factory")).getDeclaredConstructor().newInstance() as IDispatcherFactory
         factory.build()
     }
 

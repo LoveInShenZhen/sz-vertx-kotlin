@@ -25,7 +25,7 @@ class WebSocketFilter(private val vertx: Vertx) : WebSocketHandler {
         } catch (ex: Exception) {
             throw SzException("Can not load websocket handler class by name: $handlerClassName .")
         }
-        pathHandlerMap[path] = handlerClass.newInstance() as WebSocketHandler
+        pathHandlerMap[path] = handlerClass.getDeclaredConstructor().newInstance() as WebSocketHandler
     }
 
     override fun handle(webSocket: ServerWebSocket) {

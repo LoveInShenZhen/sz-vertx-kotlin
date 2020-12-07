@@ -283,7 +283,7 @@ class ApiInfo constructor(
 
         private fun defaultSampleJson(kClass: KClass<*>): String {
             try {
-                val sampleObj = kClass.java.newInstance()
+                val sampleObj = kClass.java.getDeclaredConstructor().newInstance()
                 return sampleObj.toJsonPretty()
             } catch (ex: Exception) {
                 Logger.debug(ex.cause.toString())
@@ -302,7 +302,7 @@ class ApiInfo constructor(
             if (sampleDataFunc.parameters.size != 1) {
                 return """请在 ${kClass.qualifiedName} 实现 fun SampleData() { TODO("填充样例数据") } 方法,(备注:无参数)"""
             }
-            val sampleObj = kClass.java.newInstance()
+            val sampleObj = kClass.java.getDeclaredConstructor().newInstance()
             if (sampleObj != null) {
                 sampleDataFunc.call(sampleObj)
                 return sampleObj.toJsonPretty()

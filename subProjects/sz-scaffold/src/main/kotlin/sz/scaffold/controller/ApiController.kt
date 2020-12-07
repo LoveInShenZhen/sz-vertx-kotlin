@@ -67,7 +67,7 @@ open class ApiController {
 
     inline fun <reified BeanType> postFormToBean(needDecode: Boolean = false, enc: String = "UTF-8"): BeanType {
         val formMap = formFields(needDecode, enc)
-        val bean = BeanType::class.java.newInstance()
+        val bean = BeanType::class.java.getDeclaredConstructor().newInstance()
         val beanCopy = BeanCopy.fromMap(formMap).toBean(bean)
         beanCopy.copy()
         return bean

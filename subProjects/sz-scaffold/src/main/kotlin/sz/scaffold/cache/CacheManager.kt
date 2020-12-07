@@ -53,7 +53,7 @@ object CacheManager {
         }
         val factoryClassName = Application.config.getString(cfgPath)
         val factoryClass = Application.classLoader.loadClass(factoryClassName)
-        return factoryClass.newInstance() as CacheFactory
+        return factoryClass.getDeclaredConstructor().newInstance() as CacheFactory
     }
 
     private fun cacheOptionsOf(cacheName: String): JsonObject {
