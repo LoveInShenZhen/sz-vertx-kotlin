@@ -13,6 +13,8 @@ import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.ext.web.handler.StaticHandler
+import io.vertx.micrometer.MicrometerMetricsOptions
+import io.vertx.micrometer.VertxPrometheusOptions
 import io.vertx.spi.cluster.zookeeper.ZookeeperClusterManager
 import jodd.exception.ExceptionUtil
 import jodd.io.FileNameUtil
@@ -390,6 +392,11 @@ object Application {
             if (jsonOpts.containsKey("clusterHost").not() && hostIp.isNullOrBlank().not()) {
                 // 配置文件中不包含 clusterHost 配置项, 并且获取到的主机IP不为空
                 opts.eventBusOptions.host = hostIp
+            }
+            if (jsonOpts.containsKey("micrometerMetrics")) {
+                val metricsOptions = MicrometerMetricsOptions().setPrometheusOptions(VertxPrometheusOptions().setEnabled(true)).setEnabled(true)
+                opts.metricsOptions = metricsOptions
+                Logger.info("MicrometerMetrics Prometheus.")
             }
             return opts
         } catch (ex: Exception) {

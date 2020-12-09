@@ -34,6 +34,8 @@ dependencies {
     api("com.github.ben-manes.caffeine:caffeine:2.7.0")
 //    api("com.github.ben-manes.caffeine:guava:2.7.0")
 
+    api("io.vertx:vertx-micrometer-metrics:3.8.5")
+
     configurations.all {
         this.exclude(group = "org.slf4j", module = "slf4j-log4j12")
     }
