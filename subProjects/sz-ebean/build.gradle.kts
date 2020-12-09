@@ -43,16 +43,6 @@ publishing {
             name = "myRepo"
             url = uri("file://$myRepo")
         }
-        maven {
-            name = "wise-repo"
-            val releasesRepoUrl = "http://aimid.wise4ai.com:8081/repository/wise-repository/"
-            val snapshotsRepoUrl = "http://aimid.wise4ai.com:8081/repository/wise-repository/"
-            url = uri(if (project.hasProperty("release")) releasesRepoUrl else snapshotsRepoUrl)
-            credentials {
-                username = "admin"
-                password = "admin@wise"
-            }
-        }
     }
 }
 
