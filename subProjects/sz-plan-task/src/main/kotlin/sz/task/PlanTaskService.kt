@@ -1,6 +1,6 @@
 package sz.task
 
-import io.ebean.EbeanServer
+import io.ebean.Database as EbeanServer
 import io.vertx.core.eventbus.MessageConsumer
 import jodd.datetime.JDateTime
 import jodd.exception.ExceptionUtil

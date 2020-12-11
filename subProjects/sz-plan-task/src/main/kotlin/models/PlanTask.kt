@@ -1,6 +1,6 @@
 package models
 
-import io.ebean.EbeanServer
+import io.ebean.Database as EbeanServer
 import io.ebean.Finder
 import io.ebean.Model
 import io.ebean.annotation.WhenCreated

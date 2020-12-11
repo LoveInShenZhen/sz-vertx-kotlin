@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm")
     id("maven-publish")
-    id("io.ebean").version("12.1.8")
+    id("io.ebean").version("12.6.2")
     kotlin("kapt")
 }
 
@@ -12,9 +12,9 @@ dependencies {
     api(project(":subProjects:sz-scaffold"))
     api(project(":subProjects:sz-crypto"))
 
-    api("io.ebean:ebean:12.1.8")
-    api("io.ebean:ebean-querybean:12.1.8")
-//    kapt("io.ebean:kotlin-querybean-generator:12.1.8")
+    api("io.ebean:ebean:12.6.2")
+    api("io.ebean:ebean-querybean:12.6.2")
+//    kapt("io.ebean:kotlin-querybean-generator:12.6.2")
 
     api("com.zaxxer:HikariCP:3.3.1")
     api("mysql:mysql-connector-java:8.0.18")

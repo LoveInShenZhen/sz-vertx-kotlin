@@ -2,8 +2,8 @@
 
 package sz.ebean
 
-import io.ebean.Ebean
-import io.ebean.EbeanServer
+import io.ebean.DB as Ebean
+import io.ebean.Database as EbeanServer
 import io.ebean.Finder
 import sz.scaffold.tools.BizLogicException
 import java.util.*
@@ -15,7 +15,7 @@ object DB {
     fun byDataSource(dsName: String = ""): EbeanServer {
         if (dsName.isBlank()) {
             return if (SzEbeanConfig.defaultDatasourceReady) {
-                Ebean.getDefaultServer()
+                Ebean.getDefault()
             } else {
                 throw BizLogicException("Ebean default data source is not available.")
             }
@@ -23,7 +23,7 @@ object DB {
         if (SzEbeanConfig.ebeanServerConfigs.containsKey(dsName).not()) {
             throw BizLogicException("Ebean data source is not available or it is a invalid data source name [$dsName], please check application.conf")
         }
-        return Ebean.getServer(dsName)!!
+        return Ebean.byName(dsName)!!
     }
 
     /**

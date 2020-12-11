@@ -5,14 +5,11 @@ import com.typesafe.config.Config
 import com.typesafe.config.ConfigValueType
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import io.ebean.EbeanServerFactory
-import io.ebean.config.ServerConfig
 import jodd.introspector.ClassIntrospector
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.apache.commons.lang3.concurrent.BasicThreadFactory
 import sz.crypto.RsaUtil
 import sz.ebean.SzEbeanConfig.hikariConfigKeys
 import sz.ebean.registeredClass.JDateTimeConverter
@@ -23,6 +20,8 @@ import sz.scaffold.tools.logger.Logger
 import java.io.File
 import java.util.*
 import java.util.concurrent.*
+import io.ebean.DatabaseFactory as EbeanServerFactory
+import io.ebean.config.DatabaseConfig as ServerConfig
 
 //
 // Created by kk on 17/8/20.

@@ -1,6 +1,6 @@
 package sz.ebean
 
-import io.ebean.EbeanServer
+import io.ebean.Database as EbeanServer
 import sz.annotations.DBIndexed
 import sz.scaffold.ext.camelCaseToLowCaseSeprated
 import sz.scaffold.tools.logger.Logger

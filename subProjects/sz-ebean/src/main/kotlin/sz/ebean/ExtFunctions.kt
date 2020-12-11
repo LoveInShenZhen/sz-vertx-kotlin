@@ -2,7 +2,7 @@
 
 package sz.ebean
 
-import io.ebean.EbeanServer
+import io.ebean.Database as EbeanServer
 import io.ebean.SqlRow
 import io.ebean.TxScope
 import io.ebean.annotation.TxIsolation
