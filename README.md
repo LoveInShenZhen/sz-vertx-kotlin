@@ -73,13 +73,6 @@
 * 丰富的[项目模板/脚手架样板工程](https://github.com/LoveInShenZhen/ProjectTemplates), 并且不断的还有新的脚手架样板工程被添加进来.
 
 
-
-# About Me
-
-我是一名四十多岁的大龄程序员, 目前失业在家中. 希望有好心的小伙伴可以帮忙推荐和介绍一下, 不胜感激!
-
-[个人简历](https://kklongming.github.io/resume/longming_2020.pdf)
-
 # 项目捐助
 
 有钱捧个钱场, 没钱捧个人场
