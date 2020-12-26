@@ -73,12 +73,3 @@
 * 丰富的[项目模板/脚手架样板工程](https://github.com/LoveInShenZhen/ProjectTemplates), 并且不断的还有新的脚手架样板工程被添加进来.
 
 
-# 项目捐助
-
-有钱捧个钱场, 没钱捧个人场
-
-| 通过微信捐助                                                 | 通过支付宝捐助                                               |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ![微信](https://kklongming.github.io/res/images/wechat_donate.png) | ![支付宝](https://kklongming.github.io/res/images/alipay_donate.png) |
-
-
