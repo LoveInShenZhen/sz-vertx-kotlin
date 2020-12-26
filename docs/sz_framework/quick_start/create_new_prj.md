@@ -2,12 +2,11 @@
     
 ## 安装构建依赖/工具
 * 安装好 **subversion** 客户端, 获取项目工程模板时会用到
-* 安装好 **OpenJDK 8**
-> 个人推荐使用 [*Zulu OpenJDK 8*](https://cn.azul.com/)
-* 安装好 **Gradle 5.x** [*官网下载*](https://gradle.org/releases/)
+* 安装好 **OpenJDK 8 or 11**
+* 安装好 **Gradle 6.x** [*官网下载*](https://gradle.org/releases/)
 * IDE推荐使用 **IntelliJ IDEA**, [*官网下载*](https://www.jetbrains.com/idea/download/)  
 > Community社区版功能足以, 有钱的同学可以买 **Ultimate** 版
-* 使用 windows10 的同学, 请安装 **WSL** 或 **WSL2**, 并在 WSL/WSL2 Linux子系统里安装好 OpenJDK 8 和 Gradle 5.x. 项目的编译,构建,打包等操作,请在 WSL/WSL2 环境下执行
+* 使用 windows10 的同学, 请安装 **WSL** 或 **WSL2**, 并在 WSL/WSL2 Linux子系统里安装好 OpenJDK 8 和 Gradle 6.x. 项目的编译,构建,打包等操作,请在 WSL/WSL2 环境下执行
 * 使用 windows10 的同学, 推荐使用 [*Windows Terminal*](https://github.com/microsoft/Terminal) 这款微软出品的命令行工具
 
 ## 创建项目
