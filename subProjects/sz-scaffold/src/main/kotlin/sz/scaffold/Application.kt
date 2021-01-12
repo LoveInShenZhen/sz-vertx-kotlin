@@ -10,6 +10,7 @@ import io.vertx.core.http.HttpServer
 import io.vertx.core.http.HttpServerOptions
 import io.vertx.core.impl.VertxImpl
 import io.vertx.core.json.JsonObject
+import io.vertx.core.net.JksOptions
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.ext.web.handler.StaticHandler
@@ -29,6 +30,7 @@ import sz.scaffold.controller.BodyHandlerOptions
 import sz.scaffold.dispatchers.IDispatcherFactory
 import sz.scaffold.ext.changeWorkingDir
 import sz.scaffold.ext.filePathJoin
+import sz.scaffold.ext.getBooleanOrElse
 import sz.scaffold.redis.kedis.KedisPool
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.json.toShortJson
@@ -102,7 +104,8 @@ object Application {
             appHome = SystemUtils.getUserDir().absolutePath
         } else {
             if (SystemUtils.getUserDir().name == "bin" &&
-                SystemUtils.getUserDir().parentFile.hasFile("conf${File.separator}application.conf")) {
+                SystemUtils.getUserDir().parentFile.hasFile("conf${File.separator}application.conf")
+            ) {
                 appHome = SystemUtils.getUserDir().parent
             } else {
                 val jarFile = ClassLoaderUtil.getDefaultClasspath().find { it.name.startsWith("kotlin-stdlib-") }
@@ -317,11 +320,13 @@ object Application {
         // /builtinstatic/* , 该 path 是约定专门用于处理静态文件的
         router.route("/builtinstatic/*").handler(StaticHandler.create())
 
-        router.route().handler(BodyHandler.create()
-            .setMergeFormAttributes(bodyHandlerOptions.mergeFormAttributes)
-            .setBodyLimit(bodyHandlerOptions.bodyLimit)
-            .setDeleteUploadedFilesOnEnd(bodyHandlerOptions.deleteUploadedFilesOnEnd)
-            .setUploadsDirectory(bodyHandlerOptions.uploadsDirectory))
+        router.route().handler(
+            BodyHandler.create()
+                .setMergeFormAttributes(bodyHandlerOptions.mergeFormAttributes)
+                .setBodyLimit(bodyHandlerOptions.bodyLimit)
+                .setDeleteUploadedFilesOnEnd(bodyHandlerOptions.deleteUploadedFilesOnEnd)
+                .setUploadsDirectory(bodyHandlerOptions.uploadsDirectory)
+        )
 
         loadApiRouteFromRouteFiles().forEach {
             it.addToRoute(router)
@@ -412,6 +417,7 @@ object Application {
         httpOptionJson.put("host", config.getString("app.httpServer.host"))
         httpOptionJson.put("port", config.getInt("app.httpServer.port"))
 
+
         val httpServerOptions = HttpServerOptions(httpOptionJson)
         if (SystemInfo().isLinux) {
             // Vert.x can run with native transports (when available) on BSD (OSX) and Linux:
@@ -428,6 +434,14 @@ object Application {
         httpServerOptions.maxWebSocketFrameSize = config.getInt("app.httpServer.webSocket.maxWebSocketFrameSize")
         httpServerOptions.maxWebSocketMessageSize = config.getInt("app.httpServer.webSocket.maxWebSocketMessageSize")
 
+        val ssl = config.getBooleanOrElse("app.httpServer.ssl.enabled", false)
+        if (ssl) {
+            httpServerOptions.isSsl = ssl
+            val jksOptions = JsonObject()
+            jksOptions.put("path", config.getString("app.httpServer.ssl.path"))
+            jksOptions.put("password", config.getString("app.httpServer.ssl.password"))
+            httpServerOptions.keyStoreOptions = JksOptions(jksOptions)
+        }
         return httpServerOptions
     }
 
