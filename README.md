@@ -72,4 +72,10 @@
 * 站在巨人的肩膀上, sz框架充分利用了[**Vert.x**](https://vertx.io/docs/)这套工具库包含各个模块, 帮助开发人员实现从单机到集群,分布式等不同规模的应用.
 * 丰富的[项目模板/脚手架样板工程](https://github.com/LoveInShenZhen/ProjectTemplates), 并且不断的还有新的脚手架样板工程被添加进来.
 
+## 鸣谢
+
+> [IntelliJ IDEA](https://zh.wikipedia.org/zh-hans/IntelliJ_IDEA) 是一个在各个方面都最大程度地提高开发人员的生产力的 IDE，适用于 JVM 平台语言。
+
+特别感谢 [JetBrains](https://www.jetbrains.com/?from=sz-vertx-kotlin) 为开源项目提供免费的 [IntelliJ IDEA](https://www.jetbrains.com/idea/?from=sz-vertx-kotlin) 等 IDE 的授权  
+[<img src=".github/jetbrains-variant-3.png" width="200"/>](https://www.jetbrains.com/?from=sz-vertx-kotlin)
 
