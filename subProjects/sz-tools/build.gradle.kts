@@ -25,7 +25,7 @@ dependencies {
     api("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.12.2")
     api("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.12.2")
 
-    api("com.typesafe:config:1.3.4")
+    api("com.typesafe:config:1.4.1")
     api("org.apache.commons:commons-lang3:3.9")
 }
 
