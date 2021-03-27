@@ -112,10 +112,10 @@ $builtInLinks
 
 
         info.appendLine("-".repeat(64))
-        if (Application.vertxOptions.eventBusOptions.isClustered) {
+        if (Application.isClustered) {
             // 集群方式
             info.appendLine("Vertx: cluster mode [当前为: Vertx 集群模式]")
-            info.appendLine("    Node Id: ${Application.vertxOptions.clusterManager.nodeID}")
+            info.appendLine("    Node Id: ${Application.vertxOptions.clusterManager.nodeId}")
             info.appendLine("    Nodes: ${Application.vertxOptions.clusterManager.nodes.toList()}")
         } else {
             info.appendLine("当前为: Vertx 单机模式")

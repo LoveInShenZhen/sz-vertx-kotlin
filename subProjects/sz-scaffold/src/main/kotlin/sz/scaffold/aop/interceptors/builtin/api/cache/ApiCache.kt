@@ -35,7 +35,7 @@ class ApiCacheAction : Action<ApiCache>() {
             ""
         }
 
-        val cacheKey = "ApiCache@${request.path()}@${request.method().name}@${DigestEngine.sha1().digestString(queryParamsTxt + bodyParams)}"
+        val cacheKey = "ApiCache@${request.path()}@${request.method().name()}@${DigestEngine.sha1().digestString(queryParamsTxt + bodyParams)}"
         val cache = CacheManager.asyncCache(cacheName)
         val cacheValue = cache.getOrNullAwait(cacheKey)
 

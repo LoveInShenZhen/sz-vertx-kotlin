@@ -1,5 +1,6 @@
 package sz.scaffold.websocket
 
+import io.vertx.core.Future
 import io.vertx.core.Handler
 import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
@@ -14,7 +15,6 @@ class AutoPingServerWebSocket(private val delegate: ServerWebSocket, private val
 
     private fun stopTimer() {
         timer?.let {
-            //            Logger.debug("Stop ping timer: $timer")
             vertx.cancelTimer(it)
             timer = null
         }
@@ -22,16 +22,14 @@ class AutoPingServerWebSocket(private val delegate: ServerWebSocket, private val
 
     override fun accept() {
         timer = vertx.setPeriodic(pingInterval) {
-            //            Logger.debug("[Timer] send ping to client to keep connection.")
             delegate.writePing(Buffer.buffer("PING"))
         }
-//        Logger.debug("Start ping timer: $timer")
         delegate.accept()
     }
 
-    override fun close() {
+    override fun close(): Future<Void> {
         stopTimer()
-        delegate.close()
+        return delegate.close()
     }
 
     override fun endHandler(endHandler: Handler<Void>): ServerWebSocket {

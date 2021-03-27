@@ -58,7 +58,7 @@ class SeqIdServiceVerticle : CoroutineVerticle() {
             if (vertx != Application.vertx) {
                 throw SzException("SeqIdServiceVerticle is not deployed by Application.vertx")
             }
-            "$uid@${Application.vertxOptions.clusterManager.nodeID}"
+            "$uid@${Application.vertxOptions.clusterManager.nodeId}"
         } else {
             "$uid@local"
         }

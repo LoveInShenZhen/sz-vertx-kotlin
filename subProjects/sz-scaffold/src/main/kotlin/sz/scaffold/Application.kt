@@ -114,7 +114,8 @@ object Application {
             appHome = SystemUtils.getUserDir().absolutePath
         } else {
             if (SystemUtils.getUserDir().name == "bin" &&
-                SystemUtils.getUserDir().parentFile.hasFile("conf${File.separator}application.conf")) {
+                SystemUtils.getUserDir().parentFile.hasFile("conf${File.separator}application.conf")
+            ) {
                 appHome = SystemUtils.getUserDir().parent
             } else {
                 val jarFile = ClassLoaderUtil.getDefaultClasspath().find { it.name.startsWith("kotlin-stdlib-") }
@@ -211,7 +212,7 @@ object Application {
     fun createVertx(): Vertx {
         this._vertoptions = buildVertxOptions()
 
-        if (this._vertoptions!!.eventBusOptions.isClustered) {
+        if (this.isClustered) {
             Logger.info("Vertx: cluster mode")
             val future = CompletableFuture<Vertx>()
 
@@ -232,6 +233,11 @@ object Application {
         }
 
     }
+
+    val isClustered: Boolean
+        get() {
+            return config.getBoolean("app.vertx.options.clustered")
+        }
 
     fun setupOnStartAndOnStop() {
         // 执行 OnStart 方法
@@ -257,14 +263,20 @@ object Application {
             if (it.path.startsWith("/builtinstatic/")) {
                 throw SzException("[/builtinstatic/*] is designed to deal with static file resources, please change the routing path definition: ${it.path}")
             }
-            val key = "${it.method.name}  ${it.path}"
+            val key = "${it.method.name()}  ${it.path}"
             val count = routeMap.getOrDefault(key, 0)
             routeMap[key] = count + 1
         }
 
         val errRoutes = routeMap.filter { it.value > 1 }.map { it.key }
         if (errRoutes.isNotEmpty()) {
-            throw SzException("The following routes are repeatedly defined, please check route file:\n${errRoutes.joinToString("\n")}")
+            throw SzException(
+                "The following routes are repeatedly defined, please check route file:\n${
+                    errRoutes.joinToString(
+                        "\n"
+                    )
+                }"
+            )
         }
 
     }
@@ -329,11 +341,13 @@ object Application {
         // /builtinstatic/* , 该 path 是约定专门用于处理静态文件的
         router.route("/builtinstatic/*").handler(StaticHandler.create())
 
-        router.route().handler(BodyHandler.create()
-            .setMergeFormAttributes(bodyHandlerOptions.mergeFormAttributes)
-            .setBodyLimit(bodyHandlerOptions.bodyLimit)
-            .setDeleteUploadedFilesOnEnd(bodyHandlerOptions.deleteUploadedFilesOnEnd)
-            .setUploadsDirectory(bodyHandlerOptions.uploadsDirectory))
+        router.route().handler(
+            BodyHandler.create()
+                .setMergeFormAttributes(bodyHandlerOptions.mergeFormAttributes)
+                .setBodyLimit(bodyHandlerOptions.bodyLimit)
+                .setDeleteUploadedFilesOnEnd(bodyHandlerOptions.deleteUploadedFilesOnEnd)
+                .setUploadsDirectory(bodyHandlerOptions.uploadsDirectory)
+        )
 
         loadApiRouteFromRouteFiles().forEach {
             it.addToRoute(router)
@@ -443,7 +457,8 @@ object Application {
             this.bodyLimit = config.getLong("app.httpServer.bodyHandler.bodyLimit")
             this.mergeFormAttributes = config.getBoolean("app.httpServer.bodyHandler.mergeFormAttributes")
             this.deleteUploadedFilesOnEnd = config.getBoolean("app.httpServer.bodyHandler.deleteUploadedFilesOnEnd")
-            this.uploadsDirectory = filePathJoin(appHome, config.getString("app.httpServer.bodyHandler.uploadsDirectory"))
+            this.uploadsDirectory =
+                filePathJoin(appHome, config.getString("app.httpServer.bodyHandler.uploadsDirectory"))
         }
     }
 
@@ -459,8 +474,8 @@ object Application {
     }
 
     private fun logClusterNodeId() {
-        if (vertxOptions.eventBusOptions.isClustered) {
-            Logger.info("NodeId: ${vertxOptions.clusterManager.nodeID}")
+        if (this.isClustered) {
+            Logger.info("NodeId: ${vertxOptions.clusterManager.nodeId}")
             Logger.info("Cluster Nodes: ${vertxOptions.clusterManager.nodes.joinToString(", ")}")
         }
     }
@@ -471,7 +486,8 @@ object Application {
     }
 
     val workerDispatcher: CoroutineDispatcher by lazy {
-        val factory = Class.forName(config.getString("app.httpServer.dispatcher.factory")).getDeclaredConstructor().newInstance() as IDispatcherFactory
+        val factory = Class.forName(config.getString("app.httpServer.dispatcher.factory")).getDeclaredConstructor()
+            .newInstance() as IDispatcherFactory
         factory.build()
     }
 

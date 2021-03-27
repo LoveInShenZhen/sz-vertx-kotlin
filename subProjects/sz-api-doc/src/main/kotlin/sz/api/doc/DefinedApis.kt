@@ -44,7 +44,7 @@ class DefinedApis(@Comment("是否是 json api") val isJsonApi: Boolean = true) 
 }
 
 fun ApiRoute.buildApiInfo(): ApiInfo {
-    var httpMethod = this.method.name
+    var httpMethod = this.method.name()
     if (httpMethod == "POST") {
         httpMethod = ApiInfo.PostForm
 //        if (this.controllerFun.findAnnotation<PostForm>() != null) {
