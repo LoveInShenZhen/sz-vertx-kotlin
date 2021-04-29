@@ -1,5 +1,6 @@
 package sz.scaffold.redis
 
+import io.vertx.kotlin.coroutines.await
 import io.vertx.kotlin.redis.client.sendAwait
 import io.vertx.redis.client.*
 
@@ -9,7 +10,7 @@ import io.vertx.redis.client.*
 
 suspend fun Redis.setAwait(key: String, value: ByteArray): Response? {
     val req = Request.cmd(Command.SET).arg(key).arg(value)
-    return this.sendAwait(req)
+    return this.send(req).await()
 }
 
 suspend fun Redis.psetexAwait(key: String, value: ByteArray, expirationInMs: Long): Response? {
