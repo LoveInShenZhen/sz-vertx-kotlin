@@ -29,11 +29,15 @@ tasks.register<Jar>("sourcesJar") {
     archiveClassifier.set("sources")
 }
 
+java {
+    withSourcesJar()
+}
+
 publishing {
     publications {
         create<MavenPublication>("maven") {
             from(components["java"])
-            artifact(tasks["sourcesJar"])
+//            artifact(tasks["sourcesJar"])
         }
     }
 

@@ -22,7 +22,6 @@ allprojects {
         mavenLocal()
         maven(url="https://maven.aliyun.com/repository/public/")
         mavenCentral()
-        jcenter()
     }
 
 }
