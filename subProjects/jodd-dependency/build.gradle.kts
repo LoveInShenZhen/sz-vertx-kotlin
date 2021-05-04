@@ -15,11 +15,6 @@ dependencies {
     api("org.jodd:jodd-bean:5.0.13")
 }
 
-tasks.register<Jar>("sourcesJar") {
-    from(sourceSets.main.get().allSource)
-    archiveClassifier.set("sources")
-}
-
 java {
     withSourcesJar()
 }

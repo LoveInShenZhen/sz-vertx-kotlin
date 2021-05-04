@@ -29,11 +29,6 @@ dependencies {
     api("org.apache.commons:commons-lang3:3.9")
 }
 
-tasks.register<Jar>("sourcesJar") {
-    from(sourceSets.main.get().allSource)
-    archiveClassifier.set("sources")
-}
-
 java {
     withSourcesJar()
 }

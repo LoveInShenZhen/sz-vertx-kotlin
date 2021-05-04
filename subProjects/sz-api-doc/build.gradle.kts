@@ -12,11 +12,6 @@ dependencies {
     api(project(":subProjects:sz-scaffold"))
 }
 
-tasks.register<Jar>("sourcesJar") {
-    from(sourceSets.main.get().allSource)
-    archiveClassifier.set("sources")
-}
-
 java {
     withSourcesJar()
 }

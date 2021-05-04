@@ -21,11 +21,6 @@ dependencies {
     api("org.glassfish.jaxb:jaxb-runtime:2.3.2")
 }
 
-tasks.register<Jar>("sourcesJar") {
-    from(sourceSets.main.get().allSource)
-    archiveClassifier.set("sources")
-}
-
 java {
     withSourcesJar()
 }
