@@ -66,10 +66,10 @@ class SeqIdServiceVerticle : CoroutineVerticle() {
     }
 
     companion object {
-        val idServiceBusAddress = "sz.SeqIdService"
-        val idMapLockName = "sz.SeqIdService.lock"
-        val idMapName = "sz.SeqIdService.idMap"
-        val mapkey = "idMap"
+        const val idServiceBusAddress = "sz.SeqIdService"
+        const val idMapLockName = "sz.SeqIdService.lock"
+        const val idMapName = "sz.SeqIdService.idMap"
+        const val mapkey = "idMap"
 
         /**
          * 注册一个 id 生成器的worker, 成功则分配一个 workerId, 失败则返回 -1
