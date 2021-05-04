@@ -73,8 +73,6 @@ data class ApiRoute(val method: HttpMethod,
             return
         }
 
-
-
         Application.workerScope.async {
             try {
                 val args = controllerFun.buildCallArgs(apiController, paramDatas)

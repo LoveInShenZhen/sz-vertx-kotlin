@@ -15,7 +15,7 @@ suspend fun Redis.setAwait(key: String, value: ByteArray): Response? {
 
 suspend fun Redis.psetexAwait(key: String, value: ByteArray, expirationInMs: Long): Response? {
     val req = Request.cmd(Command.PSETEX).arg(key).arg(expirationInMs).arg(value)
-    return this.sendAwait(req)
+    return this.send(req).await()
 }
 
 fun Redis.api(): RedisAPI {

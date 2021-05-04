@@ -1,5 +1,6 @@
 package sz.scaffold.redis.cache
 
+import io.vertx.kotlin.coroutines.await
 import io.vertx.kotlin.redis.client.delAwait
 import io.vertx.kotlin.redis.client.existsAwait
 import io.vertx.kotlin.redis.client.getAwait
@@ -19,7 +20,7 @@ class RedisAsyncCache(private val redis: Redis) : AsyncCacheApi {
 
     override suspend fun existsAwait(key: String): Boolean {
         return try {
-            redis.api().existsAwait(listOf(key))!!.toInteger() == 1
+            redis.api().exists(listOf(key)).await().toInteger() == 1
         } catch (e: Throwable) {
             false
         }
@@ -27,19 +28,19 @@ class RedisAsyncCache(private val redis: Redis) : AsyncCacheApi {
 
     override suspend fun delAwait(key: String) {
         try {
-            redis.api().delAwait(listOf(key))
+            redis.api().del(listOf(key)).await()
         } catch (e: Throwable) {
             Logger.warn(e.localizedMessage)
         }
     }
 
     override suspend fun getBytesAwait(key: String): ByteArray {
-        return redis.api().getAwait(key)?.toBytes() ?: throw SzException("'$key' does not exist in the cache.")
+        return redis.api().get(key).await().toBytes() ?: throw SzException("'$key' does not exist in the cache.")
     }
 
     override suspend fun getBytesOrElseAwait(key: String, default: () -> ByteArray): ByteArray {
         return try {
-            redis.api().getAwait(key)?.toBytes() ?: default()
+            redis.api().get(key).await().toBytes() ?: default()
         } catch (e: Throwable) {
             Logger.warn(e.localizedMessage)
             default()
