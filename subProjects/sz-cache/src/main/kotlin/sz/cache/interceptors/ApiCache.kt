@@ -1,4 +1,4 @@
-package sz.scaffold.aop.interceptors.builtin.api.cache
+package sz.cache.interceptors
 
 //
 // Created by kk on 2019-06-28.
