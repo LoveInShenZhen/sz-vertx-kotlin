@@ -1,8 +1,8 @@
-package sz.scaffold.redis.cache
+package sz.cache.redis
 
 import io.vertx.redis.client.Redis
 import kotlinx.coroutines.runBlocking
-import sz.scaffold.cache.CacheApi
+import sz.cache.CacheApi
 
 
 class RedisCache(redis: Redis) : CacheApi {

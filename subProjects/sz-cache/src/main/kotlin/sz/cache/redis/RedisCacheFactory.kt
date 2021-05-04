@@ -1,12 +1,12 @@
-package sz.scaffold.redis.cache
+package sz.cache.redis
 
 import io.vertx.core.json.JsonObject
 import io.vertx.redis.client.Redis
 import io.vertx.redis.client.RedisOptions
 import sz.scaffold.Application
-import sz.scaffold.cache.AsyncCacheApi
-import sz.scaffold.cache.CacheApi
-import sz.scaffold.cache.CacheFactory
+import sz.cache.AsyncCacheApi
+import sz.cache.CacheApi
+import sz.cache.CacheFactory
 
 //
 // Created by kk on 2020/4/13.

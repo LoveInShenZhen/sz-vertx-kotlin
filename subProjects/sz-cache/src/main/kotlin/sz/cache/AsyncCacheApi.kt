@@ -1,4 +1,4 @@
-package sz.scaffold.cache
+package sz.cache
 
 import jodd.datetime.JDateTime
 

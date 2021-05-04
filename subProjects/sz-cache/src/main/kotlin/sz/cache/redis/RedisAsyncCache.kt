@@ -1,14 +1,12 @@
-package sz.scaffold.redis.cache
+package sz.cache.redis
 
 import io.vertx.kotlin.coroutines.await
-import io.vertx.kotlin.redis.client.delAwait
-import io.vertx.kotlin.redis.client.existsAwait
 import io.vertx.kotlin.redis.client.getAwait
 import io.vertx.redis.client.Redis
-import sz.scaffold.cache.AsyncCacheApi
-import sz.scaffold.redis.api
-import sz.scaffold.redis.psetexAwait
-import sz.scaffold.redis.setAwait
+import sz.cache.AsyncCacheApi
+import sz.redis.api
+import sz.redis.psetexAwait
+import sz.redis.setAwait
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.logger.Logger
 

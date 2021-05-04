@@ -15,7 +15,6 @@ dependencies {
     api("io.vertx:vertx-core:4.0.3")
     api("io.vertx:vertx-web:4.0.3")
     api("io.vertx:vertx-zookeeper:4.0.3")
-    api("io.vertx:vertx-redis-client:4.0.3")
     api("io.vertx:vertx-lang-kotlin:4.0.3") {
         this.exclude(group = "org.jetbrains.kotlin")
     }

@@ -1,4 +1,4 @@
-package sz.scaffold.cache
+package sz.cache
 
 import io.vertx.core.json.JsonObject
 

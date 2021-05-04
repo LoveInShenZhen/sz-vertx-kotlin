@@ -1,4 +1,4 @@
-package sz.scaffold.cache.local
+package sz.cache.local
 
 //
 // Created by kk on 2020/4/16.

@@ -1,10 +1,10 @@
-package sz.scaffold.cache.local
+package sz.cache.local
 
 import com.google.common.cache.CacheBuilder
 import io.vertx.core.json.JsonObject
-import sz.scaffold.cache.AsyncCacheApi
-import sz.scaffold.cache.CacheApi
-import sz.scaffold.cache.CacheFactory
+import sz.cache.AsyncCacheApi
+import sz.cache.CacheApi
+import sz.cache.CacheFactory
 
 //
 // Created by kk on 2020/4/16.

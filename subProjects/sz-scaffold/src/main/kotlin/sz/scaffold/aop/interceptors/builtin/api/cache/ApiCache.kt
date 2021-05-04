@@ -9,7 +9,7 @@ import jodd.crypt.DigestEngine
 import sz.scaffold.Application
 import sz.scaffold.aop.actions.Action
 import sz.scaffold.aop.annotations.WithAction
-import sz.scaffold.cache.CacheManager
+import sz.cache.CacheManager
 import sz.scaffold.controller.ContentTypes
 import sz.scaffold.tools.json.toShortJson
 

@@ -1,7 +1,7 @@
-package sz.scaffold.cache.local
+package sz.cache.local
 
 import com.google.common.cache.Cache
-import sz.scaffold.cache.CacheApi
+import sz.cache.CacheApi
 import sz.scaffold.tools.SzException
 
 //
