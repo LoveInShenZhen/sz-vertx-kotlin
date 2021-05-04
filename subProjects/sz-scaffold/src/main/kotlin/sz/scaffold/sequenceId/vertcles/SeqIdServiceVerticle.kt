@@ -1,5 +1,7 @@
 package sz.scaffold.sequenceId.vertcles
 
+import io.vertx.core.Future
+import io.vertx.core.Promise
 import io.vertx.core.Vertx
 import io.vertx.core.eventbus.MessageConsumer
 import io.vertx.core.shareddata.Lock
@@ -148,8 +150,15 @@ class SeqIdServiceVerticle : CoroutineVerticle() {
             return this.split("@").last()
         }
 
-        suspend fun nextIdAwait(): Long {
-            return Application.vertx.eventBus().request<Long>(idServiceBusAddress, "").await().body()
+        fun nextId(): Future<Long> {
+            val result = Promise.promise<Long>()
+            Application.vertx.eventBus().request<Long>(idServiceBusAddress, "").onSuccess { msg ->
+                result.complete(msg.body())
+            }.onFailure { ex ->
+                result.fail(ex)
+            }
+
+            return result.future()
         }
     }
 
