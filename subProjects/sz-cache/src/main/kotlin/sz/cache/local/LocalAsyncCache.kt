@@ -1,87 +1,107 @@
 package sz.cache.local
 
 import com.google.common.cache.Cache
+import io.vertx.core.Future
+import io.vertx.core.Promise
 import sz.cache.AsyncCacheApi
 import sz.scaffold.tools.SzException
 
 //
-// Created by kk on 2020/4/16.
+// Created by kk on 2021/5/4.
 //
-@Suppress("DuplicatedCode")
 class LocalAsyncCache(private val cacheImp: Cache<String, CacheEntry>) : AsyncCacheApi {
-    override suspend fun existsAwait(key: String): Boolean {
-        val entry = cacheImp.getIfPresent(key)
-        return when {
-            entry == null -> {
-                false
-            }
-            entry.isExpired() -> {
-                cacheImp.invalidate(key)
-                false
-            }
-            else -> {
-                true
-            }
-        }
-    }
-
-    override suspend fun delAwait(key: String) {
-        cacheImp.invalidate(key)
-    }
-
-    override suspend fun getBytesAwait(key: String): ByteArray {
+    override fun exists(key: String): Future<Boolean> {
+        val result = Promise.promise<Boolean>()
         val entry = cacheImp.getIfPresent(key)
         when {
             entry == null -> {
-                throw SzException("'$key' does not exist in the cache.")
+                result.complete(false)
             }
             entry.isExpired() -> {
                 cacheImp.invalidate(key)
-                throw SzException("'$key' does not exist in the cache.")
+                result.complete(false)
             }
             else -> {
-                return entry.content
+                result.complete(true)
             }
         }
+        return result.future()
     }
 
-    override suspend fun getBytesOrElseAwait(key: String, default: () -> ByteArray): ByteArray {
+    override fun del(key: String): Future<Unit> {
+        val result = Promise.promise<Unit>()
+        cacheImp.invalidate(key)
+        result.complete()
+        return result.future()
+    }
+
+    override fun getBytes(key: String): Future<ByteArray> {
+        val result = Promise.promise<ByteArray>()
         val entry = cacheImp.getIfPresent(key)
-        return when {
+        when {
             entry == null -> {
-                default()
+                result.fail(SzException("'$key' does not exist in the cache."))
             }
             entry.isExpired() -> {
                 cacheImp.invalidate(key)
-                default()
+                result.fail(SzException("'$key' does not exist in the cache."))
             }
             else -> {
-                entry.content
+                result.complete(entry.content)
             }
         }
+        return result.future()
     }
 
-    override suspend fun getBytesOrNullAwait(key: String): ByteArray? {
+    override fun getBytesOrElse(key: String, default: () -> ByteArray): Future<ByteArray> {
+        val result = Promise.promise<ByteArray>()
         val entry = cacheImp.getIfPresent(key)
-        return when {
+        when {
             entry == null -> {
-                null
+                result.complete(default())
             }
             entry.isExpired() -> {
                 cacheImp.invalidate(key)
-                null
+                result.complete(default())
             }
             else -> {
-                entry.content
+                result.complete(entry.content)
             }
         }
+
+        return result.future()
     }
 
-    override suspend fun setBytesAwait(key: String, value: ByteArray) {
+    override fun getBytesOrNull(key: String): Future<ByteArray?> {
+        val result = Promise.promise<ByteArray>()
+        val entry = cacheImp.getIfPresent(key)
+        when {
+            entry == null -> {
+                result.complete(null)
+            }
+            entry.isExpired() -> {
+                cacheImp.invalidate(key)
+                result.complete(null)
+            }
+            else -> {
+                result.complete(entry.content)
+            }
+        }
+
+        return result.future()
+    }
+
+    override fun setBytes(key: String, value: ByteArray): Future<Unit> {
+        val result = Promise.promise<Unit>()
         cacheImp.put(key, CacheEntry(value))
+        result.complete()
+        return result.future()
     }
 
-    override suspend fun setBytesAwait(key: String, value: ByteArray, expirationInMs: Long) {
+    override fun setBytes(key: String, value: ByteArray, expirationInMs: Long): Future<Unit> {
+        val result = Promise.promise<Unit>()
         cacheImp.put(key, CacheEntry(value, expirationInMs))
+        result.complete()
+        return result.future()
     }
 }

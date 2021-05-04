@@ -6,6 +6,7 @@ import jodd.datetime.JDateTime
 // Created by kk on 17/9/4.
 //
 
+/// 同步(阻塞)模式下的缓存 Api 接口
 interface CacheApi {
 
     fun exists(key: String): Boolean

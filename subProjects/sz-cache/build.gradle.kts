@@ -14,6 +14,7 @@ plugins {
 
 dependencies {
     api(project(":subProjects:sz-redis"))
+    api(project(":subProjects:sz-log"))
 
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")

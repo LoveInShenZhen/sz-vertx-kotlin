@@ -5,6 +5,7 @@ package sz.cache.interceptors
 //
 
 import io.vertx.core.http.HttpMethod
+import io.vertx.kotlin.coroutines.await
 import jodd.crypt.DigestEngine
 import sz.scaffold.Application
 import sz.scaffold.aop.actions.Action
@@ -36,13 +37,13 @@ class ApiCacheAction : Action<ApiCache>() {
         }
 
         val cacheKey = "ApiCache@${request.path()}@${request.method().name()}@${DigestEngine.sha1().digestString(queryParamsTxt + bodyParams)}"
-        val cache = CacheManager.asyncCache(cacheName)
-        val cacheValue = cache.getOrNullAwait(cacheKey)
+        val asyncCache = CacheManager.asyncCache(cacheName)
+        val cacheValue = asyncCache.getOrNull(cacheKey).await()
 
         return if (cacheValue == null) {
             val result = delegate.call()
             if (result != null) {
-                cache.setAwait(cacheKey, result.toShortJson(), this.config.expireTimeInMs)
+                asyncCache.set(cacheKey, result.toShortJson(), this.config.expireTimeInMs).await()
             }
             result
         } else {

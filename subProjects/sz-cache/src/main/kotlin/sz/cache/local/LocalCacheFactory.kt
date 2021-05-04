@@ -5,6 +5,7 @@ import io.vertx.core.json.JsonObject
 import sz.cache.AsyncCacheApi
 import sz.cache.CacheApi
 import sz.cache.CacheFactory
+import sz.scaffold.tools.SzException
 
 //
 // Created by kk on 2020/4/16.

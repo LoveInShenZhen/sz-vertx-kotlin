@@ -1,85 +1,160 @@
 package sz.cache
 
+import io.vertx.core.Future
+import io.vertx.core.Promise
+import io.vertx.kotlin.coroutines.await
 import jodd.datetime.JDateTime
+import sz.scaffold.tools.logger.Logger
+import kotlin.math.exp
 
 //
 // Created by kk on 2019-06-14.
 //
 interface AsyncCacheApi {
 
-    suspend fun existsAwait(key: String): Boolean
+    fun exists(key: String): Future<Boolean>
 
-    suspend fun delAwait(key: String)
+    fun del(key: String): Future<Unit>
 
     //<editor-fold desc="For String Value">
-    suspend fun getAwait(key: String): String {
-        return getBytesAwait(key).toString(Charsets.UTF_8)
-    }
-
-    suspend fun getOrElseAwait(key: String, default: () -> String): String {
-        val value = getBytesOrNullAwait(key)
-        return value?.toString(Charsets.UTF_8) ?: default()
-    }
-
-    suspend fun getOrNullAwait(key: String): String? {
-        val value = getBytesOrNullAwait(key)
-        return value?.toString(Charsets.UTF_8)
-    }
-
-    suspend fun getOrPutAwait(key: String, expirationInMs: Long = 0, supplier: () -> String): String {
-        val value = getOrNullAwait(key)
-        return if (value == null) {
-            val newValue = supplier()
-            setAwait(key, newValue, expirationInMs)
-            newValue
-        } else {
-            value
+    fun get(key: String): Future<String> {
+        val result = Promise.promise<String>()
+        getBytes(key).onSuccess { bytes ->
+            result.complete(bytes.toString(Charsets.UTF_8))
+        }.onFailure { ex ->
+            result.fail(ex)
         }
+
+        return result.future()
     }
 
-    suspend fun setAwait(key: String, value: String) {
-        setBytesAwait(key, value.toByteArray(Charsets.UTF_8))
+    fun getOrElse(key: String, default: () -> String): Future<String> {
+        val result = Promise.promise<String>()
+        getBytesOrNull(key).onSuccess { bytes ->
+            if (bytes == null) {
+                result.complete(default())
+            } else {
+                result.complete(bytes.toString(Charsets.UTF_8))
+            }
+        }.onFailure { ex ->
+            result.fail(ex)
+        }
+
+        return result.future()
     }
 
-    suspend fun setAwait(key: String, value: String, expirationInMs: Long) {
-        setBytesAwait(key, value.toByteArray(Charsets.UTF_8), expirationInMs)
+    fun getOrNull(key: String): Future<String?> {
+        val result = Promise.promise<String?>()
+        getBytesOrNull(key).onSuccess { bytes ->
+            if (bytes == null) {
+                result.complete(null)
+            } else {
+                result.complete(bytes.toString(Charsets.UTF_8))
+            }
+        }.onFailure { ex ->
+            result.fail(ex)
+        }
+
+        return result.future()
     }
 
-    suspend fun setAwait(key: String, value: String, cleaningTime: JDateTime) {
-        setBytesAwait(key, value.toByteArray(Charsets.UTF_8), cleaningTime)
+    fun getOrPut(key: String, expirationInMs: Long = 0, supplier: () -> String): Future<String> {
+        val result = Promise.promise<String>()
+        getOrNull(key).onSuccess { value ->
+            if (value != null) {
+                result.complete(value)
+            } else {
+                val newValue = supplier()
+                set(key, newValue, expirationInMs)
+                result.complete(newValue)
+            }
+        }.onFailure { ex ->
+            result.fail(ex)
+        }
+
+        return result.future()
+    }
+
+    fun set(key: String, value: String): Future<Unit> {
+        val result = Promise.promise<Unit>()
+
+        setBytes(key, value.toByteArray(Charsets.UTF_8)).onSuccess {
+            result.complete()
+        }.onFailure { ex ->
+            result.fail(ex)
+        }
+
+        return result.future()
+    }
+
+    fun set(key: String, value: String, expirationInMs: Long): Future<Unit> {
+        val result = Promise.promise<Unit>()
+
+        setBytes(key, value.toByteArray(Charsets.UTF_8), expirationInMs).onSuccess {
+            result.complete()
+        }.onFailure { ex ->
+            result.fail(ex)
+        }
+
+        return result.future()
+    }
+
+    fun set(key: String, value: String, cleaningTime: JDateTime): Future<Unit> {
+        val result = Promise.promise<Unit>()
+
+        setBytes(key, value.toByteArray(Charsets.UTF_8), cleaningTime).onSuccess {
+            result.complete()
+        }.onFailure { ex ->
+            result.fail(ex)
+        }
+
+        return result.future()
     }
     //</editor-fold>
 
     //<editor-fold desc="For Bytes Value">
-    suspend fun getBytesAwait(key: String): ByteArray
+    fun getBytes(key: String): Future<ByteArray>
 
-    suspend fun getBytesOrElseAwait(key: String, default: () -> ByteArray): ByteArray
+    fun getBytesOrElse(key: String, default: () -> ByteArray): Future<ByteArray>
 
-    suspend fun getBytesOrNullAwait(key: String): ByteArray?
+    fun getBytesOrNull(key: String): Future<ByteArray?>
 
-    suspend fun getBytesOrPutAwait(key: String, expirationInMs: Long = 0, supplier: () -> ByteArray): ByteArray {
-        val value = getBytesOrNullAwait(key)
-        return if (value == null) {
-            val newValue = supplier()
-            setBytesAwait(key, newValue, expirationInMs)
-            newValue
-        } else {
-            value
+    fun getBytesOrPut(key: String, expirationInMs: Long = 0, supplier: () -> ByteArray): Future<ByteArray> {
+        val result = Promise.promise<ByteArray>()
+
+        getBytesOrNull(key).onSuccess { bytes ->
+            if (bytes == null) {
+                val newValue = supplier()
+                setBytes(key, newValue, expirationInMs).onFailure { ex ->
+                    Logger.warn(ex.localizedMessage)
+                }
+                result.complete(newValue)
+            } else {
+                result.complete(bytes)
+            }
+        }.onFailure { ex ->
+            result.fail(ex)
         }
+
+        return result.future()
     }
 
-    suspend fun setBytesAwait(key: String, value: ByteArray)
+    fun setBytes(key: String, value: ByteArray): Future<Unit>
 
-    suspend fun setBytesAwait(key: String, value: ByteArray, expirationInMs: Long)
+    fun setBytes(key: String, value: ByteArray, expirationInMs: Long): Future<Unit>
 
-    suspend fun setBytesAwait(key: String, value: ByteArray, cleaningTime: JDateTime) {
+    fun setBytes(key: String, value: ByteArray, cleaningTime: JDateTime): Future<Unit> {
+        val result = Promise.promise<Unit>()
         val now = JDateTime().timeInMillis
         val diffTime = cleaningTime.convertToDate().time - now
-        if (diffTime <= 0) {
-            setBytesAwait(key, value)
-        } else {
-            setBytesAwait(key, value, diffTime)
+        if (diffTime > 0) {
+            setBytes(key, value, diffTime).onSuccess {
+                result.complete()
+            }.onFailure { ex ->
+                result.fail(ex)
+            }
         }
+        return result.future()
     }
     //</editor-fold>
 
