@@ -39,17 +39,6 @@ publishing {
             from(components["java"])
         }
     }
-
-    repositories {
-        var myRepo = "/Users/kk/ssdwork/github/kklongming.github.io/repository"
-        System.getProperty("myRepo")?.apply {
-            myRepo = this
-        }
-        maven {
-            name = "myRepo"
-            url = uri("file://$myRepo")
-        }
-    }
 }
 
 val compileKotlin: KotlinCompile by tasks

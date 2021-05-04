@@ -44,19 +44,6 @@ publishing {
             from(components["java"])
         }
     }
-
-    val userHome = System.getProperty("user.home")
-
-    repositories {
-        var myRepo =  "$userHome/ssdwork/github/kklongming.github.io/repository"
-        System.getProperty("myRepo")?.apply {
-            myRepo = this
-        }
-        maven {
-            name = "myRepo"
-            url = uri("file://$myRepo")
-        }
-    }
 }
 
 val compileKotlin: KotlinCompile by tasks
