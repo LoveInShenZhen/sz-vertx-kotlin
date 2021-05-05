@@ -16,8 +16,9 @@ plugins {
 }
 
 repositories {
-    // Use JCenter for resolving dependencies.
-    jcenter()
+    mavenLocal()
+    maven(url="https://maven.aliyun.com/repository/public/")
+    mavenCentral()
 }
 
 dependencies {
