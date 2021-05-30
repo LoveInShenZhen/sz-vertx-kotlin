@@ -7,7 +7,7 @@
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
-    kotlin("jvm").version("1.4.32").apply(false)
+    kotlin("jvm").version("1.5.10").apply(false)
 }
 
 allprojects {
