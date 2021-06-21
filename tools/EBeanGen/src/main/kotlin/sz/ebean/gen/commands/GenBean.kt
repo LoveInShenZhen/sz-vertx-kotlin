@@ -2,8 +2,10 @@ package sz.ebean.gen.commands
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.default
+import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
+import com.github.ajalt.clikt.parameters.types.file
 import com.squareup.kotlinpoet.*
 import io.ebean.Database
 import io.ebean.DatabaseFactory
@@ -15,11 +17,11 @@ import io.ebean.config.DatabaseConfig
 import io.ebean.datasource.DataSourceConfig
 import jodd.io.FileNameUtil
 import jodd.io.FileUtil
+import jodd.util.Wildcard
 import sz.ebean.gen.dbinfo.ColumnInfo
 import sz.ebean.gen.dbinfo.DBInfo
 import sz.ebean.gen.dbinfo.TableInfo
 import java.io.File
-import java.lang.StringBuilder
 import javax.persistence.*
 
 //
@@ -47,46 +49,55 @@ class GenBean : CliktCommand(name = "gen") {
         help = "package of the bean classes"
     ).default("models")
 
-    val output by option(
-        names = arrayOf("-o", "--output"),
+    val outdir by option(
+        names = arrayOf("-o", "--outdir"),
         help = "output dir. default is ./build dir"
-    ).default("./build")
+    ).file(canBeFile = false).default(value = File("./build"), defaultForHelp = "./build")
+
+    val excludes by option(
+        names = arrayOf("-x", "--excludes"),
+        help = "需要排除的表名称,支持通配符,多个名称之间使用逗号分隔"
+    ).default("")
+
+    val with_view by option(
+        help = "是否包含视图"
+    ).flag("--with-view", default = false)
+
+    var exclude_pattern: List<String> = listOf()
 
     override fun run() {
+        exclude_pattern = excludes.split(",")
+
         val db = newDatabase()
 
-//        db.beginTransaction().use { tran ->
-//            val cnn = tran.connection
-//            val metaData = cnn.metaData
-//
-//            val rs = metaData.getPrimaryKeys(cnn.catalog, null, "data_sdk_version")
-//            val count = rs.metaData.columnCount
-//            for (i in 1..count) {
-//
-//                println("ColumnNam : ${rs.metaData.getColumnName(i)}")
-//                println("colunm type: ${rs.metaData.getColumnTypeName(i)}")
-//            }
-//            while (rs.next()) {
-//                println("PK_NAME: ${rs.getString("PK_NAME")}")
-//                println("COLUMN_NAME: ${rs.getString("COLUMN_NAME")}")
-//                println("KEY_SEQ: ${rs.getString("KEY_SEQ")}")
-//            }
-//        }
-
-
         val dbinfo = DBInfo(db)
-        val tables = dbinfo.tables()
-        println(tables.find { it.table_name == "data_user_base" })
+        val tables = mutableListOf<TableInfo>()
+        tables.addAll(dbinfo.tables())
 
-        val destDir = outputDirPath()
-        FileUtil.mkdirs(destDir)
-
-        tables.find { it.table_name == "data_authtoken" }.run {
-            buildEntity(this!!, destDir)
+        if (with_view) {
+            tables.addAll(dbinfo.views())
         }
 
-//        test()
+        FileUtil.mkdirs(this.outdir)
 
+        tables.forEach {
+            if (excludeTable(it.table_name).not()) {
+                echo("为表: ${it.table_name} 生成实体类代码: ${it.class_name}")
+                buildEntity(it, this.outdir.absolutePath)
+            }
+        }
+
+        echo("完毕")
+    }
+
+    private fun excludeTable(tableName:String):Boolean{
+        exclude_pattern.forEach {pattern ->
+            if (Wildcard.match(tableName, pattern)) {
+                return true
+            }
+        }
+
+        return false
     }
 
     private fun newDatabase(): Database {
@@ -99,12 +110,6 @@ class GenBean : CliktCommand(name = "gen") {
         config.dataSourceConfig = dataSourceConfig
 
         return DatabaseFactory.create(config)
-    }
-
-    private fun outputDirPath(): String {
-        var pkgDirs = this.pkg.replace(".", File.pathSeparator, true)
-        val path = FileNameUtil.concat(this.output, pkgDirs)
-        return path
     }
 
     private fun buildEntity(tableInfo: TableInfo, destDir: String) {
@@ -140,7 +145,7 @@ class GenBean : CliktCommand(name = "gen") {
 
         fileBuilder.addType(classBuilder.build())
 
-        fileBuilder.build().writeTo(System.out)
+        fileBuilder.build().writeTo(File(destDir))
     }
 
     private fun buildField(tableInfo: TableInfo, columnInfo: ColumnInfo): PropertySpec {
@@ -192,42 +197,8 @@ class GenBean : CliktCommand(name = "gen") {
 
             builder.addAnnotation(columnAnnSpecBuilder.build())
         }
-        
+
         return builder.build()
-    }
-
-    private fun test() {
-        val greeterClass = ClassName("", "Greeter")
-        val file = FileSpec.builder("", "HelloWorld")
-            .addType(
-                TypeSpec.classBuilder("Greeter")
-                    .primaryConstructor(
-                        FunSpec.constructorBuilder()
-                            .addParameter("name", String::class)
-                            .build()
-                    )
-                    .addProperty(
-                        PropertySpec.builder("name", String::class)
-                            .initializer("name")
-                            .build()
-                    )
-                    .addFunction(
-                        FunSpec.builder("greet")
-                            .addStatement("println(%P)", "Hello, \$name")
-                            .build()
-                    )
-                    .build()
-            )
-            .addFunction(
-                FunSpec.builder("main")
-                    .addParameter("args", String::class, KModifier.VARARG)
-                    .addStatement("%T(args[0]).greet()", greeterClass)
-                    .build()
-            )
-            .suppressWarningTypes("edundantVisibilityModifier")
-            .build()
-
-        file.writeTo(System.out)
     }
 }
 
