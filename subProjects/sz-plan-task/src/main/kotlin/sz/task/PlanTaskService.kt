@@ -176,7 +176,7 @@ object PlanTaskService {
                 } catch (ex: Exception) {
                     loadedTasks.clear()
                     Logger.error(ExceptionUtil.exceptionStackTraceToString(ex))
-                    Thread.sleep(10 * 1000)
+                    Thread.sleep(10 * 1000L)
                 }
             }
             Logger.debug("Stop PlanningTaskLoader for requireSeq: $requireSeq")

@@ -4,6 +4,7 @@ import io.ebean.Database as EbeanServer
 import sz.annotations.DBIndexed
 import sz.scaffold.ext.camelCaseToLowCaseSeprated
 import sz.scaffold.tools.logger.Logger
+import java.util.*
 import kotlin.reflect.full.memberProperties
 
 //
@@ -30,7 +31,7 @@ internal class IndexInfo(var indexName: String) {
                 sql = "show index from `$tableName`"
             }
             if (SzEbeanConfig.isH2()) {
-                sql = "SELECT t.TABLE_NAME, t.COLUMN_NAME AS Column_name, t.INDEX_NAME AS Key_name FROM INFORMATION_SCHEMA.INDEXES as t WHERE t.INDEX_TYPE_NAME != 'PRIMARY KEY' AND t.TABLE_NAME = '${tableName.toUpperCase()}'"
+                sql = "SELECT t.TABLE_NAME, t.COLUMN_NAME AS Column_name, t.INDEX_NAME AS Key_name FROM INFORMATION_SCHEMA.INDEXES as t WHERE t.INDEX_TYPE_NAME != 'PRIMARY KEY' AND t.TABLE_NAME = '${tableName.uppercase()}'"
             }
             val rows = dbServer.sqlQuery(sql).findList()
             for (row in rows) {
@@ -157,7 +158,7 @@ class DbIndex(private val dbServer: EbeanServer) {
                 continue
             }
 
-            if (indexInfo.indexName.toUpperCase() == "PRIMARY") {
+            if (indexInfo.indexName.uppercase() == "PRIMARY") {
                 continue
             }
 

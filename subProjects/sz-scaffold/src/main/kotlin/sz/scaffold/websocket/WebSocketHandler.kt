@@ -4,7 +4,7 @@ import io.netty.handler.codec.http.QueryStringDecoder
 import io.vertx.core.Handler
 import io.vertx.core.MultiMap
 import io.vertx.core.http.ServerWebSocket
-import io.vertx.ext.web.handler.impl.HttpStatusException
+import io.vertx.ext.web.handler.HttpException
 
 //
 // Created by kk on 2019-06-17.
@@ -21,6 +21,6 @@ fun ServerWebSocket.queryParams(): MultiMap {
         }
         return queryParams
     } catch (ex: IllegalArgumentException) {
-        throw HttpStatusException(400, "Error while decoding query params", ex)
+        throw HttpException(400, "Error while decoding query params", ex)
     }
 }
