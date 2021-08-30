@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm").version("1.5.21")
+    kotlin("jvm").version("1.5.30")
     id("io.ebean").version("12.8.0")
     application
 }
@@ -37,12 +37,12 @@ dependencies {
 
 val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
 compileKotlin.kotlinOptions {
-    jvmTarget = "1.8"
+    jvmTarget = "11"
 }
 
 val compileTestKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
-    jvmTarget = "1.8"
+    jvmTarget = "11"
 }
 
 application {
