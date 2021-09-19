@@ -5,5 +5,6 @@ package org.sz
 
 
 fun main(args: Array<String>) {
+    println("args: ${args.joinToString(separator = " ")}")
     println("hello cli 这是一个测试程序")
 }

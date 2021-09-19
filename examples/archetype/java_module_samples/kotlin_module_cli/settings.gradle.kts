@@ -8,4 +8,3 @@
  */
 
 rootProject.name = "kotlin_module_cli"
-include("app")

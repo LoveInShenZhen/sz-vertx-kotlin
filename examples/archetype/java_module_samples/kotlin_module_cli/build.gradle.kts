@@ -44,13 +44,13 @@ application {
     mainClass.set("org.sz.AppKt")
 }
 
-java {
-    modularity.inferModulePath.set(true)
-}
+//java {
+//    modularity.inferModulePath.set(true)
+//}
 
 jlink {
     this.options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
     this.launcher {
-        name = "app"
+//        name = "app"
     }
 }
