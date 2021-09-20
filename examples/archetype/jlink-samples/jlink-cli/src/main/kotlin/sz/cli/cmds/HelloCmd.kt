@@ -3,7 +3,6 @@ package sz.cli.cmds
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
-import com.github.ajalt.clikt.parameters.options.prompt
 import com.github.ajalt.clikt.parameters.types.int
 import org.slf4j.LoggerFactory
 
@@ -17,8 +16,8 @@ class Hello : CliktCommand() {
     override fun run() {
         repeat(count) {
             echo("Hello $name!")
-            logger.info("Hello $name!")
         }
+        logger.info("Hello $name!")
     }
 
     companion object {
