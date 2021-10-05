@@ -22,13 +22,13 @@ class SyncProto(val protoSource: ProtoSource) {
 
     fun scan() {
         this.protoSource.proto_dirs.forEach { proto_dir ->
-            val files = srcProtoFiles(proto_dir)
+            val files = destProtoFiles(proto_dir)
             files.forEach { protoFile ->
                 if (this.protoSource.file_mapping.contains(protoFile.name)) {
                     logger.error("重复的 proto 文件名, 需要在配置文件里单独进行映射单独进行映射. src_dir: ${proto_dir.src_path} file: ${protoFile.name}")
                 } else {
                     this.protoSource.file_mapping[protoFile.name] =
-                        protoFile.absolutePath.removePrefix(this.protoSource.src_base_dir)
+                        protoFile.absolutePath.removePrefix(this.protoSource.dest_base_dir)
                             .removePrefix("/")
                             .replace("/api/", "/")
                 }
@@ -83,12 +83,19 @@ class SyncProto(val protoSource: ProtoSource) {
 
     fun srcProtoFiles(protoDir: ProtoDir): List<File> {
         val path = FileNameUtil.concat(protoSource.src_base_dir, protoDir.src_path)
-        logger.debug("path: $path")
         return FindFile.createWildcardFF()
             .matchOnlyFileName()
             .include("*.proto")
             .searchPath(File(path))
             .findAll()
+    }
+
+    fun destProtoFiles(protoDir: ProtoDir): List<File> {
+        val destDirPath = FileNameUtil.concat(protoSource.dest_base_dir, protoDir.dest_path)
+        return srcProtoFiles(protoDir).map { srcProtoFile ->
+            val filePath = FileNameUtil.concat(destDirPath, srcProtoFile.name)
+            File(filePath)
+        }
     }
 
     fun process(protoFile: File, protoDir: ProtoDir) {
@@ -148,7 +155,7 @@ class SyncProto(val protoSource: ProtoSource) {
 
     fun javaOuterClassName(protoDir: ProtoDir, protoFile: File): String {
         val fileName = protoFile.nameWithoutExtension
-        val parts = fileName.split(".").toMutableList()
+        val parts = fileName.split(".", "-").toMutableList()
         parts.add("proto")
         return parts.map {
             StringUtil.capitalize(it.lowercase())

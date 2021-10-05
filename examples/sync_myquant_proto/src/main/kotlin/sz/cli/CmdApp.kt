@@ -35,17 +35,6 @@ class CmdApp {
                 logger.info("${t} : ${u}")
             }
 
-            val line1 = """ syntax = "proto3"; """
-            logger.info("'${line1}' : ${syncProto.isSyntaxLine(line1)}")
-
-            val line2 = " package   tradeaccount.api ;  "
-            logger.info("'${line2}' : ${syncProto.isPackageLine(line2)}")
-            logger.info("package: [${syncProto.packageOf(line2)}]")
-
-            val line3 = """ import "core/account.proto" ; """
-            logger.info("'${line3}' : ${syncProto.isImportLine(line3)}")
-            logger.info("package: [${syncProto.importOf(line3)}]")
-
             Hello().main(args)
         }
     }
