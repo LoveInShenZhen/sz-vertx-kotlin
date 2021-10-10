@@ -25,6 +25,8 @@ dependencies {
         exclude(group = "org.jetbrains.kotlin")
     }
     implementation("org.jodd:jodd-core:5.3.0")
+    implementation("sz.myquant:myquant_proto:1.0.0")
+    implementation("io.grpc:grpc-okhttp:1.41.0")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
