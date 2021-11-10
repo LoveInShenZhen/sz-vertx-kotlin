@@ -1,0 +1,27 @@
+GET     /                                                               sz.scaffold.controller.builtIn.Default.hello
+POST    /                                                               sz.scaffold.controller.builtIn.Default.hello
+GET     /api/builtin/sysInfo                                            sz.scaffold.controller.builtIn.Default.sysInfo
+
+# 内置EBean
+GET     /api/builtin/ebean/CreateTablesSql                              controllers.builtin.szebean.CreateTablesSql     {"dataSource" : ""}
+GET     /api/builtin/ebean/DropTablesSql                                controllers.builtin.szebean.DropTablesSql       {"dataSource" : ""}
+GET     /api/builtin/ebean/CreateIndexSql                               controllers.builtin.szebean.CreateIndexSql      {"dataSource" : ""}
+GET     /api/builtin/ebean/evolution                                    controllers.builtin.szebean.evolution           {"dataSource" : ""}
+
+
+# Api 文档
+GET     /api/builtin/doc/apiIndex                                       sz.api.controllers.ApiDoc.apiIndex
+GET     /api/builtin/doc/apiTest                                        sz.api.controllers.ApiDoc.apiTest
+GET     /api/builtin/doc/apiDocMarkdown                                 sz.api.controllers.ApiDoc.apiDocMarkdown
+GET     /api/builtin/doc/apiDocHtml                                     sz.api.controllers.ApiDoc.apiDocHtml
+GET     /api/builtin/doc/pageIndex                                      sz.api.controllers.ApiDoc.pageIndex
+GET     /api/builtin/doc/pageTest                                       sz.api.controllers.ApiDoc.pageTest
+
+# 测试接口
+GET     /api/sample/hello                                               com.api.server.controllers.sample.SampleController.hello
+GET     /api/sample/newUser                                             com.api.server.controllers.sample.SampleController.newUser
+GET     /api/sample/userList                                            com.api.server.controllers.sample.SampleController.userList
+GET     /api/sample/delUser                                             com.api.server.controllers.sample.SampleController.delUser
+
+GET     /api/sample/createDdl                                           com.api.server.controllers.sample.SampleController.createDdl
+GET     /api/sample/dropAllDdl                                          com.api.server.controllers.sample.SampleController.dropAllDdl
