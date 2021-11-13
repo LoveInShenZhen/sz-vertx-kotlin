@@ -25,7 +25,7 @@ const (
 )
 
 var (
-	globalLogger zap.Logger
+	globalLogger *zap.Logger
 	devMode      bool = false
 )
 
