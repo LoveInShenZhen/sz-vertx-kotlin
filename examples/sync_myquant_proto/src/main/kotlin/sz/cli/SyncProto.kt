@@ -25,7 +25,18 @@ class SyncProto(val protoSource: ProtoSource) {
             val files = destProtoFiles(proto_dir)
             files.forEach { protoFile ->
                 if (this.protoSource.file_mapping.contains(protoFile.name)) {
-                    logger.error("重复的 proto 文件名, 需要在配置文件里单独进行映射单独进行映射. src_dir: ${proto_dir.src_path} file: ${protoFile.name}")
+                    // 发现有同名的 proto 文件, 准备 rename
+                    if (proto_dir.rename_to.contains(protoFile.name)) {
+                        val new_name = proto_dir.rename_to[protoFile.name]!!
+
+                        this.protoSource.file_mapping[new_name] =
+                            protoFile.absolutePath.removePrefix(this.protoSource.dest_base_dir)
+                                .removePrefix("/")
+                                .replace("/api/", "/")
+                        logger.warn("proto 文件: ${protoFile.absolutePath} 被重命名为 ${new_name}")
+                    } else {
+                        logger.error("重复的 proto 文件名, 需要在配置文件里单独进行映射单独进行映射. src_dir: ${proto_dir.src_path} file: ${protoFile.name}")
+                    }
                 } else {
                     this.protoSource.file_mapping[protoFile.name] =
                         protoFile.absolutePath.removePrefix(this.protoSource.dest_base_dir)
@@ -37,22 +48,34 @@ class SyncProto(val protoSource: ProtoSource) {
     }
 
     fun Sync(protoDir: ProtoDir) {
-        FileUtil.mkdirs(FileNameUtil.concat(this.protoSource.dest_base_dir, protoDir.dest_path))
+        val dest_dir = FileNameUtil.concat(this.protoSource.dest_base_dir, protoDir.dest_path)
+        FileUtil.mkdirs(dest_dir)
+
+        // clean old proto files
+        FileUtil.cleanDir(dest_dir)
 
         logger.debug("sync for : ${protoDir}")
         srcProtoFiles(protoDir).forEach { srcProtoFile ->
             logger.info("sync file: ${srcProtoFile.absolutePath}")
             val lines = mutableListOf<String>()
 
-            val dest_dir = FileNameUtil.concat(this.protoSource.dest_base_dir, protoDir.dest_path)
-            val destProtoFile = File(FileNameUtil.concat(dest_dir, srcProtoFile.name))
+
+            val destFileName = protoDir.rename_to.getOrDefault(srcProtoFile.name, srcProtoFile.name)
+            val destProtoFile = File(FileNameUtil.concat(dest_dir, destFileName))
 
             srcProtoFile.forEachLine { line ->
                 if (isSyntaxLine(line)) {
                     lines.add(line)
                     lines.add("")
                     lines.add("option java_multiple_files = false;")
-                    lines.add("""option java_outer_classname = "${this.javaOuterClassName(protoDir, destProtoFile)}";""")
+                    lines.add(
+                        """option java_outer_classname = "${
+                            this.javaOuterClassName(
+                                protoDir,
+                                destProtoFile
+                            )
+                        }";"""
+                    )
                     lines.add("""option java_package = "${this.javaPackage(protoDir)}";""")
 
                     return@forEachLine
@@ -62,6 +85,7 @@ class SyncProto(val protoSource: ProtoSource) {
                     val importPath = this.importOf(line)
 
                     if (protoDir.file_mapping.contains(importPath)) {
+                        // 以 file_mapping 的优先
                         lines.add("""import "${protoDir.file_mapping[importPath]}";""")
                     } else if (this.protoSource.file_mapping.contains(importPath)) {
                         lines.add("""import "${this.protoSource.file_mapping[importPath]}";""")

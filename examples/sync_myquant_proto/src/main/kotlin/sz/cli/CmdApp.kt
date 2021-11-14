@@ -34,8 +34,6 @@ class CmdApp {
             syncProto.protoSource.file_mapping.forEach { t, u ->
                 logger.info("${t} : ${u}")
             }
-
-            Hello().main(args)
         }
     }
 

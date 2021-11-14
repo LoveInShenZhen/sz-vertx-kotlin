@@ -10,7 +10,10 @@ import io.github.config4k.extract
 data class ProtoDir(
     val src_path: String,
     val dest_path: String,
-    val file_mapping: MutableMap<String, String>
+    // 当 proto 文件中, import 的文件名有冲突时, 改成 import 此映射中的文件名
+    val file_mapping: MutableMap<String, String> = mutableMapOf(),
+    // 当 源 proto 文件, 与其他目录里有同名文件时, 改成指定的新文件名
+    val rename_to: MutableMap<String, String> = mutableMapOf()
 )
 
 data class ProtoSource(
@@ -22,6 +25,8 @@ data class ProtoSource(
 )
 
 val config = ConfigFactory.defaultApplication()
+    .withFallback(ConfigFactory.systemProperties())
+    .resolve()
 
 val protos: ProtoSource = config.extract("protos")
 
