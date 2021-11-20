@@ -34,6 +34,8 @@ object SzEbeanConfig {
 
     private val workerPoolMap = ConcurrentHashMap<String, ExecutorService>()
 
+    private val scope = CoroutineScope(Dispatchers.IO)
+
     private var _defaultDatasourceReady = false
     val defaultDatasourceReady
         get() = _defaultDatasourceReady
@@ -72,7 +74,7 @@ object SzEbeanConfig {
 
         dataSources.root().keys.forEach { dataSourceName ->
 
-            GlobalScope.launch(Dispatchers.IO) {
+            scope.launch(Dispatchers.IO) {
                 while (true) {
                     try {
                         val dataSourceConfig = dataSources.getConfig(dataSourceName)
