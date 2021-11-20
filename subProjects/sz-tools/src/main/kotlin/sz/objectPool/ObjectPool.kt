@@ -26,6 +26,7 @@ open class ObjectPool<T : Any>(val config: PoolConfig, val factory: PooledObject
 
     private var evictionCheckingTimer: Timer? = null
 
+    private val scope = CoroutineScope(Dispatchers.IO)
     private var stopped = false
 
     init {
@@ -90,7 +91,7 @@ open class ObjectPool<T : Any>(val config: PoolConfig, val factory: PooledObject
     }
 
     private suspend fun doCreate() {
-        GlobalScope.launch(Dispatchers.IO) {
+        scope.launch(Dispatchers.IO) {
             val obj = factory.wrapObject(this@ObjectPool)
             if (obj != null) {
                 idleChannel.send(obj)
@@ -106,7 +107,7 @@ open class ObjectPool<T : Any>(val config: PoolConfig, val factory: PooledObject
     }
 
     private fun doDestory(pooledObject: PooledObject<T>) {
-        GlobalScope.launch(Dispatchers.IO) {
+        scope.launch(Dispatchers.IO) {
             try {
                 factory.destoryObject(pooledObject.target)
             } catch (ex: Exception) {
@@ -116,7 +117,7 @@ open class ObjectPool<T : Any>(val config: PoolConfig, val factory: PooledObject
     }
 
     fun returnObject(pooledObject: PooledObject<T>) {
-        GlobalScope.launch {
+        scope.launch {
 //            Logger.debug("return object: $pooledObject")
             if (pooledObject.broken) {
                 pooledObject.status = PooledObjectStatus.Broken
@@ -161,7 +162,7 @@ open class ObjectPool<T : Any>(val config: PoolConfig, val factory: PooledObject
 //                    Logger.debug("==> ${pool.poolInfo()}")
 //                    Logger.debug("==> 执行驱逐策略, 本次驱逐 $count 个")
                     for (i in 1..count) {
-                        GlobalScope.launch {
+                        scope.launch {
                             try {
                                 pool.borrowAwait().use {
                                     it.markBroken()

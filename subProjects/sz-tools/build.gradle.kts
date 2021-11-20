@@ -9,7 +9,7 @@ plugins {
 dependencies {
 //    api(kotlin("stdlib-jdk8"))
     api(kotlin("reflect"))
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.4.3")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.5.2")
 
     // android gradle依赖：implementation 和compile的区别
     // 参考: https://www.jianshu.com/p/f34c179bc9d0 根据需要选择使用不同的依赖设定方式
