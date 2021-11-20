@@ -1,15 +1,15 @@
 package sz.ebean
 
-import io.ebean.Database as EbeanServer
 import sz.annotations.DBIndexed
 import sz.scaffold.ext.camelCaseToLowCaseSeprated
 import sz.scaffold.tools.logger.Logger
-import java.util.*
 import kotlin.reflect.full.memberProperties
+import io.ebean.Database as EbeanServer
 
 //
 // Created by kk on 2019/11/7.
 //
+@Deprecated("No longer in use")
 internal class IndexInfo(var indexName: String) {
 
     var columns: MutableSet<String> = mutableSetOf()
@@ -65,6 +65,7 @@ internal class IndexInfo(var indexName: String) {
 
 }
 
+@Deprecated("No longer in use")
 @Suppress("LocalVariableName")
 class DbIndex(private val dbServer: EbeanServer) {
 

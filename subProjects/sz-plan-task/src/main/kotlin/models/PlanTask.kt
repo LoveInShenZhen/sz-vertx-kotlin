@@ -1,12 +1,10 @@
 package models
 
-import io.ebean.Database as EbeanServer
 import io.ebean.Finder
 import io.ebean.Model
-import io.ebean.annotation.WhenCreated
-import io.ebean.annotation.WhenModified
+import io.ebean.annotation.*
+import io.ebean.annotation.Index
 import jodd.datetime.JDateTime
-import sz.annotations.DBIndexed
 import sz.ebean.DB
 import sz.ebean.runTransactionAwait
 import sz.ebean.runTransactionBlocking
@@ -16,11 +14,13 @@ import sz.scaffold.tools.json.toJsonPretty
 import sz.task.PlanTaskService
 import java.sql.Timestamp
 import javax.persistence.*
+import io.ebean.Database as EbeanServer
 
 //
 // Created by kk on 17/8/25.
 //
 @Suppress("MemberVisibilityCanBePrivate", "PropertyName", "DuplicatedCode")
+@DbComment("计划任务")
 @Entity
 @Table(name = "plan_task")
 class PlanTask(dataSource: String = dataSourceName) : Model(dataSource) {
@@ -37,29 +37,43 @@ class PlanTask(dataSource: String = dataSourceName) : Model(dataSource) {
     @WhenModified
     var whenModified: Timestamp? = null
 
-    @Column(columnDefinition = "TINYINT(1) COMMENT '是否要求顺序执行'")
+    @DbComment("是否要求顺序执行")
+    @Column
     var require_seq: Boolean = false
 
-    @Column(columnDefinition = "VARCHAR(64) COMMENT '顺序执行的类别'", nullable = false)
+    @DbComment("顺序执行的类别")
+    @DbDefault("")
+    @Column(length = 64, nullable = false)
     var seq_type: String? = null
 
-    @DBIndexed
-    @Column(columnDefinition = "DATETIME COMMENT '任务计划执行时间'")
+    @Index
+    @DbComment("任务计划执行时间")
+    @Column()
     var plan_run_time: JDateTime? = null
 
-    @Column(columnDefinition = "INTEGER DEFAULT 0 COMMENT '任务状态: 0:WaitingInDB, 7:WaitingInQueue, 8:Error'", nullable = false)
+    @DbComment("任务状态: 0:WaitingInDB, 7:WaitingInQueue, 8:Error")
+    @DbDefault("0")
+    @Column(nullable = false)
     var task_status: Int = 0
 
-    @Column(columnDefinition = "VARCHAR(1024) COMMENT 'Runnable task class name'", nullable = false)
+    @DbComment("Runnable task class name")
+    @Column(length = 1024, nullable = false)
     var class_name: String? = null
 
-    @Column(columnDefinition = "TEXT COMMENT 'Runnable task class json data'", nullable = false)
+    @DbComment("Runnable task class json data")
+    @Lob
+    @Column(nullable = false)
     var json_data: String? = null
 
-    @Column(columnDefinition = "TEXT COMMENT '标签,用于保存任务相关的额外数据'")
+    @DbComment("标签,用于保存任务相关的额外数据")
+    @DbDefault("")
+    @Column(length = 1024)
     var tag: String? = null
 
-    @Column(columnDefinition = "TEXT COMMENT '发生异常情况的时候, 用于记录额外信息'")
+    @DbComment("发生异常情况的时候, 用于记录额外信息")
+    @Lob
+    @DbDefault("")
+    @Column
     var remarks: String? = null
 
     companion object {
