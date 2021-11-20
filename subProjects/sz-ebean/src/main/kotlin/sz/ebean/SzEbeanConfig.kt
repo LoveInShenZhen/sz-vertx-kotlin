@@ -49,8 +49,8 @@ object SzEbeanConfig {
         val classDescriptor = ClassIntrospector.get().lookup(HikariConfig::class.java)
         return@lazy classDescriptor.allPropertyDescriptors.filter {
             it.writeMethodDescriptor != null && it.writeMethodDescriptor.isPublic
-                && it.readMethodDescriptor != null
-                && (it.readMethodDescriptor.rawReturnType.isPrimitive || it.readMethodDescriptor.rawReturnType == String::class.java)
+                    && it.readMethodDescriptor != null
+                    && (it.readMethodDescriptor.rawReturnType.isPrimitive || it.readMethodDescriptor.rawReturnType == String::class.java)
         }.map {
             it.name
         }.toSet()
@@ -74,7 +74,7 @@ object SzEbeanConfig {
 
         dataSources.root().keys.forEach { dataSourceName ->
 
-            scope.launch(Dispatchers.IO) {
+            scope.launch {
                 while (true) {
                     try {
                         val dataSourceConfig = dataSources.getConfig(dataSourceName)
@@ -158,12 +158,12 @@ object SzEbeanConfig {
             if (it.endsWith(".*")) {
                 val packagePath = it.dropLast(2)
                 ClassPath.from(Application.classLoader).getTopLevelClassesRecursive(packagePath)
-                    .map { classInfo -> classInfo.load() }
-                    .filter { clazz -> isEntityClass(clazz) }
-                    .forEach { clazz ->
+                        .map { classInfo -> classInfo.load() }
+                        .filter { clazz -> isEntityClass(clazz) }
+                        .forEach { clazz ->
 //                        Logger.debug("ebean add class: ${clazz.name}")
-                        modelClassSet.add(clazz)
-                    }
+                            modelClassSet.add(clazz)
+                        }
             } else {
                 try {
                     val clazz = Application.classLoader.loadClass(it)
@@ -228,7 +228,7 @@ private fun ServerConfig.addModelClass(clazz: Class<*>) {
     }
 }
 
-class DbThreadFactory(val dsName:String) : ForkJoinPool.ForkJoinWorkerThreadFactory {
+class DbThreadFactory(val dsName: String) : ForkJoinPool.ForkJoinWorkerThreadFactory {
     override fun newThread(pool: ForkJoinPool?): ForkJoinWorkerThread {
         val thread = ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(pool)
         thread.name = "db-$dsName-${thread.name}"
