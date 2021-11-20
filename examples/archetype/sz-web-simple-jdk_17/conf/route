@@ -4,8 +4,8 @@ GET     /api/builtin/sysInfo                                            sz.scaff
 
 # 内置EBean
 GET     /api/builtin/ebean/CreateTablesSql                              controllers.builtin.szebean.CreateTablesSql     {"dataSource" : ""}
-GET     /api/builtin/ebean/DropTablesSql                                controllers.builtin.szebean.DropTablesSql       {"dataSource" : ""}
-GET     /api/builtin/ebean/CreateIndexSql                               controllers.builtin.szebean.CreateIndexSql      {"dataSource" : ""}
+#GET     /api/builtin/ebean/DropTablesSql                                controllers.builtin.szebean.DropTablesSql       {"dataSource" : ""}
+#GET     /api/builtin/ebean/CreateIndexSql                               controllers.builtin.szebean.CreateIndexSql      {"dataSource" : ""}
 GET     /api/builtin/ebean/evolution                                    controllers.builtin.szebean.evolution           {"dataSource" : ""}
 
 

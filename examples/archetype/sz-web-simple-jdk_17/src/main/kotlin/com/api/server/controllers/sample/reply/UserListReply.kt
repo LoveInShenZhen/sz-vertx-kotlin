@@ -51,7 +51,7 @@ data class DUser(val user_id: UUID,
             return DUser(
                 user_id = user.user_id,
                 user_name = user.name,
-                remarks = user.remarks ?: "",
+                remarks = user.remarks,
                 create_time = user.whenCreated!!.toJDateTime()
             )
         }

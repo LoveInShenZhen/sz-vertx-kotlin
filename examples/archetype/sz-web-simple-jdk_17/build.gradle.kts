@@ -30,7 +30,7 @@ dependencies {
     api("com.h2database:h2:1.4.200")
 
 
-    kapt("io.ebean:kotlin-querybean-generator:12.1.8")
+    kapt("io.ebean:kotlin-querybean-generator:12.13.0")
 
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")
@@ -80,7 +80,7 @@ installDist.into("webroot") {
 
 ebean {
     debugLevel = 2
-    queryBeans = false
+    queryBeans = true
     kotlin = true
     //generatorVersion = "11.4"
 }

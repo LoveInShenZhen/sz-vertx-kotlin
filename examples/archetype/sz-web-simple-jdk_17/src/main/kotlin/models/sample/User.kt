@@ -4,6 +4,8 @@ package models.sample
 import io.ebean.Finder
 import io.ebean.Model
 import io.ebean.Query
+import io.ebean.annotation.DbComment
+import io.ebean.annotation.Index
 import io.ebean.annotation.WhenCreated
 import io.ebean.annotation.WhenModified
 import jodd.crypt.DigestEngine
@@ -16,10 +18,7 @@ import sz.scaffold.ext.zeroUUID
 import java.sql.Timestamp
 import java.time.Instant
 import java.util.*
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.Version
+import javax.persistence.*
 
 //
 // This is a sample model class.
@@ -43,18 +42,23 @@ class User(dataSource: String = "") : Model(dataSource) {
 //    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", nullable = false)
     var whenModified: Timestamp? = null
 
-    @DBIndexed
-    @Column(columnDefinition = "CHAR(36) COMMENT '用户UUID'", nullable = false)
+    @DbComment("用户UUID")
+    @Column(length = 36, nullable = false, unique = true)
     var user_id: UUID = zeroUUID
 
-    @Column(columnDefinition = "VARCHAR(32) COMMENT '用户名'", nullable = false)
+    @Index
+    @DbComment("用户名")
+    @Column(length = 32, unique = true, nullable = false)
     var name: String = ""
 
-    @Column(columnDefinition = "VARCHAR(128) COMMENT '用户密码,sha1(user_id+密码明文)'")
-    var encrypted_pwd: String? = null
+    @DbComment("用户密码,sha1(user_id+密码明文)")
+    @Column(length = 128, nullable = false)
+    var encrypted_pwd: String = ""
 
-    @Column(columnDefinition = "TEXT COMMENT '备注信息'")
-    var remarks: String? = null
+    @DbComment("备注信息")
+    @Lob
+    @Column()
+    var remarks: String = ""
 
     fun updatePwd(newPwd: String): User {
         encrypted_pwd = DigestEngine.sha1().digestString("$user_id$newPwd")
