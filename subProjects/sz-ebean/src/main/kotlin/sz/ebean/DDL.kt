@@ -13,7 +13,6 @@ object DDL {
         val modelDdl = CurrentModel(spiServer)
 
         val sqlScript = modelDdl.createDdl
-//        val pos = sqlScript.indexOf("create table")
 
         return sqlScript
     }
@@ -22,10 +21,5 @@ object DDL {
         val spiServer = DB.byDataSource(dataSource) as SpiEbeanServer
         val ddl = CurrentModel(spiServer)
         return ddl.dropAllDdl
-    }
-
-    fun createIndexDdl(dataSource: String = ""): String {
-        val db = DB.byDataSource(dataSource)
-        return DbIndex(db).createIndexSql()
     }
 }

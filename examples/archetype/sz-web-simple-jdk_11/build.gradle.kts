@@ -2,13 +2,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
-    kotlin("jvm").version("1.5.31")
+    kotlin("jvm").version("1.6.0")
 
     // Apply the application plugin to add support for building a CLI application.
     application
 
-    id("io.ebean").version("12.6.2")
-    kotlin("kapt").version("1.5.31")
+    id("io.ebean").version("12.13.0")
+    kotlin("kapt").version("1.6.0")
 }
 
 
@@ -51,11 +51,11 @@ application {
 }
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {
-    jvmTarget = "11"
+    jvmTarget = "17"
 }
 val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
-    jvmTarget = "11"
+    jvmTarget = "17"
 }
 
 val distZip: Zip by tasks

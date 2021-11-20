@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm")
     id("maven-publish")
-    id("io.ebean").version("12.6.2")
+    id("io.ebean").version("12.13.0")
     kotlin("kapt")
 }
 
@@ -12,9 +12,10 @@ dependencies {
     api(project(":subProjects:sz-scaffold"))
     api(project(":subProjects:sz-crypto"))
 
-    api("io.ebean:ebean:12.6.2")
-    api("io.ebean:ebean-querybean:12.6.2")
-//    kapt("io.ebean:kotlin-querybean-generator:12.6.2")
+    api("io.ebean:ebean:12.13.0")
+    api("io.ebean:ebean-querybean:12.13.0")
+    api("io.ebean:ebean-ddl-generator:12.13.0")
+    kapt("io.ebean:kotlin-querybean-generator:12.13.0")
 
     api("com.zaxxer:HikariCP:3.3.1")
     api("mysql:mysql-connector-java:8.0.18")
@@ -33,21 +34,21 @@ publishing {
     }
 }
 
-//ebean {
-//    debugLevel = 2
-//    queryBeans = true
-//    kotlin = true
-////    generatorVersion = "11.4"
-//}
+ebean {
+    debugLevel = 2
+    queryBeans = true
+    kotlin = true
+//    generatorVersion = "11.4"
+}
 
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {
-    jvmTarget = "11"
+    jvmTarget = "17"
     
 }
 
 val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
-    jvmTarget = "11"
+    jvmTarget = "17"
     
 }
