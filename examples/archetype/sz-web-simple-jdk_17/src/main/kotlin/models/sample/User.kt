@@ -9,14 +9,10 @@ import io.ebean.annotation.Index
 import io.ebean.annotation.WhenCreated
 import io.ebean.annotation.WhenModified
 import jodd.crypt.DigestEngine
-import jodd.datetime.JDateTime
 import models.sample.query.QUser
-
-import sz.annotations.DBIndexed
 import sz.ebean.DB
 import sz.scaffold.ext.zeroUUID
 import java.sql.Timestamp
-import java.time.Instant
 import java.util.*
 import javax.persistence.*
 

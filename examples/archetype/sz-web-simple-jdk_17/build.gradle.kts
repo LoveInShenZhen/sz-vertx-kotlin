@@ -22,13 +22,13 @@ repositories {
 
 dependencies {
     implementation(kotlin("reflect"))
-    
-    api(files("conf"))
+
     api("com.github.kklongming:sz-scaffold:4.0.0-dev")
     api("com.github.kklongming:sz-ebean:4.0.0-dev")
     api("com.github.kklongming:sz-api-doc:4.0.0-dev")
-    api("com.h2database:h2:1.4.200")
 
+    implementation("com.h2database:h2:1.4.200")
+//    runtimeOnly(("mysql:mysql-connector-java:8.0.18"))
 
     kapt("io.ebean:kotlin-querybean-generator:12.13.0")
 
@@ -85,17 +85,8 @@ ebean {
     //generatorVersion = "11.4"
 }
 
-tasks.register<Delete>("removeLocalSzJarsCache") {
-    val localMaven = this.project.repositories.mavenLocal()
-    val path = localMaven.url.path + listOf("com", "github", "kklongming").joinToString(separator = File.separator)
-    this.delete(path)
-    println("remove Local Maven Cache For Sz Framework: $path")
-    val gradleJsrCachePath = listOf(this.project.gradle.gradleUserHomeDir.path, "caches", "modules-2", "files-2.1", "com.github.kklongming").joinToString(separator = File.separator)
-    val gradleMetaCachePath1 = listOf(this.project.gradle.gradleUserHomeDir.path, "caches", "modules-2", "metadata-2.23", "descriptors", "com.github.kklongming").joinToString(separator = File.separator)
-    val gradleMetaCachePath2 = listOf(this.project.gradle.gradleUserHomeDir.path, "caches", "modules-2", "metadata-2.71", "descriptors", "com.github.kklongming").joinToString(separator = File.separator)
-    this.delete(gradleJsrCachePath, gradleMetaCachePath1, gradleMetaCachePath2)
-    println("remove Local Gradle Cache For Sz Framework: $gradleJsrCachePath")
-}
+val run: JavaExec by tasks
+run.jvmArgs = listOf("-Dconfig.file=${project.file("conf/application.conf").absolutePath}")
 
 //sourceSets {
 //    main {
