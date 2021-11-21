@@ -18,8 +18,8 @@ dependencies {
     kapt("io.ebean:kotlin-querybean-generator:12.13.0")
 
     api("com.zaxxer:HikariCP:3.3.1")
-    api("mysql:mysql-connector-java:8.0.18")
-    api("org.glassfish.jaxb:jaxb-runtime:2.3.2")
+//    api("mysql:mysql-connector-java:8.0.18")
+//    api("org.glassfish.jaxb:jaxb-runtime:2.3.2")
 }
 
 java {
