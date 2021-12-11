@@ -29,6 +29,9 @@ dependencies {
 
     implementation("io.ktor:ktor-client-core:1.6.5")
     implementation("io.ktor:ktor-client-java:1.6.5")
+    implementation("io.ktor:ktor-client-apache:1.6.5")
+    implementation("io.ktor:ktor-client-okhttp:1.6.5")
+    implementation("io.ktor:ktor-client-logging:1.6.5")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
@@ -54,4 +57,4 @@ compileTestKotlin.kotlinOptions {
 
 val run: JavaExec by tasks
 run.setJvmArgs(listOf("-Dconfig.file=${project.file("src/dist/conf/application.conf").absolutePath}",
-"-Djavax.net.debug=all"))
+"-Djavax.net.debug=ssl"))
