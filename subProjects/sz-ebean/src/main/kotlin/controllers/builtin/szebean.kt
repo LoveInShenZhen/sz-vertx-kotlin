@@ -15,14 +15,14 @@ import sz.scaffold.controller.ApiController
 @Comment("内置的Ebean工具接口方法")
 class szebean : ApiController() {
 
-    @Comment("生成创建/更新索引的SQL语句")
-    @DevModeOnly
-    suspend fun CreateIndexSql(@Comment("数据源名称, 为空时,表示默认数据源") dataSource: String = ""): String {
-        this.contentType("text/plain; charset=UTF-8")
-        return DB.byDataSource(dataSource).runTransactionAwait {
-            DDL.createIndexDdl(dataSource)
-        }
-    }
+//    @Comment("生成创建/更新索引的SQL语句")
+//    @DevModeOnly
+//    suspend fun CreateIndexSql(@Comment("数据源名称, 为空时,表示默认数据源") dataSource: String = ""): String {
+//        this.contentType("text/plain; charset=UTF-8")
+//        return DB.byDataSource(dataSource).runTransactionAwait {
+//            DDL.createIndexDdl(dataSource)
+//        }
+//    }
 
     @Comment("生成创建数据库表结构的SQL")
     @DevModeOnly
@@ -49,7 +49,7 @@ class szebean : ApiController() {
         return DB.byDataSource(dataSource).runTransactionAwait {
             it.sqlUpdate(DDL.dropAllDdl(dataSource)).execute()
             it.sqlUpdate(DDL.createDdl(dataSource)).execute()
-            it.sqlUpdate(DDL.createIndexDdl(dataSource)).execute()
+//            it.sqlUpdate(DDL.createIndexDdl(dataSource)).execute()
 
             "数据库重置成功"
         }

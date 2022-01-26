@@ -14,7 +14,7 @@ plugins {
 
 dependencies {
     api(project(":subProjects:sz-scaffold"))
-    api("io.vertx:vertx-redis-client:4.1.1")
+    api("io.vertx:vertx-redis-client:4.2.1")
 
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")
@@ -37,12 +37,12 @@ publishing {
 
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {
-    jvmTarget = "11"
+    jvmTarget = "17"
     
 }
 
 val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
-    jvmTarget = "11"
+    jvmTarget = "17"
     
 }

@@ -41,13 +41,13 @@ fun EbeanServer.tableExists(tableName: String): Boolean {
 
 suspend fun <T> EbeanServer.runTransactionAwait(readOnly: Boolean = false, body: (ebeanServer: EbeanServer) -> T): T {
     val ebeanServer = this
-    val worker = SzEbeanConfig.workerOf(ebeanServer.name)
+    val worker = SzEbeanConfig.workerOf(ebeanServer.name())
 
     val ebeanFuture = CompletableFuture<T>()
     worker.submit {
         try {
             DB.initDataSourceContext()
-            DB.setDataSourceContext(ebeanServer.name)
+            DB.setDataSourceContext(ebeanServer.name())
 
             val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED).setReadOnly(readOnly)
             val tranResult = ebeanServer.beginTransaction(txScope).use { transaction ->
@@ -91,12 +91,12 @@ suspend fun <T> queryOnlyAwait(readOnlyDataSourceList: List<String>, body: (ebea
     }
 
     val ebeanServer = DB.byDataSource(readOnlyDataSourceList[abs(RoundRobinCounter.counter.getAndIncrement() % readOnlyDataSourceList.size).toInt()])
-    val worker = SzEbeanConfig.workerOf(ebeanServer.name)
+    val worker = SzEbeanConfig.workerOf(ebeanServer.name())
 
     val ebeanFuture = CompletableFuture.supplyAsync(Supplier<T> {
         try {
             DB.initDataSourceContext()
-            DB.setDataSourceContext(ebeanServer.name)
+            DB.setDataSourceContext(ebeanServer.name())
 
             val result = ebeanServer.runTransactionBlocking(readOnly = true, body = body)
             result
@@ -115,7 +115,7 @@ suspend fun <T> queryOnlyAwait(readOnlyDataSourceList: List<String>, body: (ebea
  */
 fun <T> EbeanServer.runTransactionBlocking(readOnly: Boolean = false, body: (ebeanServer: EbeanServer) -> T): T {
     try {
-        DB.setDataSourceContext(this.name)
+        DB.setDataSourceContext(this.name())
         val txScope = TxScope.requiresNew().setIsolation(TxIsolation.READ_COMMITED).setReadOnly(readOnly)
         this.beginTransaction(txScope).use { transaction ->
             val result = body(this)

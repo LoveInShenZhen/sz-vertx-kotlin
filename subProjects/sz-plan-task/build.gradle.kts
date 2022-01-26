@@ -3,14 +3,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm")
     id("maven-publish")
-    id("io.ebean").version("12.6.2")
+    id("io.ebean").version("12.13.0")
     kotlin("kapt")
 }
 
 dependencies {
     api(project(":subProjects:sz-ebean"))
 
-//    kapt("io.ebean:kotlin-querybean-generator:12.6.2")
+//    kapt("io.ebean:kotlin-querybean-generator:12.13.0")
 
 }
 
@@ -35,12 +35,12 @@ ebean {
 
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {
-    jvmTarget = "11"
+    jvmTarget = "17"
     
 }
 
 val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
-    jvmTarget = "11"
+    jvmTarget = "17"
     
 }

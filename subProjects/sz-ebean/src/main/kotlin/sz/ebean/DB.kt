@@ -23,7 +23,7 @@ object DB {
         if (SzEbeanConfig.ebeanServerConfigs.containsKey(dsName).not()) {
             throw BizLogicException("Ebean data source is not available or it is a invalid data source name [$dsName], please check application.conf")
         }
-        return Ebean.byName(dsName)!!
+        return Ebean.byName(dsName)
     }
 
     /**
