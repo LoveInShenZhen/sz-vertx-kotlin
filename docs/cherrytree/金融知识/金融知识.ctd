@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cherrytree>
   <bookmarks list=""/>
-  <node name="金融知识" unique_id="1" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="37" is_bold="1" foreground="#986a44" ts_creation="1642923620" ts_lastsave="1643734632">
+  <node name="金融知识" unique_id="1" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="37" is_bold="1" foreground="#986a44" ts_creation="1642923620" ts_lastsave="1643737810">
     <node name="股票" unique_id="2" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="1" foreground="#26a269" ts_creation="1642923644" ts_lastsave="1643725085">
       <node name="基础知识" unique_id="3" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1642923758" ts_lastsave="1643724609">
         <node name="股票交易手续费" unique_id="5" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643708717" ts_lastsave="1643720712">
@@ -228,8 +228,11 @@ A股诞生早期，证券公司数量少，佣金的定价权在证券公司手�
         <rich_text>。</rich_text>
       </node>
     </node>
-    <node name="金融常识" unique_id="8" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643734632" ts_lastsave="1643734660">
-      <node name="银行系金融知识" unique_id="9" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643734660" ts_lastsave="1643734924">
+    <node name="金融常识" unique_id="8" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643734632" ts_lastsave="1643736543">
+      <node name="银行系金融知识" unique_id="9" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643734660" ts_lastsave="1643735777">
+        <rich_text link="webs https://zhuanlan.zhihu.com/p/74327330">原文连接</rich_text>
+        <rich_text>
+</rich_text>
         <rich_text scale="h1">什么是存款准备金率和备付金率？</rich_text>
         <rich_text>
 存款准备金率是中央银行重要的货币政策工具。
@@ -270,6 +273,159 @@ A股诞生早期，证券公司数量少，佣金的定价权在证券公司手�
 
 </rich_text>
       </node>
+      <node name="交易单元和席位" unique_id="10" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643736543" ts_lastsave="1643737749">
+        <rich_text link="webs https://zhuanlan.zhihu.com/p/24842109">原文连接</rich_text>
+        <rich_text>
+</rich_text>
+        <rich_text scale="h1">席位是什么？</rich_text>
+        <rich_text>
+如果要在证券交易所参与交易，并不是猫猫狗狗都可以，只有证券公司才能有资格向交易所报单；这是券商身为交易所会员所的独有权利。
+至于个人投资者和机构投资者，都必须委托券商才可以交易，否则提交的买单卖单无法送达交易所的交易系统。
+</rich_text>
+        <rich_text background="#f9f9f0f06b6b" weight="heavy">席位</rich_text>
+        <rich_text background="#f9f9f0f06b6b">，就是这种交易权的载体</rich_text>
+        <rich_text>。所谓载体，更多的是体现在法律含义上，而非实际业务层面。
+根据证券法规定，会员必须至少持有一个交易席位，才能从事场内证券交易。
+
+在历史上，国内交易所曾经采用场内报盘的方式。
+股民在证券营业部所下的委托单，由营业部的柜台营业员通过电话或长途电话报到交易所交易大厅内的“红马甲”，“红马甲”再将营业部报单输入交易所电脑主机进行撮合。
+由于证券商大多在交易所交易大厅内设有席位，专作代理委托交易之用，因此，这样的报盘模式又称为“</rich_text>
+        <rich_text background="#f9f9f0f06b6b">有形席位交易模式</rich_text>
+        <rich_text>”。</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">这就是席位最初的原型，恐怕也是“席位”这个称谓的由来。</rich_text>
+        <rich_text>
+
+随着交易系统和通讯手段的进步，场内报盘已经基本绝迹，席位的含义也从一个具体的、交易大厅里的一个座位、一个接线电话、一个场内报盘机，转变为抽象概念。
+但是熙熙攘攘的交易大厅、接线不停的红马甲仍然是广大股民对于交易所最深刻的印象
+
+</rich_text>
+        <rich_text background="#f9f9f0f06b6b" weight="heavy">除了交易权外，席位也承载了财产权</rich_text>
+        <rich_text>。若交易所会员丧失了会员资格，其名下的席位可以作为资产转让给其他会员。
+在传统意义上，交易席位是证券公司在证券交易所交易大厅内进行交易的固定位置，其实质还包括了交易资格的含义，即取得了交易席位后才能从事实际的证券交易业务。
+</rich_text>
+        <rich_text indent="1" foreground="#777776767b7b">从上海证券交易所和深圳证券交易所的相关管理制度看，交易席位代表了会员在证券交易所拥有的权益，是会员享有交易权限的基础。
+证券交易所会员的权利之一是参加交易，参加交易先要取得交易席位。
+根据我国证券交易所现行制度的规定，证券交易所会员应当至少取得并持有一个席位。
+证券交易所会员可以向证券交易所提出申请购买席位，也可以在证券交易所会员之间转让席位。
+证券交易所会员不得共有席位，席位也不得退回证券交易所。未经证券交易所同意，会员不得将席位出租、质押，或将席位所属权益以其他任何方式转给他人。</rich_text>
+        <rich_text>
+
+</rich_text>
+        <rich_text scale="h1">交易单元是什么？</rich_text>
+        <rich_text>
+</rich_text>
+        <rich_text background="#f9f9f0f06b6b" weight="heavy">交易单元</rich_text>
+        <rich_text>，全称为交易者参与业务单元（Participant Business Unit，简称为</rich_text>
+        <rich_text weight="heavy">PBU</rich_text>
+        <rich_text>）。
+与席位不同，这是一个偏向实际业务的概念。</rich_text>
+        <rich_text background="#f9f9f0f06b6b">在业务中，投资者的账户必须挂靠在券商的交易单元下，方可参与场内交易。</rich_text>
+        <rich_text>
+</rich_text>
+        <rich_text foreground="#777776767b7b">        交易单元是指证券交易所会员取得席位后向证券交易所申请设立的、参与证券交易所证券交易与接受证券交易所监管及服务的基本业务单位。
+        证券交易所的会员及证券交易所认可的机构，若要进人证券交易所市场进行证券交易，要向证券交易所申请取得交易权，成为证券交易所的交易参与人。
+        交易参与人应当通过在证券交易所申请开设的交易单元进行证券交易，交易单元是交易权限的技术载体。
+        会员参与交易及会员权限的管理通过交易单元来实现。</rich_text>
+        <rich_text>
+</rich_text>
+        <rich_text background="#f9f9f0f06b6b" weight="heavy">在技术上，交易单位可以认为是接入交易所交易主机的许可。</rich_text>
+        <rich_text>
+交易单元是会员交易的逻辑身份标识，接入服务系统（MISS）是会员系统与交易系统连接的物理通道。会员的委托等业务数据在交易单元名下经MISS送入交易系统。
+
+</rich_text>
+        <rich_text background="#f9f9f0f06b6b" weight="heavy">在结算业务中，交易单位是结算路径中的一个环节。</rich_text>
+        <rich_text>
+• 结算路径是，中国结算根据结算参与机构的申请，为确定交收责任归属而设定的结算关系。
+• </rich_text>
+        <rich_text background="#f9f9f0f06b6b">结算路径包含证券账户、交易单元、托管单元（或清算编号）、结算账户等要素及其对应关系。</rich_text>
+        <rich_text>
+• 从事证券经纪、证券自营和证券资产管理等业务的，应当使用不同的交易单元
+• 出于权限控制和业务需要，有一些</rich_text>
+        <rich_text background="#f9f9f0f06b6b">特殊PBU品种</rich_text>
+        <rich_text>：债券专用PBU，港交所SPV专用PBU，银行办理股票质押特别PBU。
+• 如果基金、保险、资产管理公司出于交易需要，会向券商租用交易单元，按年收费；租用必须向交易所和中登申报。一个交易单元只能租用给一家机构，不可共享。
+• 交易单元必须组成联通圈，联通圈的作用是通买通卖。
+
+</rich_text>
+        <rich_text scale="h1">交易单元和席位的区别是什么？</rich_text>
+        <rich_text>
+根据我的理解，现如今席位事实上更多只是一个概念。</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">真正实际中用来做交易和清算的，是交易单元（PBU）。</rich_text>
+        <rich_text>
+
+</rich_text>
+        <rich_text underline="single">市场上很多人把交易单元叫成交易席位，是历史遗留的以讹传讹。
+在07年引入交易单元概念之前，席位集业务、技术、财产于一体，限制了业务发展，也无法有效进行权限控制。
+在07年上交所新交易系统后，交易所引入交易单元的概念，原先席位的财产权保留在席位上，实际业务由交易单元实现。
+
+</rich_text>
+        <rich_text scale="h1">交易席位初费、交易单元使用费、流速费、流量费是什么？</rich_text>
+        <rich_text underline="single">
+</rich_text>
+        <rich_text>比较容易混淆的是</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">流速费</rich_text>
+        <rich_text>和</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">流量费</rich_text>
+        <rich_text>。</rich_text>
+        <rich_text underline="single">
+</rich_text>
+        <rich_text>
+• 流速共15档，档数越高，订单打入交易主机的速度就越快。相应的，流速越快，交易所收取的费用越高。
+• 流量则是按照每年交易单元的申报笔数来计算。
+
+</rich_text>
+        <rich_text foreground="#777776767b7b">我的理解是，流速类似于宽带带宽（控制数据传输的速度）；流量类似于手机流量（控制数据传输的总量）。
+另外，券商每获得一个席位，便可获得一个免交使用费的交易单元。</rich_text>
+        <rich_text>
+</rich_text>
+        <rich_text underline="single">
+</rich_text>
+        <rich_text scale="h2">（1）交易席位初费</rich_text>
+        <rich_text>
+交易席位（非B股）的初费为60 万元/个，B 股席位为7.5 万美元/个。
+
+</rich_text>
+        <rich_text scale="h2">（2）交易单元使用费</rich_text>
+        <rich_text>
+会员等机构拥有的每个席位可抵免一个交易单元的使用费；
+对超出其席位数量的部分，本所收取每个交易单元每年5万元的交易单元使用费（2010年12月1日起，暂免收取债券现券及回购交易专用的交易单元使用费）
+
+</rich_text>
+        <rich_text scale="h2">（3）交易单元流量费</rich_text>
+        <rich_text>
+计费期间为上年 12 月 1 日至当年 11 月 30 日
+流量费＝（该机构所用交易单元的年交易类申报笔数总和-3万笔/年×持有席位数）×0.10 元＋（该机构所用交易单元的年非交易类申报笔数总和-3万笔/年×持有席位数）×0.01元
+
+</rich_text>
+        <rich_text indent="1" foreground="#1c1c7171d8d8">2010年12月1日起，暂免收取各交易参与人参与债券现券及回购交易的流量费
+暂免收取货币ETF、债券ETF的交易单元流量费
+股票期权试点初期暂免收取期权经营机构流量费</rich_text>
+        <rich_text>
+
+</rich_text>
+        <rich_text scale="h2">（4）交易单元流速费</rich_text>
+        <rich_text>
+会员等机构接入交易系统流速之和超出其免费流速额度时，超出部分每年按每个标准流速计收1万元的流速费（2010年12月1日起，暂免收取债券现券及回购交易专用的交易单元流速费）
+
+</rich_text>
+        <rich_text scale="h1">通买通卖</rich_text>
+        <rich_text>
+是指投资者只要在同一证券公司下属的任何一家营业部开户交易，当开户营业部电话线拥挤时，可改拨证券公司其他任意一个营业部的电话，通过输入客户号仍可完成委托；
+当投资者在证券公司多家营业部开户时，只需拨打最方便的一家营业部电话即可委托。
+速度上，同城（如深圳本地）各营业部没有区别，异地营业部也仅在登录时有3～4秒的延时。
+
+通买通卖操作的好处在于方便客户在异地进行股票买卖。客户出差在外地，如果当地有公司营业部的，客户可在营业部内通过自助终端下单，或拨打当地营业部的电话进行委托、交易，无须拨长途电话。
+
+</rich_text>
+        <rich_text scale="h1">为什么要设置联通圈？</rich_text>
+        <rich_text>
+这个问题有一部分历史因素，我也是一知半解。
+如果投资者去通过电话/电脑/手机客户端下单的话，这个订单对应的交易单元编号，往往不是他自己证券账户的交易单元编号。
+为了避免交易系统报错，交易所就设置了联通圈，只要是一个联通圈的交易单元，都是同一个券商下面的，哪怕编号不一样也可以顺利报单。
+反之，如果两个交易单元不是一个联通圈，系统就会认为订单对应的交易单元不是指定券商，就会报错，订单就无法进入交易系统。
+</rich_text>
+      </node>
     </node>
+    <node name="期货" unique_id="11" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643737810" ts_lastsave="1643737810"/>
   </node>
 </cherrytree>
