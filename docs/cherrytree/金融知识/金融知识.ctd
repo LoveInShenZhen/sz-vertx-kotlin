@@ -228,8 +228,8 @@ A股诞生早期，证券公司数量少，佣金的定价权在证券公司手�
         <rich_text>。</rich_text>
       </node>
     </node>
-    <node name="金融常识" unique_id="8" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643734632" ts_lastsave="1643736543">
-      <node name="银行系金融知识" unique_id="9" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643734660" ts_lastsave="1643735777">
+    <node name="金融常识" unique_id="8" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643734632" ts_lastsave="1643778374">
+      <node name="银行系金融知识" unique_id="9" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643734660" ts_lastsave="1643778338">
         <rich_text link="webs https://zhuanlan.zhihu.com/p/74327330">原文连接</rich_text>
         <rich_text>
 </rich_text>
@@ -270,8 +270,558 @@ A股诞生早期，证券公司数量少，佣金的定价权在证券公司手�
 </rich_text>
         <rich_text scale="h1">什么是贷款迁徙分析或信用风险迁徙分析？</rich_text>
         <rich_text>
+贷款迁徙分析或信用风险迁徙分析（loan migration analysis or credit risk migration analysis），是近年来新出现的一种以概率分析为基础的信用风险分析方法。
+它是用贷款的历史损失数据来推算当前一家银行贷款组合中贷款损失所占的比重，从而确定贷款损失准备是否充足。一般来说，贷款迁徙分析有四个主要的步骤：
+1. 将贷款组合按照贷款的种类或风险类别分组。
+     如可将贷款划分为正常、关注、次级、可疑，还可将贷款以划分为房地产贷款、担保贷款、信用贷款、汽车消费贷款等类别。
+     这主要是因为不同类别的贷款具有不同的损失状况（different loss history）。
+2. 确定各类别贷款的损失率。如关注类贷款在第四个季度的损失是2%；
+3. 对影响贷款损失率变化的因素进行分析，并对现有损失率进行调整；
+4. 将调整后的损失率乘以当前季度各类别贷款额，得到各类别贷款的损失额。
+
+进行贷款迁徙分析至少要有连续四个季度的贷款损失数据。
+贷款迁徙分析的前提是必须要有有效的有问题贷款识别体系、准确的贷款分类和贷款损失核销制度。否则，贷款迁徙分析的质量得不到保证。
 
 </rich_text>
+        <rich_text scale="h1">什么是银监会所倡导的审慎银行资本监管思路？</rich_text>
+        <rich_text>
+提高商业银行资本充足率，促使商业银行计提充足的贷款损失准备金，是商业银行应对宏观经济波动的重要手段，也是贯彻中国银监会“管法人、管内控、管风险、提高透明度”监管理念的具体措施。
+审慎的银行资本监管思路是，首先要提高商业银行贷款五级分类的准确性，在此基础上商业银行计提充足的贷款损失准备金，从而更加真实地反映银行的经营成果，然后使商业银行的资本充足率达到规定标准。
+即“提高贷款五级分类的准确性?提足拨备?做实利润?资本充足率达标”。
+
+</rich_text>
+        <rich_text scale="h1">什么是</rich_text>
+        <rich_text scale="h1" background="#8f8ff0f0a4a4">关联交易</rich_text>
+        <rich_text scale="h1">？</rich_text>
+        <rich_text>
+商业银行关联交易是指商业银行与关联方之间发生的转移资源或义务的下列事项，包括授信、担保、资产转移、提供服务等。
+商业银行的关联方既包括自然人也包括法人或其他组织。
+关联自然人包括商业银行的内部人、主要自然人股东及他们的近亲属、商业银行关联法人的控股自然人股东、董事、关键管理人员，以及对商业银行有重大影响的其他自然人等。
+
+关联法人或其他组织则包括商业银行的主要非自然人股东；
+与商业银行同受某一企业直接、间接控制的法人或其他组织；
+商业银行的内部人与主要自然人股东及其近亲属直接、间接控制或可施加重大影响的法人或其他组织；
+以及其他可直接、间接、共同控制商业银行或可对商业银行施加重大影响的法人或其他组织。
+
+</rich_text>
+        <rich_text scale="h1">什么是通货膨胀和消费价格指数？</rich_text>
+        <rich_text>
+通货膨胀是指一个经济体在一段时间内总体价格的持续上涨。通货膨胀是一种货币现象，是流通中的货币超过了产品和服务所需货币量。
+它造成的直接后果是购买力的下降。通常，通货膨胀率是用消费价格指数（CPI）来衡量的
+
+</rich_text>
+        <rich_text scale="h1">什么是国际收支？</rich_text>
+        <rich_text>
+国际收支是指一定时期内一个经济体（通常指一国或者地区）与世界其他经济体之间的各项经济交易。其中的经济交易是在居民与非居民之间进行的。
+</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">经济交易作为流量，反映经济价值的创造、转移、交换、转让或削减</rich_text>
+        <rich_text>，包括经常项目交易、资本与金融项目交易和国际储备资产变动等。
+国际收支平衡表是按照复式薄记原理，以某一特定货币为计量单位，运用简明的表格形式总括地反映一个经济体（一般指一个国家或地区）在特定时期内与世界其他经济体间发生的全部经济交易。
+
+</rich_text>
+        <rich_text scale="h1">何谓</rich_text>
+        <rich_text scale="h1" background="#8f8ff0f0a4a4">软着陆</rich_text>
+        <rich_text scale="h1">？</rich_text>
+        <rich_text>
+“软着陆”是指一个经济体在降低经济增长速度，以免出现高通货膨胀率和高利率，同时又要防止经济陷入衰退的做法。
+中国经济必须要实现“软着陆”，以保证经济可持续增长。我国历次宏观调控的经验反复证明，经济大起大落对持续发展会造成巨大损害，恢复起来需要更长时间、付出更大代价。
+
+去年以来，党中央、国务院见微知著，适时适度地针对部分行业过热和固定资产投资增长过快等主要问题实施宏观调控。
+其根本着眼点是把各方面加快发展的积极性保护好、引导好、发挥好，及时消除经济运行中不稳定、不健康因素，促进国民经济既快又好地平稳持续向前发展。
+
+</rich_text>
+        <rich_text scale="h1">什么是骆驼评级制度?</rich_text>
+        <rich_text>
+美国监管的评级方法“骆驼”评级法其评价内容只共有五大类指标: 
+• </rich_text>
+        <rich_text background="#8f8ff0f0a4a4">即资本充足率（Capital Adequacy）</rich_text>
+        <rich_text>
+• </rich_text>
+        <rich_text background="#8f8ff0f0a4a4">资产质量（Asset Quality）</rich_text>
+        <rich_text>
+• </rich_text>
+        <rich_text background="#8f8ff0f0a4a4">经营管理水平（Management）</rich_text>
+        <rich_text>
+• </rich_text>
+        <rich_text background="#8f8ff0f0a4a4">盈利水平（Earnings）</rich_text>
+        <rich_text>
+• </rich_text>
+        <rich_text background="#8f8ff0f0a4a4">流动性（Liquidity）</rich_text>
+        <rich_text>
+
+其英文单词的第一个字母组合在一起就是“CAMEL”，正好与“骆驼”的英文单词相同，所以该评级方法简称为“骆驼”评级法。
+
+后经发展，世界各国的金融监管都广泛使用，并经发展增加了“</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">市场风险敏感度</rich_text>
+        <rich_text>（Sensitivity to Market Risk），现在发展成为“CAMELS”　　
+
+这一制度正式名称是“联邦监督管理机构内部统一银行评级体系”，俗称为“骆驼评级体系”（CAMEL Rating System）。
+
+</rich_text>
+        <rich_text scale="h1">银监会公布股份制银行评级办法</rich_text>
+        <rich_text>
+中国银监会公布了股份制商业银行风险评级办法，今后各股份制银行将会被监管部门分成五级，一级是良好，五级为差，对不同级别将采用不同的监管方式，而老百姓选择银行时也将多了一个参考。
+
+这份评价体系包括对银行的资本充足状况评价、资产安全状况评价、管理状况评价、盈利状况评价、流动性状况评价和市场风险敏感性状况评价以及在此基础上加权汇总后的总体评价。
+
+据介绍，目前这一评价体系参照了国际通行的骆驼评级法。
+所谓骆驼评级制度起源于美国，在1921年～1932年间，美国先后倒闭银行10800家，1933年，银行更是频繁发生挤兑。
+面对严峻形势，为加强对商业银行的业务经营、信用状况等方面的监督管理，美联储选择五个要素对银行进行监管。
+五个要素是资本充足状况、资产质量、管理能力、盈利能力、资产的流动性，这五个英文单词的第一个字母组合成了一个词“CAMEL”——英文的意思是骆驼。
+
+</rich_text>
+        <rich_text scale="h1">什么是保理业务?</rich_text>
+        <rich_text>
+所谓应收账款的保理，通俗地讲就是企业把赊销出去的货物的应收账款有条件地转给银行，银行为企业提供资金，并负责管理、催收应收款和坏账担保，企业可借此及时回收账款、加快资金流转。
+
+按业务方式应收账款保理又分“有追索权”和“无追索权”两种，从字面上也好理解: 
+• </rich_text>
+        <rich_text background="#8f8ff0f0a4a4">有追索权</rich_text>
+        <rich_text>即企业的下家(买方)到时候不还账时，银行有权向企业追索，企业有责任从银行回购账款；
+• 而</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">无追索</rich_text>
+        <rich_text>则是银行买断企业的应收账款，(除非特殊情况)，不管买方能否还款，风险全由银行承担。
+
+</rich_text>
+        <rich_text scale="h1">什么是全面风险管理理念？</rich_text>
+        <rich_text>
+全面风险管理理念（Enterprise-wide Risk Management，简称ERM）侧重通过公司治理、内部控制等制度设计，降低住处不对称的程度，从而降低道德风险，并保证组合风险管理和交易风险管理的有效性。
+
+</rich_text>
+        <rich_text scale="h1">什么是税收的收入效应和替代效应？</rich_text>
+        <rich_text>
+各种形式的税收通常产生两种经济效应：</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">收入效应</rich_text>
+        <rich_text>（Income Effect）和</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">替代效应</rich_text>
+        <rich_text>（Substitution Effect）。
+• 税收的收入效应是指税收引起人们收入的变动，即人们由于纳税而使可支配的实际收入随之减少。
+   政府变动税收政策也会改变人们的现行收入水平，典型的情况是政府增税使人们收入相对下降，而减税使人们的收入相对提高。
+• 替代效应是指税收引起人们经济行为的调整，即人们为了减少纳税负担而改变在可供替代的经济行为之间的选择。
+
+例如，政府对商品课税可能改变人们在可供替代的商品之间的选择，对企业课税可能改变人们在可供替代的投资之间的选择，如此等等。
+人们对经济行为的调整必然造成经济税基的变动，导致个人收入、企业收入，以及政府财政收入的变化。
+因此，政府的税收政策及其调整总是给经济社会同时带来上述两种效应。
+
+当然，唯一的例外是对非经济税基课税，只会引起收入效应，而不会发生替代效应。
+因为这种课税与个人经济行为无关，它仅仅减少纳税人的可支配收入，不会引起纳税人经济行为的改变，不会影响人们的既定的经济选择。
+这种不会产生替代效应的税收通常称为</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">中性税收</rich_text>
+        <rich_text>（Neutral Tax）。
+
+现实生活里，属于中性税收的只有</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">一次性总额税</rich_text>
+        <rich_text>（Lum-sum Tax）。
+该税是政府为特殊目而征课的一次性税收，通常情况下，这种税收不能逃避，也不对个人经济行为造成明显的扭曲。
+除了一次性总额税外，其他各类税收都是非中性的，都会影响人们的生产、消费、储蓄、投资的决策，即都会改变人们对使用经济资源的决策。
+
+理论上认为，所有非中性税收都属于</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">扭曲性税收</rich_text>
+        <rich_text>（Distorting Taxes），均导致人们在经济资源使用方面产生福利损失，或效率损失。
+这是因为，政府税收的加入必然改变原先经济社会处于均衡状态的（商品的）相对价格体系，只要商品之相对价格发生变动，人们就会对个人经济行为进行调整，即发生了税收的替代效应。
+
+但是，由于此时经济社会相对价格的变动并不代表经济资源之相对稀缺程度的改变，人们的行为调整实际上就带有相当的盲目性，
+这不仅无助于经济社会恢复均衡状态，反而会使之进一步受到破坏，并对国民福利提高带来某种不利影响
+
+换言之，虽然税收使政府获得了一定规模的财政收入，但是如果其代表的国民福利不能充分补偿税收造成的国民福利的减少，就表明国民要承担额外的税收负担。
+这种额外的税收负担，又称超额税负担，则被认为是税收造成的国民福利的净损失。
+
+</rich_text>
+        <rich_text scale="h1">证券发行的主要方式有哪几种？</rich_text>
+        <rich_text>
+证券发行的主要方式有</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">全球公募</rich_text>
+        <rich_text>、</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">招标</rich_text>
+        <rich_text>和</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">簿记建档</rich_text>
+        <rich_text>。
+
+</rich_text>
+        <rich_text scale="h1">什么是路演？</rich_text>
+        <rich_text>
+</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">路演（roadshow）</rich_text>
+        <rich_text>是指拟上市发行股票（或债券）的公司在正式发行股票（或债券）之前向机构投资者推介股票（或债券）的活动。
+企业可以通过路演的情况调整股票（或债券）的定价，使之顺利的发行出去。　
+
+</rich_text>
+        <rich_text scale="h1">什么是EMV？</rich_text>
+        <rich_text>
+EMV规范是由Europay、Mastercard、Visa三大信用卡国际组织联合制定的IC（智能）卡金融支付应用标准，其推出的目的是在IC卡支付系统中建立卡片和终端之间统一的互通互用的标准平台。
+这种以芯片卡配合密码输入的技术，代表着未来银行卡的主流发展方向。　
+
+</rich_text>
+        <rich_text scale="h1">什么是簿记建档？</rich_text>
+        <rich_text>
+簿记建档(BookBuilding)是一种</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">证券化发行方式</rich_text>
+        <rich_text>，国外很多国家也在使用这种方式进行股票、债券等证券品种的发行。
+具体流程是：首先由簿记管理人(一般为主承销商)进行预路演，根据预路演获得的市场反馈信息，发行人和簿记管理人将根据市场情况与投资者需求共同确定申购价格区间。
+
+然后进入路演阶段，债券发行人与投资者以一对一的方式进行更加深入的沟通，同时，簿记管理人开展簿记建档工作，由权威的公证机关进行全程监督。
+主承销商一旦接收申购订单，该原始资料立刻接受公证机关的核验，并对订单进行统一编号，确保订单的合规性、完整性。
+主承销商在公证机构的监督下，将投资者在每一价格上的累计申购总金额录入电子系统，形成价格需求曲线，并以此为基础，与发行人共同确定最终的发行价格。
+
+</rich_text>
+        <rich_text scale="h1">什么是收益率曲线？</rich_text>
+        <rich_text>
+收益率曲线是描述投资收益率与期限之间关系的曲线。
+
+</rich_text>
+        <rich_text scale="h1">什么是CME？</rich_text>
+        <rich_text>
+贷币错配风险
+
+</rich_text>
+        <rich_text scale="h1">什么是IPO？</rich_text>
+        <rich_text>
+股票首次发行
+
+</rich_text>
+        <rich_text scale="h1">什么是FDI？</rich_text>
+        <rich_text>
+</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">流动性风险</rich_text>
+        <rich_text>指金融机构没有足够的流动性资金来及时支付流动性负债，乃至引发挤兑风潮的危险。
+其原因可以是:
+• 金融机构的资产和负债的期限搭配不当，把大量短期资金来源进行长期资金运用，又没有足够的支付准备，造成资金周转不灵；
+• 也可以是因出现资产损失又无力弥补，失去了支付流动性负债的能力。
+流动性风险的危害性极大，严重时甚至会置金融机构于死地。
+
+</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">外汇风险</rich_text>
+        <rich_text>一般是指在一定时期的国际经济交易中，因未料到汇率或利率的忽然变动，给外汇持有人带来的经济收益或损失。
+从广义上讲，外汇风险也包括国际经济、贸易、金融活动中产生的信用风险，但一般是指货币汇率变动带来的风险。
+
+在</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">浮动汇率制度</rich_text>
+        <rich_text>下，汇率或利率变动十分频繁，从而必然会引起交易双方的收益和外汇持有人所持外汇的市场价值发生变动的风险，
+外汇风险可概括为四种类型：
+</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">①交易风险；
+②评价风险；
+③经济风险；
+④储备风险。</rich_text>
+        <rich_text>
+
+由于外汇风险涉及到交易双方经济利益，所以各国外贸企业、外汇银行等在其经营活动中，都把避免外汇风险视为管理外汇资财的一个重要方面。
+
+防止外汇风险的主要方法有:
+• 汇率的预测法
+• 选择货币法
+• 货币保值法
+• 远期合同法
+• 利用国际信贷法，早付迟收或早收迟付法
+• 对销贸易法
+• 调整价格法
+• 利率和货币调换法
+• 保付代理业务法
+• 投保货币风险保险等法。　
+
+</rich_text>
+        <rich_text scale="h1">国家风险</rich_text>
+        <rich_text>
+指由于借款国政治、经济不稳定、法制不健全、信用观念弱或失去国际支付能力等原因，使借款国不能偿付债务或拒绝偿负债务，从而给从事国际业务的金融机构带来的风险。
+随着国际业务的扩大，国家风险问题日益突出，并且国家风险还有连锁效应，即一国债务危机会涉及到其他国家偿还外债的能力，甚至引发全球性金融危机。
+
+</rich_text>
+        <rich_text scale="h1">三角债</rich_text>
+        <rich_text>
+是企业相互拖欠货款的俗称。
+企业在商品交易中，经过双方约定，可能会出现先发货、后付款或先收款、后发货的情况，企业经常保留一定的应收应付款项是正常的，这不是"三角债"。
+"三角债"是指超过正常限度，即超过结算实践或超过商业信用约定支付实践而不能偿还的债务。
+
+三角债"形成的原因：
+• 一个是固定资产投资规模过大、建设项目超概算、资金缺口大且到位不及时，项目不能按期运营，投入资金不能回流，或项目决策失误根本无法回流。这是造成企业货款拖欠的重要原因；
+• 二是企业资产负债率过高，所需流动资金主要依靠银行贷款支持，偿债能力下降，形成拖欠；
+• 三是在企业资产负债结构中不合理的情况下，企业流动资金的漏损和流失，加剧了流动资金的紧张状况和相互拖欠。
+
+</rich_text>
+        <rich_text scale="h1">金融风险预警系统</rich_text>
+        <rich_text>
+是金融监管机构为了更好的对金融经营机构实施有效监控，既是对其可能发生的金融风险进行预警、预报所建立的早期预警系统。
+该系统通过设置的一系列监测比率和比率的"通常界限"，对金融经营机构的经营状况进行监测。
+早期预警系统可通过对金融经营机构的主要业务经营比率和比率的"通常界限"加以仔细分析，对接近比率"通常界限"的金融经营机构及时预警并进行必要的干预。这种早期预警系统属于事前监管。
+
+</rich_text>
+        <rich_text scale="h1">金融创新</rich_text>
+        <rich_text>
+是指政府或金融当局和金融组织为适应不断变化的外部环境和在融资过程中的内部矛盾运动，防止或转移经营风险和降低成本，
+为更好的实现流动性、安全性和盈利性目标而逐步改变金融中介功能，创造或组合一个新的高效率的资金营运体系的创造性过程。
+主要类型有：
+• 风险转移创新；
+• 流动性增强创新；
+• 信用创造创新；
+• 股权创造创新。
+
+</rich_text>
+        <rich_text scale="h1">金融衍生产品</rich_text>
+        <rich_text>
+是指从原生资产派生出来的金融工具。
+由于许多金融衍生产品交易在资产负债表上没有相应科目，因而也被称为"</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">资产负债表外交易</rich_text>
+        <rich_text>（简称表外交易）"。
+金融衍生产品的共同特征是</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">保证金交易</rich_text>
+        <rich_text>:
+• 即只要支付一定比例的保证金就可进行全额交易，不需实际上的本金转移
+• 合约的了结一般也采用现金差价结算的方式进行，只有在满期日以实物交割方式履约的合约才需要买方交足货款。
+
+因此，金融衍生产品交易具有</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">杠杆效应</rich_text>
+        <rich_text>。
+</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">保证金越低，杠杆效应越大，风险也就越大</rich_text>
+        <rich_text>。
+国际上金融衍生产品种类繁多，活跃的金融创新活动接连不断的推出新的衍生产品。
+金融衍生产品主要有以下分类方法：
+①根据产品形态，可以分为</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">远期</rich_text>
+        <rich_text>、</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">期货</rich_text>
+        <rich_text>、</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">期权</rich_text>
+        <rich_text>和</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">掉期</rich_text>
+        <rich_text>四大类；
+②根据原生资产大致可以分为四类，即</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">股票</rich_text>
+        <rich_text>、</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">利率</rich_text>
+        <rich_text>、</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">汇率</rich_text>
+        <rich_text>和</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">商品</rich_text>
+        <rich_text>。
+
+</rich_text>
+        <rich_text scale="h1">金融监管</rich_text>
+        <rich_text>
+是指金融行政管理机关（中央银行或其他金融行政管理机关），为了维护金融体系的稳定，防止金融混乱对社会经济的发展造成不良影响，
+而对商业银行和其他金融行政管理机关以及金融市场的设置、业务活动和经济情况进行检查监督、指导、管理和控制。
+简单地说，也就是金融行政管理机关通过其对商业银行以及其他金融机构的管理，对金融市场的管理，达到稳定金融和促进社会经济正常发展的目的。
+
+</rich_text>
+        <rich_text scale="h1">洗钱</rich_text>
+        <rich_text>
+是指利用银行体系或其他金融设施，把从非法所得到的肮脏收益转换成合法金融资产的过程。
+洗钱一般可以分为</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">三个步骤</rich_text>
+        <rich_text>：
+• 第一步是</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">存放</rich_text>
+        <rich_text>，即设法把非法现金收益存放在银行里；
+• 第二步是</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">掩盖</rich_text>
+        <rich_text>，即通过多层次的、复杂的金融交易，试图把资金来源的非法性掩盖起来；
+• 第三步是</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">合并</rich_text>
+        <rich_text>，把"洗干净"的钱合并在一起，从而可以堂而皇之的加以使用。
+
+洗钱是目前国际银行界所遇到的最严重的问题之一。我国新的刑法把洗钱和内部交易等行为纳入了刑事犯罪的范畴。
+
+</rich_text>
+        <rich_text scale="h1">巴塞尔协议</rich_text>
+        <rich_text>
+是指国际清算银行所属银行监督管理委员会（简称</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">巴塞尔委员会</rich_text>
+        <rich_text>），根据美、英、法、德、日、比利时、加拿大、荷兰、瑞典、意大利、瑞士、卢森堡12个工业发达国家中央银行行长会议的建议，
+于1988年7月在瑞士巴塞尔通过的关于同意国际银行的资本衡量和资本标准的协议。
+
+协议的主要宗旨是通过对银行规定资本与风险资产的最低比率来加强国际银行的稳定性。
+协议内容主要包括，</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">对商业银行的资本比率、资本结构、各类资产的风险权数等都作了统一的规定</rich_text>
+        <rich_text>。
+
+</rich_text>
+        <rich_text scale="h1">货币政策</rich_text>
+        <rich_text>
+通过中央银行调节货币供应量，影响利息率及经济中的信贷供应程度来间接影响总需求，以达到总需求与总供给趋于理想的均衡的一系列措施。
+货币政策分为</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">扩张性</rich_text>
+        <rich_text>的和</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">紧缩性</rich_text>
+        <rich_text>的两种。
+</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">扩张性的货币政策是通过提高货币供应增长速度来刺激总需求，在这种政策下，取得信贷更为容易，利息率会降低</rich_text>
+        <rich_text>。
+因此，当总需求与经济的生产能力相比很低时，使用扩张性的货币政策最合适。
+
+</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">紧缩性的货币政策是通过削减货币供应的增长率来降低总需求水平，在这种政策下，取得信贷较为困难，利息率也随之提高</rich_text>
+        <rich_text>。
+因此，在通货膨胀较严重时，采用紧缩性的货币政策较合适。
+
+货币政策的工具主要有：
+• 调整法定准备率
+• 调整贴现率
+• 公开市场业务
+
+</rich_text>
+        <rich_text scale="h1">什么是出口打包贷款业务？</rich_text>
+        <rich_text>
+该项贷款是银行提供给出口商的一种短期资金融通,它</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">属于抵押贷款</rich_text>
+        <rich_text>,其抵押对象是尚在打包中而没有达到装运出口程度的货物。
+该项贷款货币币种为人民币或其他可自由兑换货币,金额不超过信用证金额等值人民币的80%, 期限一般不超过三个月,最长不超过信用证有效期满后30天,
+贷款利率按照中国人民银行利率政策中人民币流动资金贷款利率执行,</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">贷款用途仅限于信用证上列明的出口商品在生产、收购、结算等方面的资金需要</rich_text>
+        <rich_text>。
+
+但信用证只是在单证相符的情况下才有效力，如果借款人不能按信用证要求办货，银行的权益仍是无法保证
+
+</rich_text>
+        <rich_text scale="h1">什么是银团贷款？</rich_text>
+        <rich_text>
+银团贷款又称为</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">辛迪加贷款</rich_text>
+        <rich_text>，以</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">共同出资、共同承担风险</rich_text>
+        <rich_text>为特征的银行联合信贷经营形式，在国家投资信用中得到广泛的应用。
+银团贷款的当事人为借款人和参加银团的各家银行，后者又可以分为牵头行，代理行和参与行。
+银团贷款不仅分散了贷款风险而且又为企业筹集巨额资金开辟了渠道，现在已经成为国际上中长期贷款的主要形式之一。
+
+</rich_text>
+        <rich_text scale="h1">什么是远期利率协议？</rich_text>
+        <rich_text>
+远期利率协议是一种远期合约，买卖双方商定将来一定时间段的协议利率，并指定一种参照利率。
+在将来清算日按照规定的期限和本金数额，由一方向另一方支付协议利率和届时参照利率之间差额利息的贴现金额。
+
+</rich_text>
+        <rich_text scale="h1">什么是贷款承诺？</rich_text>
+        <rich_text>
+款承诺是指银行承诺在一定时期内或者某一时间按照约定条件提供贷款给借款人的协议。
+它属于银行的表外业务，是一种承诺在未来某时刻进行的直接信贷。
+它可以分为不可撤消贷款承诺和可撤消贷款承诺两种。
+对于在规定的借款额度内客户未使用的部分，客户必须支付一定的承诺费。
+
+</rich_text>
+        <rich_text scale="h1">银行承兑汇票的程序是什么？</rich_text>
+        <rich_text>
+承兑是指汇票付款人承诺在汇票到期日支付汇票金额的票据行为。
+在通常情况下，承兑涉及三方当事人，即汇票的出票人，票上所载付款人，持票人。
+银行承兑汇票的程序如下：
+1. 首先持票人在汇票到期日前或者出票日起一个月内向付款人提示承兑。
+2. 其次银行收到持票人提示承兑的汇票后，就应当向持票人签发收到汇票的回单，并且在三日之内决定承兑或者拒绝承兑。
+3. 最次付款人承兑汇票后，履行到期付款的义务。
+
+</rich_text>
+        <rich_text scale="h1">本票、汇票、支票、银行承兑汇票的定义是什么？</rich_text>
+        <rich_text>
+</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">本票</rich_text>
+        <rich_text>是指由出票人签发的，承诺自己在见票时无条件支付确定的金额给收款人或者持票人的票据。
+本票的出票人可以是银行，也可以是企业，可以分为</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">银行本票</rich_text>
+        <rich_text>和</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">商业本票</rich_text>
+        <rich_text>两种，目前在我国使用的是银行本票。</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">本票可以背书转让</rich_text>
+        <rich_text>。
+
+汇票是指由出票人签发的，委托付款人见票时或者在指定日期无条件支付确定的金额给收款人或者出票人的票据。
+汇票按照出票人的不同可以分为</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">银行汇票</rich_text>
+        <rich_text>和</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">商业汇票</rich_text>
+        <rich_text>两种，</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">汇票也可以背书转让</rich_text>
+        <rich_text>。
+
+支票是指由出票人签发的，委托办理支票存款业务的银行或者其他金融机构在见票时无条件支付确定的金额给收款人或者持票人的票据。
+支票共有四种：
+• </rich_text>
+        <rich_text background="#8f8ff0f0a4a4">转帐支票</rich_text>
+        <rich_text>
+• </rich_text>
+        <rich_text background="#8f8ff0f0a4a4">现金支票</rich_text>
+        <rich_text>
+• </rich_text>
+        <rich_text background="#8f8ff0f0a4a4">普通支票</rich_text>
+        <rich_text>
+• </rich_text>
+        <rich_text background="#8f8ff0f0a4a4">划线支票</rich_text>
+        <rich_text>
+
+银行承兑汇票是指由收款人或者付款人开出的，由付款人向其开户银行提出承兑申请而且经过银行承诺到期兑付的汇票。
+
+</rich_text>
+        <rich_text scale="h1">什么是系统性风险和非系统性风险？</rich_text>
+        <rich_text>
+</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">系统性风险</rich_text>
+        <rich_text>是指由那些能够影响整个金融市场的风险因素引起的，这些因素包括经济周期、国家宏观经济政策的变动等。
+这种风险不能通过分散投资相互抵消或者削弱。因此又称为</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">不可分散风险</rich_text>
+        <rich_text>。
+
+而</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">非系统性风险</rich_text>
+        <rich_text>是一种与特定公司或者行业相关的风险，它与经济、政治和其他影响所有金融变量的因素无关。
+通过分散投资，非系统性风险可以被降低，而且如果分散是充分有效的，这种风险还可以被消除。因此又被称为</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">可分散风险</rich_text>
+        <rich_text>。
+
+</rich_text>
+        <rich_text scale="h1">什么是票据贴现，如何计算贴现额？</rich_text>
+        <rich_text>
+票据贴现是指银行应客户的要求，买进其未到付款日期的票据，并向客户收取一定的利息的业务。
+具体程序是银行根据票面金额以及既定贴现率，计算出从贴现日到票据到期日这段时间的贴现利息，并从票面金额中扣除，余额部分支付给客户。
+票据到期时，银行持票据向票据载明的支付人索取票面金额的款项。贴现额的计算公式为：
+
+贴现业务形式上是票据的买卖，但实际上是信用业务，即银行通过贴现间接贷款给票据金额的支付人。
+
+</rich_text>
+        <rich_text scale="h1">什么是备用信用证？它有哪些特点？</rich_text>
+        <rich_text>
+备用信用证实质上是</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">担保的一个类别</rich_text>
+        <rich_text>，通常与商业票据的发行相联系。
+备用信用证是一种信用证或者类似安排，构成开证行对受益人的下列担保：
+• 一是偿还债务人的借款或者预支给债务人的款项
+• 二是支付由债务人所承担的负债
+• 三是对债务人不履行契约而付款。
+
+由此可见，银行开出备用信用证等的行为与传统的商业信用证不同点在于，它并</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">不需要银行进行实际的融资，仅当申请人无力偿还时才需要银行承担债务责任</rich_text>
+        <rich_text>。
+
+</rich_text>
+        <rich_text scale="h1">什么是票据的背书？</rich_text>
+        <rich_text>
+票据的背书是指票据持有人将票据转让他人时，在票据背面或者粘单上记载有关事项并且签章的票据行为。
+签章的人称为背书人。接受票据转让的人称为被背书人或者转让人。
+背书可以分为记名背书和不记名背书两种。
+经过票据的背书，如果出票人或者付款人到期拒绝支付，票据不能兑现时，背书人负有连带的付款责任。
+因此，票据的背书是背书人的一种或有负债。
+
+</rich_text>
+        <rich_text scale="h1">什么是同业拆借市场？该市场的交易主要有哪些？</rich_text>
+        <rich_text>
+同业拆借市场，是指金融机构之间以货币借贷方式进行短期资金融通活动的市场。
+同业拆借的资金主要用于弥补银行短期资金的不足，票据清算的差额以及解决临时性资金短缺需要。
+同业拆借市场的主要交易有：
+1. 头寸拆借，一般为日拆。
+2. 同业借贷，它的期限比较长，从数天到一年不等。
+
+同业拆借市场的利率确定方式有两种：
+• 其一为融资双方根据资金供求关系以及其他影响因素自主决定；
+• 其二为融资双方借助中介人经纪商，通过市场公开竞标确定。
+
+</rich_text>
+        <rich_text scale="h1">什么叫国内生产总值？</rich_text>
+        <rich_text>
+国内生产总值，简称</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">GDP</rich_text>
+        <rich_text>（Gross Domestic Product）。
+是指一个国家或地区使用本国或本地区的生产要素，在一年内创造的最终产品和最终服务的货币价值总额。
+国内生产总值增长率常常被用来描述一个国家或地区的经济增长情况。
+但是，国内生产总值的概念具有一定的局限性。它不能反映国民经济增长的结构和质量。
+片面追求GDP的高速度，容易导致经济出现高投入、高消耗、低效益、不可持续的粗放型增长模式。
+
+</rich_text>
+        <codebox char_offset="9557" justification="left" frame_width="90" frame_height="42" width_in_pixels="0" syntax_highlighting="plain-text" highlight_brackets="1" show_line_numbers="0">贴现付款额＝票据面额×（1－年贴现率×未到期天数÷360天）</codebox>
       </node>
       <node name="交易单元和席位" unique_id="10" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643736543" ts_lastsave="1643737749">
         <rich_text link="webs https://zhuanlan.zhihu.com/p/24842109">原文连接</rich_text>
@@ -424,6 +974,81 @@ A股诞生早期，证券公司数量少，佣金的定价权在证券公司手�
 为了避免交易系统报错，交易所就设置了联通圈，只要是一个联通圈的交易单元，都是同一个券商下面的，哪怕编号不一样也可以顺利报单。
 反之，如果两个交易单元不是一个联通圈，系统就会认为订单对应的交易单元不是指定券商，就会报错，订单就无法进入交易系统。
 </rich_text>
+      </node>
+      <node name="基金证券类知识" unique_id="12" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643778374" ts_lastsave="1643778656">
+        <rich_text link="webs https://zhuanlan.zhihu.com/p/74327330">原文连接</rich_text>
+        <rich_text>
+</rich_text>
+        <rich_text scale="h1">基金类</rich_text>
+        <rich_text>
+
+</rich_text>
+        <rich_text scale="h2">开放式基金(open-end funds)</rich_text>
+        <rich_text>
+指基金规模不是固定不变的，而是可以随时根据市场供求情况发行新份额或被投资人赎回的投资基金。
+
+</rich_text>
+        <rich_text scale="h2">封闭式基金(close-end funds)</rich_text>
+        <rich_text>
+指基金规模在发行前已确定，在发行完毕后及规定的期限内，基金规模固定不变的投资基金。
+
+</rich_text>
+        <rich_text scale="h2">契约型投资基金(constractual type funds)</rich_text>
+        <rich_text>
+根据一定的信托契约原理，由基金发起人和基金管理人、基金托管人订立基金契约而组建的投资基金。
+基金管理人依据法律法规和基金契约负责基金的经营和管理操作；
+基金托管人负责保管基金资产，执行管理人的有关指令，办理基金名下的资金往来；
+投资人通过购买基金单位，享有基金投资收益。
+
+</rich_text>
+        <rich_text scale="h2">公司型投资基金(corporate type funds)</rich_text>
+        <rich_text>
+具有共同投资目标的投资者依据公司法组成以赢利为目的、投资于特定对象（如各种有价证券、货币）的股份制投资公司。
+</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">基金持有者既是基金投资者，又是公司股东。</rich_text>
+        <rich_text>
+
+</rich_text>
+        <rich_text scale="h2">雨伞基金(umbrella funds)</rich_text>
+        <rich_text>
+基金管理公司把自己名下的一组基金作为“母基金”，在“母基金”之下，再组成若干个“子基金”，以方便和吸引投资者在其中自由选择和转换的一种经营方式。
+其最大的特点就是利于投资者转换基金，并且不收或少收转换费，以此来稳定投资队伍。
+
+</rich_text>
+        <rich_text scale="h2">基金中的基金(funds of funds)</rich_text>
+        <rich_text>
+其特点是</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">以其他基金单位为投资对象</rich_text>
+        <rich_text>。它通过分散投资于本身或不同管理团体的基金来进一步分散降低风险。
+
+</rich_text>
+        <rich_text scale="h2">对冲基金(hedge fund)</rich_text>
+        <rich_text>
+原意是“</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">风险对冲过的基金</rich_text>
+        <rich_text>”，起源于５０年代初的美国，起初的操宗旨是利用期货、期权等金融衍生产品以及对相关联的不同股票进行实买空卖、风险对冲的操作技巧，
+在一定程度上可规避和化解证券投资风险。
+经过几十年的演变，对冲基金已失去初始的风险对冲的内涵，已成为充分利用各种金融衍生产品的杠杆效应，承担高风险、追求高收益的投资模式。
+
+</rich_text>
+        <rich_text scale="h2">风险基金(venture capital)</rich_text>
+        <rich_text>
+是指那些由专业投资管理人士或机构定向募集的资金，投资于处于草创阶段的企业、技术、产品或市场，以期望在未来实现高额回报。
+
+</rich_text>
+        <rich_text scale="h2">股票基金</rich_text>
+        <rich_text>
+股票基金是</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">以股票为投资对象的投资基金</rich_text>
+        <rich_text>，是投资基金的主要种类。股票基金的主要功能是将大众投资者的小额投资集中为大额资金。
+投资于不同的股票组合，是股票市场的主要机构投资。
+
+</rich_text>
+        <rich_text scale="h2">债券基金</rich_text>
+        <rich_text>
+债券基金是一种</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">以债券为投资对象的证券投资基金</rich_text>
+        <rich_text>，它通过集中众多投资者的资金，对债券进行组合投资，寻求较为稳定的收益。</rich_text>
       </node>
     </node>
     <node name="期货" unique_id="11" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643737810" ts_lastsave="1643737810"/>
