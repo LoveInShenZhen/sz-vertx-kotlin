@@ -228,7 +228,7 @@ A股诞生早期，证券公司数量少，佣金的定价权在证券公司手�
         <rich_text>。</rich_text>
       </node>
     </node>
-    <node name="金融常识" unique_id="8" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643734632" ts_lastsave="1643797460">
+    <node name="金融常识" unique_id="8" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643734632" ts_lastsave="1643861960">
       <node name="银行系金融知识" unique_id="9" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643734660" ts_lastsave="1643778338">
         <rich_text link="webs https://zhuanlan.zhihu.com/p/74327330">原文连接</rich_text>
         <rich_text>
@@ -1092,7 +1092,7 @@ EMV规范是由Europay、Mastercard、Visa三大信用卡国际组织联合制�
 
 </rich_text>
       </node>
-      <node name="金融衍生工具" unique_id="13" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643797460" ts_lastsave="1643797697">
+      <node name="金融衍生工具" unique_id="13" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643797460" ts_lastsave="1643861917">
         <rich_text scale="h2">金融衍生工具</rich_text>
         <rich_text>
 通常是指从原生资产（Underlying Asserts）派生出来的金融工具。
@@ -1143,7 +1143,191 @@ EMV规范是由Europay、Mastercard、Visa三大信用卡国际组织联合制�
         <rich_text>
 股票指数期货指</rich_text>
         <rich_text background="#f6f6d3d32d2d">以股票指数为标的物的期货合约</rich_text>
-        <rich_text>。股票指数期货不涉及股票本身的交割，其价格根据股票指数计算，合约以现金清算形式进行交割。</rich_text>
+        <rich_text>。股票指数期货不涉及股票本身的交割，其价格根据股票指数计算，合约以现金清算形式进行交割。
+
+</rich_text>
+        <rich_text scale="h2">股票指数期货</rich_text>
+        <rich_text>
+股票指数期货指</rich_text>
+        <rich_text background="#f6f6d3d32d2d">以股票指数为标的物的期货合约</rich_text>
+        <rich_text>。股票指数期货不涉及股票本身的交割，其价格根据股票指数计算，合约以现金清算形式进行交割。
+
+</rich_text>
+        <rich_text scale="h2">看涨期权</rich_text>
+        <rich_text>
+看涨期权，是指期权的购买者拥有在期权合约有效期内按执行价格买进一定数量标的物的</rich_text>
+        <rich_text background="#f6f6d3d32d2d">权利</rich_text>
+        <rich_text>。
+
+</rich_text>
+        <rich_text scale="h2">看跌期权</rich_text>
+        <rich_text>
+看跌期权是指期权的购买者拥有在期权合约有效期内按执行价格卖出一定数量标的物的</rich_text>
+        <rich_text background="#f6f6d3d32d2d">权利</rich_text>
+        <rich_text>。
+
+</rich_text>
+        <rich_text scale="h2">欧式期权</rich_text>
+        <rich_text>
+欧式期权，是指只有在合约到期日才被允许执行的期权。
+
+</rich_text>
+        <rich_text scale="h2">美式期权</rich_text>
+        <rich_text>
+美式期权，是指可以在成交后有效期内任何一大被执行的期权。
+
+</rich_text>
+        <rich_text scale="h2">外汇按金交易</rich_text>
+        <rich_text>
+外汇按金交易，是指在金融机构之间及金融机构与投资者之间进行的一种远期外汇买卖方式。在交易时，交易者只付出1％～10%的按金（保证金），就可进行100％额度的交易。
+
+</rich_text>
+        <rich_text scale="h2">期货保证金</rich_text>
+        <rich_text>
+在期货市场上，交易者只需按期货合约价格的一定比率交纳少量资金作为履行期货合约的财力担保，便可参与期货合约的买卖，这种资金就是期货保证金。
+
+</rich_text>
+        <rich_text scale="h2">期货交易的逐日盯市制度</rich_text>
+        <rich_text>
+期货交易的逐日盯市制度，是指结算部门在每日闭市后计算、检查保证金账户余额，通过适时发出追加保证金通知，使保证金余额维持在一定水平之上，防止负债现象发生的结算制度。
+其具体执行过程如下：
+1. 在每一交易日结束之后，交易所结算部门根据全日成交情况计算出当日结算价，据此计算每个会员恃仓的浮动盈亏，调整会员保证金账户的可动用余额。
+2. 若调整后的保证金余额小于维持保证金，交易所便发出通知，要求在下一交易日开市之前追加保证金，
+3. 若会员单位不能按时追加保证金，交易所将有权强行平仓。
+
+</rich_text>
+        <rich_text scale="h2">期货建仓、持仓和平仓</rich_text>
+        <rich_text>
+期货交易的全过程可以概括为</rich_text>
+        <rich_text background="#f6f6d3d32d2d">建仓</rich_text>
+        <rich_text>、</rich_text>
+        <rich_text background="#f6f6d3d32d2d">持仓</rich_text>
+        <rich_text>、</rich_text>
+        <rich_text background="#f6f6d3d32d2d">平仓</rich_text>
+        <rich_text>或</rich_text>
+        <rich_text background="#f6f6d3d32d2d">实物交割</rich_text>
+        <rich_text>。
+• 建仓也叫开仓，是指交易者新买入或新卖出一定数量的期货合约。
+• 建仓之后尚没有平仓的合约，叫未平仓合约或者未平仓头寸，也叫持仓。
+• 在最后交易日结束之前择机将买入的期货合约卖出，或将卖出的期货合约买回，
+   即通过一笔数量相等、方向相反的期货交易来冲销原有的期货合约，以此了结期货交易，解除到期进行实物交割的义务，这种买回已卖出合约，或卖出己买入合约的行为就叫平仓。
+
+</rich_text>
+        <rich_text scale="h2">限仓制度</rich_text>
+        <rich_text>
+限仓制度，是期货交易所为了防止市场风险过度集中于少数交易者和防范操纵市场行为，对会员和客户的持仓数量进行限制的制度。
+
+</rich_text>
+        <rich_text scale="h2">大户报告制度</rich_text>
+        <rich_text>
+大户报告制度，是与限仓制度紧密相关的另外一个控制交易风险、防止大户操纵中场行为的制度。
+期货交易所建立限仓制度后。当会员或客户投机头寸达到了交易所规定的数量时，必须向交易所申报。
+申报的内容包括客户的</rich_text>
+        <rich_text background="#f6f6d3d32d2d">开户情况</rich_text>
+        <rich_text>、</rich_text>
+        <rich_text background="#f6f6d3d32d2d">交易情况</rich_text>
+        <rich_text>、</rich_text>
+        <rich_text background="#f6f6d3d32d2d">资金来源</rich_text>
+        <rich_text>。</rich_text>
+        <rich_text background="#f6f6d3d32d2d">交易动机</rich_text>
+        <rich_text>等等，便于交易所审查大户是否有过度投机和操纵市场行为以及大户的交易风险情况
+
+</rich_text>
+        <rich_text scale="h2">期货实物交割</rich_text>
+        <rich_text>
+实物交割，是指期货合约的买卖双方于合约到期时，根据交易所制订的规则和程序，通过期货合约标的物的所有权转移，将到期未平仓合约进行了结的行为。</rich_text>
+        <rich_text background="#f6f6d3d32d2d">商品期货交易一般采用实物交割的方式。</rich_text>
+        <rich_text>
+
+</rich_text>
+        <rich_text scale="h2">期货现金交割</rich_text>
+        <rich_text>
+现金交割，是指到期末平仓期货合约进行交割时，用结算价格来计算未平仓合约的盈亏，以现金支付的方式最终了结期货合约的交割方式。
+这种交割方式主要用于金融期货等期货标的物无法进行实物交割的期货合约，如股票指数期货合约等。
+近年，国外一些交易所也探索将现金交割的方式用于商品期货。
+</rich_text>
+        <rich_text background="#f6f6d3d32d2d">我国商品期货市场不允许进行现金交割</rich_text>
+        <rich_text>。
+
+</rich_text>
+        <rich_text scale="h2">利率顶(interest rate caps)</rich_text>
+        <rich_text>
+如果贷款利率超过了规定的上限(cap rate)，</rich_text>
+        <rich_text background="#f6f6d3d32d2d">利率顶合约</rich_text>
+        <rich_text>的提供者将向合约持有人补偿实际利率与利率上限的差额，从而保证合约持有人实际支付的净利率不会超过合约规定的上限。
+
+</rich_text>
+        <rich_text scale="h2">利率底(interest rate floors)</rich_text>
+        <rich_text>
+如果贷款利率下降至下限(floor rate)，利率底合约的提供者将向合约持有人补偿实际利率与利率下限的差额，从而保证合约持有人实际支付的净利率不会超过合约规定的下限。 
+扬基债券(Yankee bonds) 在美国债券市场上发行的外国债券，即美国以外的政府、金融机构、工商企业和国际组织在美国国内市场发行的、以美圆为计值货币的债券。
+扬基债券具有如下几个特点：
+1. 期限长，数额大。
+2. 美国政府对其控制较严，申请手续远比一般债券繁琐。
+3. 发行者以外国政府和国际组织为主。
+4. 投资者以人寿保险公司、储蓄银行等机构为主。
+
+</rich_text>
+      </node>
+      <node name="证券发行类" unique_id="14" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643861960" ts_lastsave="1643862252">
+        <rich_text scale="h2">武士债券(Samurai bonds)</rich_text>
+        <rich_text>
+在日本债券市场上发行的外国债券，即日本以外的政府、金融机构、工商企业和国际组织在日本国内市场发行的、以日元为计值货币的债券。
+武士债券均为无担保发行，典型期限为３～１０年，一般在东京证券交易所交易。
+
+</rich_text>
+        <rich_text scale="h2">龙债券(Dragon bonds)</rich_text>
+        <rich_text>
+以非日元的亚洲国家或地区货币发行的外国债券。
+龙债券是东亚经济迅速增长的产物。从１９９２年起，龙债券得到了迅速发展。其典型偿还期限为３～８年。龙债券对发行人的资信要求较高，一般为政府及相关机构。
+
+</rich_text>
+        <rich_text scale="h2">蓝筹股</rich_text>
+        <rich_text>
+在所属行业内占有重要支配性地位、业绩优良、成交活跃、红利优厚的大公司股票被称为蓝筹股。</rich_text>
+        <rich_text background="#8f8ff0f0a4a4">“蓝筹”一词源于西方赌场，在西方赌场中，有三种颜色的筹码，其中蓝色筹码最为值钱。</rich_text>
+        <rich_text>
+
+</rich_text>
+        <rich_text scale="h2">红筹股</rich_text>
+        <rich_text>
+红筹股这一概念诞生于９０年代初期的香港股票市场。香港和国际投资者把在境外注册、在香港上市的那些</rich_text>
+        <rich_text background="#f6f6d3d32d2d">带有中国大陆概念的股票称为红筹股</rich_text>
+        <rich_text>。
+早期的红筹股主要是一些中资公司收购香港中小型上市公司后改造而形成的，如“中信泰富”等。
+后来出现的红筹股，主要是内地一些省市将其在香港的窗口公司改组并在香港上市后形成的，如“北京控股”等。
+
+</rich_text>
+        <rich_text scale="h2">存托凭证(depository receipts,DR)</rich_text>
+        <rich_text>
+是指在一国证券市场流通的代表外国公司有价证券的可转让凭证。
+以股票为例，存托凭证是这样产生的：
+</rich_text>
+        <rich_text foreground="#5e5e5c5c6464">    某国的上市公司为使其股票在外国流通，就将一定数额的股票，委托某一中间机构（通常为一银行，称为保管银行）保管，
+    由保管银行通知外国的存托银行在当地发行代表该股份的存托凭证，之后存托凭证便开始在外国证券交易所或柜台市场交易。</rich_text>
+        <rich_text>
+
+</rich_text>
+        <rich_text scale="h2">转配股</rich_text>
+        <rich_text>
+</rich_text>
+        <rich_text background="#f6f6d3d32d2d">是我国股票市场特有的产物</rich_text>
+        <rich_text>。
+国家股、法人股的持有者放弃配股权，将</rich_text>
+        <rich_text background="#f6f6d3d32d2d">配股权有偿转让</rich_text>
+        <rich_text>给其他法人或社会公众，这些法人或社会公众行使相应的配股权时所认购的新股，就是转配股。
+
+</rich_text>
+        <rich_text scale="h2">认股权证</rich_text>
+        <rich_text>
+由上市公司发行，给予持有权证的投资者在未来某个时间或某一段时间以事先确认的价格购买一定量该公司股票的权利。</rich_text>
+        <rich_text background="#f6f6d3d32d2d">其实质是一种买入期权</rich_text>
+        <rich_text>。
+
+</rich_text>
+        <rich_text scale="h2">备兑权证</rich_text>
+        <rich_text>
+也给予持有者以某一特定价格购买某种股票的权利，但和一般的认股权证不同，备兑权证由上市公司以外的第三者发行，发行人通常都是资信卓著的金融机构。</rich_text>
       </node>
     </node>
     <node name="期货" unique_id="11" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643737810" ts_lastsave="1643737810"/>
