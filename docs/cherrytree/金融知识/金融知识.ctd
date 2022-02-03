@@ -228,7 +228,7 @@ A股诞生早期，证券公司数量少，佣金的定价权在证券公司手�
         <rich_text>。</rich_text>
       </node>
     </node>
-    <node name="金融常识" unique_id="8" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643734632" ts_lastsave="1643778374">
+    <node name="金融常识" unique_id="8" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643734632" ts_lastsave="1643797460">
       <node name="银行系金融知识" unique_id="9" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643734660" ts_lastsave="1643778338">
         <rich_text link="webs https://zhuanlan.zhihu.com/p/74327330">原文连接</rich_text>
         <rich_text>
@@ -769,7 +769,9 @@ EMV规范是由Europay、Mastercard、Visa三大信用卡国际组织联合制�
 票据贴现是指银行应客户的要求，买进其未到付款日期的票据，并向客户收取一定的利息的业务。
 具体程序是银行根据票面金额以及既定贴现率，计算出从贴现日到票据到期日这段时间的贴现利息，并从票面金额中扣除，余额部分支付给客户。
 票据到期时，银行持票据向票据载明的支付人索取票面金额的款项。贴现额的计算公式为：
-
+</rich_text>
+        <rich_text justification="left"></rich_text>
+        <rich_text>
 贴现业务形式上是票据的买卖，但实际上是信用业务，即银行通过贴现间接贷款给票据金额的支付人。
 
 </rich_text>
@@ -975,7 +977,7 @@ EMV规范是由Europay、Mastercard、Visa三大信用卡国际组织联合制�
 反之，如果两个交易单元不是一个联通圈，系统就会认为订单对应的交易单元不是指定券商，就会报错，订单就无法进入交易系统。
 </rich_text>
       </node>
-      <node name="基金证券类知识" unique_id="12" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643778374" ts_lastsave="1643778656">
+      <node name="基金证券类知识" unique_id="12" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643778374" ts_lastsave="1643797415">
         <rich_text link="webs https://zhuanlan.zhihu.com/p/74327330">原文连接</rich_text>
         <rich_text>
 </rich_text>
@@ -1048,7 +1050,100 @@ EMV规范是由Europay、Mastercard、Visa三大信用卡国际组织联合制�
         <rich_text>
 债券基金是一种</rich_text>
         <rich_text background="#8f8ff0f0a4a4">以债券为投资对象的证券投资基金</rich_text>
-        <rich_text>，它通过集中众多投资者的资金，对债券进行组合投资，寻求较为稳定的收益。</rich_text>
+        <rich_text>，它通过集中众多投资者的资金，对债券进行组合投资，寻求较为稳定的收益。
+
+</rich_text>
+        <rich_text scale="h2">货币市场基金</rich_text>
+        <rich_text>
+货币市场基金是指投资于货币市场上短期有价证券的～种基金。该基金资产主要投资于短期货币工具如国库券、商业票据、银行定期存单、政府短期债券、企业债券等短期有价证券。
+
+</rich_text>
+        <rich_text scale="h2">基金发起人</rich_text>
+        <rich_text>
+基金发起人是指发起设立基金的机构，它在基金的设立过程中起着重要作用。
+在我国，根据《证券投资基金管理暂行办法》的规定。基金的主要发起人为按照国家有关规定设立的证券公司，信托投资公司及基金管理公司，基金发起入的数目为两个以上。
+依据《证券投资基金管理暂行办法》及中国证监会的有关规定，基金发起人主要职责包括：
+（1）制定有关法律文件并向主管机关提出设立基金的申请，筹建基金；
+（2）认购或持有一定数量的基金单位；
+（3）基金不能成立时、基金发起人须承担基金募集费用，将已募集的资金并加计银行恬期存款利息在规定时间内退还基金认购。
+
+</rich_text>
+        <rich_text scale="h2">基金管理人</rich_text>
+        <rich_text>
+基金管理人，是指凭借专门的知识与经验，运用所管理基金的资产，
+根据法律、法规及基金章程或基金契约的规定，按照科学的投资组合原理进行投资决策，谋求所管理的基金资产不断增值，并使基金持有人获取尽可能多收益的机构。
+我国《证券投资基金管理暂行办法》规定，基金管理人的职责主要有：
+• 按照基金契约的规定运用基金资产投资并管理基金资产；
+• 及时、足额向基金持有人支付基金收益；
+• 保存基金的会计账册，记录15年以上；
+• 编制基金财务报告，及时公告，并向中国证监会报告：计算并公告基金资产净值及每一基金单位资产净值；
+• 基金契约规定的其他职责：开放式基金的管理人还应当按照国家有关规定和基金契约的规定，及时、准确地办理基金的申购与赎回。
+
+</rich_text>
+        <rich_text scale="h2">基金托管人</rich_text>
+        <rich_text>
+基金托管人应为基金开设独立的银行存款账户，并负责账户的管理。
+即基金银行账户款项收付及资金划拨等也由基金托管人负责，基金投资于证券后，有关证券交易的资金清算由基金托管人负责。
+基金托管人主要有以下职责：
+• ①安全保管全部基金资产
+• ②执行基金管理人的投资指令；
+• ③监督基金管理人的投资运作，如果发现基金管理人有违规行为，有权向证券上管机关报告。并督促基金管理人予以改正；
+• ④对基金管理人计算的基金资产净值和编制的财务报表进行复核。
+
+</rich_text>
+      </node>
+      <node name="金融衍生工具" unique_id="13" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643797460" ts_lastsave="1643797697">
+        <rich_text scale="h2">金融衍生工具</rich_text>
+        <rich_text>
+通常是指从原生资产（Underlying Asserts）派生出来的金融工具。
+由于许多金融衍生产品交易 在资产负债表上没有相应科目，因而也被称为“资产负债表外交易（简称表外交易）”。
+根据产品形态，可以分为远期、期货、期权和掉期四大类。
+
+</rich_text>
+        <rich_text scale="h2">掉期合约</rich_text>
+        <rich_text>
+掉期合约是一种内交易双方签订的在未来某一时期相互交换某种资产的合约。
+更为准确他说，掉期合约是当事人之间签讨的在未来某一期间内相互交换他们认为具有相等经济价值的现金流（Cash Flow）的合约。
+
+</rich_text>
+        <rich_text scale="h2">期权合约</rich_text>
+        <rich_text>
+期权的买方向卖方支付一定数额的权利金后，就获得这种权利，即拥有在一定时间内以一定的价格（执行价格〕出售或购买一定数量的标的物（实物商品、证券或期货合约）的权利。
+
+</rich_text>
+        <rich_text scale="h2">期货合约</rich_text>
+        <rich_text>
+期货合约指由期货交易所统一制订的、规定在将来某一特定的时间和地点交割一定数量和质量实物商品或金融商品的标准化合约。
+
+</rich_text>
+        <rich_text scale="h2">商品期货</rich_text>
+        <rich_text>
+商品期货是指</rich_text>
+        <rich_text background="#f6f6d3d32d2d">标的物为实物商品</rich_text>
+        <rich_text>的期货合约。商品期货历史悠久，种类繁多，主要包括农副产品、金属产品、能源产品等几大类。
+
+</rich_text>
+        <rich_text scale="h2">金融期货</rich_text>
+        <rich_text>
+指</rich_text>
+        <rich_text background="#f6f6d3d32d2d">以金融工具为标的物的期货合约</rich_text>
+        <rich_text>。金融期货作为期货交易中的一种，具有期货交易的一般特点，但与商品期货相比较，其</rich_text>
+        <rich_text background="#f6f6d3d32d2d">合约标的物不是实物商品，而是传统的金融商品</rich_text>
+        <rich_text>。
+
+</rich_text>
+        <rich_text scale="h2">利率期货</rich_text>
+        <rich_text>
+利率期货，指</rich_text>
+        <rich_text background="#f6f6d3d32d2d">以利率为标的物的期货合约</rich_text>
+        <rich_text>。利率期货主要包括以长期国债为标的物的长期利率期货和以二个月短期存款利率为标的物的短期利率期货。
+
+</rich_text>
+        <rich_text scale="h2">货币期货</rich_text>
+        <rich_text>
+股票指数期货指</rich_text>
+        <rich_text background="#f6f6d3d32d2d">以股票指数为标的物的期货合约</rich_text>
+        <rich_text>。股票指数期货不涉及股票本身的交割，其价格根据股票指数计算，合约以现金清算形式进行交割。</rich_text>
       </node>
     </node>
     <node name="期货" unique_id="11" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643737810" ts_lastsave="1643737810"/>
