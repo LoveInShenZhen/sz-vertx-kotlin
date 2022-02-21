@@ -2,8 +2,8 @@
 <cherrytree>
   <bookmarks list=""/>
   <node name="金融知识" unique_id="1" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="37" is_bold="1" foreground="#986a44" ts_creation="1642923620" ts_lastsave="1643870456">
-    <node name="股票" unique_id="2" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="1" foreground="#26a269" ts_creation="1642923644" ts_lastsave="1643725085">
-      <node name="基础知识" unique_id="3" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1642923758" ts_lastsave="1643724609">
+    <node name="股票" unique_id="2" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="1" foreground="#26a269" ts_creation="1642923644" ts_lastsave="1645368539">
+      <node name="基础知识" unique_id="3" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1642923758" ts_lastsave="1645368137">
         <node name="股票交易手续费" unique_id="5" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643708717" ts_lastsave="1643720712">
           <rich_text justification="left"></rich_text>
           <rich_text>
@@ -192,6 +192,100 @@ A股诞生早期，证券公司数量少，佣金的定价权在证券公司手�
 
 </rich_text>
         </node>
+        <node name="持仓成本" unique_id="20" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1645366704" ts_lastsave="1645368022">
+          <rich_text scale="h1">什么是持仓成本？</rich_text>
+          <rich_text>
+在一个时期内连续分批（买入、卖出）交易某金融产品或衍生品（例如股票或期货）后的交易总成本减去浮动盈亏的数额除以现持有数量得到的数值，即（单位）持仓成本。
+
+</rich_text>
+          <rich_text scale="h2">股票持仓成本价计算：持仓成本价</rich_text>
+          <rich_text>
+释义：持仓成本价是指某一证券持有期内的成本价格。其包含了持有期内每次交易的盈亏。
+算法：持仓成本价＝（持有期内买入所用资金总和－持有期内卖出所得资金总和）÷（股份可用数）
+
+</rich_text>
+          <rich_text scale="h2">股票持仓成本价计算：买入均价</rich_text>
+          <rich_text>
+释义：买入均价是股票交易成本价的一种计算方式。其体现的是持有期内买入所用资金总和。
+算法：买入均价＝（持有期内买入所用资金总和）÷（持有期内买入数量总和）
+
+</rich_text>
+          <rich_text scale="h2">股票持仓成本价计算方法</rich_text>
+          <rich_text>
+在交易中券商使用的委托系统均使用以下两种方法计算：
+
+</rich_text>
+          <rich_text scale="h3">方式 1: 成本价只计算买入的成本</rich_text>
+          <rich_text>
+即用户买入单只股票后，成本价为买入股票的 </rich_text>
+          <rich_text foreground="#1c1c7171d8d8" weight="heavy">买入金额</rich_text>
+          <rich_text> 加上 </rich_text>
+          <rich_text foreground="#1c1c7171d8d8" weight="heavy">交易费用（佣金和手续费）</rich_text>
+          <rich_text>除以 </rich_text>
+          <rich_text foreground="#1c1c7171d8d8">持股股数的数值</rich_text>
+          <rich_text>，</rich_text>
+          <rich_text style="italic">持股期间不考虑卖出股票有盈利</rich_text>
+          <rich_text>。
+
+计算公式：成本价 = 买入金额 / 持股股数
+
+举例1：
+用户某日以10元买入某股票1000股，交易费用50元，则成本价为（1000*10+50）/1000=10.05
+
+如用户第二日卖出此股票的一部分，</rich_text>
+          <rich_text underline="single" style="italic">剩余部分股票的成本价不变，卖出部分股票直接计算盈利，不摊薄到剩余股票的成本价</rich_text>
+          <rich_text style="italic">。</rich_text>
+          <rich_text>
+
+举例2：
+用户第二日以11元卖出此股票500股，交易费用25元，兑现金额为500*11-25=5475，此时盈利部分直接计入资产总额，持有股票的成本价不变仍为10.05元。
+如用户第二日继续买入此股票，则持有股票的成本价会根据其买入的成本情况，进行摊薄。
+
+计算公式：成本价 =（第一次买入金额 + 第二买入金额）/ 持股股数
+
+举例3：
+用户第二日以10.50元买入同一股票1000股，交易费用52元，则成本价为{（500*10+25）+（1000*10.5+52）}/1500=10.385，
+如用户第三日以11元卖出800股，交易费用为49元，兑现金额为800*11-49=8750，盈利部分直接计入资产总额，剩余持有的700股成本仍为10.385元。
+
+</rich_text>
+          <rich_text scale="h3">方式 2: 成本价计算持股期间卖出股票盈亏</rich_text>
+          <rich_text>
+即用户买入单只股票后，成本价为 </rich_text>
+          <rich_text foreground="#1c1c7171d8d8">买入股票的买入金额</rich_text>
+          <rich_text weight="heavy"> </rich_text>
+          <rich_text>加上 </rich_text>
+          <rich_text foreground="#1c1c7171d8d8" weight="heavy">交易费用（佣金和手续费）</rich_text>
+          <rich_text>除以 </rich_text>
+          <rich_text foreground="#1c1c7171d8d8">持股股数的数值</rich_text>
+          <rich_text>，</rich_text>
+          <rich_text underline="single" style="italic">如持股期间卖出股票有盈利，则买入金额需要扣除这些金额</rich_text>
+          <rich_text>。
+
+计算公式：成本价=（买入金额-盈亏金额）/持股股数
+
+说明：
+• 公式中的盈亏金额包括卖出股票的盈利或亏损金额。
+• 如盈亏金额为负值，即为亏损，公式中减负值则为加正值，因此公式中的分子比买入金额大，成本价增加；反之当卖出股票盈亏，盈亏金额为正值，则公式中的分子比买入金额小，成本价减小。
+
+举例：
+用户某日以10元买入某股票1000股，交易费用50元，则成本价为（1000*10+50）/1000=10.05
+
+用户第二日股票亏损0.5元，并以9.5元卖出1000股，交易费用为49元，而用户卖出后又以9.3元的价格买入1000股，交易费用为48元，则成本价为{（1000*9.3+48）+[1000*（10-9.5）+49]}/1000=9.897，用户持仓成本价格增加到9.897元。
+
+用户第二日股票盈利0.5元，并以10.5元卖出1000股，交易费用为51元，而用户卖出后，又以10元的价格买入1000股，交易费用为50元，则成本价为{（1000*10+50）-[1000*（10.5-10）-51]}/1000=9.601，用户持仓成本价降低为9.601元。
+
+如用户第二日股票盈利0.5元，并以10.5元卖出500股，交易费用为25元，剩余500股，而用户卖出后，又以10元的价格买入1000股，交易费用为50元，则成本价为（500*10+25）+{（1000*10+50）-[500*（10.5-10）-25]}/1500=9.9。
+
+</rich_text>
+        </node>
+        <node name="股息和分红" unique_id="21" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1645368137" ts_lastsave="1645368143">
+          <rich_text>分红是指股份公司在赢利中每年按股票份额的一定比例支付给投资者的红利，是上市公司对股东的投资回报。
+那股息和分红有哪些区别呢？关于股息和分红有哪些区别，接下来小编就简单地说一下股息和分红的区别。
+
+1. 在数量上，股息的比率一般是相对固定的，而分红却随公司的盈利状况可多可少。
+2. 在时间上，股息发放时间可以是年底或第二年年初，也可分期多次发放，而分红一般在第二年年初发放。
+3. 在对象上，普通股的股东在公司经营状况欠佳的情况下，可以减少，甚至不分派股息。而优先股的股东一般有股息收入的保障，但一般不参与公司的分红，普通股的分红随公司盈利的增减而增减。</rich_text>
+        </node>
       </node>
       <node name="换手率" unique_id="7" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643725085" ts_lastsave="1643725085"/>
       <node name="股票涨跌分析" unique_id="4" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643708469" ts_lastsave="1643733355">
@@ -228,6 +322,7 @@ A股诞生早期，证券公司数量少，佣金的定价权在证券公司手�
         <rich_text>。</rich_text>
       </node>
     </node>
+    <node name="期货" unique_id="22" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1645368539" ts_lastsave="1645368548"/>
     <node name="金融常识" unique_id="8" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643734632" ts_lastsave="1643870145">
       <node name="银行系金融知识" unique_id="9" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1643734660" ts_lastsave="1643778338">
         <rich_text link="webs https://zhuanlan.zhihu.com/p/74327330">原文连接</rich_text>
@@ -1473,13 +1568,17 @@ H股，即注册地在内地、上市地在香港的外资股。香港的英文�
         <rich_text scale="h2">除权</rich_text>
         <rich_text>
 由于公司股本增加，每股股票所代表的企业实际价值（每股净资产）有所减少，需要在发生该事实之后从股票市场价格中剔除这部分因素。
-
+</rich_text>
+        <rich_text justification="left"></rich_text>
+        <rich_text>
 
 </rich_text>
         <rich_text scale="h2">除息</rich_text>
         <rich_text>
 由于公司向股东分配红利，每股股票所代表的企业实际价值（每股净资产）有所减少，需要在发生该事实之后从股票市场价格中剔除这部分因素。
-
+</rich_text>
+        <rich_text justification="left"></rich_text>
+        <rich_text>
 
 </rich_text>
         <rich_text scale="h2">填权</rich_text>
@@ -1807,5 +1906,28 @@ H股，即注册地在内地、上市地在香港的外资股。香港的英文�
         </node>
       </node>
     </node>
+  </node>
+  <node name="买多、卖空、平仓、平今仓、平昨仓" unique_id="23" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1645368548" ts_lastsave="1645368686">
+    <rich_text scale="h1">期货中的买多、卖空、平仓、平今仓、平昨仓是什么意思？</rich_text>
+    <rich_text>
+• </rich_text>
+    <rich_text foreground="#1c1c7171d8d8" weight="heavy">买多</rich_text>
+    <rich_text>：就是价格上涨的话 你赚钱；
+• </rich_text>
+    <rich_text foreground="#1c1c7171d8d8">卖空</rich_text>
+    <rich_text>：也叫做空，就是价格下跌你赚钱；
+• </rich_text>
+    <rich_text foreground="#1c1c7171d8d8">平仓</rich_text>
+    <rich_text>：就是把你的持仓给平调，解除合约，赚钱离场；
+• </rich_text>
+    <rich_text foreground="#1c1c7171d8d8">平今仓</rich_text>
+    <rich_text>：就是今天开仓，今天平仓的意思。
+   ◇ 上期所和郑商所、上海国际能源中心很多交易品种都是平今仓免收期货手续费（黄金、铜、铝、棉纱、红枣、PTA、白砂糖、原油），
+   ◇ 大商所和中金所很多品种都是平今仓加收手续费的（铁矿石、焦煤、焦炭、细木工板、沪深300、上证50，中证500），敬请了解。
+• </rich_text>
+    <rich_text foreground="#1c1c7171d8d8">平昨仓</rich_text>
+    <rich_text>：就是平掉昨天开的仓的意思和平今仓相对应。
+• 注意：</rich_text>
+    <rich_text underline="single" style="italic">所有交易所都是优先平今仓，上海期货交易所的品种可以设置今天平昨仓；</rich_text>
   </node>
 </cherrytree>
