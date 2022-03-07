@@ -1,0 +1,93 @@
+{
+  "main": {
+    "id": "877f9132332f9ea6",
+    "type": "split",
+    "children": [
+      {
+        "id": "07337b048477524a",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "grpc/backoff.md",
+            "mode": "source"
+          }
+        }
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "3a6524720efafbb6",
+    "type": "split",
+    "children": [
+      {
+        "id": "b0b721259e424e7b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1bb17e05e7995470",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {}
+            }
+          },
+          {
+            "id": "44185f424d0d21fc",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "19daf6e3b49308c8",
+    "type": "split",
+    "children": [
+      {
+        "id": "ff9de4b0851f11de",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "f72f30d940ebd5e4",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "grpc/backoff.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "active": "07337b048477524a",
+  "lastOpenFiles": [
+    "grpc/backoff.md"
+  ]
+}
