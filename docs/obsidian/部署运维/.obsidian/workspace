@@ -1,0 +1,99 @@
+{
+  "main": {
+    "id": "49348fd31bb8a999",
+    "type": "split",
+    "children": [
+      {
+        "id": "ce405b835a00de3e",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "运维/Prometheus/资料整合.md",
+            "mode": "source",
+            "source": false
+          }
+        }
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "5b02878e38f330dd",
+    "type": "split",
+    "children": [
+      {
+        "id": "d2762fa09bc91581",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "6d3af05ccfb92a50",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {}
+            }
+          },
+          {
+            "id": "06dee38bb375d52d",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "metricvec",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "b6b45478ef2f99ef",
+    "type": "split",
+    "children": [
+      {
+        "id": "27dcfe1c0b30cb61",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "f10532b6e58bf090",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "运维/Prometheus/资料整合.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "active": "ce405b835a00de3e",
+  "lastOpenFiles": [
+    "运维/Prometheus/资料整合.md",
+    "[Prometheus.md",
+    "运维/Prometheus/异常检测.md",
+    "运维/Prometheus/go-grpc-prometheus.md",
+    "运维/Prometheus/Prometheus Client Lib.md",
+    "Pasted image 20220319122055.png"
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "main": {
+    "id": "0e53dbd51531dbe6",
+    "type": "split",
+    "children": [
+      {
+        "id": "dde71fa5a1fc930c",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "期货交易品种和交易时间.md",
+            "mode": "source",
+            "source": false
+          }
+        }
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "5cdae978f2c3eb48",
+    "type": "split",
+    "children": [
+      {
+        "id": "8244f122820c85b3",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a4b7e976a32e5566",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {}
+            }
+          },
+          {
+            "id": "614ac537109dc2c5",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "7bb3e1ac406e9bce",
+    "type": "split",
+    "children": [
+      {
+        "id": "84a4c88c09bf94b0",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "15642f46e9b3c033",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "期货交易品种和交易时间.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "active": "dde71fa5a1fc930c",
+  "lastOpenFiles": [
+    "期货交易品种和交易时间.md",
+    "Pasted image 20220327213612.png",
+    "Pasted image 20220327213647.png",
+    "Pasted image 20220327213545.png"
+  ]
+}
