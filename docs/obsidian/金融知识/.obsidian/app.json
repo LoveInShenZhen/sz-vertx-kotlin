@@ -2,5 +2,7 @@
   "legacyEditor": false,
   "livePreview": true,
   "newFileLocation": "current",
-  "attachmentFolderPath": "./attachments"
+  "attachmentFolderPath": "./attachments",
+  "readableLineLength": true,
+  "autoPairBrackets": false
 }
