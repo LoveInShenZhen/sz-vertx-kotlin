@@ -3,10 +3,8 @@
 
 import os
 
-from rich import print
 from git import Repo, Remote, InvalidGitRepositoryError
-from urllib.parse import urlunsplit, urlsplit, SplitResult
-
+from rich import print
 from rich.console import Console
 
 console = Console()
