@@ -12,20 +12,21 @@ dependencies {
 
     // android gradle依赖：implementation 和compile的区别
     // 参考: https://www.jianshu.com/p/f34c179bc9d0 根据需要选择使用不同的依赖设定方式
-    api("io.vertx:vertx-core:4.2.4")
-    api("io.vertx:vertx-web:4.2.4")
-    api("io.vertx:vertx-zookeeper:4.2.4")
-    api("io.vertx:vertx-lang-kotlin:4.2.4") {
+    api("io.vertx:vertx-core:4.2.7")
+    api("io.vertx:vertx-web:4.2.7")
+    api("io.vertx:vertx-zookeeper:4.2.7")
+    api("io.vertx:vertx-lang-kotlin:4.2.7") {
         this.exclude(group = "org.jetbrains.kotlin")
     }
-    api("io.vertx:vertx-lang-kotlin-coroutines:4.2.4") {
+    api("io.vertx:vertx-lang-kotlin-coroutines:4.2.7") {
         this.exclude(group = "org.jetbrains.kotlin")
     }
 
     // 参考: https://vertx.io/docs/vertx-core/kotlin/#_native_transports
     // 注意, 要保持版本号和vertx依赖的 netty 的版本号一致
-    api(group = "io.netty", name = "netty-transport-native-epoll", version = "4.1.48.Final", classifier = "linux-x86_64")
-    api(group = "io.netty", name = "netty-transport-native-kqueue", version = "4.1.48.Final", classifier = "osx-x86_64")
+    // 建议在自己工程的gradle添加对应的依赖, 作为 runtime 依赖进行添加
+//    api(group = "io.netty", name = "netty-transport-native-epoll", version = "4.1.74.Final", classifier = "linux-x86_64")
+//    api(group = "io.netty", name = "netty-transport-native-kqueue", version = "4.1.74.Final", classifier = "osx-x86_64")
 
     api("org.apache.commons:commons-pool2:2.6.2")
     api("com.google.guava:guava:28.2-jre")
