@@ -13,7 +13,7 @@ plugins {
 }
 
 dependencies {
-    api("org.bouncycastle:bcprov-jdk15on:1.58")
+    api("org.bouncycastle:bcprov-jdk18on:1.71")
 
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")
