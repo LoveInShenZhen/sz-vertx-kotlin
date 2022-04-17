@@ -22,7 +22,6 @@ import jodd.util.ClassLoaderUtil
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import org.apache.commons.lang3.SystemUtils
-import org.kodein.di.Kodein
 import sz.scaffold.controller.ApiRoute
 import sz.scaffold.controller.BodyHandlerOptions
 import sz.scaffold.dispatchers.IDispatcherFactory
@@ -86,20 +85,6 @@ object Application {
             return _vertoptions!!
         }
 
-    private var _kodein: Kodein? = null
-
-    val kodein: Kodein
-        get() {
-            if (_kodein == null) {
-                throw SzException("Application has not setup kodein.")
-            }
-            return _kodein!!
-        }
-
-    fun setupKodein(supplier: () -> Kodein) {
-        _kodein = supplier()
-    }
-
     init {
         writePidFile()
 
@@ -114,12 +99,12 @@ object Application {
             appHome = SystemUtils.getUserDir().absolutePath
         } else {
             if (SystemUtils.getUserDir().name == "bin" &&
-                SystemUtils.getUserDir().parentFile.hasFile("conf${File.separator}application.conf")
+                    SystemUtils.getUserDir().parentFile.hasFile("conf${File.separator}application.conf")
             ) {
                 appHome = SystemUtils.getUserDir().parent
             } else {
                 val jarFile = ClassLoaderUtil.getDefaultClasspath().find { it.name.startsWith("kotlin-stdlib-") }
-                    ?: throw SzException("class path 里不包含 kotlin-stdlib-*.jar, 请检查build.gradle")
+                        ?: throw SzException("class path 里不包含 kotlin-stdlib-*.jar, 请检查build.gradle")
                 appHome = File(jarFile.parent).parent
             }
         }
@@ -253,7 +238,7 @@ object Application {
 
     private fun loadRouteFromFiles(files: List<File>): List<ApiRoute> {
         return files.map { file -> ApiRoute.parseFromFile(file) }
-            .flatMap { it }
+                .flatMap { it }
     }
 
     // 检查在 route 文件 和 subRoutes 目录下的 *.route 里定义的route 的 method + path 没有重复的
@@ -271,11 +256,11 @@ object Application {
         val errRoutes = routeMap.filter { it.value > 1 }.map { it.key }
         if (errRoutes.isNotEmpty()) {
             throw SzException(
-                "The following routes are repeatedly defined, please check route file:\n${
-                    errRoutes.joinToString(
-                        "\n"
-                    )
-                }"
+                    "The following routes are repeatedly defined, please check route file:\n${
+                        errRoutes.joinToString(
+                                "\n"
+                        )
+                    }"
             )
         }
 
@@ -307,7 +292,7 @@ object Application {
         if (routeFile.exists()) {
             val routeRegex = """(/\S*)\s+(\S+)\s*$""".toRegex()
             val lines = routeFile.readLines().map { it.trim() }
-                .filter { it.startsWith("#").not() && it.startsWith("//").not() && it.isNotBlank() }
+                    .filter { it.startsWith("#").not() && it.startsWith("//").not() && it.isNotBlank() }
             if (lines.isNotEmpty()) {
                 val webSocketRootHandler = WebSocketFilter(vertx)
                 lines.forEach { line ->
@@ -342,11 +327,11 @@ object Application {
         router.route("/builtinstatic/*").handler(StaticHandler.create())
 
         router.route().handler(
-            BodyHandler.create()
-                .setMergeFormAttributes(bodyHandlerOptions.mergeFormAttributes)
-                .setBodyLimit(bodyHandlerOptions.bodyLimit)
-                .setDeleteUploadedFilesOnEnd(bodyHandlerOptions.deleteUploadedFilesOnEnd)
-                .setUploadsDirectory(bodyHandlerOptions.uploadsDirectory)
+                BodyHandler.create()
+                        .setMergeFormAttributes(bodyHandlerOptions.mergeFormAttributes)
+                        .setBodyLimit(bodyHandlerOptions.bodyLimit)
+                        .setDeleteUploadedFilesOnEnd(bodyHandlerOptions.deleteUploadedFilesOnEnd)
+                        .setUploadsDirectory(bodyHandlerOptions.uploadsDirectory)
         )
 
         loadApiRouteFromRouteFiles().forEach {
@@ -458,7 +443,7 @@ object Application {
             this.mergeFormAttributes = config.getBoolean("app.httpServer.bodyHandler.mergeFormAttributes")
             this.deleteUploadedFilesOnEnd = config.getBoolean("app.httpServer.bodyHandler.deleteUploadedFilesOnEnd")
             this.uploadsDirectory =
-                filePathJoin(appHome, config.getString("app.httpServer.bodyHandler.uploadsDirectory"))
+                    filePathJoin(appHome, config.getString("app.httpServer.bodyHandler.uploadsDirectory"))
         }
     }
 
@@ -487,7 +472,7 @@ object Application {
 
     val workerDispatcher: CoroutineDispatcher by lazy {
         val factory = Class.forName(config.getString("app.httpServer.dispatcher.factory")).getDeclaredConstructor()
-            .newInstance() as IDispatcherFactory
+                .newInstance() as IDispatcherFactory
         factory.build()
     }
 
