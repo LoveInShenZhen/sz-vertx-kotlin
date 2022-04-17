@@ -29,7 +29,7 @@ dependencies {
 //    api(group = "io.netty", name = "netty-transport-native-kqueue", version = "4.1.74.Final", classifier = "osx-x86_64")
 
     api("org.apache.commons:commons-pool2:2.6.2")
-    api("com.google.guava:guava:28.2-jre")
+    api("com.google.guava:guava:31.1-jre")
     api("org.freemarker:freemarker:2.3.23")
     api("org.kodein.di:kodein-di-generic-jvm:6.5.1")
 
