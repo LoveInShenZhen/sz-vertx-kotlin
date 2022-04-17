@@ -30,7 +30,7 @@ dependencies {
 
     api("org.apache.commons:commons-pool2:2.6.2")
     api("com.google.guava:guava:31.1-jre")
-    api("org.freemarker:freemarker:2.3.23")
+    api("org.freemarker:freemarker:2.3.31")
     api("org.kodein.di:kodein-di-generic-jvm:6.5.1")
 
     configurations.all {
