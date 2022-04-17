@@ -13,14 +13,10 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("stdlib"))
-    implementation(kotlin("reflect"))
-    implementation(kotlin("stdlib-jdk8"))
-
     implementation("com.github.ajalt.clikt:clikt:3.2.0") {
         exclude(group = "org.jetbrains.kotlin")
     }
-    implementation("ch.qos.logback:logback-classic:1.2.6")
+    implementation("ch.qos.logback:logback-classic:1.2.9")
     implementation("io.github.config4k:config4k:0.4.2") {
         exclude(group = "org.jetbrains.kotlin")
     }
