@@ -9,7 +9,7 @@
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
     kotlin("jvm").version("1.6.20")
-    id("org.beryx.jlink").version("2.23.8")
+    id("org.beryx.jlink").version("2.25.0")
 
     // Apply the application plugin to add support for building a CLI application in Java.
     application
@@ -23,13 +23,7 @@ repositories {
 
 dependencies {
     // Align versions of all Kotlin components
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
-
-    // Use the Kotlin JDK 8 standard library.
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-
-    // This dependency is used by the application.
-//    implementation("com.google.guava:guava:29.0-jre")
+//    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
 
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")
@@ -48,9 +42,21 @@ application {
 //    modularity.inferModulePath.set(true)
 //}
 
+val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
+compileKotlin.kotlinOptions {
+    jvmTarget = "17"
+
+}
+
+val compileTestKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
+compileTestKotlin.kotlinOptions {
+    jvmTarget = "17"
+
+}
+
 jlink {
     this.options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
     this.launcher {
-        name = "app"
+        name = "consoleApp"
     }
 }
