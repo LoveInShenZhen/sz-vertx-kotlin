@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.6.20"
+    kotlin("jvm") version "1.6.21"
     java
     application
     id("org.beryx.runtime") version "1.12.7"
@@ -16,9 +16,9 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("stdlib"))
+//    implementation(kotlin("stdlib"))
 //    implementation(kotlin("reflect"))
-    implementation(kotlin("stdlib-jdk8"))
+//    implementation(kotlin("stdlib-jdk8"))
 
     implementation("com.github.ajalt.clikt:clikt:3.3.0") {
         exclude(group = "org.jetbrains.kotlin")
@@ -47,4 +47,8 @@ val compileTestKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
     jvmTarget = "17"
 
+}
+
+runtime {
+    this.addOptions("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages")
 }
