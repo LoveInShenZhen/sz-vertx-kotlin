@@ -8,6 +8,7 @@ import jodd.util.StringUtil
 // Created by kk on 2021/5/5.
 //
 class TableInfo {
+    var prefix = ""     // 实体类的名称前缀
     var table_name = ""
     var table_type = ""
     var columns = mutableListOf<ColumnInfo>()
@@ -16,7 +17,7 @@ class TableInfo {
 
     val class_name: String
         get() {
-            return StringUtil.toCamelCase(this.table_name, true, '_')
+            return this.prefix + StringUtil.toCamelCase(this.table_name, true, '_')
         }
 
     override fun toString(): String {

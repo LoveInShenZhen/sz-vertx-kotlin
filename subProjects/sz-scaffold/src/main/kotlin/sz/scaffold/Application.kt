@@ -152,7 +152,7 @@ object Application {
                 }
             }
             if (stopVertxFuture.get()) {
-                Logger.info("Stop vertx successed.")
+                Logger.info("Stop vertx successfully.")
             } else {
                 Logger.error("Stop vertx failed.")
             }
@@ -174,7 +174,7 @@ object Application {
                 }
             }
         } catch (ex: Exception) {
-            throw RuntimeException("Faild to load gloabl properties. Please check whether the config -D$szPropertiesUrlKey is valid.")
+            throw RuntimeException("Failed to load global properties. Please check whether the config -D$szPropertiesUrlKey is valid.")
         }
     }
 

@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm").version("1.6.21")
+    kotlin("jvm").version("1.7.0")
     id("io.ebean").version("12.8.0")
     application
 }

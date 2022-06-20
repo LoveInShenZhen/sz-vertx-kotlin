@@ -49,6 +49,12 @@ class GenBean : CliktCommand(name = "gen") {
         help = "package of the bean classes"
     ).default("models")
 
+    val prefix by option(
+        names = arrayOf("--prefix"),
+        help = "bean class name prefix"
+    ).default("")
+
+
     val outdir by option(
         names = arrayOf("-o", "--outdir"),
         help = "output dir. default is ./build dir"
@@ -81,6 +87,7 @@ class GenBean : CliktCommand(name = "gen") {
         FileUtil.mkdirs(this.outdir)
 
         tables.forEach {
+            it.prefix = this.prefix
             if (excludeTable(it.table_name).not()) {
                 echo("为表: ${it.table_name} 生成实体类代码: ${it.class_name}")
                 buildEntity(it, this.outdir.absolutePath)

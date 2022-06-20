@@ -4,6 +4,7 @@
 import os
 from typing import List
 
+import git.refs.head
 from git import Repo, Remote, InvalidGitRepositoryError
 from rich import print
 from rich.console import Console
@@ -95,6 +96,26 @@ def fetch_and_pull(path: str):
         echo(f"{path} 目录不是 git 仓库, 忽略", style = 'bold yellow')
 
 
+def list_branches():
+    repo_path = '/Users/kk/work/gm3/src/myquant.cn/dragonsunmoon/gmterm-serv'
+    repo = Repo(repo_path)
+    branch: git.refs.head.Head
+    for branch in repo.branches:
+        echo(branch.name)
+
+def switch_to_branch(repo: Repo, branch_name:str):
+    branch:git.refs.head.Head
+    if repo.active_branch.name != branch_name:
+        for branch in repo.branches:
+            if branch.name == branch_name:
+                if not repo.is_dirty():
+                    branch.checkout()
+                else:
+                    echo("dirty")
+                    repo.
+
+
+
 def echo(msg: str, style = 'blue'):
     print(f"[yellow]==>[/yellow] [{style}]{msg}[/{style}]")
 
@@ -112,4 +133,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    repo_path = '/Users/kk/work/gm3/src/myquant.cn/dragonsunmoon/gmterm-serv'
+    repo = Repo(repo_path)
+    switch_to_branch(repo, 'master')
