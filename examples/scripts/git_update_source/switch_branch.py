@@ -26,7 +26,7 @@ DEFAULT_BRANCH = {
 
 def run_cmd(args: List[str]):
     result = subprocess.run(args = args, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
-    output_lines =[line.decode(encoding = 'UTF-8') for line in result.stdout.splitlines() ]
+    output_lines = [line.decode(encoding = 'UTF-8') for line in result.stdout.splitlines()]
     has_error = False
     for line in output_lines:
         if line.find("error:") > -1:
@@ -103,17 +103,16 @@ def list_branches():
     for branch in repo.branches:
         echo(branch.name)
 
-def switch_to_branch(repo: Repo, branch_name:str):
-    branch:git.refs.head.Head
+
+def switch_to_branch(repo: Repo, branch_name: str):
+    branch: git.refs.head.Head
     if repo.active_branch.name != branch_name:
         for branch in repo.branches:
             if branch.name == branch_name:
                 if not repo.is_dirty():
                     branch.checkout()
                 else:
-                    echo("dirty")
-                    repo.
-
+                    echo("请先 commitÏ", style = 'red')
 
 
 def echo(msg: str, style = 'blue'):

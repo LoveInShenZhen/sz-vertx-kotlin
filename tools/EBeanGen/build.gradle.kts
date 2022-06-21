@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm").version("1.7.0")
-    id("io.ebean").version("12.8.0")
+    id("io.ebean").version("13.6.4")
     application
 }
 
@@ -16,20 +16,20 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation(kotlin("stdlib-jdk8"))
 
-    implementation("io.ebean:ebean:12.8.0")
+    implementation("io.ebean:ebean:13.6.4")
     implementation("com.github.ajalt.clikt:clikt:3.1.0") {
         exclude(group = "org.jetbrains.kotlin")
     }
-    implementation("mysql:mysql-connector-java:8.0.18")
-    implementation("com.squareup:kotlinpoet:1.8.0") {
+    implementation("mysql:mysql-connector-java:8.0.29")
+    implementation("com.squareup:kotlinpoet:1.12.0") {
         exclude(group = "org.jetbrains.kotlin")
     }
 //    implementation("com.google.guava:guava:28.2-jre")
-    implementation("org.jodd:jodd-util:6.0.1")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.+") {
+    implementation("org.jodd:jodd-util:6.1.0")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3") {
         exclude(group = "org.jetbrains.kotlin")
     }
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.+")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.3")
 
 
     testImplementation("junit", "junit", "4.12")
