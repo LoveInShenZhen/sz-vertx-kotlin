@@ -15,14 +15,12 @@ import io.ebean.annotation.WhenCreated
 import io.ebean.annotation.WhenModified
 import io.ebean.config.DatabaseConfig
 import io.ebean.datasource.DataSourceConfig
-import jodd.io.FileNameUtil
 import jodd.io.FileUtil
 import jodd.util.Wildcard
-import sz.ebean.gen.dbinfo.ColumnInfo
-import sz.ebean.gen.dbinfo.DBInfo
-import sz.ebean.gen.dbinfo.TableInfo
+import sz.ebean.gen.dbinfo.*
 import java.io.File
 import javax.persistence.*
+import kotlin.reflect.full.isSubclassOf
 
 //
 // Created by kk on 2021/5/5.
@@ -76,7 +74,14 @@ class GenBean : CliktCommand(name = "gen") {
 
         val db = newDatabase()
 
-        val dbinfo = DBInfo(db)
+        var tableCommentService: TableCommentService? = null
+
+        if (this.jdbcUrl.startsWith("jdbc:mysql:")) {
+            // mysql
+            tableCommentService = MysqlTableCommentService(db)
+        }
+
+        val dbinfo = DBInfo(db, tableCommentService)
         val tables = mutableListOf<TableInfo>()
         tables.addAll(dbinfo.tables())
 
@@ -97,8 +102,8 @@ class GenBean : CliktCommand(name = "gen") {
         echo("完毕")
     }
 
-    private fun excludeTable(tableName:String):Boolean{
-        exclude_pattern.forEach {pattern ->
+    private fun excludeTable(tableName: String): Boolean {
+        exclude_pattern.forEach { pattern ->
             if (Wildcard.match(tableName, pattern)) {
                 return true
             }
@@ -144,6 +149,14 @@ class GenBean : CliktCommand(name = "gen") {
                     .build()
             )
 
+        if (tableInfo.comment.isNotBlank()) {
+            classBuilder.addAnnotation(
+                AnnotationSpec.builder(DbComment::class)
+                    .addMember("%S", tableInfo.comment)
+                    .build()
+            )
+        }
+
 
         tableInfo.columns.forEach { columnInfo ->
             val propSpec = buildField(tableInfo, columnInfo)
@@ -183,6 +196,11 @@ class GenBean : CliktCommand(name = "gen") {
 
         if (columnInfo.is_pk) {
             builder.addAnnotation(Id::class)
+            if (columnInfo.kotlinType().isSubclassOf(Int::class).not() &&
+                columnInfo.kotlinType().isSubclassOf(Long::class).not()
+            ) {
+                builder.addModifiers(KModifier.LATEINIT)
+            }
         }
 
         if (columnInfo.isWhenCreated()) {
@@ -193,13 +211,18 @@ class GenBean : CliktCommand(name = "gen") {
             builder.addAnnotation(Version::class)
         } else {
             val columnAnnSpecBuilder = AnnotationSpec.builder(Column::class)
-            columnAnnSpecBuilder.addMember("nullable = %S", columnInfo.null_able)
+            if (columnInfo.null_able) {
+                columnAnnSpecBuilder.addMember("nullable = true")
+            } else {
+                columnAnnSpecBuilder.addMember("nullable = false")
+            }
+
             if (columnInfo.column_size > 0) {
-                columnAnnSpecBuilder.addMember("length = %S", columnInfo.column_size)
+                columnAnnSpecBuilder.addMember("length = ${columnInfo.column_size}")
             }
 
             if (tableInfo.isUnique(columnInfo.column_name)) {
-                columnAnnSpecBuilder.addMember("unique = %S", true)
+                columnAnnSpecBuilder.addMember("unique = true")
             }
 
             builder.addAnnotation(columnAnnSpecBuilder.build())

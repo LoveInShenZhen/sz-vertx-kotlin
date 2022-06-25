@@ -11,6 +11,7 @@ class TableInfo {
     var prefix = ""     // 实体类的名称前缀
     var table_name = ""
     var table_type = ""
+    var comment = ""
     var columns = mutableListOf<ColumnInfo>()
     var pk_columns = mutableSetOf<String>()
     var indexs = mutableListOf<IndexInfo>()

@@ -6,23 +6,29 @@ import io.ebean.Database
 // Created by kk on 2021/5/5.
 //
 
-class DBInfo(val db: Database) {
+class DBInfo(val db: Database, val tableCommentService: TableCommentService?) {
 
     fun tables(): List<TableInfo> {
         val tables = mutableListOf<TableInfo>()
 
         db.beginTransaction().use { tran ->
-            val cnn = tran.connection
+            val cnn = tran.connection()
             val metaData = cnn.metaData
 
             val tablesRs = metaData.getTables(cnn.catalog, null, null, null)
             while (tablesRs.next()) {
-                val name = tablesRs.getString("TABLE_NAME")
+                val tableName = tablesRs.getString("TABLE_NAME")
                 val tableType = tablesRs.getString("TABLE_TYPE")
+                var remarks = tablesRs.getString("REMARKS")
+
+                if (remarks.isNullOrBlank() && this.tableCommentService != null) {
+                    remarks = tableCommentService.tableCommentOf(cnn.catalog, tableName)
+                }
 
                 val tableInfo = TableInfo().apply {
-                    table_name = name
-                    table_type = tableType
+                    this.table_name = tableName
+                    this.table_type = tableType
+                    this.comment = remarks
                 }
 
                 if (tableType == "TABLE") {
@@ -44,17 +50,23 @@ class DBInfo(val db: Database) {
         val tables = mutableListOf<TableInfo>()
 
         db.beginTransaction().use { tran ->
-            val cnn = tran.connection
+            val cnn = tran.connection()
             val metaData = cnn.metaData
 
             val tablesRs = metaData.getTables(cnn.catalog, null, null, null)
             while (tablesRs.next()) {
-                val name = tablesRs.getString("TABLE_NAME")
+                val tableName = tablesRs.getString("TABLE_NAME")
                 val tableType = tablesRs.getString("TABLE_TYPE")
+                var remarks = tablesRs.getString("REMARKS")
+
+                if (remarks.isNullOrBlank() && this.tableCommentService != null) {
+                    remarks = tableCommentService.tableCommentOf(cnn.catalog, tableName)
+                }
 
                 val tableInfo = TableInfo().apply {
-                    table_name = name
-                    table_type = tableType
+                    this.table_name = tableName
+                    this.table_type = tableType
+                    this.comment = remarks
                 }
 
                 if (tableType == "VIEW") {
@@ -74,7 +86,7 @@ class DBInfo(val db: Database) {
 
     private fun loadColumnInfo(tableInfo: TableInfo): TableInfo {
         db.beginTransaction().use { tran ->
-            val cnn = tran.connection
+            val cnn = tran.connection()
             val metaData = cnn.metaData
             tableInfo.columns.clear()
 
@@ -88,7 +100,7 @@ class DBInfo(val db: Database) {
                     null_able = columnRs.getString("IS_NULLABLE").uppercase() == "YES"
                     default_value = columnRs.getString("COLUMN_DEF")
                     is_autoincrement = columnRs.getString("IS_AUTOINCREMENT").uppercase() == "YES"
-                    remarks = columnRs.getString("REMARKS")
+                    remarks = columnRs.getString("REMARKS").trim()
                     is_pk = tableInfo.pk_columns.contains(column_name)
                 }
                 tableInfo.columns.add(columnInfo)
@@ -100,7 +112,7 @@ class DBInfo(val db: Database) {
 
     private fun loadPKInfo(tableInfo: TableInfo): TableInfo {
         db.beginTransaction().use { tran ->
-            val cnn = tran.connection
+            val cnn = tran.connection()
             val metaData = cnn.metaData
             tableInfo.pk_columns.clear()
 
@@ -115,7 +127,7 @@ class DBInfo(val db: Database) {
 
     private fun loadIndexInfo(tableInfo: TableInfo): TableInfo {
         db.beginTransaction().use { tran ->
-            val cnn = tran.connection
+            val cnn = tran.connection()
             val metaData = cnn.metaData
             tableInfo.indexs.clear()
 

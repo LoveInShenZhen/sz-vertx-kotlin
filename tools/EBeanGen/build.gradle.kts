@@ -8,6 +8,10 @@ group = "sz.utils.ebean"
 version = "1.0-SNAPSHOT"
 
 repositories {
+    maven {
+        url = uri("https://maven.aliyun.com/repository/public/")
+    }
+    mavenLocal()
     mavenCentral()
 }
 
@@ -16,6 +20,7 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation(kotlin("stdlib-jdk8"))
 
+    implementation("ch.qos.logback:logback-classic:1.2.11")
     implementation("io.ebean:ebean:13.6.4")
     implementation("com.github.ajalt.clikt:clikt:3.1.0") {
         exclude(group = "org.jetbrains.kotlin")
