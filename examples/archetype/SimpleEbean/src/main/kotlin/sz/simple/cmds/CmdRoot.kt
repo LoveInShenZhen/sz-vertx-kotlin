@@ -6,12 +6,13 @@ import com.github.ajalt.clikt.parameters.options.option
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
 import org.slf4j.LoggerFactory
+import sz.model.sakila.query.QActor
 import java.io.File
 
 //
 // Created by kk on 2022/5/28.
 //
-class CmdStartServer : CliktCommand() {
+class CmdRoot : CliktCommand() {
 
     val log = LoggerFactory.getLogger("app")
 
@@ -24,8 +25,10 @@ class CmdStartServer : CliktCommand() {
 
     override fun run() {
         initConfig()
-        // TODO: 2022/6/25
-        println("TODO")
+        val cityList = QActor().setMaxRows(10).findList()
+        cityList.forEach {
+            println(cityList.toString())
+        }
     }
 
     fun initConfig() {
@@ -35,6 +38,7 @@ class CmdStartServer : CliktCommand() {
             log.info("config.file: ${config_file}")
             ConfigFactory.invalidateCaches()    // Use ConfigFactory.invalidateCaches() to force-reload system properties.
         }
+        log.info("ebean props.file: ${System.getProperty("props.file", "undefined")}")
     }
 
 }

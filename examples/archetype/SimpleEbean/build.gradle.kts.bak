@@ -3,11 +3,11 @@ import java.nio.file.Path
 
 
 plugins {
-    kotlin("jvm") version "1.6.21"
+    kotlin("jvm") version "1.7.0"
+    application
     id("org.beryx.runtime") version "1.12.7"
     id("io.ebean").version("13.6.4")
-    id("org.jetbrains.kotlin.kapt") version "1.6.21"
-    application
+    id("org.jetbrains.kotlin.kapt") version "1.7.0"
 }
 
 group = "com.github.kklongming"
@@ -32,7 +32,6 @@ dependencies {
     implementation("mysql:mysql-connector-java:8.0.29")
 
     implementation("io.ebean:ebean:13.6.4")
-//    implementation("io.ebean:ebean-ddl-generator:13.6.4")
     kapt("io.ebean:querybean-generator:13.6.4")
 
 
@@ -59,9 +58,9 @@ application {
     mainClass.set("sz.simple.MainApp")
 }
 
-//runtime {
-//    this.options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
-//}
+runtime {
+    this.options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
+}
 
 //kapt {
 //    generateStubs = true
@@ -69,7 +68,7 @@ application {
 
 ebean {
     debugLevel = 1
-    queryBeans = true
+//    queryBeans = true
     kotlin = true
 }
 

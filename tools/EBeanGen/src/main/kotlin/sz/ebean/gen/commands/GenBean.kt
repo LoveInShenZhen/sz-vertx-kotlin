@@ -15,10 +15,13 @@ import io.ebean.annotation.WhenCreated
 import io.ebean.annotation.WhenModified
 import io.ebean.config.DatabaseConfig
 import io.ebean.datasource.DataSourceConfig
+import io.ebeaninternal.server.util.Str
 import jodd.io.FileUtil
 import jodd.util.Wildcard
 import sz.ebean.gen.dbinfo.*
 import java.io.File
+import java.math.BigDecimal
+import java.util.UUID
 import javax.persistence.*
 import kotlin.reflect.full.isSubclassOf
 
@@ -64,8 +67,9 @@ class GenBean : CliktCommand(name = "gen") {
     ).default("")
 
     val with_view by option(
+        names = arrayOf("--with-view"),
         help = "是否包含视图"
-    ).flag("--with-view", default = false)
+    ).flag("--without-view", default = false)
 
     var exclude_pattern: List<String> = listOf()
 
@@ -94,7 +98,11 @@ class GenBean : CliktCommand(name = "gen") {
         tables.forEach {
             it.prefix = this.prefix
             if (excludeTable(it.table_name).not()) {
-                echo("为表: ${it.table_name} 生成实体类代码: ${it.class_name}")
+                if (it.table_type == "VIEW") {
+                    echo("为视图: ${it.table_name} 生成实体类代码: ${it.class_name}")
+                } else {
+                    echo("为表: ${it.table_name} 生成实体类代码: ${it.class_name}")
+                }
                 buildEntity(it, this.outdir.absolutePath)
             }
         }
@@ -169,13 +177,69 @@ class GenBean : CliktCommand(name = "gen") {
     }
 
     private fun buildField(tableInfo: TableInfo, columnInfo: ColumnInfo): PropertySpec {
+        // 根据 columnInfo, 来确定实体类里, 该 field 的 类型, 是否可以为 null, 初始值
+        var typeName : TypeName
+        var initValue: Any?
+        val fieldType = columnInfo.kotlinType()
+
+        if (columnInfo.null_able) {
+            // 字段在数据库表里允许为 null
+            typeName = columnInfo.kotlinType().asTypeName().copy(nullable = true)
+            initValue = null
+        } else {
+            // 字段在数据库表里, 不允许为 null
+            // 再判断, 在表结构定义里, 该 column 是否指定了默认值
+            if (columnInfo.default_value.isNullOrBlank()) {
+                // 表结构定义里, 没有指定默认值, 那么, 我们根据该字段的 kotlinType 来设置其java类型的默认值
+                // 原生数值类型, 默认值为 0
+                // BigDecimal 类型, 默认值为 0
+                // String 类型, 默认值为 ""
+                // Boolean 类型, 默认值为 False
+                // Uuid 类型, 默认值为 全0 的uuid
+                // 其他类型, 默认值为 null
+
+                if (fieldType == BigDecimal::class) {
+                    typeName =  columnInfo.kotlinType().asTypeName().copy(nullable = false)
+                    initValue = "BigDecimal.ZERO"
+                } else if (fieldType.isSubclassOf(Number::class)) {
+                    typeName =  columnInfo.kotlinType().asTypeName().copy(nullable = false)
+                    initValue = 0
+                } else if (fieldType == String::class) {
+                    typeName =  columnInfo.kotlinType().asTypeName().copy(nullable = false)
+                    initValue = ""
+                } else if (fieldType == Boolean::class) {
+                    typeName =  columnInfo.kotlinType().asTypeName().copy(nullable = false)
+                    initValue = false
+                } else if (fieldType == UUID::class) {
+                    typeName =  columnInfo.kotlinType().asTypeName().copy(nullable = false)
+                    initValue = UUID.fromString("00000000-0000-0000-0000-000000000000")
+                } else {
+                    typeName =  columnInfo.kotlinType().asTypeName().copy(nullable = true)
+                    initValue = null
+                }
+            } else {
+                // 表结构定义里, 有指定默认值. 那么我们设置该实体类的 field 类型为 null able, 这样实体类不给此字段
+                // 设置值时, insert 到表里, 会自动save 默认值
+                typeName = columnInfo.kotlinType().asTypeName().copy(nullable = true)
+                initValue = null
+            }
+        }
+
         val builder = PropertySpec.builder(
             name = columnInfo.field_name,
-            type = columnInfo.kotlinType().asTypeName().copy(nullable = columnInfo.null_able)
-        )
-            .mutable(true)
-        if (columnInfo.null_able) {
-            builder.initializer("null")
+            type = typeName
+        ).mutable(true)
+
+        if (fieldType == String::class) {
+            builder.initializer("%S", initValue)
+        } else {
+            builder.initializer("%L", initValue)
+        }
+
+        if (columnInfo.is_pk && tableInfo.pk_columns.size == 1) {
+            // 只有单主键的情况, 才使用 @Id 注解
+            // 复合主键暂不支持
+            builder.addAnnotation(Id::class)
         }
 
         val comments = mutableListOf<String>()
@@ -192,15 +256,6 @@ class GenBean : CliktCommand(name = "gen") {
                     .addMember("%S", comments.joinToString(", "))
                     .build()
             )
-        }
-
-        if (columnInfo.is_pk) {
-            builder.addAnnotation(Id::class)
-            if (columnInfo.kotlinType().isSubclassOf(Int::class).not() &&
-                columnInfo.kotlinType().isSubclassOf(Long::class).not()
-            ) {
-                builder.addModifiers(KModifier.LATEINIT)
-            }
         }
 
         if (columnInfo.isWhenCreated()) {

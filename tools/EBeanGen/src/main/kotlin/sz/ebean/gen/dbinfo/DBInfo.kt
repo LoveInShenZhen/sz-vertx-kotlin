@@ -15,7 +15,7 @@ class DBInfo(val db: Database, val tableCommentService: TableCommentService?) {
             val cnn = tran.connection()
             val metaData = cnn.metaData
 
-            val tablesRs = metaData.getTables(cnn.catalog, null, null, null)
+            val tablesRs = metaData.getTables(cnn.catalog, null, null, arrayOf("TABLE"))
             while (tablesRs.next()) {
                 val tableName = tablesRs.getString("TABLE_NAME")
                 val tableType = tablesRs.getString("TABLE_TYPE")
@@ -53,7 +53,7 @@ class DBInfo(val db: Database, val tableCommentService: TableCommentService?) {
             val cnn = tran.connection()
             val metaData = cnn.metaData
 
-            val tablesRs = metaData.getTables(cnn.catalog, null, null, null)
+            val tablesRs = metaData.getTables(cnn.catalog, null, null, arrayOf("VIEW"))
             while (tablesRs.next()) {
                 val tableName = tablesRs.getString("TABLE_NAME")
                 val tableType = tablesRs.getString("TABLE_TYPE")

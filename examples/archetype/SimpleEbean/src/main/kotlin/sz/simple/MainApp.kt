@@ -1,8 +1,9 @@
 package sz.simple
 
+import io.ebean.DatabaseFactory
+import io.ebean.config.DatabaseConfig
 import org.slf4j.LoggerFactory
-import sz.simple.cmds.CmdStartServer
-import java.io.File
+import sz.simple.cmds.CmdRoot
 
 //
 // Created by kk on 2022/5/29.
@@ -13,7 +14,7 @@ class MainApp {
         @JvmStatic
         fun main(args: Array<String>) {
             initLogbackConfigFilePath()
-            CmdStartServer().main(args)
+            CmdRoot().main(args)
         }
 
         fun initLogbackConfigFilePath() {
@@ -23,5 +24,6 @@ class MainApp {
                 log.info("logback.configurationFile: ${logbackConfFile}")
             }
         }
+
     }
 }
