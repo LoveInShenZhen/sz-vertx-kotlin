@@ -49,23 +49,43 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<JavaExec> {
     val appconf = Path.of(this.project.rootDir.absolutePath, "conf", "application.conf")
-    this.args("--config", appconf.toString())
     val logbackConfPath = Path.of(this.project.rootDir.absolutePath, "conf", "logback.xml")
     val ebeanConfPath = Path.of(this.project.rootDir.absolutePath, "conf", "ebean.yml")
-    this.jvmArgs("-Dlogback.configurationFile=${logbackConfPath}", "-Dprops.file=${ebeanConfPath}")
+    this.jvmArgs(
+        "-Dlogback.configurationFile=${logbackConfPath}",
+        "-Dprops.file=${ebeanConfPath}",
+        "-Dconfig.file=${appconf}"
+    )
 }
 
 application {
     mainClass.set("sz.simple.MainApp")
 }
 
-//runtime {
-//    this.options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
-//}
+tasks.withType<CreateStartScripts> {
 
-//kapt {
-//    generateStubs = true
-//}
+    this.doLast {
+        val lines = unixScript.readText().split("\n")
+        val newLines = StringBuilder()
+        lines.forEach { line ->
+            if (line.startsWith("DEFAULT_JVM_OPTS=")) {
+                newLines.appendLine("DEFAULT_JVM_OPTS=\"-Dlogback.configurationFile=\$APP_HOME/conf/logback.xml -Dprops.file=\$APP_HOME/conf/ebean.yml -Dconfig.file=\$APP_HOME/conf/application.conf\"")
+            } else {
+                newLines.appendLine(line)
+            }
+        }
+
+        unixScript.writeText(newLines.toString())
+    }
+}
+
+runtime {
+    this.options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
+}
+
+kapt {
+    generateStubs = true
+}
 
 ebean {
     debugLevel = 1
@@ -78,3 +98,12 @@ sourceSets {
         java.srcDirs.add(file("${buildDir.path}/generated/source/kapt/main"))
     }
 }
+
+val distZip: Zip by tasks
+distZip.into("${project.name}-${project.version}") {
+    from(".").include("conf/**")
+}
+
+val distTar: Tar by tasks
+distTar.enabled = false
+
