@@ -4,7 +4,7 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
 import org.slf4j.LoggerFactory
-import sz.model.sakila.query.QActor
+import sz.model.sakila.query.QFilmActor
 import java.io.File
 
 //
@@ -21,9 +21,9 @@ class CmdRoot : CliktCommand() {
 
     override fun run() {
         initConfig()
-        val cityList = QActor().setMaxRows(10).findList()
-        cityList.forEach {
-            println(cityList.toString())
+        val results = QFilmActor().setMaxRows(3).findList()
+        results.forEach {
+            println(it)
         }
     }
 
