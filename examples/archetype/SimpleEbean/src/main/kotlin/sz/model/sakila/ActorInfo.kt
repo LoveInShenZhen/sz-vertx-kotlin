@@ -4,16 +4,16 @@ package sz.model.sakila
 
 import io.ebean.Model
 import io.ebean.`annotation`.DbComment
+import io.ebean.`annotation`.View
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.MappedSuperclass
-import javax.persistence.Table
 import kotlin.Short
 import kotlin.String
 
 @MappedSuperclass
 @Entity
-@Table(name = "actor_info")
+@View(name = "actor_info")
 @DbComment("VIEW")
 public open class ActorInfo(
   dataSource: String = "",

@@ -29,6 +29,12 @@ class TableInfo {
         return this.indexs.filter { it.column_name == columnName }.any { it.unique }
     }
 
+    fun pkColumnInfos() : List<ColumnInfo> {
+        return columns.filter {
+            this.pk_columns.contains(it.column_name)
+        }
+    }
+
     companion object {
         private val mapper = YAMLMapper().registerKotlinModule()
     }

@@ -4,17 +4,17 @@ package sz.model.sakila
 
 import io.ebean.Model
 import io.ebean.`annotation`.DbComment
+import io.ebean.`annotation`.View
 import java.math.BigDecimal
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.MappedSuperclass
-import javax.persistence.Table
 import kotlin.Short
 import kotlin.String
 
 @MappedSuperclass
 @Entity
-@Table(name = "nicer_but_slower_film_list")
+@View(name = "nicer_but_slower_film_list")
 @DbComment("VIEW")
 public open class NicerButSlowerFilmList(
   dataSource: String = "",
