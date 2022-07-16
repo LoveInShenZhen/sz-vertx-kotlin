@@ -3,10 +3,10 @@ import java.nio.file.Path
 
 
 plugins {
-    kotlin("jvm") version "1.7.0"
+    kotlin("jvm") version "1.7.10"
     id("org.beryx.runtime") version "1.12.7"
     id("io.ebean").version("13.6.4.1")
-    id("org.jetbrains.kotlin.kapt") version "1.7.0"
+    id("org.jetbrains.kotlin.kapt") version "1.7.10"
     application
 }
 
