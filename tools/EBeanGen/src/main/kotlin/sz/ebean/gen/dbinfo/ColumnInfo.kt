@@ -91,7 +91,7 @@ class ColumnInfo {
     }
 
     companion object {
-        private val jdbcType2KotlinType = mapOf<JDBCType, KClass<*>>(
+        private val jdbcType2KotlinType = mutableMapOf<JDBCType, KClass<*>>(
             JDBCType.BIT to kotlin.Boolean::class,
             JDBCType.TINYINT to kotlin.Short::class,
             JDBCType.SMALLINT to kotlin.Short::class,
@@ -123,6 +123,14 @@ class ColumnInfo {
 
         fun kotlinTypeOf(jdbcType: JDBCType): KClass<*> {
             return jdbcType2KotlinType.getOrDefault(jdbcType, kotlin.String::class)
+        }
+
+        fun useUtcTime() {
+            jdbcType2KotlinType[JDBCType.TIMESTAMP] = java.time.Instant::class
+        }
+
+        fun useLocalTime() {
+            jdbcType2KotlinType[JDBCType.TIMESTAMP] = java.time.LocalDateTime::class
         }
     }
 

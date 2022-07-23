@@ -71,9 +71,22 @@ class GenBean : CliktCommand(name = "gen") {
         help = "是否包含视图"
     ).flag("--without-view", default = false)
 
+    val use_utc_instant by option(
+        names = arrayOf("--use-utc"),
+        help = "数据库里Datetime使用UTC保存时, 使用此选项, 对应的字段的java类型为 Instant"
+    ).flag("--use-localtime", default = false)
+
     var exclude_pattern: List<String> = listOf()
 
+    private var dbinfo: DBInfo? = null
+
     override fun run() {
+        if (use_utc_instant) {
+            ColumnInfo.useUtcTime()
+        } else {
+            ColumnInfo.useLocalTime()
+        }
+
         exclude_pattern = excludes.split(",")
 
         val db = newDatabase()
@@ -85,12 +98,12 @@ class GenBean : CliktCommand(name = "gen") {
             tableCommentService = MysqlTableCommentService(db)
         }
 
-        val dbinfo = DBInfo(db, tableCommentService)
+        dbinfo = DBInfo(db, tableCommentService)
         val tables = mutableListOf<TableInfo>()
-        tables.addAll(dbinfo.tables())
+        tables.addAll(dbinfo!!.tables())
 
         if (with_view) {
-            tables.addAll(dbinfo.views())
+            tables.addAll(dbinfo!!.views())
         }
 
         FileUtil.mkdirs(this.outdir)
@@ -108,6 +121,10 @@ class GenBean : CliktCommand(name = "gen") {
         }
 
         echo("完毕")
+    }
+
+    private fun wrapName(name : String) : String {
+        return "`${name}`"
     }
 
     private fun excludeTable(tableName: String): Boolean {
@@ -231,6 +248,8 @@ class GenBean : CliktCommand(name = "gen") {
             builder.addAnnotation(Version::class)
         } else {
             val columnAnnSpecBuilder = AnnotationSpec.builder(Column::class)
+            columnAnnSpecBuilder.addMember("name = %S", this.wrapName(columnInfo.field_name))
+
             if (columnInfo.null_able) {
                 columnAnnSpecBuilder.addMember("nullable = true")
             } else {
@@ -276,13 +295,13 @@ class GenBean : CliktCommand(name = "gen") {
         if (tableInfo.table_type == "VIEW") {
             entityClassBuilder.addAnnotation(
                 AnnotationSpec.builder(View::class)
-                    .addMember("name = %S", tableInfo.table_name)
+                    .addMember("name = %S", this.wrapName(tableInfo.table_name))
                     .build()
             )
         } else {
             entityClassBuilder.addAnnotation(
                 AnnotationSpec.builder(Table::class)
-                    .addMember("name = %S", tableInfo.table_name)
+                    .addMember("name = %S", this.wrapName(tableInfo.table_name))
                     .build()
             )
         }
@@ -383,6 +402,8 @@ class GenBean : CliktCommand(name = "gen") {
             }
 
             val columnAnnSpecBuilder = AnnotationSpec.builder(Column::class)
+            columnAnnSpecBuilder.addMember("name = %S", this.wrapName(columnInfo.field_name))
+
             if (columnInfo.null_able) {
                 columnAnnSpecBuilder.addMember("nullable = true")
             } else {
@@ -471,6 +492,7 @@ class GenBean : CliktCommand(name = "gen") {
 
         fileBuilder.build().writeTo(File(destDir))
     }
+
 }
 
 internal fun FileSpec.Builder.suppressWarningTypes(vararg types: String): FileSpec.Builder {
@@ -486,3 +508,4 @@ internal fun FileSpec.Builder.suppressWarningTypes(vararg types: String): FileSp
     )
     return this
 }
+
