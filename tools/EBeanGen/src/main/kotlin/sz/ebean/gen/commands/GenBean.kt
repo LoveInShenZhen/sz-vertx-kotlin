@@ -177,7 +177,7 @@ class GenBean : CliktCommand(name = "gen") {
                     initValue = false
                 } else if (fieldType == UUID::class) {
                     typeName = columnInfo.kotlinType().asTypeName().copy(nullable = false)
-                    initValue = UUID.fromString("00000000-0000-0000-0000-000000000000")
+                    initValue = "UUID.randomUUID()"
                 } else {
                     typeName = columnInfo.kotlinType().asTypeName().copy(nullable = true)
                     initValue = null
@@ -255,7 +255,7 @@ class GenBean : CliktCommand(name = "gen") {
     private fun buildSinglePKEntity(tableInfo: TableInfo, destDir: String) {
         val fileName = tableInfo.class_name
         val fileBuilder = FileSpec.builder(this.pkg, fileName)
-            .suppressWarningTypes("RedundantVisibilityModifier", "MemberVisibilityCanBePrivate", "PropertyName")
+            .suppressWarningTypes("RedundantVisibilityModifier", "MemberVisibilityCanBePrivate", "PropertyName", "unused")
 
         val entityClassBuilder = TypeSpec.classBuilder(tableInfo.class_name)
             .superclass(Model::class)
@@ -345,7 +345,7 @@ class GenBean : CliktCommand(name = "gen") {
                         defaultValue = false
                     } else if (columnInfo.kotlinType() == UUID::class) {
                         typeName = columnInfo.kotlinType().asTypeName().copy(nullable = false)
-                        defaultValue = UUID.fromString("00000000-0000-0000-0000-000000000000")
+                        defaultValue = "UUID.randomUUID()"
                     } else {
                         typeName = columnInfo.kotlinType().asTypeName().copy(nullable = true)
                         defaultValue = null
