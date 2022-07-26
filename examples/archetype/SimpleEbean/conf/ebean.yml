@@ -7,3 +7,8 @@ datasource:
     username: root
     password: "1qaz2wsx"
     url: "jdbc:mysql://localhost:3306/sakila?useSSL=false&useUnicode=true&characterEncoding=UTF-8"
+
+  broker:
+    username: gm3_readonly
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://localhost:9418/gm3-broker-beta?useSSL=false&useUnicode=true&characterEncoding=UTF-8"

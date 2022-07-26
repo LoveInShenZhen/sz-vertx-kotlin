@@ -5,7 +5,7 @@ import java.nio.file.Path
 plugins {
     kotlin("jvm") version "1.7.10"
     id("org.beryx.runtime") version "1.12.7"
-    id("io.ebean").version("13.6.4.1")
+    id("io.ebean").version("13.6.5")
     id("org.jetbrains.kotlin.kapt") version "1.7.10"
     application
 }
@@ -31,9 +31,9 @@ dependencies {
     }
     implementation("mysql:mysql-connector-java:8.0.29")
 
-    implementation("io.ebean:ebean:13.6.4")
+    implementation("io.ebean:ebean:13.6.5")
 //    implementation("io.ebean:ebean-ddl-generator:13.6.4")
-    kapt("io.ebean:querybean-generator:13.6.4")
+    kapt("io.ebean:querybean-generator:13.6.5")
 
 
     testImplementation(kotlin("test"))

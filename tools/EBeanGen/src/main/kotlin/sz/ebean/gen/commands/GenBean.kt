@@ -1,3 +1,5 @@
+@file:Suppress("OPT_IN_USAGE")
+
 package sz.ebean.gen.commands
 
 import com.github.ajalt.clikt.core.CliktCommand

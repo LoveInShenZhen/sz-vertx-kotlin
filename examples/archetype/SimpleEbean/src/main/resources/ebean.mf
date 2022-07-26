@@ -1,5 +1,0 @@
-entity-packages: sz.model.sakila
-transactional-packages: sz.model.sakila
-querybean-packages: sz.model.sakila
-profile-location: true
-
