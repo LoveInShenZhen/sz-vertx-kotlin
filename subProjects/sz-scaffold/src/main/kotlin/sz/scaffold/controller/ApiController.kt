@@ -62,7 +62,8 @@ open class ApiController {
     }
 
     inline fun <reified BeanType> postJsonToBean(): BeanType {
-        return this.httpContext.getBodyAsString(contentCharset()).toJsonNode().toObj(BeanType::class.java)
+//        return this.httpContext.getBodyAsString(contentCharset()).toJsonNode().toObj(BeanType::class.java)
+        return this.httpContext.body().asString(contentCharset()).toJsonNode().toObj(BeanType::class.java)
     }
 
     inline fun <reified BeanType> postFormToBean(needDecode: Boolean = false, enc: String = "UTF-8"): BeanType {

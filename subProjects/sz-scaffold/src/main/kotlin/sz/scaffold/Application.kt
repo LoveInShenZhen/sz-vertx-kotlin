@@ -73,7 +73,7 @@ object Application {
 
     val workerPool: ExecutorService
         get() {
-            return vertxImpl.workerPool
+            return vertxImpl.workerPool.executor()
         }
 
     private var _vertoptions: VertxOptions? = null

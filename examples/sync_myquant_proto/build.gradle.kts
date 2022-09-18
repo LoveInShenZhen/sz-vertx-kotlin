@@ -2,13 +2,17 @@ plugins {
     kotlin("jvm") version "1.7.10"
     java
     application
-    id("org.beryx.runtime") version "1.12.6"
+    id("org.beryx.runtime") version "1.12.7"
 }
 
 group = "com.github.kklongming"
 version = "1.0.0"
 
 repositories {
+    maven {
+        url = uri("https://maven.aliyun.com/repository/public/")
+    }
+    mavenLocal()
     mavenCentral()
 }
 
