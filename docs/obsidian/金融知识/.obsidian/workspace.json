@@ -1,0 +1,144 @@
+{
+  "main": {
+    "id": "0e53dbd51531dbe6",
+    "type": "split",
+    "children": [
+      {
+        "id": "a3275b70a41c5927",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "dde71fa5a1fc930c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "股票/股票交易手续费.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "0318ee94765ac473",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "股票/交易规则.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "632575f73efefdf6",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.0.3"
+              }
+            }
+          }
+        ],
+        "currentTab": 2
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "5cdae978f2c3eb48",
+    "type": "split",
+    "children": [
+      {
+        "id": "8244f122820c85b3",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a4b7e976a32e5566",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "614ac537109dc2c5",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "tag:#清华计算机博士带你学-Python金融量化分析",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "7bb3e1ac406e9bce",
+    "type": "split",
+    "children": [
+      {
+        "id": "84a4c88c09bf94b0",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "15642f46e9b3c033",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "股票/交易规则.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "08e4c3d8282cf75c",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "股票/交易规则.md"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "active": "632575f73efefdf6",
+  "lastOpenFiles": [
+    "股票/交易规则.md",
+    "股票/股票交易手续费.md",
+    "股票/视频资料汇总.md",
+    "股票/交易时段与集合竞价.md",
+    "交易系统/券商柜台系统/行情基础知识.md",
+    "交易系统/券商柜台系统/几家大的券商的PB系统以及算法交易概况.md",
+    "交易系统/券商柜台系统/期货交易柜台基础知识.md",
+    "什么是一级市场和二级市场.md",
+    "交易系统/券商柜台系统/attachments/Pasted image 20220410122034.png",
+    "交易系统/券商柜台系统/attachments/Pasted image 20220410121435.png"
+  ]
+}
