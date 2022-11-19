@@ -73,6 +73,11 @@ class GenBean : CliktCommand(name = "gen") {
         help = "是否包含视图"
     ).flag("--without-view", default = false)
 
+    val selected_tables by option(
+        names = arrayOf("--tables"),
+        help = "指定特定的表才生成实体类代码,表名称直接使用逗号分隔;使用此参数时,将忽略 --with-view 参数; --excludes 参数仍然有效"
+    ).default("")
+
     val use_utc_instant by option(
         names = arrayOf("--use-utc"),
         help = "数据库里Datetime使用UTC保存时, 使用此选项, 对应的字段的java类型为 Instant"
@@ -102,10 +107,24 @@ class GenBean : CliktCommand(name = "gen") {
 
         dbinfo = DBInfo(db, tableCommentService)
         val tables = mutableListOf<TableInfo>()
-        tables.addAll(dbinfo!!.tables())
+        if (selected_tables == "") {
+            tables.addAll(dbinfo!!.tables())
 
-        if (with_view) {
-            tables.addAll(dbinfo!!.views())
+            if (with_view) {
+                tables.addAll(dbinfo!!.views())
+            }
+        } else {
+            val select_table_names = selected_tables.split(",").map { it.trim() }.toSet()
+            dbinfo!!.tables().forEach {
+                if (it.table_name in select_table_names) {
+                    tables.add(it)
+                }
+            }
+            dbinfo!!.views().forEach {
+                if (it.table_name in select_table_names) {
+                    tables.add(it)
+                }
+            }
         }
 
         FileUtil.mkdirs(this.outdir)
@@ -125,8 +144,9 @@ class GenBean : CliktCommand(name = "gen") {
         echo("完毕")
     }
 
-    private fun wrapName(name : String) : String {
-        return "`${name}`"
+    private fun wrapName(name: String): String {
+        return name
+//        return "`${name}`"
     }
 
     private fun excludeTable(tableName: String): Boolean {
@@ -250,7 +270,7 @@ class GenBean : CliktCommand(name = "gen") {
             builder.addAnnotation(Version::class)
         } else {
             val columnAnnSpecBuilder = AnnotationSpec.builder(Column::class)
-            columnAnnSpecBuilder.addMember("name = %S", this.wrapName(columnInfo.field_name))
+            columnAnnSpecBuilder.addMember("name = %S", columnInfo.field_name)
 
             if (columnInfo.null_able) {
                 columnAnnSpecBuilder.addMember("nullable = true")
@@ -276,7 +296,12 @@ class GenBean : CliktCommand(name = "gen") {
     private fun buildSinglePKEntity(tableInfo: TableInfo, destDir: String) {
         val fileName = tableInfo.class_name
         val fileBuilder = FileSpec.builder(this.pkg, fileName)
-            .suppressWarningTypes("RedundantVisibilityModifier", "MemberVisibilityCanBePrivate", "PropertyName", "unused")
+            .suppressWarningTypes(
+                "RedundantVisibilityModifier",
+                "MemberVisibilityCanBePrivate",
+                "PropertyName",
+                "unused"
+            )
 
         val entityClassBuilder = TypeSpec.classBuilder(tableInfo.class_name)
             .primaryConstructor(
@@ -289,13 +314,13 @@ class GenBean : CliktCommand(name = "gen") {
         if (tableInfo.table_type == "VIEW") {
             entityClassBuilder.addAnnotation(
                 AnnotationSpec.builder(View::class)
-                    .addMember("name = %S", this.wrapName(tableInfo.table_name))
+                    .addMember("name = %S", tableInfo.table_name)
                     .build()
             )
         } else {
             entityClassBuilder.addAnnotation(
                 AnnotationSpec.builder(Table::class)
-                    .addMember("name = %S", this.wrapName(tableInfo.table_name))
+                    .addMember("name = %S", tableInfo.table_name)
                     .build()
             )
         }
@@ -327,8 +352,8 @@ class GenBean : CliktCommand(name = "gen") {
 
         val pkClassConstructorBuilder = FunSpec.constructorBuilder()
         tableInfo.pkColumnInfos().forEach { columnInfo ->
-            var typeName : TypeName
-            var defaultValue : Any?
+            var typeName: TypeName
+            var defaultValue: Any?
             if (columnInfo.null_able) {
                 typeName = columnInfo.kotlinType().asTypeName().copy(nullable = true)
                 defaultValue = null
@@ -396,7 +421,7 @@ class GenBean : CliktCommand(name = "gen") {
             }
 
             val columnAnnSpecBuilder = AnnotationSpec.builder(Column::class)
-            columnAnnSpecBuilder.addMember("name = %S", this.wrapName(columnInfo.field_name))
+            columnAnnSpecBuilder.addMember("name = %S", columnInfo.field_name)
 
             if (columnInfo.null_able) {
                 columnAnnSpecBuilder.addMember("nullable = true")
