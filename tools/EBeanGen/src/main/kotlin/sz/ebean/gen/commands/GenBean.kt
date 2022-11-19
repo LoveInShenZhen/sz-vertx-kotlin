@@ -279,18 +279,10 @@ class GenBean : CliktCommand(name = "gen") {
             .suppressWarningTypes("RedundantVisibilityModifier", "MemberVisibilityCanBePrivate", "PropertyName", "unused")
 
         val entityClassBuilder = TypeSpec.classBuilder(tableInfo.class_name)
-            .superclass(Model::class)
             .primaryConstructor(
-                FunSpec.constructorBuilder()
-                    .addParameter(
-                        ParameterSpec.builder("dataSource", String::class)
-                            .defaultValue("%S", "")
-                            .build()
-                    ).build()
+                FunSpec.constructorBuilder().build()
             )
-            .addSuperclassConstructorParameter("dataSource")
             .addModifiers(KModifier.OPEN)
-            .addAnnotation(MappedSuperclass::class)
             .addAnnotation(Entity::class.java)
 
 
@@ -437,18 +429,10 @@ class GenBean : CliktCommand(name = "gen") {
         fileBuilder.addType(buildCompositePKClass(tableInfo))
 
         val entityClassBuilder = TypeSpec.classBuilder(tableInfo.class_name)
-            .superclass(Model::class)
             .primaryConstructor(
-                FunSpec.constructorBuilder()
-                    .addParameter(
-                        ParameterSpec.builder("dataSource", String::class)
-                            .defaultValue("%S", "")
-                            .build()
-                    ).build()
+                FunSpec.constructorBuilder().build()
             )
-            .addSuperclassConstructorParameter("dataSource")
             .addModifiers(KModifier.OPEN)
-            .addAnnotation(MappedSuperclass::class)
             .addAnnotation(Entity::class.java)
 
 
