@@ -1,5 +1,6 @@
 {
   "legacyEditor": false,
   "readableLineLength": false,
-  "attachmentFolderPath": "./"
+  "attachmentFolderPath": "./",
+  "promptDelete": false
 }

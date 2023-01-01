@@ -1,5 +1,5 @@
 {
-  "server_url": "",
+  "server_url": "http://43.134.197.192:9090",
   "header": "",
   "debounce": 3,
   "localJar": "",

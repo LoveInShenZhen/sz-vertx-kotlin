@@ -1,0 +1,105 @@
+{
+  "main": {
+    "id": "1d4d233a0b8dd87d",
+    "type": "split",
+    "children": [
+      {
+        "id": "91d82fcb02ae02f8",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "5ca5112f11cf8092",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "开源量化框架/回测框架/回测框架设计备忘录.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "b501edbe46a25e66",
+    "type": "split",
+    "children": [
+      {
+        "id": "2f034faa01cd3285",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "3c41069e57610214",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "95a54ebc1eb45a6d",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 408.5
+  },
+  "right": {
+    "id": "3945704b5be55bfb",
+    "type": "split",
+    "children": [
+      {
+        "id": "c8ae58156313a7f1",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "8a49cf27d4324fe8",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "开源量化框架/回测框架/回测框架设计备忘录.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "active": "5ca5112f11cf8092",
+  "lastOpenFiles": [
+    "开源量化框架/回测框架/Backtrader.md",
+    "Untitled.md",
+    "股票涨跌分析.md",
+    "股票知识整理.md",
+    "images/sample_001.png"
+  ]
+}
