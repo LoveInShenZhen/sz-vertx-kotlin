@@ -1,8 +1,6 @@
 {
-  "server_url": "http://43.134.197.192:9090",
+  "server_url": "http://43.129.71.100:9090",
   "header": "",
   "debounce": 3,
-  "localJar": "",
-  "javaPath": "java",
-  "defaultProcessor": "png"
+  "localJar": ""
 }
