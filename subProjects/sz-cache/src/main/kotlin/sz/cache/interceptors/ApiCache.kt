@@ -31,7 +31,7 @@ class ApiCacheAction : Action<ApiCache>() {
             .filter { excludes.contains(it.key).not() }.joinToString("&") { "${it.key}=${it.value}" }
 
         val bodyParams = if (request.method() == HttpMethod.POST) {
-            this.httpContext.bodyAsString + request.formAttributes().joinToString("&") { "${it.key}=${it.value}" }
+            this.httpContext.body().asString() + request.formAttributes().joinToString("&") { "${it.key}=${it.value}" }
         } else {
             ""
         }
