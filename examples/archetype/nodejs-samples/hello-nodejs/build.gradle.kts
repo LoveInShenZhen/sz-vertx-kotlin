@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.js") version "1.7.21"
+    id("org.jetbrains.kotlin.js") version "1.8.10"
 }
 
 group = "org.sz.example"

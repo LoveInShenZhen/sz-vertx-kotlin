@@ -30,19 +30,8 @@
                 "source": false
               }
             }
-          },
-          {
-            "id": "632575f73efefdf6",
-            "type": "leaf",
-            "state": {
-              "type": "release-notes",
-              "state": {
-                "currentVersion": "1.0.3"
-              }
-            }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -100,7 +89,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "股票/交易规则.md",
+                "file": "股票/股票交易手续费.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -117,7 +106,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "股票/交易规则.md"
+                "file": "股票/股票交易手续费.md"
               }
             }
           }
@@ -128,7 +117,7 @@
     "width": 300,
     "collapsed": true
   },
-  "active": "632575f73efefdf6",
+  "active": "dde71fa5a1fc930c",
   "lastOpenFiles": [
     "股票/交易规则.md",
     "股票/股票交易手续费.md",
