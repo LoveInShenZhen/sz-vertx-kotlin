@@ -1,7 +1,6 @@
 package sz.cli
 
 import org.slf4j.LoggerFactory
-import sz.cli.cmds.Hello
 import sz.cli.config.protos
 import java.io.File
 

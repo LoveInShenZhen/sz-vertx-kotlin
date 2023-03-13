@@ -18,6 +18,7 @@ class SyncProto(val protoSource: ProtoSource) {
         this.protoSource.proto_dirs.forEach {
             this.Sync(it)
         }
+        this.SyncThirdProto()
     }
 
     fun scan() {
@@ -30,7 +31,9 @@ class SyncProto(val protoSource: ProtoSource) {
                         val new_name = proto_dir.rename_to[protoFile.name]!!
 
                         this.protoSource.file_mapping[new_name] =
-                            protoFile.absolutePath.removePrefix(this.protoSource.dest_base_dir)
+                            protoFile.absolutePath
+                                .replace("\\", "/")
+                                .removePrefix(this.protoSource.dest_base_dir)
                                 .removePrefix("/")
                                 .replace("/api/", "/")
                         logger.warn("proto 文件: ${protoFile.absolutePath} 被重命名为 ${new_name}")
@@ -39,11 +42,20 @@ class SyncProto(val protoSource: ProtoSource) {
                     }
                 } else {
                     this.protoSource.file_mapping[protoFile.name] =
-                        protoFile.absolutePath.removePrefix(this.protoSource.dest_base_dir)
+                        protoFile.absolutePath
+                            .replace("\\", "/")
+                            .removePrefix(this.protoSource.dest_base_dir)
                             .removePrefix("/")
                             .replace("/api/", "/")
                 }
             }
+        }
+    }
+
+    fun SyncThirdProto() {
+        this.protoSource.third_proto_dirs.forEach {
+            FileUtil.mkdirs(it.dest_path)
+            FileUtil.copyDir(it.src_path, FileNameUtil.concat(this.protoSource.dest_base_dir, it.dest_path))
         }
     }
 
@@ -98,6 +110,14 @@ class SyncProto(val protoSource: ProtoSource) {
                     return@forEachLine
                 }
 
+                if (line.startsWith("//import")) {
+                    return@forEachLine
+                }
+
+                if (line.startsWith("/*import") && line.endsWith("*/")) {
+                    return@forEachLine
+                }
+
                 lines.add(line)
             }
 
@@ -122,10 +142,10 @@ class SyncProto(val protoSource: ProtoSource) {
         }
     }
 
-    fun process(protoFile: File, protoDir: ProtoDir) {
-        val lines = mutableListOf<String>()
-
-    }
+//    fun process(protoFile: File, protoDir: ProtoDir) {
+//        val lines = mutableListOf<String>()
+//
+//    }
 
     // match line: syntax = "proto3";
     val regexSyntax = Regex("""\s*syntax\s*=\s*"(\S+)"\s*;\s*""")
@@ -177,9 +197,10 @@ class SyncProto(val protoSource: ProtoSource) {
         return newPath
     }
 
+    @Suppress("MemberVisibilityCanBePrivate", "UNUSED_PARAMETER")
     fun javaOuterClassName(protoDir: ProtoDir, protoFile: File): String {
         val fileName = protoFile.nameWithoutExtension
-        val parts = fileName.split(".", "-").toMutableList()
+        val parts = fileName.split(".", "-", "_").toMutableList()
         parts.add("proto")
         return parts.map {
             StringUtil.capitalize(it.lowercase())
