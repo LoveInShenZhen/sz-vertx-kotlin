@@ -1,0 +1,60 @@
+datasource:
+  db:
+    username: gmadmin_server
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://rm-wz9l1rac4j35m999i.mysql.rds.aliyuncs.com:3306/gmadmin_org_myquant?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
+
+  myquant:
+    username: gmadmin_server
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://rm-wz9l1rac4j35m999i.mysql.rds.aliyuncs.com:3306/gmadmin_org_myquant?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
+
+  chinafortune:
+    username: gmadmin_readonly
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://rm-wz9l1rac4j35m999i.mysql.rds.aliyuncs.com:3306/gmadmin_org_chinafortune?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
+
+  yingda:
+    username: gmadmin_readonly
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://rm-wz9l1rac4j35m999i.mysql.rds.aliyuncs.com:3306/gmadmin_org_yingda?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
+
+  vanho:
+    username: gmadmin_readonly
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://rm-wz9l1rac4j35m999i.mysql.rds.aliyuncs.com:3306/gmadmin_org_vanho?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
+
+  shengang:
+    username: gmadmin_readonly
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://rm-wz9l1rac4j35m999i.mysql.rds.aliyuncs.com:3306/gmadmin_org_shengang?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
+
+  jiuzhou:
+    username: gmadmin_readonly
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://rm-wz9l1rac4j35m999i.mysql.rds.aliyuncs.com:3306/gmadmin_org_jiuzhou?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
+
+  cindasc:
+    username: gmadmin_readonly
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://rm-wz9l1rac4j35m999i.mysql.rds.aliyuncs.com:3306/gmadmin_org_cindasc?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
+
+  dongxing:
+    username: gmadmin_readonly
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://rm-wz9l1rac4j35m999i.mysql.rds.aliyuncs.com:3306/gmadmin_org_dongxing?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
+
+  northeast:
+    username: gmadmin_readonly
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://rm-wz9l1rac4j35m999i.mysql.rds.aliyuncs.com:3306/gmadmin_org_northeast?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
+
+  tianfeng:
+    username: gmadmin_readonly
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://rm-wz9l1rac4j35m999i.mysql.rds.aliyuncs.com:3306/gmadmin_org_tianfeng?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
+
+  everbright:
+    username: gmadmin_readonly
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://rm-wz9l1rac4j35m999i.mysql.rds.aliyuncs.com:3306/gmadmin_org_everbright?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"

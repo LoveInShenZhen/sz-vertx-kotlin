@@ -1,0 +1,70 @@
+# 配置参数参考: io/ebean/datasource/DataSourceConfig.java
+# 文档: https://ebean.io/docs/intro/configuration/
+# 配置文件路径设定, 请查看代码: io/avaje/config/InitialLoader.java 中 loadViaSystemProperty() 函数实现
+# 默认数据库名称约定: null, "", "db", 参考代码: io/ebean/DbPrimary.java determineDefaultServerName() 函数实现
+datasource:
+  db:
+#    username: root
+#    password: "showmethemoney"
+#    url: "jdbc:mysql://127.0.0.1:3306/gmadmin_org_myquant?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
+    username: gmadmin_readonly
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://127.0.0.1:3300/gmadmin_org_myquant?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
+
+  myquant:
+#    username: root
+#    password: "showmethemoney"
+#    url: "jdbc:mysql://127.0.0.1:3306/gmadmin_org_myquant?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
+    username: gmadmin_readonly
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://127.0.0.1:3300/gmadmin_org_myquant?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
+
+  chinafortune:
+    username: gmadmin_readonly
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://127.0.0.1:3300/gmadmin_org_chinafortune?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
+
+  yingda:
+    username: gmadmin_readonly
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://127.0.0.1:3300/gmadmin_org_yingda?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
+
+  vanho:
+    username: gmadmin_readonly
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://127.0.0.1:3300/gmadmin_org_vanho?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
+
+  shengang:
+    username: gmadmin_readonly
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://127.0.0.1:3300/gmadmin_org_shengang?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
+
+  jiuzhou:
+    username: gmadmin_readonly
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://127.0.0.1:3300/gmadmin_org_jiuzhou?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
+
+  cindasc:
+    username: gmadmin_readonly
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://127.0.0.1:3300/gmadmin_org_cindasc?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
+
+  dongxing:
+    username: gmadmin_readonly
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://127.0.0.1:3300/gmadmin_org_dongxing?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
+
+  northeast:
+    username: gmadmin_readonly
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://127.0.0.1:3300/gmadmin_org_northeast?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
+
+  tianfeng:
+    username: gmadmin_readonly
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://127.0.0.1:3300/gmadmin_org_tianfeng?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
+
+  everbright:
+    username: gmadmin_readonly
+    password: "Myquant_$123%"
+    url: "jdbc:mysql://127.0.0.1:3300/gmadmin_org_everbright?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL"
