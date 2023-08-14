@@ -79,3 +79,6 @@
 特别感谢 [JetBrains](https://www.jetbrains.com/?from=sz-vertx-kotlin) 为开源项目提供免费的 [IntelliJ IDEA](https://www.jetbrains.com/idea/?from=sz-vertx-kotlin) 等 IDE 的授权  
 [<img src="https://jodd.org/gfx/intellij.png" width="200"/>](https://www.jetbrains.com/?from=sz-vertx-kotlin)
 
+Jetbrains is helping us to develop this project by providing development tools to maintainers.  
+Intellij IDEA is our IDE of choice for Kotlin development and we strongly recommend using it.  
+[![jblogo](.README/jetbrains.svg)](https://www.jetbrains.com/)
