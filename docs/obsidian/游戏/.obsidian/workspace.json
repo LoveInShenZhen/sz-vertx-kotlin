@@ -19,11 +19,9 @@
             "id": "a11e14b4d721419e",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "image",
               "state": {
-                "file": "定制游戏列表.md",
-                "mode": "source",
-                "source": false
+                "file": "图片资源/Pasted image 20230814234833.png"
               }
             }
           }
@@ -94,7 +92,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "定制游戏列表.md",
+                "file": "图片资源/Pasted image 20230814234833.png",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -111,7 +109,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "定制游戏列表.md",
+                "file": "图片资源/Pasted image 20230814234833.png",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -134,7 +132,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "定制游戏列表.md"
+                "file": "图片资源/Pasted image 20230814234833.png"
               }
             }
           }
@@ -155,12 +153,12 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "a11e14b4d721419e",
+  "active": "cc0707f7c8dae649",
   "lastOpenFiles": [
-    "Pasted image 20230814234833.png",
-    "Pasted image 20230814234822.png",
-    "图片资源/Pasted image 20230814234549.png",
+    "图片资源/Pasted image 20230814234822.png",
     "定制游戏列表.md",
+    "图片资源/Pasted image 20230814234833.png",
+    "图片资源/Pasted image 20230814234549.png",
     "图片资源/Pasted image 20230814234648.png",
     "图片资源/Pasted image 20230814234632.png",
     "图片资源/Pasted image 20230814234621.png",
