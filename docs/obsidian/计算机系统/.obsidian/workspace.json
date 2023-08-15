@@ -1,0 +1,168 @@
+{
+  "main": {
+    "id": "e2878e7af7fe5cca",
+    "type": "split",
+    "children": [
+      {
+        "id": "1f1dafc6e062e7ca",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "08492c19879020a0",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "文件系统同步机制(fdatasync fsync syncfs sync).md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "2191cd7a13adc984",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "网络编程/TCP keepalive简介.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "cd0223c07b32d10c",
+    "type": "split",
+    "children": [
+      {
+        "id": "9a99b16432822f04",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "fd7269438e1d0d03",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "9614deb8a17cd16f",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "e1607751bab36b92",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "7f4b7a0a7de420b7",
+    "type": "split",
+    "children": [
+      {
+        "id": "17b9c0b74164f730",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "61119c0d42e272aa",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "网络编程/TCP keepalive简介.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "9395b74615b80850",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "网络编程/TCP keepalive简介.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "f776031aace46325",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "e1072b8ad6a0b00d",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "网络编程/TCP keepalive简介.md"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false
+    }
+  },
+  "active": "fd7269438e1d0d03",
+  "lastOpenFiles": [
+    "文件系统同步机制(fdatasync fsync syncfs sync).md",
+    "网络编程/TCP keepalive简介.md",
+    "网络编程"
+  ]
+}
