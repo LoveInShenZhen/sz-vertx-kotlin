@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "735b97df387e8c73",
+        "id": "0649caa1cdef772b",
         "type": "tabs",
         "children": [
           {
-            "id": "07b4ec4844aec755",
+            "id": "41c2fb227143aadc",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -138,6 +138,6 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "07b4ec4844aec755",
+  "active": "41c2fb227143aadc",
   "lastOpenFiles": []
 }

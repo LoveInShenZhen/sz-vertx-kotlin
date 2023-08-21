@@ -1,5 +1,7 @@
 {
   "accentColor": "",
   "theme": "moonstone",
-  "cssTheme": "Blue Topaz"
+  "cssTheme": "Blue Topaz",
+  "textFontFamily": "Microsoft YaHei Mono,Microsoft YaHei",
+  "monospaceFontFamily": "Inconsolata,Consolas"
 }
