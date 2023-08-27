@@ -11,22 +11,15 @@
             "id": "5ca5112f11cf8092",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {}
-            }
-          },
-          {
-            "id": "a9e75a3085a4c156",
-            "type": "leaf",
-            "state": {
-              "type": "release-notes",
+              "type": "markdown",
               "state": {
-                "currentVersion": "1.1.16"
+                "file": "开源量化框架/回测框架/回测框架设计备忘录.md",
+                "mode": "source",
+                "source": false
               }
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -92,6 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "开源量化框架/回测框架/回测框架设计备忘录.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -119,8 +113,10 @@
       "markdown-importer:打开 Markdown 格式转换器": false
     }
   },
-  "active": "a9e75a3085a4c156",
+  "active": "5ca5112f11cf8092",
   "lastOpenFiles": [
+    "开源量化框架/业务逻辑对象.md",
+    "开源量化框架/回测框架/回测框架设计备忘录.md",
     "Untitled.md",
     "开源量化框架/回测框架/Backtrader.md",
     "股票涨跌分析.md",
