@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory
 // Created by kk on 2021/9/20.
 //
 class Hello : CliktCommand() {
-    val count: Int by option(help="Number of greetings").int().default(1)
+    val count: Int by option(help="Number of greetings").int().default(3)
     val name: String by option(help="The person to greet").default("KK")
 
     override fun run() {
