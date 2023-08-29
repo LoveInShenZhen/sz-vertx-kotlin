@@ -14,19 +14,8 @@
               "type": "empty",
               "state": {}
             }
-          },
-          {
-            "id": "a9e75a3085a4c156",
-            "type": "leaf",
-            "state": {
-              "type": "release-notes",
-              "state": {
-                "currentVersion": "1.1.16"
-              }
-            }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -119,7 +108,7 @@
       "markdown-importer:打开 Markdown 格式转换器": false
     }
   },
-  "active": "a9e75a3085a4c156",
+  "active": "5ca5112f11cf8092",
   "lastOpenFiles": [
     "Untitled.md",
     "开源量化框架/回测框架/Backtrader.md",

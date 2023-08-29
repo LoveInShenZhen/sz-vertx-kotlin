@@ -3,6 +3,6 @@
   "livePreview": true,
   "newFileLocation": "current",
   "attachmentFolderPath": "./attachments",
-  "readableLineLength": false,
+  "readableLineLength": true,
   "autoPairBrackets": false
 }
