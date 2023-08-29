@@ -19,9 +19,11 @@
             "id": "a11e14b4d721419e",
             "type": "leaf",
             "state": {
-              "type": "image",
+              "type": "markdown",
               "state": {
-                "file": "图片资源/Pasted image 20230814234833.png"
+                "file": "模拟器/Retroarch/Retroarch Playlist.md",
+                "mode": "source",
+                "source": false
               }
             }
           }
@@ -92,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "图片资源/Pasted image 20230814234833.png",
+                "file": "模拟器/Retroarch/Retroarch Playlist.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -109,7 +111,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "图片资源/Pasted image 20230814234833.png",
+                "file": "模拟器/Retroarch/Retroarch Playlist.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -132,7 +134,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "图片资源/Pasted image 20230814234833.png"
+                "file": "模拟器/Retroarch/Retroarch Playlist.md"
               }
             }
           }
@@ -153,10 +155,12 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "cc0707f7c8dae649",
+  "active": "a11e14b4d721419e",
   "lastOpenFiles": [
-    "图片资源/Pasted image 20230814234822.png",
     "定制游戏列表.md",
+    "模拟器/Retroarch/Retroarch Playlist.md",
+    "模拟器/Retroarch",
+    "图片资源/Pasted image 20230814234822.png",
     "图片资源/Pasted image 20230814234833.png",
     "图片资源/Pasted image 20230814234549.png",
     "图片资源/Pasted image 20230814234648.png",
@@ -166,7 +170,6 @@
     "图片资源/Pasted image 20230814234516.png",
     "图片资源/Pasted image 20230814234237.png",
     "图片资源",
-    "模拟器/未命名",
     "模拟器"
   ]
 }
