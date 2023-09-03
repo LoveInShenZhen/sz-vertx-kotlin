@@ -46,6 +46,7 @@ def build_playlist(fpath: str, dist_dir: str):
       "db_name": "FC.lpl"
     },
     """
+    db_name = os.path.basename(fpath)
     entry_list = []
     for item in itme_list:
         if len(item) != 5:
@@ -55,8 +56,8 @@ def build_playlist(fpath: str, dist_dir: str):
             'label': item[3],
             'core_path': 'DETECT',
             'core_name': 'DETECT',
-            'crc32': f'{item[4]}|serial',
-            'db_name': item[4]
+            'crc32': 'DETECT',
+            'db_name': db_name
         }
         entry_list.append(entry)
 
