@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import json
-import os
+import os.path
+import shutil
 
 
 def print_hi(name):
@@ -9,18 +10,26 @@ def print_hi(name):
     print(f'Hi, {name}')  # Press ⇧⌘B to toggle the breakpoint.
 
 
-def build_playlist(fpath: str):
-    itmes = []
+def build_playlist(fpath: str, dist_dir: str):
+    itme_list = []
 
-    it = []
+    item = []
     with open(fpath, 'r') as f:
         for line in f.readlines():
-            li = line.strip()
-            if li == '':
-                itmes.append(it)
-                it = []
+            if line.startswith('{'):
+                print(f'{fpath} 已经是json格式的 playlist, 无需转换')
+                return
+
+            if line.startswith('/ROM/'):
+                line = line.replace('/ROM/', '/home/deck/emu_games/emu_roms/roms/')
+            line = line.replace('[我干UFO制作合集 禁止转载.倒卖]', '')
+            line = line.strip()
+
+            if line == '':
+                itme_list.append(item)
+                item = []
             else:
-                it.append(li)
+                item.append(line)
 
     # /home/deck/emu_games/emu_roms/ROM/FC/FC 183.nes
     # FC 183
@@ -29,7 +38,7 @@ def build_playlist(fpath: str):
     # FC.lpl
     """
     {
-      "path": "/home/deck/emu_games/emu_roms/ROM/FC/FC 002.nes",
+      "path": "/home/deck/emu_games/emu_roms/roms/FC/FC 002.nes",
       "label": "FC 002",
       "core_path": "DETECT",
       "core_name": "DETECT",
@@ -37,29 +46,39 @@ def build_playlist(fpath: str):
       "db_name": "FC.lpl"
     },
     """
+    db_name = os.path.basename(fpath)
     entry_list = []
-    for it in itmes:
-        if len(it) != 5:
+    for item in itme_list:
+        if len(item) != 5:
             raise '格式错误'
         entry = {
-            'path': it[0],
-            'label': it[3],
+            'path': item[0],
+            'label': item[3],
             'core_path': 'DETECT',
-            'core_name': 'core_name',
-            'crc32': f'{it[4]}|serial',
-            'db_name': it[4]
+            'core_name': 'DETECT',
+            'crc32': 'DETECT',
+            'db_name': db_name
         }
         entry_list.append(entry)
 
     result = {'items': entry_list}
     playlist_json = json.dumps(result, ensure_ascii = False, indent = '    ')
-    print(playlist_json)
+    # print(playlist_json)
 
-    playlist_fpath = f'{fpath}.json'
+    dest_fpath = os.path.join(dist_dir, os.path.basename(fpath))
+
+    with open(dest_fpath, 'w') as f:
+        f.write(playlist_json)
+    print(f'{fpath} 转换完成')
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    build_playlist('/Users/kk/Downloads/tmp/retroarch/playlists/FC.lpl')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    build_playlist('/Users/kk/Downloads/tmp/playlist/FBA.lpl', '/Users/kk/Downloads/tmp/json_playlist')
+    build_playlist('/Users/kk/Downloads/tmp/playlist/FC HACK.lpl', '/Users/kk/Downloads/tmp/json_playlist')
+    build_playlist('/Users/kk/Downloads/tmp/playlist/GBA.lpl', '/Users/kk/Downloads/tmp/json_playlist')
+    build_playlist('/Users/kk/Downloads/tmp/playlist/HACK.lpl', '/Users/kk/Downloads/tmp/json_playlist')
+    build_playlist('/Users/kk/Downloads/tmp/playlist/JIEJI.lpl', '/Users/kk/Downloads/tmp/json_playlist')
+    build_playlist('/Users/kk/Downloads/tmp/playlist/PCE CD.lpl', '/Users/kk/Downloads/tmp/json_playlist')
+    build_playlist('/Users/kk/Downloads/tmp/playlist/PCE.lpl', '/Users/kk/Downloads/tmp/json_playlist')
+    build_playlist('/Users/kk/Downloads/tmp/playlist/SFC.lpl', '/Users/kk/Downloads/tmp/json_playlist')
