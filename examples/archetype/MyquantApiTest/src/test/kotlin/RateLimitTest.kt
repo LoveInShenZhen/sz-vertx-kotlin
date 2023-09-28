@@ -177,7 +177,7 @@ SHSE.000070
         val hapi =
             history_api.withInterceptors(MetadataUtils.newCaptureMetadataInterceptor(headersCapture, trailersCapture))
 
-        for (i in 1..10) {
+        for (i in 1..100) {
             try {
                 val rsp = hapi.getCurrentTicks(req)
                 logger.info("(${i}) ${symbol} 最新价格: ${rsp.dataList.first().price}")
