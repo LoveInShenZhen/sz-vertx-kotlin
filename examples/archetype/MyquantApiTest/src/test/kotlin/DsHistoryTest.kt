@@ -1,5 +1,6 @@
 import io.grpc.Metadata
 import io.grpc.stub.MetadataUtils
+import myquant.proto.platform.data.history.GetCurrentTicksReq
 import myquant.proto.platform.data.history.GetHistoryBarsNReq
 import myquant.proto.platform.data.history.GetHistoryTicksReq
 import org.junit.jupiter.api.DisplayName
@@ -64,5 +65,77 @@ class DsHistoryTest : DsProxyTesterBase() {
 
         val rsp = hapi.getHistoryBarsN(req)
         logger.info("查询结果 ${rsp.dataCount} 条记录")
+    }
+
+    @Test
+    @DisplayName("查询最新tick")
+    fun CurrentTick() {
+        val symbols="""SHSE.000001
+SHSE.000002
+SHSE.000003
+SHSE.000004
+SHSE.000005
+SHSE.000006
+SHSE.000007
+SHSE.000008
+SHSE.000009
+SHSE.000010
+SHSE.000011
+SHSE.000012
+SHSE.000013
+SHSE.000015
+SHSE.000016
+SHSE.000017
+SHSE.000018
+SHSE.000019
+SHSE.000020
+SHSE.000021
+SHSE.000022
+SHSE.000025
+SHSE.000026
+SHSE.000027
+SHSE.000028
+SHSE.000029
+SHSE.000030
+SHSE.000031
+SHSE.000032
+SHSE.000033
+SHSE.000034
+SHSE.000035
+SHSE.000036
+SHSE.000037
+SHSE.000038
+SHSE.000039
+SHSE.000040
+SHSE.000041
+SHSE.000042
+SHSE.000043
+SHSE.000044
+SHSE.000045
+SHSE.000046
+SHSE.000047
+SHSE.000048
+SHSE.000049
+SHSE.000050
+SHSE.000051
+SHSE.000052
+SHSE.000053
+"""
+        val symbol_list = symbols.split("\n").map { it.trim() }.filter { it.isNotEmpty() }
+
+        symbol_list.forEach {symbol ->
+            val req = GetCurrentTicksReq {
+                this.symbols = symbol
+            }
+            val begin_time = System.currentTimeMillis()
+            val rsp = history_api.getCurrentTicks(req)
+            val end_time = System.currentTimeMillis()
+
+            val duration = end_time - begin_time
+            if (rsp.dataCount > 0) {
+                logger.info("${symbol} 查询最新价格 ${rsp.dataList.first().price}, 耗时 ${duration} 毫秒")
+            }
+
+        }
     }
 }
