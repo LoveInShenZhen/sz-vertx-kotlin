@@ -30,8 +30,8 @@ open class DsProxyTesterBase {
                 siteId = "kk-site"
             )
 
-//            val channel = factory.getChannel("127.0.0.1", 7050)
-            val channel = factory.getChannel("120.79.68.122", 8001)
+            val channel = factory.getChannel("127.0.0.1", 7050)
+//            val channel = factory.getChannel("120.79.68.122", 8001)
 
             fundamental_api = FundamentalServiceGrpc.newBlockingStub(channel)
             instrument_api = InstrumentServiceGrpc.newBlockingStub(channel)

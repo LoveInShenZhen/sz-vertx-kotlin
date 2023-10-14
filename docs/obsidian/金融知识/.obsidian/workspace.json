@@ -30,6 +30,16 @@
             }
           },
           {
+            "id": "6980260a0059c16c",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.4.14"
+              }
+            }
+          },
+          {
             "id": "0318ee94765ac473",
             "type": "leaf",
             "state": {
@@ -42,7 +52,7 @@
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -145,7 +155,7 @@
       "markdown-importer:打开 Markdown 格式转换器": false
     }
   },
-  "active": "3afafd4ab54cf05b",
+  "active": "6980260a0059c16c",
   "lastOpenFiles": [
     "基金/ETF.md",
     "股票/A股交易进入全面注册制时代，交易规则变化.md",

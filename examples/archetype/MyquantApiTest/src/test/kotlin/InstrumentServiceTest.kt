@@ -404,4 +404,16 @@ class InstrumentServiceTest : DsProxyTesterBase() {
 
     }
 
+    @Test
+    @DisplayName("指定品种大类, 查询码表基本面")
+    fun TestGetSymbolInfos_by_sec_type1() {
+        val req = GetSymbolInfosReq {
+            secType1 = 1010
+        }
+
+        val rsp = instrument_api.getSymbolInfos(req)
+        assert(rsp.symbolInfosCount > 0)
+        logger.info("共有 ${rsp.symbolInfosCount} 支股票的码表基本面信息")
+    }
+
 }
