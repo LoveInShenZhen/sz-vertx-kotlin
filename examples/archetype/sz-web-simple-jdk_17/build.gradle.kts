@@ -2,13 +2,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
-    kotlin("jvm").version("1.9.10")
+    kotlin("jvm").version("1.9.20")
 
     // Apply the application plugin to add support for building a CLI application.
     application
 
-    id("io.ebean").version("12.13.0")
-    kotlin("kapt").version("1.9.10")
+    id("io.ebean").version("13.25.0")
+    kotlin("kapt").version("1.9.20")
 }
 
 
@@ -30,7 +30,7 @@ dependencies {
     implementation("com.h2database:h2:1.4.200")
 //    runtimeOnly(("mysql:mysql-connector-java:8.0.18"))
 
-    kapt("io.ebean:kotlin-querybean-generator:12.13.0")
+    kapt("io.ebean:kotlin-querybean-generator:13.25.0")
 
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")

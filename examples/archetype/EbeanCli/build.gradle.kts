@@ -3,10 +3,10 @@ import java.nio.file.Path
 
 
 plugins {
-    kotlin("jvm") version "1.9.10"
+    kotlin("jvm") version "1.9.20"
     id("org.beryx.runtime") version "1.12.7"
     id("io.ebean").version("13.6.5")
-    id("org.jetbrains.kotlin.kapt") version "1.9.10"
+    id("org.jetbrains.kotlin.kapt") version "1.9.20"
     id("com.github.johnrengelman.shadow") version("7.1.2")
     application
 }
@@ -32,9 +32,9 @@ dependencies {
     }
     implementation("mysql:mysql-connector-java:8.0.29")
 
-    implementation("io.ebean:ebean:13.10.1")
+    implementation("io.ebean:ebean:13.25.0")
 //    implementation("io.ebean:ebean-ddl-generator:13.6.4")
-    kapt("io.ebean:querybean-generator:13.10.1")
+    kapt("io.ebean:querybean-generator:13.25.0")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.+")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.+")
