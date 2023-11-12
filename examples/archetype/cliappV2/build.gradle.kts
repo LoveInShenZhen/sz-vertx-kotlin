@@ -9,7 +9,6 @@ version = "1.0"
 
 repositories {
     mavenLocal()
-    maven(url="https://maven.aliyun.com/repository/public/")
     mavenCentral()
 }
 
@@ -25,6 +24,10 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.+")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.+")
+//    implementation("org.jodd:jodd-util:6.1.0")
 }
 
 tasks.getByName<Test>("test") {

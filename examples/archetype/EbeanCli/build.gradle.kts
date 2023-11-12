@@ -15,10 +15,10 @@ group = "com.myquant"
 version = "1.0-SNAPSHOT"
 
 repositories {
-    maven {
-        url = uri("https://maven.aliyun.com/repository/public/")
-    }
     mavenLocal()
+//    maven {
+//        url = uri("https://maven.aliyun.com/repository/public/")
+//    }
     mavenCentral()
 }
 
@@ -31,6 +31,10 @@ dependencies {
         exclude(group = "org.jetbrains.kotlin")
     }
     implementation("mysql:mysql-connector-java:8.0.29")
+
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-csv
+    implementation("org.apache.commons:commons-csv:1.10.0")
+
 
     implementation("io.ebean:ebean:13.25.0")
 //    implementation("io.ebean:ebean-ddl-generator:13.6.4")

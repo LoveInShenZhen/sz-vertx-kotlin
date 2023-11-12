@@ -15,8 +15,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.FileWriter
 import java.time.Instant
-import java.time.LocalDateTime
-import java.time.LocalTime
 
 class ExcludeUser(val gmuser: GmUser, val excludeReason: String)
 
