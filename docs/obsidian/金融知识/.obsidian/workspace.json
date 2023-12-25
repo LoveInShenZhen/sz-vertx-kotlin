@@ -13,29 +13,9 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "股票/A股交易进入全面注册制时代，交易规则变化.md",
+                "file": "基金/ETF.md",
                 "mode": "source",
                 "source": false
-              }
-            }
-          },
-          {
-            "id": "3afafd4ab54cf05b",
-            "type": "leaf",
-            "state": {
-              "type": "release-notes",
-              "state": {
-                "currentVersion": "1.4.13"
-              }
-            }
-          },
-          {
-            "id": "6980260a0059c16c",
-            "type": "leaf",
-            "state": {
-              "type": "release-notes",
-              "state": {
-                "currentVersion": "1.4.14"
               }
             }
           },
@@ -51,8 +31,7 @@
               }
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -118,7 +97,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "股票/A股交易进入全面注册制时代，交易规则变化.md",
+                "file": "基金/ETF.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -135,7 +114,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "股票/A股交易进入全面注册制时代，交易规则变化.md"
+                "file": "基金/ETF.md"
               }
             }
           }
@@ -155,20 +134,20 @@
       "markdown-importer:打开 Markdown 格式转换器": false
     }
   },
-  "active": "6980260a0059c16c",
+  "active": "dde71fa5a1fc930c",
   "lastOpenFiles": [
-    "基金/ETF.md",
     "股票/A股交易进入全面注册制时代，交易规则变化.md",
+    "股票/视频资料汇总.md",
+    "股票/交易时段与集合竞价.md",
+    "股票/交易规则.md",
+    "股票/股票交易手续费.md",
+    "基金/ETF.md",
     "基金/attachments/Pasted image 20230823161707.png",
     "基金/attachments/Pasted image 20230823161652.png",
     "基金/attachments/Pasted image 20230823161531.png",
     "基金/attachments/Pasted image 20230823161417.png",
     "基金/attachments",
-    "股票/股票交易手续费.md",
     "基金",
-    "股票/交易规则.md",
-    "股票/视频资料汇总.md",
-    "股票/交易时段与集合竞价.md",
     "交易系统/券商柜台系统/行情基础知识.md",
     "交易系统/券商柜台系统/几家大的券商的PB系统以及算法交易概况.md",
     "交易系统/券商柜台系统/期货交易柜台基础知识.md",
