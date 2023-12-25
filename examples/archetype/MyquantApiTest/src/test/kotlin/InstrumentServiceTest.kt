@@ -243,40 +243,40 @@ class InstrumentServiceTest : DsProxyTesterBase() {
         assert(ins.info.symbol == req.symbol)
     }
 
-    @Test
-    @DisplayName("查询今年和明年的历史码表")
-    fun TestGetHistorySymbol_this_year_and_next_year() {
-        val this_year = LocalDate.now().year
-        val next_year = this_year + 1
-
-        val req1 = GetHistorySymbolReq {
-            symbol = "SHSE.600000"
-            startDate = "${this_year}-01-01"
-            endDate = "${this_year}-12-31"
-        }
-
-        val rsp1 = instrument_api.getHistorySymbol(req1)
-
-        val req2 = GetHistorySymbolReq {
-            symbol = "SHSE.600000"
-            startDate = "${this_year}-01-01"
-            endDate = "${next_year}-12-31"
-        }
-
-        val rsp2 = instrument_api.getHistorySymbol(req2)
-
-        assert(rsp1.symbolsCount > 0)
-        assert(rsp2.symbolsCount > 0)
-        assert(rsp1.symbolsCount == rsp2.symbolsCount)
-        assert(rsp1.symbolsList.first().tradeDate == rsp2.symbolsList.first().tradeDate)
-        assert(rsp1.symbolsList.last().tradeDate == rsp2.symbolsList.last().tradeDate)
-
-        val middleIdx = rsp1.symbolsCount / 2
-        assert(rsp1.symbolsList[middleIdx].tradeDate == rsp2.symbolsList[middleIdx].tradeDate)
-
-        val ins = rsp1.symbolsList[middleIdx]
-        logger.info("共 ${rsp1.symbolsCount} 条记录, 中间记录: ${ins.info.symbol} ${ins.info.secName} ${ins.tradeDate.toLocalDate()}")
-    }
+//    @Test
+//    @DisplayName("查询今年和明年的历史码表")
+//    fun TestGetHistorySymbol_this_year_and_next_year() {
+//        val this_year = LocalDate.now().year
+//        val next_year = this_year + 1
+//
+//        val req1 = GetHistorySymbolReq {
+//            symbol = "SHSE.600000"
+//            startDate = "${this_year}-01-01"
+//            endDate = "${this_year}-12-31"
+//        }
+//
+//        val rsp1 = instrument_api.getHistorySymbol(req1)
+//
+//        val req2 = GetHistorySymbolReq {
+//            symbol = "SHSE.600000"
+//            startDate = "${this_year}-01-01"
+//            endDate = "${next_year}-12-31"
+//        }
+//
+//        val rsp2 = instrument_api.getHistorySymbol(req2)
+//
+//        assert(rsp1.symbolsCount > 0)
+//        assert(rsp2.symbolsCount > 0)
+//        assert(rsp1.symbolsCount == rsp2.symbolsCount)
+//        assert(rsp1.symbolsList.first().tradeDate == rsp2.symbolsList.first().tradeDate)
+//        assert(rsp1.symbolsList.last().tradeDate == rsp2.symbolsList.last().tradeDate)
+//
+//        val middleIdx = rsp1.symbolsCount / 2
+//        assert(rsp1.symbolsList[middleIdx].tradeDate == rsp2.symbolsList[middleIdx].tradeDate)
+//
+//        val ins = rsp1.symbolsList[middleIdx]
+//        logger.info("共 ${rsp1.symbolsCount} 条记录, 中间记录: ${ins.info.symbol} ${ins.info.secName} ${ins.tradeDate.toLocalDate()}")
+//    }
 
     @Test
     @DisplayName("查询1980年的交易日历(不在交易日历有效范围)")

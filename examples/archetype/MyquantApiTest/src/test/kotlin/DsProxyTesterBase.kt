@@ -1,8 +1,10 @@
+import com.google.protobuf.Empty
 import myquant.proto.platform.data.data_dists.HistoryInnerServiceGrpc
 import myquant.proto.platform.data.ds_fund.FundProxyServiceGrpc
 import myquant.proto.platform.data.ds_instrument.InstrumentServiceGrpc
 import myquant.proto.platform.data.fundamental.FundamentalServiceGrpc
 import myquant.proto.platform.data.history.HistoryServiceGrpc
+import myquant.proto.platform.health.HealthCheckServiceGrpc
 import myquant.rpc.client.ChannelFactory
 import org.slf4j.LoggerFactory
 
@@ -20,6 +22,7 @@ open class DsProxyTesterBase {
         val fundProxy_api: FundProxyServiceGrpc.FundProxyServiceBlockingStub
         val history_api: HistoryServiceGrpc.HistoryServiceBlockingStub
         val innder_api: HistoryInnerServiceGrpc.HistoryInnerServiceBlockingStub
+        val health_api: HealthCheckServiceGrpc.HealthCheckServiceBlockingStub
 
         init {
             factory = ChannelFactory(
@@ -31,13 +34,18 @@ open class DsProxyTesterBase {
             )
 
             val channel = factory.getChannel("127.0.0.1", 7050)
-//            val channel = factory.getChannel("120.79.68.122", 8001)
+            // 测试环境
+//            val channel = factory.getChannel("120.79.180.133", 7521)
 
             fundamental_api = FundamentalServiceGrpc.newBlockingStub(channel)
             instrument_api = InstrumentServiceGrpc.newBlockingStub(channel)
             fundProxy_api = FundProxyServiceGrpc.newBlockingStub(channel)
             history_api = HistoryServiceGrpc.newBlockingStub(channel)
             innder_api = HistoryInnerServiceGrpc.newBlockingStub(channel)
+            health_api = HealthCheckServiceGrpc.newBlockingStub(channel)
+
+            // 先ping一下, 保证已经创建好 grpc 连接
+            health_api.ping(Empty.newBuilder().build())
         }
     }
 }
