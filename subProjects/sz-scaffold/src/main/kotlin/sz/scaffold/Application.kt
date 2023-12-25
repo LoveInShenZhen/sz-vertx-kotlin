@@ -34,7 +34,7 @@ import sz.scaffold.websocket.WebSocketFilter
 import java.io.File
 import java.lang.management.ManagementFactory
 import java.net.InetAddress
-import java.net.URL
+import java.net.URI
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutorService
@@ -161,10 +161,10 @@ object Application {
 
     private fun loadProperties() {
         try {
-            val propertiesUr = System.getProperty(szPropertiesUrlKey, "")
+            val propertiesUrl = System.getProperty(szPropertiesUrlKey, "")
 
-            if (propertiesUr.isNotBlank()) {
-                val url = URL(propertiesUr)
+            if (propertiesUrl.isNotBlank()) {
+                val url = URI.create(propertiesUrl).toURL()  //URL(propertiesUr)
                 url.openStream().use {
                     val properties = Properties()
                     properties.load(it)

@@ -37,7 +37,7 @@ class GlobalApiMetrics : GlobalInterceptorBase() {
             record.path = request.path()
             record.query_string = request.query()
             record.headers = request.headers().map { Pair<String, String>(it.key, it.value) }.toMap()
-            record.request_body = this.httpContext.getBodyAsString(contentCharset())
+            record.request_body = this.httpContext.body().asString(contentCharset())
 
             record.start_time = System.currentTimeMillis()
             val result = delegate.call()

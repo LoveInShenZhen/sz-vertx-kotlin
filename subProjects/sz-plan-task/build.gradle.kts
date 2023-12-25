@@ -3,14 +3,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm")
     id("maven-publish")
-    id("io.ebean").version("12.13.0")
+    id("io.ebean").version("13.25.0")
     kotlin("kapt")
 }
 
 dependencies {
     api(project(":subProjects:sz-ebean"))
 
-//    kapt("io.ebean:kotlin-querybean-generator:12.13.0")
+//    kapt("io.ebean:kotlin-querybean-generator:13.25.0")
 
 }
 
