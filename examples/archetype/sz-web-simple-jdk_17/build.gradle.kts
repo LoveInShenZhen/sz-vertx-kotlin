@@ -49,13 +49,9 @@ application {
     // 可以在此添加jvm内存参数, eg: '-Xms512m', '-Xmx4096m'
     applicationDefaultJvmArgs = listOf("-Duser.timezone=GMT+8", "-Dfile.encoding=UTF-8", "-Dsun.jnu.encoding=UTF-8")
 }
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions {
-    jvmTarget = "17"
-}
-val compileTestKotlin: KotlinCompile by tasks
-compileTestKotlin.kotlinOptions {
-    jvmTarget = "17"
+
+kotlin { // Extension for easy setup
+    jvmToolchain(21) // Target version of generated JVM bytecode. See 7️⃣
 }
 
 val distZip: Zip by tasks

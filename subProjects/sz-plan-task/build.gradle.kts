@@ -33,14 +33,6 @@ ebean {
 //    generatorVersion = "11.4"
 }
 
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions {
-    jvmTarget = "17"
-    
-}
-
-val compileTestKotlin: KotlinCompile by tasks
-compileTestKotlin.kotlinOptions {
-    jvmTarget = "17"
-    
+kotlin { // Extension for easy setup
+    jvmToolchain(21) // Target version of generated JVM bytecode. See 7️⃣
 }

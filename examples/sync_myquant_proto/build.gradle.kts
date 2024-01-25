@@ -42,14 +42,8 @@ application {
     mainClass.set("sz.cli.CmdApp")
 }
 
-val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
-compileKotlin.kotlinOptions {
-    jvmTarget = "17"
-}
-
-val compileTestKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
-compileTestKotlin.kotlinOptions {
-    jvmTarget = "17"
+kotlin { // Extension for easy setup
+    jvmToolchain(21) // Target version of generated JVM bytecode. See 7️⃣
 }
 
 val distZip: Zip by tasks

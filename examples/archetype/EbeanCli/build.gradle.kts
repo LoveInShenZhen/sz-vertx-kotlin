@@ -47,8 +47,8 @@ tasks.test {
     useJUnitPlatform()
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
+kotlin { // Extension for easy setup
+    jvmToolchain(21) // Target version of generated JVM bytecode. See 7️⃣
 }
 
 tasks.withType<JavaExec> {
