@@ -5,6 +5,7 @@ import myquant.rpc.client.ChannelFactory
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
+import kotlin.time.measureTime
 
 //
 // Created by drago on 2023/9/11 011.
@@ -104,5 +105,20 @@ class TradeDateTest :DsProxyTesterBase() {
         assert(rsp.datesCount == 242)
     }
 
+    @Test
+    @DisplayName("查询2424年2月份的交易日历")
+    fun GetTradingDate_2024_02() {
+        measureTime {
+            val req = GetTradingDatesReq {
+                exchange = "SHSE"
+                startDate = "2024-02-01"
+                endDate = "2024-02-29"
+            }
 
+            val rsp = fundamental_api.getTradingDates(req)
+            rsp.datesList.forEach {
+                logger.info("${it.toLocalDate().toString()}")
+            }
+        }
+    }
 }

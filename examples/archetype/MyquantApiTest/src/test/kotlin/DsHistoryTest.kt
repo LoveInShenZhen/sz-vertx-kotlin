@@ -5,11 +5,13 @@ import commons.toLocalDateTime
 import io.grpc.Metadata
 import io.grpc.stub.MetadataUtils
 import jdk.jfr.Frequency
+import myquant.proto.platform.data.DataProto
 import myquant.proto.platform.data.fundamental.GetPreviousTradingDateReq
 import myquant.proto.platform.data.history.GetCurrentTicksReq
 import myquant.proto.platform.data.history.GetHistoryBarsNReq
 import myquant.proto.platform.data.history.GetHistoryBarsReq
 import myquant.proto.platform.data.history.GetHistoryTicksReq
+import myquant.proto.platform.data.history.HistoryServiceProto.GetHistoryBarsReq
 import myquant.proto.platform.data.history.HistoryServiceProto.GetHistoryTicksReq
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -19,6 +21,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 import kotlin.math.log
+import kotlin.time.measureTime
 
 //
 // Created by drago on 2023/9/22 022.
@@ -362,4 +365,151 @@ SHSE.000053
         val rsp = history_api.getHistoryBars(req)
         logger.info("查询结果 ${rsp.dataCount} 条记录")
     }
+
+    @Test
+    @DisplayName("当前年度股票日线")
+    fun GetHistoryBar_1d_stock_this_year() {
+        MeasureTime {
+            val first_day = "${LocalDate.now().year}-01-01"
+            val last_day = "${LocalDate.now().year}-12-31"
+
+            val req = GetHistoryBarsReq {
+                frequency = "1d"
+                symbols = "SHSE.600000,SZSE.000001"
+                startTime = first_day
+                endTime = last_day
+            }
+
+            val rsp = history_api.getHistoryBars(req)
+            logger.info("查询结果 ${rsp.dataCount} 条记录")
+            rsp.dataList.forEach {
+                logger.info("${it.symbol}  ${it.eob.toLocalDate()}")
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("最近2年的股票日线")
+    fun GetHistoryBar_1d_stock_last_2_year() {
+        var rsp: DataProto.Bars? = null
+        MeasureTime {
+            val first_day = "${LocalDate.now().year-1}-01-01"
+            val last_day = "${LocalDate.now().year}-12-31"
+
+            val req = GetHistoryBarsReq {
+                frequency = "1d"
+                symbols = "SHSE.600000,SZSE.000001"
+                startTime = first_day
+                endTime = last_day
+            }
+
+            rsp = history_api.getHistoryBars(req)
+        }
+
+        logger.info("查询结果 ${rsp!!.dataCount} 条记录")
+        rsp!!.dataList.take(2).forEach {
+            logger.info("${it.symbol} ${it.eob.toLocalDate()}")
+        }
+        logger.info("...")
+        rsp!!.dataList.takeLast(2).forEach {
+            logger.info("${it.symbol} ${it.eob.toLocalDate()}")
+        }
+    }
+
+    @Test
+    @DisplayName("DCE.j2309")
+    fun GetHistoryBar_dce() {
+        MeasureTime {
+            val req = GetHistoryBarsReq {
+                symbols = "DCE.j2309"
+                startTime = "2023-07-01"
+                endTime = "2023-07-20"
+                frequency = "1d"
+            }
+
+            val rsp = history_api.getHistoryBars(req)
+            logger.info("查询结果 ${rsp!!.dataCount} 条记录")
+            rsp!!.dataList.forEach {
+                logger.info("${it.symbol} ${it.eob.toLocalDate()} open: ${it.open} close: ${it.close} volume: ${it.volume}")
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("查询虚拟合约日线")
+    fun GetHistoryBar_1d_ccsymbol() {
+        MeasureTime {
+            // history(symbol='SHFE.RB', frequency='1d', start_time='2022-09-14 00:00:00', end_time='2023-04-28 00:00:00', adjust=0, adjust_end_time=date, df=True)
+            val req = GetHistoryBarsReq {
+                symbols = "SHFE.RB"
+                frequency = "1d"
+                startTime = "2020-09-14 00:00:00"
+                endTime = "2023-04-28 00:00:00"
+            }
+
+            val rsp = history_api.getHistoryBars(req)!!
+            logger.info("查询结果 ${rsp.dataCount} 条记录")
+            logger.info("第一条结果:\n${rsp.dataList.first()}")
+            logger.info("最后一条结果:\n${rsp.dataList.last()}")
+        }
+    }
+
+    @Test
+    @DisplayName("日线查询, 过滤掉成交量为0的记录(停牌)")
+    fun GetHistoryBars_filter_volume_zero() {
+        MeasureTime {
+            val req = GetHistoryBarsReq {
+                symbols = "SZSE.128127"
+                frequency = "1d"
+                startTime = "2021-12-14"
+                endTime = "2021-12-24"
+            }
+
+            val rsp = history_api.getHistoryBars(req)!!
+            logger.info("查询结果 ${rsp.dataCount} 条记录")
+            rsp.dataList.forEach {
+                logger.info("${it.bob.toLocalDate()} open: ${it.open} close: ${it.close} volume: ${it.volume}")
+            }
+        }
+    }
+
+    @Test
+    fun GetHistoryBar_sunsen() {
+        MeasureTime {
+            val req = GetHistoryBarsReq {
+                symbols = "SHSE.600000"
+                frequency = "60s"
+                startTime = "2022-06-01 11:00:00"
+                endTime = "2022-06-01 13:21:00"
+            }
+
+            val rsp = history_api.getHistoryBars(req)!!
+            logger.info("查询结果 ${rsp.dataCount} 条记录")
+            rsp.dataList.forEach {
+                logger.info("${it.bob.toLocalDate()} open: ${it.open} close: ${it.close} volume: ${it.volume} BOB: ${it.bob.toLocalDateTime()} EOB: ${it.eob.toLocalDateTime()}")
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("debug")
+    fun GetHistoryBarsReq_adj_test() {
+        MeasureTime {
+            val req = GetHistoryBarsReq {
+                symbols = "SZSE.000001"
+                frequency = "1d"
+                startTime = "1990-04-21 09:00"
+                endTime = "1991-04-29 10:08"
+                adjust = 1
+                adjustEndTime = "1991-04-29"
+            }
+
+            val rsp = history_api.getHistoryBars(req)!!
+            logger.info("查询结果 ${rsp.dataCount} 条记录")
+            rsp.dataList.forEach {
+                logger.info("${it.bob.toLocalDate()} open: ${it.open} close: ${it.close} volume: ${it.volume} BOB: ${it.bob.toLocalDateTime()} EOB: ${it.eob.toLocalDateTime()}")
+            }
+        }
+    }
+
 }

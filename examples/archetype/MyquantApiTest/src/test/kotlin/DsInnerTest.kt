@@ -1,5 +1,8 @@
+import commons.toLocalDateTime
 import myquant.proto.platform.data.data_dists.BatchQueryReq
+import myquant.proto.platform.data.data_dists.DataInnerServiceProto
 import myquant.proto.platform.data.data_dists.DataInnerServiceProto.ExchangeSymbols
+import myquant.proto.platform.data.data_dists.DayBarsReq
 import myquant.proto.platform.data.data_dists.ExchangeSymbols
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -73,4 +76,17 @@ class DsInnerTest : DsProxyTesterBase() {
         doTicksBatchQuery_PerformanceTest(3000)
     }
 
+    @Test
+    fun TestDayBars() {
+        val req = DayBarsReq {
+            symbol = "SZSE.000001"
+            fromDay = "1991-04-12"
+            toDay = "1991-04-29"
+        }
+
+        val rsp = innder_api.dayBars(req)
+        rsp.dataList.forEach{
+            logger.info("${it.bob.toLocalDateTime()}")
+        }
+    }
 }
