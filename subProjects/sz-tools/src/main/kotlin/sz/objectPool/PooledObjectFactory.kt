@@ -20,7 +20,7 @@ abstract class PooledObjectFactory<T : Any> {
 
     }
 
-    open fun destoryObject(target: T) {
-//        Logger.debug("Destory pooled object: [${System.identityHashCode(obj)}]")
+    open fun destroyObject(target: T) {
+//        Logger.debug("Destroy pooled object: [${System.identityHashCode(obj)}]")
     }
 }

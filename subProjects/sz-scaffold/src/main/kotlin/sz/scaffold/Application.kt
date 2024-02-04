@@ -55,7 +55,6 @@ object Application {
     val inProductionMode: Boolean
 
     private var _vertx: Vertx? = null
-    private const val szPropertiesUrlKey = "sz.properties.url"
 
     val vertx: Vertx
         get() {
@@ -88,10 +87,8 @@ object Application {
         writePidFile()
 
         // setup use SLF4JLogDelegateFactory
-        // ref: https://vertx.io/docs/vertx-core/kotlin/#_using_another_logging_framework
+        // ref: https://vertx.io/docs/vertx-core/java/#_configuring_with_the_system_property
         System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.SLF4JLogDelegateFactory")
-
-        loadProperties()
 
         val confFolder = File(filePathJoin(SystemUtils.getUserDir().absolutePath, "conf"))
         if (confFolder.exists()) {
@@ -158,24 +155,6 @@ object Application {
         }
     }
 
-    private fun loadProperties() {
-        try {
-            val propertiesUrl = System.getProperty(szPropertiesUrlKey, "")
-
-            if (propertiesUrl.isNotBlank()) {
-                val url = URI.create(propertiesUrl).toURL()  //URL(propertiesUr)
-                url.openStream().use {
-                    val properties = Properties()
-                    properties.load(it)
-                    properties.forEach { prop ->
-                        System.setProperty(prop.key.toString(), prop.value.toString())
-                    }
-                }
-            }
-        } catch (ex: Exception) {
-            throw RuntimeException("Failed to load global properties. Please check whether the config -D$szPropertiesUrlKey is valid.")
-        }
-    }
 
     private fun setupConfPathProperty(propName: String, default: String) {
         if (System.getProperties().containsKey(propName).not()) {

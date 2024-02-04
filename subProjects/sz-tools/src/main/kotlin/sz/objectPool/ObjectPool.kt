@@ -109,7 +109,7 @@ open class ObjectPool<T : Any>(val config: PoolConfig, val factory: PooledObject
     private fun doDestory(pooledObject: PooledObject<T>) {
         scope.launch(Dispatchers.IO) {
             try {
-                factory.destoryObject(pooledObject.target)
+                factory.destroyObject(pooledObject.target)
             } catch (ex: Exception) {
                 Logger.warn("${factory.javaClass.name}.onDestoryObject(...) failed.\n$ex")
             }
@@ -210,7 +210,7 @@ open class ObjectPool<T : Any>(val config: PoolConfig, val factory: PooledObject
         idleObjMap.toList().forEach {
             try {
                 idleObjMap.remove(it.first)
-                factory.destoryObject(it.second.target)
+                factory.destroyObject(it.second.target)
             } catch (ex: Exception) {
                 Logger.warn("${factory.javaClass.name}.onDestoryObject(...) failed.\n$ex")
             }
