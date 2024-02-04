@@ -31,12 +31,12 @@ open class DsProxyTesterBase {
             channel_factory = test_env_channel_factory()
             val ds_proxy_channel = test_env_local_ds_proxy_channel()
 
-            fundamental_api = FundamentalServiceGrpc.newBlockingStub(ds_proxy_channel)
-            instrument_api = InstrumentServiceGrpc.newBlockingStub(ds_proxy_channel)
-            fundProxy_api = FundProxyServiceGrpc.newBlockingStub(ds_proxy_channel)
-            history_api = HistoryServiceGrpc.newBlockingStub(ds_proxy_channel)
-            innder_api = HistoryInnerServiceGrpc.newBlockingStub(ds_proxy_channel)
-            health_api = HealthCheckServiceGrpc.newBlockingStub(ds_proxy_channel)
+            fundamental_api = FundamentalServiceGrpc.newBlockingStub(ds_proxy_channel).withCompression("gzip")
+            instrument_api = InstrumentServiceGrpc.newBlockingStub(ds_proxy_channel).withCompression("gzip")
+            fundProxy_api = FundProxyServiceGrpc.newBlockingStub(ds_proxy_channel).withCompression("gzip")
+            history_api = HistoryServiceGrpc.newBlockingStub(ds_proxy_channel).withCompression("gzip")
+            innder_api = HistoryInnerServiceGrpc.newBlockingStub(ds_proxy_channel).withCompression("gzip")
+            health_api = HealthCheckServiceGrpc.newBlockingStub(ds_proxy_channel).withCompression("gzip")
 
             // 先ping一下, 保证已经创建好 grpc 连接
             health_api.ping(Empty.newBuilder().build())

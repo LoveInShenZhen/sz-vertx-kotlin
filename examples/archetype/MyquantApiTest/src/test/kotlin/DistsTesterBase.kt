@@ -20,7 +20,7 @@ open class DistsTesterBase {
 
             val dists_channel = local_data_dists_channel()
 
-            basic_data_dists_api = BasicDataQueryServiceGrpc.newBlockingStub(dists_channel)
+            basic_data_dists_api = BasicDataQueryServiceGrpc.newBlockingStub(dists_channel).withCompression("gzip")
 
         }
 

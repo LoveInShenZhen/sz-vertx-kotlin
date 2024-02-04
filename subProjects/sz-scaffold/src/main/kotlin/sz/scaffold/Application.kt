@@ -2,7 +2,6 @@ package sz.scaffold
 
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
-import io.vertx.core.AsyncResult
 import io.vertx.core.Vertx
 import io.vertx.core.VertxOptions
 import io.vertx.core.http.HttpMethod
@@ -44,7 +43,7 @@ import kotlinx.coroutines.runBlocking as kxRunBlocking
 //
 // Created by kk on 17/8/19.
 //
-@Suppress("MemberVisibilityCanBePrivate", "HasPlatformType", "ObjectPropertyName")
+@Suppress("MemberVisibilityCanBePrivate", "HasPlatformType")
 object Application {
 
     private val startHandlers = mutableMapOf<Int, MutableList<() -> Unit>>()
@@ -185,36 +184,30 @@ object Application {
         }
     }
 
-    fun setupVertx(appVertx: Vertx? = null) {
-        if (_vertx != null) {
-            throw SzException("The vertx of Application has been initialized. Do not initialize it again.")
-        }
-        _vertx = appVertx ?: createVertx()
-
-        logClusterNodeId()
-    }
+//    fun setupVertx(appVertx: Vertx? = null) {
+//        if (_vertx != null) {
+//            throw SzException("The vertx of Application has been initialized. Do not initialize it again.")
+//        }
+//        _vertx = appVertx ?: createVertx()
+//
+//        logClusterNodeId()
+//    }
 
     fun createVertx(): Vertx {
         this._vertoptions = buildVertxOptions()
 
         if (this.isClustered) {
             Logger.info("Vertx: cluster mode")
-            val future = CompletableFuture<Vertx>()
 
             val zookeeperConfig = JsonObject(config.getConfig("app.vertx.zookeeper").root().unwrapped().toShortJson())
-            this._vertoptions!!.clusterManager = ZookeeperClusterManager(zookeeperConfig)
+            val clusterManager = ZookeeperClusterManager(zookeeperConfig)
 
-            Vertx.clusteredVertx(this._vertoptions) { event: AsyncResult<Vertx> ->
-                if (event.failed()) {
-                    throw SzException("Failed to create cluster mode Vertx: ${event.cause().message}")
-                } else {
-                    future.complete(event.result())
-                }
-            }
-            return future.get()
+            val fut = Vertx.builder().with(this.vertxOptions).withClusterManager(clusterManager).buildClustered()
+            return fut.result()
+
         } else {
             Logger.info("Vertx: standalone mode")
-            return Vertx.vertx(this._vertoptions)
+            return Vertx.builder().with(this.vertxOptions).build()
         }
 
     }

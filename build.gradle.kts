@@ -20,7 +20,7 @@ allprojects {
 
     repositories {
         mavenLocal()
-        maven(url="https://maven.aliyun.com/repository/public/")
+//        maven(url="https://maven.aliyun.com/repository/public/")
         mavenCentral()
     }
 

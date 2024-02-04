@@ -14,7 +14,7 @@ plugins {
 
 dependencies {
     api(project(":subProjects:sz-scaffold"))
-    api("io.vertx:vertx-redis-client:4.3.7")
+    api("io.vertx:vertx-redis-client:4.5.2")
 
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")

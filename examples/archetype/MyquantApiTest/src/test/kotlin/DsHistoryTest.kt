@@ -6,6 +6,8 @@ import io.grpc.Metadata
 import io.grpc.stub.MetadataUtils
 import jdk.jfr.Frequency
 import myquant.proto.platform.data.DataProto
+import myquant.proto.platform.data.ds_instrument.GetSymbolInfosReq
+import myquant.proto.platform.data.ds_instrument.GetSymbolsReq
 import myquant.proto.platform.data.fundamental.GetPreviousTradingDateReq
 import myquant.proto.platform.data.history.GetCurrentTicksReq
 import myquant.proto.platform.data.history.GetHistoryBarsNReq
@@ -509,6 +511,66 @@ SHSE.000053
             rsp.dataList.forEach {
                 logger.info("${it.bob.toLocalDate()} open: ${it.open} close: ${it.close} volume: ${it.volume} BOB: ${it.bob.toLocalDateTime()} EOB: ${it.eob.toLocalDateTime()}")
             }
+        }
+    }
+
+    @Test
+    @DisplayName("3000 个symbol 查询1年的日线")
+    fun GetDayBar_3000_symbols_1year() {
+        val req_infos = GetSymbolInfosReq {
+            secType1 = 1010
+            addExchanges("SHSE")
+            addExchanges("SZSE")
+        }
+        val rsp_infos = instrument_api.getSymbolInfos(req_infos)
+        val symbol_list = rsp_infos.symbolInfosList.map { it.symbol }.take(3000)
+
+        val sql = "select count(*) from dists_day_bar where symbol in (${symbol_list.map { "'"+it + "'" }.joinToString(",")}) AND volume > 0 AND trade_date between '2023-01-01' AND '2023-12-31'"
+        logger.info(sql)
+
+        logger.info("symbol 数量: ${symbol_list.size}")
+        MeasureTime {
+            val req = GetHistoryBarsReq {
+                symbols = symbol_list.joinToString(",")
+                frequency = "1d"
+                startTime = "2023-01-01"
+                endTime = "2023-12-31"
+                adjust = 1
+                adjustEndTime = "2023-12-31"
+            }
+
+            val rsp = history_api.getHistoryBars(req)!!
+            logger.info("查询结果 ${rsp.dataCount} 条记录")
+        }
+    }
+
+    @Test
+    @DisplayName("3000 个symbol 查询1天的日线")
+    fun GetDayBar_3000_symbols_1day() {
+        val req_infos = GetSymbolInfosReq {
+            secType1 = 1010
+            addExchanges("SHSE")
+            addExchanges("SZSE")
+        }
+        val rsp_infos = instrument_api.getSymbolInfos(req_infos)
+        val symbol_list = rsp_infos.symbolInfosList.map { it.symbol }.take(3000)
+
+        logger.info("symbol 数量: ${symbol_list.size}")
+        MeasureTime {
+            val req = GetHistoryBarsReq {
+                symbols = symbol_list.joinToString(",")
+                frequency = "1d"
+                startTime = "2023-02-15"
+                endTime = "2023-02-15"
+                adjust = 0
+                adjustEndTime = "2023-12-31"
+            }
+
+            val sql = "select count(*) from dists_day_bar where symbol in (${symbol_list.map { "'"+it + "'" }.joinToString(",")}) AND volume > 0 AND trade_date between '${req.startTime}' AND '${req.endTime}'"
+            logger.info(sql)
+
+            val rsp = history_api.getHistoryBars(req)!!
+            logger.info("查询结果 ${rsp.dataCount} 条记录")
         }
     }
 

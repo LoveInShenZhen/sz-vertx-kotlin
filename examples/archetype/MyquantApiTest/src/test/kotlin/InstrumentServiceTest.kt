@@ -499,6 +499,20 @@ class InstrumentServiceTest : DsProxyTesterBase() {
     }
 
     @Test
+    fun TestGetSymbolInfos_by_sec_type1_CFFEX() {
+        MeasureTime {
+            val req = GetSymbolInfosReq {
+                secType1 = 1040
+                addExchanges("CFFEX")
+            }
+
+            val rsp = instrument_api.getSymbolInfos(req)
+            assert(rsp.symbolInfosCount > 0)
+            logger.info("共有 ${rsp.symbolInfosCount} 支期货的码表基本面信息")
+        }
+    }
+
+    @Test
     @DisplayName("debug")
     fun TestGetSymbolInfos_CZCE_AP99() {
         MeasureTime {
@@ -511,6 +525,24 @@ class InstrumentServiceTest : DsProxyTesterBase() {
             logger.info("结果记录 ${rsp.symbolInfosCount} 条记录")
             rsp.symbolInfosList.forEach {
                 logger.info("${it.secName} ${it.listedDate.toLocalDate()}")
+            }
+        }
+    }
+
+    @Test
+    fun TestGetHistorySymbol_SHSE_501000() {
+        MeasureTime {
+            val req = GetHistorySymbolReq {
+                symbol = "SHSE.501000"
+                startDate = "2024-01-22"
+                endDate = "2024-01-22"
+            }
+
+            val rsp = instrument_api.getHistorySymbol(req)
+
+            logger.info("结果记录 ${rsp.symbolsCount} 条记录")
+            rsp.symbolsList.forEach {
+                logger.info("${it.toString()}}")
             }
         }
     }

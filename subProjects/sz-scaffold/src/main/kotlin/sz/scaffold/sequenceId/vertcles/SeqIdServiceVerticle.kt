@@ -12,6 +12,7 @@ import io.vertx.kotlin.core.shareddata.getLockAwait
 import io.vertx.kotlin.core.shareddata.putAwait
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.await
+import io.vertx.kotlin.coroutines.coAwait
 import sz.scaffold.Application
 import sz.scaffold.sequenceId.IdGenerator
 import sz.scaffold.sequenceId.exceptions.FailedToGetWorkerId
@@ -81,9 +82,9 @@ class SeqIdServiceVerticle : CoroutineVerticle() {
             var lock: Lock? = null
 
             try {
-                lock = shareData.getLock(idMapLockName).await()
-                val shareMap = shareData.getAsyncMap<String, String>(idMapName).await()
-                val mapJson = shareMap.get(mapkey).await()
+                lock = shareData.getLock(idMapLockName).coAwait()
+                val shareMap = shareData.getAsyncMap<String, String>(idMapName).coAwait()
+                val mapJson = shareMap.get(mapkey).coAwait()
                 val idMap: MutableMap<Long, String> = if (mapJson.isNullOrBlank()) {
                     mutableMapOf()
                 } else {
@@ -97,7 +98,7 @@ class SeqIdServiceVerticle : CoroutineVerticle() {
                 for (id in 0..IdGenerator.maxWorkerId) {
                     if (idMap.containsKey(id).not()) {
                         idMap[id] = workerName
-                        shareMap.put(mapkey, idMap.toJsonPretty()).await()
+                        shareMap.put(mapkey, idMap.toJsonPretty()).coAwait()
                         return id
                     }
                 }
@@ -117,10 +118,10 @@ class SeqIdServiceVerticle : CoroutineVerticle() {
             var lock: Lock? = null
 
             try {
-                lock = shareData.getLock(idMapLockName).await()
+                lock = shareData.getLock(idMapLockName).coAwait()
 
-                val shareMap = shareData.getAsyncMap<String, String>(idMapName).await()
-                val mapJson = shareMap.get(mapkey).await()
+                val shareMap = shareData.getAsyncMap<String, String>(idMapName).coAwait()
+                val mapJson = shareMap.get(mapkey).coAwait()
                 val idMap: MutableMap<Long, String> = if (mapJson.isNullOrBlank()) {
                     mutableMapOf()
                 } else {
@@ -131,7 +132,7 @@ class SeqIdServiceVerticle : CoroutineVerticle() {
                     idMap.remove(workerId)
                 }
 
-                shareMap.put(mapkey, idMap.toJsonPretty()).await()
+                shareMap.put(mapkey, idMap.toJsonPretty()).coAwait()
             } finally {
                 lock?.release()
             }

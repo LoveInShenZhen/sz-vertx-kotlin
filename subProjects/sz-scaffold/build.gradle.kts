@@ -12,15 +12,15 @@ dependencies {
 
     // android gradle依赖：implementation 和compile的区别
     // 参考: https://www.jianshu.com/p/f34c179bc9d0 根据需要选择使用不同的依赖设定方式
-    api("io.vertx:vertx-core:4.3.7")
-    api("io.vertx:vertx-web:4.3.7")
-    api("io.vertx:vertx-zookeeper:4.3.7") {
+    api("io.vertx:vertx-core:4.5.2")
+    api("io.vertx:vertx-web:4.5.2")
+    api("io.vertx:vertx-zookeeper:4.5.2") {
         this.exclude(group="log4j")
     }
-    api("io.vertx:vertx-lang-kotlin:4.3.7") {
+    api("io.vertx:vertx-lang-kotlin:4.5.2") {
         this.exclude(group = "org.jetbrains.kotlin")
     }
-    api("io.vertx:vertx-lang-kotlin-coroutines:4.3.7") {
+    api("io.vertx:vertx-lang-kotlin-coroutines:4.5.2") {
         this.exclude(group = "org.jetbrains.kotlin")
     }
 

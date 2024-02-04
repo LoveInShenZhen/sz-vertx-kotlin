@@ -1,6 +1,7 @@
 package sz.redis
 
 import io.vertx.kotlin.coroutines.await
+import io.vertx.kotlin.coroutines.coAwait
 import io.vertx.kotlin.redis.client.sendAwait
 import io.vertx.redis.client.*
 
@@ -10,12 +11,12 @@ import io.vertx.redis.client.*
 
 suspend fun Redis.setAwait(key: String, value: ByteArray): Response? {
     val req = Request.cmd(Command.SET).arg(key).arg(value)
-    return this.send(req).await()
+    return this.send(req).coAwait()
 }
 
 suspend fun Redis.psetexAwait(key: String, value: ByteArray, expirationInMs: Long): Response? {
     val req = Request.cmd(Command.PSETEX).arg(key).arg(expirationInMs).arg(value)
-    return this.send(req).await()
+    return this.send(req).coAwait()
 }
 
 fun Redis.api(): RedisAPI {
