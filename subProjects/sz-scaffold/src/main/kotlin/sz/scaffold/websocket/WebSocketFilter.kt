@@ -30,11 +30,11 @@ class WebSocketFilter(private val vertx: Vertx) : WebSocketHandler {
 
     override fun handle(webSocket: ServerWebSocket) {
         try {
-            val handlerInstence = pathHandlerMap.getOrDefault(webSocket.path(), rejectHandler)
+            val handlerInstance = pathHandlerMap.getOrDefault(webSocket.path(), rejectHandler)
             if (autoPingByServer) {
-                handlerInstence.handle(AutoPingServerWebSocket(webSocket, vertx, pingInterval))
+                handlerInstance.handle(AutoPingServerWebSocket(webSocket, vertx, pingInterval))
             } else {
-                handlerInstence.handle(webSocket)
+                handlerInstance.handle(webSocket)
             }
         } catch (ex: Exception) {
             webSocket.close(500, ex.message)
