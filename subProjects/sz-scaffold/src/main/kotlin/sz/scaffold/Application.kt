@@ -16,15 +16,13 @@ import io.vertx.spi.cluster.zookeeper.ZookeeperClusterManager
 import jodd.exception.ExceptionUtil
 import jodd.io.FileNameUtil
 import jodd.io.FileUtil
+import jodd.io.PathUtil
 import jodd.system.SystemInfo
-import jodd.util.ClassLoaderUtil
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import org.apache.commons.lang3.SystemUtils
 import sz.scaffold.controller.ApiRoute
 import sz.scaffold.controller.BodyHandlerOptions
 import sz.scaffold.dispatchers.IDispatcherFactory
-import sz.scaffold.ext.changeWorkingDir
 import sz.scaffold.ext.filePathJoin
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.json.toShortJson
@@ -33,10 +31,11 @@ import sz.scaffold.websocket.WebSocketFilter
 import java.io.File
 import java.lang.management.ManagementFactory
 import java.net.InetAddress
-import java.net.URI
-import java.util.*
+import java.nio.file.Paths
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutorService
+import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
 import kotlinx.coroutines.runBlocking as kxRunBlocking
 
 
@@ -50,7 +49,7 @@ object Application {
     private val stopHandlers = mutableMapOf<Int, MutableList<() -> Unit>>()
 
     val config: Config
-    val appHome: String
+    val confDir: String
     val classLoader = Application::class.java.classLoader
     val inProductionMode: Boolean
 
@@ -89,6 +88,13 @@ object Application {
         // setup use SLF4JLogDelegateFactory
         // ref: https://vertx.io/docs/vertx-core/java/#_configuring_with_the_system_property
         System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.SLF4JLogDelegateFactory")
+
+        val app_conf_fpath = System.getProperty("config.file")
+        if (app_conf_fpath.isNullOrBlank()) {
+            this.confDir = Path(".").absolutePathString()
+        } else {
+            this.confDir = Path(app_conf_fpath).parent.absolutePathString()
+        }
 
         config = ConfigFactory.load()
 
@@ -194,7 +200,7 @@ object Application {
     }
 
     fun getFile(relativePath: String): File {
-        return File(filePathJoin(appHome, relativePath))
+        return File(filePathJoin(confDir, relativePath))
     }
 
     // 从 conf/route 文件, 以及 conf/sub_routes/*.route 子路由文件里加载路由配置
@@ -321,6 +327,7 @@ object Application {
 
             val jsonOpts = JsonObject(configContent)
             val opts = VertxOptions(jsonOpts)
+            opts.setPreferNativeTransport(true)
 
             // 需要修正 clusterHost, 不然不同主机节点之间的 EventBus 不会互通
             val hostIp = InetAddress.getLocalHost().hostAddress
@@ -370,7 +377,7 @@ object Application {
             this.mergeFormAttributes = config.getBoolean("app.httpServer.bodyHandler.mergeFormAttributes")
             this.deleteUploadedFilesOnEnd = config.getBoolean("app.httpServer.bodyHandler.deleteUploadedFilesOnEnd")
             this.uploadsDirectory =
-                    filePathJoin(appHome, config.getString("app.httpServer.bodyHandler.uploadsDirectory"))
+                    filePathJoin(confDir, config.getString("app.httpServer.bodyHandler.uploadsDirectory"))
         }
     }
 

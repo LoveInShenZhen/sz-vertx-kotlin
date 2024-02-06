@@ -1,7 +1,7 @@
 import java.nio.file.Path
 
 plugins {
-  kotlin ("jvm") version "1.9.22"
+  kotlin("jvm") version "1.9.22"
   application
 }
 
@@ -37,9 +37,16 @@ kotlin { // Extension for easy setup
   jvmToolchain(21) // Target version of generated JVM bytecode. See 7️⃣
 }
 
+val jvm_args_for_encoding = listOf(
+  "-Dfile.encoding=UTF-8",
+  "-Dsun.stdout.encoding=UTF-8",
+  "-Dsun.stderr.encoding=UTF-8",
+  "-Dsun.jnu.encoding=UTF-8"
+)
 
 application {
   mainClass.set("com.quantplus.MainApp")
+  this.applicationDefaultJvmArgs = jvm_args_for_encoding
 }
 
 tasks.withType<JavaCompile> {
@@ -51,14 +58,13 @@ tasks.withType<JavaExec> {
   val appconf = Path.of(this.project.rootDir.absolutePath, "conf", "application.conf")
   val logbackConfPath = Path.of(this.project.rootDir.absolutePath, "conf", "logback.xml")
 //  val ebeanConfPath = Path.of(this.project.rootDir.absolutePath, "conf", "ebean.yml")
+
   this.jvmArgs(
-    "-Dfile.encoding=UTF-8",
-    "-Dsun.stdout.encoding=UTF-8",
-    "-Dsun.stderr.encoding=UTF-8",
     "-Dlogback.configurationFile=${logbackConfPath}",
-//    "-Dprops.file=${ebeanConfPath}",
     "-Dconfig.file=${appconf}"
   )
+
+  this.jvmArguments.addAll(jvm_args_for_encoding)
 
   println(this.jvmArgs?.joinToString(" "))
 }

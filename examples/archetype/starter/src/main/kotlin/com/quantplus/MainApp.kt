@@ -10,7 +10,7 @@ class MainApp {
     fun main(args: Array<String>) {
       initLogbackConfigFilePath()
       val encoding = System.getProperty("file.encoding")
-      println(encoding)
+      println("args: ${args.joinToString(" ")}")
       println("hello quant plus 中文测试+++")
     }
 
