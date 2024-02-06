@@ -90,44 +90,6 @@ object Application {
         // ref: https://vertx.io/docs/vertx-core/java/#_configuring_with_the_system_property
         System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.SLF4JLogDelegateFactory")
 
-        val confFolder = File(filePathJoin(SystemUtils.getUserDir().absolutePath, "conf"))
-        if (confFolder.exists()) {
-            appHome = SystemUtils.getUserDir().absolutePath
-        } else {
-            if (SystemUtils.getUserDir().name == "bin" &&
-                    SystemUtils.getUserDir().parentFile.hasFile("conf${File.separator}application.conf")
-            ) {
-                appHome = SystemUtils.getUserDir().parent
-            } else {
-                val jarFile = ClassLoaderUtil.getDefaultClasspath().find { it.name.startsWith("kotlin-stdlib-") }
-                        ?: throw SzException("class path 里不包含 kotlin-stdlib-*.jar, 请检查build.gradle")
-                appHome = File(jarFile.parent).parent
-            }
-        }
-
-        val logbackXmlPath = filePathJoin(appHome, "conf", "logback.xml")
-        setupConfPathProperty("logback.configurationFile", logbackXmlPath)
-
-        val currentDir = File("").absolutePath
-        Logger.debug("current dir: $currentDir")
-        Logger.debug("appHome : $appHome")
-        Logger.debug("""-Dlogback.configurationFile : ${System.getProperty("logback.configurationFile")}""")
-
-        Logger.debug("Change working dir to appHome")
-        changeWorkingDir(appHome)
-
-        val confPath = filePathJoin(appHome, "conf", "application.conf")
-        if (File(confPath).exists().not()) {
-            throw SzException("appHome 路径推断错误, 因为 [$confPath] 不存在")
-        }
-
-        if (System.getProperties().containsKey("config.url")) {
-            Logger.debug("""-Dconfig.url : ${System.getProperty("config.url")}""")
-        } else {
-            setupConfPathProperty("config.file", confPath)
-            Logger.debug("""-Dconfig.file : ${System.getProperty("config.file")}""")
-        }
-
         config = ConfigFactory.load()
 
         inProductionMode = config.getBoolean("app.httpServer.productionMode")
@@ -156,23 +118,16 @@ object Application {
     }
 
 
-    private fun setupConfPathProperty(propName: String, default: String) {
-        if (System.getProperties().containsKey(propName).not()) {
-            // If it is not specified, it will be specified as our default value
-            System.setProperty(propName, default)
+    fun setupVertx(appVertx: Vertx? = null) {
+        if (_vertx != null) {
+            throw SzException("The vertx of Application has been initialized. Do not initialize it again.")
         }
+        _vertx = appVertx ?: createVertx()
+
+        logClusterNodeId()
     }
 
-//    fun setupVertx(appVertx: Vertx? = null) {
-//        if (_vertx != null) {
-//            throw SzException("The vertx of Application has been initialized. Do not initialize it again.")
-//        }
-//        _vertx = appVertx ?: createVertx()
-//
-//        logClusterNodeId()
-//    }
-
-    fun createVertx(): Vertx {
+    private fun createVertx(): Vertx {
         this._vertoptions = buildVertxOptions()
 
         if (this.isClustered) {

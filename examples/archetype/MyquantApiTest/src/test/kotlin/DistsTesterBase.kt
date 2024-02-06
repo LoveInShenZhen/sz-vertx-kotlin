@@ -1,4 +1,5 @@
 import com.google.protobuf.Empty
+import com.googlecode.protobuf.format.JsonJacksonFormat
 import io.grpc.Channel
 import myquant.proto.platform.data.data_dists.BasicDataQueryServiceGrpc
 import myquant.proto.platform.health.HealthCheckServiceGrpc
@@ -14,6 +15,8 @@ open class DistsTesterBase {
         val logger = LoggerFactory.getLogger("UnitTest")!!
         val channel_factory: ChannelFactory
         val basic_data_dists_api: BasicDataQueryServiceGrpc.BasicDataQueryServiceBlockingStub
+        val json_formatter = JsonJacksonFormat()
+
 
         init {
             channel_factory = test_env_channel_factory()
@@ -22,6 +25,7 @@ open class DistsTesterBase {
 
             basic_data_dists_api = BasicDataQueryServiceGrpc.newBlockingStub(dists_channel).withCompression("gzip")
 
+            json_formatter.defaultCharset = Charsets.UTF_8
         }
 
         fun MeasureTime(block: () -> Unit) {

@@ -20,6 +20,15 @@ dependencies {
     api("myquant.cn:myquant-kroto:1.0-SNAPSHOT")
     implementation("ch.qos.logback:logback-classic:1.4.11")
 
+    api("com.fasterxml.jackson.module:jackson-module-jsonSchema:2.14.3")
+    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.3") {
+        this.exclude(group = "org.jetbrains.kotlin")
+    }
+    api("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.14.3")
+    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.3")
+    api("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.3")
+    api("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.14.3")
+
     testImplementation(kotlin("test"))
 }
 

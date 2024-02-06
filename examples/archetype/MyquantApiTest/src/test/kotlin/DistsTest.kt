@@ -26,4 +26,19 @@ class DistsTest : DistsTesterBase(){
             logger.info("${it.patchDataType} create_time: ${it.patchCreateTime.toLocalDateTime()} sha1: ${it.sha1} downloadUrl: ${it.downloadUrl}")
         }
     }
+
+    @Test
+    fun GetHistoryTickPatchRecord() {
+        val req = GetPatchRecordsReq {
+            patchDataType = "history_tick_meta"
+            exchange = "SHSE"
+            year = 0
+            lastCutimeBuilder.setSeconds(LocalDateTime.of(2004, 1, 1, 0, 0, 0).toEpochSecond(ZoneOffset.UTC))
+        }
+
+        val rsp = basic_data_dists_api.getPatchRecords(req)
+        val record = rsp.dataList.filter { it.symbol == "SHSE.600000" }.first()
+        logger.info(json_formatter.printToString(record))
+
+    }
 }

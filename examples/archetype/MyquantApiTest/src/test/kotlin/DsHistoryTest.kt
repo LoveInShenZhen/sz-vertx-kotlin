@@ -1,5 +1,7 @@
 import com.google.protobuf.Empty
 import com.google.protobuf.EmptyProto
+import com.googlecode.protobuf.format.JsonFormat
+import com.googlecode.protobuf.format.JsonJacksonFormat
 import commons.toLocalDate
 import commons.toLocalDateTime
 import io.grpc.Metadata
@@ -15,6 +17,8 @@ import myquant.proto.platform.data.history.GetHistoryBarsReq
 import myquant.proto.platform.data.history.GetHistoryTicksReq
 import myquant.proto.platform.data.history.HistoryServiceProto.GetHistoryBarsReq
 import myquant.proto.platform.data.history.HistoryServiceProto.GetHistoryTicksReq
+import myquant.rpc.client.TokenUpdater
+import myquant.rpc.client.TokenUpdater.Companion.logger
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import java.time.Instant
@@ -571,6 +575,26 @@ SHSE.000053
 
             val rsp = history_api.getHistoryBars(req)!!
             logger.info("查询结果 ${rsp.dataCount} 条记录")
+        }
+    }
+
+    @Test
+    fun GetHistoryTick_for_revision_test() {
+        MeasureTime {
+            val req = GetHistoryTicksReq {
+                symbols = "SHSE.600000"
+                startTime = "2024-01-18 09:30:00"
+                endTime = "2024-01-18 09:31:00"
+            }
+
+            val rsp = history_api.getHistoryTicks(req)
+            logger.info("查询结果 ${rsp.dataCount} 条记录")
+
+            val json_formatter = JsonJacksonFormat()
+            json_formatter.defaultCharset = Charsets.UTF_8
+
+            logger.info("第一条记录:\n${json_formatter.printToString(rsp.dataList.first())}")
+            logger.info("最后一条记录:\n${json_formatter.printToString(rsp.dataList.last())}")
         }
     }
 
