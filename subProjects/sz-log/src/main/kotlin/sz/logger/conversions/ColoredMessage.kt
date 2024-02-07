@@ -1,9 +1,9 @@
-package sz.scaffold.tools.logger.conversions
+package sz.logger.conversions
 
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.pattern.ClassicConverter
 import ch.qos.logback.classic.spi.ILoggingEvent
-import sz.scaffold.tools.logger.AnsiColor
+import sz.logger.AnsiColor
 
 //
 // Created by kk on 2019/12/26.

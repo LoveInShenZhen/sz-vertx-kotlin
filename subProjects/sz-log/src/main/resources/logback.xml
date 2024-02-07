@@ -1,8 +1,8 @@
 <!-- https://www.playframework.com/documentation/latest/SettingsLogger -->
 <configuration>
 
-    <conversionRule conversionWord="coloredLevel" converterClass="sz.scaffold.tools.logger.conversions.ColoredLevel"/>
-    <conversionRule conversionWord="coloredMsg" converterClass="sz.scaffold.tools.logger.conversions.ColoredMessage"/>
+    <conversionRule conversionWord="coloredLevel" converterClass="sz.logger.conversions.ColoredLevel"/>
+    <conversionRule conversionWord="coloredMsg" converterClass="sz.logger.conversions.ColoredMessage"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>

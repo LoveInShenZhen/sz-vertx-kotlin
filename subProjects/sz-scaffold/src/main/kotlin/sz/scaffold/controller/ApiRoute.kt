@@ -8,6 +8,7 @@ import io.vertx.ext.web.RoutingContext
 import jodd.exception.ExceptionUtil
 import jodd.util.ClassUtil
 import kotlinx.coroutines.async
+import sz.logger.log
 import sz.scaffold.Application
 import sz.scaffold.annotations.PostForm
 import sz.scaffold.annotations.PostJson
@@ -20,7 +21,6 @@ import sz.scaffold.tools.SzException
 import sz.scaffold.tools.json.Json
 import sz.scaffold.tools.json.Json.toStrMap
 import sz.scaffold.tools.json.singleLineJson
-import sz.scaffold.tools.logger.Logger
 import java.io.File
 import java.math.BigDecimal
 import kotlin.reflect.KClass
@@ -96,7 +96,7 @@ data class ApiRoute(val method: HttpMethod,
                     onNormal(httpContext, result)
                 }
             } catch (ex: Throwable) {
-                Logger.debug(ExceptionUtil.exceptionChainToString(ex))
+                log.debug(ExceptionUtil.exceptionChainToString(ex))
                 val reply = ReplyBase()
                 val reason = ExceptionUtil.findCause(ex, BizLogicException::class.java)
                 if (reason != null) {

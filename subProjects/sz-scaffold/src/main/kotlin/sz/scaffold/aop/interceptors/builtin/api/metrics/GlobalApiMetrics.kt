@@ -1,10 +1,10 @@
 package sz.scaffold.aop.interceptors.builtin.api.metrics
 
+import org.slf4j.LoggerFactory
 import sz.scaffold.aop.interceptors.GlobalInterceptorBase
 import sz.scaffold.controller.reply.ReplyBase
 import sz.scaffold.tools.BizLogicException
 import sz.scaffold.tools.json.singleLineJson
-import sz.scaffold.tools.logger.Logger
 
 // app.httpServer.interceptors 中的配置
 // includes 和 excludes 采用通配符匹配, excludes 比 includes 的优先级高
@@ -26,7 +26,7 @@ import sz.scaffold.tools.logger.Logger
 @Suppress("DuplicatedCode", "unused")
 class GlobalApiMetrics : GlobalInterceptorBase() {
 
-    private val logger = Logger.of("sz.api.metrics")
+    private val logger = LoggerFactory.getLogger("sz.api.metrics")
 
     override suspend fun whenMatch(): Any? {
         val record = MetricsRecord()

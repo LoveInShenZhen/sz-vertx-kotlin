@@ -1,4 +1,4 @@
-package sz.scaffold.tools.logger
+package sz.logger
 
 /**
  * Created by kk on 17/4/11.

@@ -9,10 +9,10 @@ import models.TaskStatus
 import sz.ebean.DB
 import sz.ebean.SzEbeanConfig
 import sz.ebean.runTransactionBlocking
+import sz.logger.log
 import sz.scaffold.Application
 import sz.scaffold.ext.getIntOrElse
 import sz.scaffold.tools.json.Json
-import sz.scaffold.tools.logger.Logger
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
@@ -45,7 +45,7 @@ object PlanTaskService {
     fun start() {
         try {
             if (enabled.not()) {
-                Logger.debug("PlanTaskServer 不能运行. 请检查配置和数据库是否就绪")
+                log.debug("PlanTaskServer 不能运行. 请检查配置和数据库是否就绪")
                 return
             }
 
@@ -67,27 +67,27 @@ object PlanTaskService {
 
             eventConsumer = Application.vertx.eventBus().consumer(eventBusAddress) { _ -> notifyNewTask() }
 
-            Logger.info("Plan Task Service Started......")
+            log.info("Plan Task Service Started......")
 
         } catch (ex: Exception) {
             stopNow = true
             isRunning = false
 
-            Logger.warn("Start planTask service failed.\n${ExceptionUtil.exceptionStackTraceToString(ex)}")
+            log.warn("Start planTask service failed.\n${ExceptionUtil.exceptionStackTraceToString(ex)}")
         }
     }
 
     fun stop() {
-        Logger.info("Try to stop paln task service ...")
+        log.info("Try to stop paln task service ...")
         if (!isRunning) return
         stopNow = true
         try {
-            Logger.debug("Try to stop plan task loader...")
+            log.debug("Try to stop plan task loader...")
             notifyNewTask()
             seqPlanningTaskLoader!!.join(120000)
             parallerPlanningTaskLoader!!.join(120000)
 
-            Logger.debug("Try to stop plan task worker...")
+            log.debug("Try to stop plan task worker...")
             seqPlanningWorker.shutdown()
             parallelPlanningWorker.shutdown()
 
@@ -96,9 +96,9 @@ object PlanTaskService {
 
             eventConsumer!!.unregister()
 
-            Logger.debug("Plan Task Service Stopped......")
+            log.debug("Plan Task Service Stopped......")
         } catch (ex: Exception) {
-            Logger.error(ExceptionUtil.exceptionStackTraceToString(ex))
+            log.error(ExceptionUtil.exceptionStackTraceToString(ex))
         } finally {
             isRunning = false
         }
@@ -165,7 +165,7 @@ object PlanTaskService {
                         // 在 endTime 之前没有需要执行的 task, 尝试等待新任务, 释放 cpu
                         try {
                             synchronized(taskNotifier) {
-                                //  Logger.debug("开始等待task requireSeq:[$requireSeq}] 最多: $taskLoaderWaitTime 秒")
+                                //  log.debug("开始等待task requireSeq:[$requireSeq}] 最多: $taskLoaderWaitTime 秒")
                                 taskNotifier.wait(taskLoaderWaitTime * 1000L)
                             }
                         } catch (ex: Exception) {
@@ -175,11 +175,11 @@ object PlanTaskService {
 
                 } catch (ex: Exception) {
                     loadedTasks.clear()
-                    Logger.error(ExceptionUtil.exceptionStackTraceToString(ex))
+                    log.error(ExceptionUtil.exceptionStackTraceToString(ex))
                     Thread.sleep(10 * 1000L)
                 }
             }
-            Logger.debug("Stop PlanningTaskLoader for requireSeq: $requireSeq")
+            log.debug("Stop PlanningTaskLoader for requireSeq: $requireSeq")
         })
     }
 
@@ -191,7 +191,7 @@ object PlanTaskService {
                 try {
                     processTask(task)
                 } catch (ex: Exception) {
-                    Logger.error(ExceptionUtil.exceptionStackTraceToString(ex))
+                    log.error(ExceptionUtil.exceptionStackTraceToString(ex))
                 }
             }
 
@@ -204,7 +204,7 @@ object PlanTaskService {
             try {
                 processTask(task)
             } catch (ex: Exception) {
-                Logger.error(ExceptionUtil.exceptionStackTraceToString(ex))
+                log.error(ExceptionUtil.exceptionStackTraceToString(ex))
             }
         },
             delay,
@@ -253,7 +253,7 @@ object PlanTaskService {
                 }
             }
         } catch (ex: Exception) {
-            Logger.error(ExceptionUtil.exceptionStackTraceToString(ex))
+            log.error(ExceptionUtil.exceptionStackTraceToString(ex))
         }
     }
 

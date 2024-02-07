@@ -2,8 +2,8 @@ package sz.scaffold.tools.template
 
 import freemarker.template.Configuration
 import jodd.exception.ExceptionUtil
+import sz.logger.log
 import sz.scaffold.Application
-import sz.scaffold.tools.logger.Logger
 import java.io.File
 import java.io.IOException
 import java.io.StringWriter
@@ -20,7 +20,7 @@ object FileTemplate {
         try {
             templateConf.setDirectoryForTemplateLoading(templateDir())
         } catch (e: IOException) {
-            Logger.error(ExceptionUtil.exceptionStackTraceToString(e))
+            log.error(ExceptionUtil.exceptionStackTraceToString(e))
         }
 
     }

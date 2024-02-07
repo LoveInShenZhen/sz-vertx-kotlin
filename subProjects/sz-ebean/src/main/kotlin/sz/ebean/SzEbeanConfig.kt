@@ -10,10 +10,10 @@ import kotlinx.coroutines.*
 import sz.crypto.RsaUtil
 import sz.ebean.SzEbeanConfig.hikariConfigKeys
 import sz.ebean.registeredClass.JDateTimeConverter
+import sz.logger.log
 import sz.scaffold.Application
 import sz.scaffold.ext.getStringListOrEmpty
 import sz.scaffold.tools.BizLogicException
-import sz.scaffold.tools.logger.Logger
 import java.io.File
 import java.util.*
 import java.util.concurrent.*
@@ -105,12 +105,12 @@ object SzEbeanConfig {
                             it.shutdown()
                             workerPoolMap.remove(dataSourceName)
                         }
-                        Logger.warn("Failed to initialize ebean data source [$dataSourceName]. Caused by: ${ex.message} Try again after 5 seconds.")
+                        log.warn("Failed to initialize ebean data source [$dataSourceName]. Caused by: ${ex.message} Try again after 5 seconds.")
                         delay(5000)
                     }
                 }
 
-                Logger.info("Successfully initialize the ebean data source [$dataSourceName].")
+                log.info("Successfully initialize the ebean data source [$dataSourceName].")
             }
         }
     }
@@ -161,7 +161,7 @@ object SzEbeanConfig {
                         .map { classInfo -> classInfo.load() }
                         .filter { clazz -> isEntityClass(clazz) }
                         .forEach { clazz ->
-//                        Logger.debug("ebean add class: ${clazz.name}")
+//                        log.debug("ebean add class: ${clazz.name}")
                             modelClassSet.add(clazz)
                         }
             } else {
@@ -169,7 +169,7 @@ object SzEbeanConfig {
                     val clazz = Application.classLoader.loadClass(it)
                     modelClassSet.add(clazz)
                 } catch (ex: Exception) {
-                    Logger.error("Failed to load class [$it] caused by: ${ex.message}")
+                    log.error("Failed to load class [$it] caused by: ${ex.message}")
                 }
 
             }
@@ -221,10 +221,10 @@ private fun ServerConfig.addModelClasses(modelClasses: Set<Class<*>>) {
 
 private fun ServerConfig.addModelClass(clazz: Class<*>) {
     try {
-//        Logger.debug("add class for ebean server: $clazz")
+//        log.debug("add class for ebean server: $clazz")
         this.addClass(clazz)
     } catch (ex: Exception) {
-        Logger.error("ebean.dataSources.${this.name} cannot register class [${clazz.name}] in ebean server. Caused by: ${ex.message}")
+        log.error("ebean.dataSources.${this.name} cannot register class [${clazz.name}] in ebean server. Caused by: ${ex.message}")
     }
 }
 

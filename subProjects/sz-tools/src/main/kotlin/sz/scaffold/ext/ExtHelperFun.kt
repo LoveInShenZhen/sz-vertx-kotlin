@@ -2,7 +2,7 @@ package sz.scaffold.ext
 
 import jodd.exception.ExceptionUtil
 import jodd.io.FileNameUtil
-import sz.scaffold.tools.logger.AnsiColor
+import sz.logger.AnsiColor
 import java.io.File
 import java.util.*
 

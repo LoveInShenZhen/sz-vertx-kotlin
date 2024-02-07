@@ -1,9 +1,9 @@
 package sz.scaffold.aop.interceptors.example
 
 
+import sz.logger.log
 import sz.scaffold.aop.actions.Action
 import sz.scaffold.aop.annotations.WithAction
-import sz.scaffold.tools.logger.Logger
 
 @WithAction(SampleCheckTokenAction::class)
 @Target(AnnotationTarget.FUNCTION)
@@ -16,7 +16,7 @@ annotation class SampleCheckToken(
 class SampleCheckTokenAction : Action<SampleCheckToken>() {
 
     override suspend fun call(): Any? {
-        Logger.debug(" CheckTokenAction.call() ... token: ${this.config.token}, require roles: [${this.config.roles.joinToString(",")}]")
+        log.debug(" CheckTokenAction.call() ... token: ${this.config.token}, require roles: [${this.config.roles.joinToString(",")}]")
         // 以下2行是模拟检查token不通过, 直接结束掉当前的request处理.
 //        this.httpContext.response().end("token timeout ...")
 //        return Unit

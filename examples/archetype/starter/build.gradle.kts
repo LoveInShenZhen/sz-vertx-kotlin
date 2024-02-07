@@ -16,21 +16,13 @@ repositories {
   mavenCentral()
 }
 
-val vertxVersion = "4.5.2"
-val junitJupiterVersion = "5.9.1"
-
 
 dependencies {
-  implementation(kotlin("stdlib-jdk8"))
+  implementation("ch.qos.logback:logback-classic:1.4.12")
+//  implementation("com.github.ajalt.clikt:clikt:4.2.2")
+  implementation("io.github.config4k:config4k:0.5.0")
 
-  implementation(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))
-  implementation("io.vertx:vertx-web")
-  implementation("io.vertx:vertx-lang-kotlin")
-
-  implementation("ch.qos.logback:logback-classic:1.2.11")
-
-  testImplementation("io.vertx:vertx-junit5")
-  testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
+  testImplementation(kotlin("test"))
 }
 
 kotlin { // Extension for easy setup
@@ -46,7 +38,6 @@ val jvm_args_for_encoding = listOf(
 
 application {
   mainClass.set("com.quantplus.MainApp")
-  this.applicationDefaultJvmArgs = jvm_args_for_encoding
 }
 
 tasks.withType<JavaCompile> {
@@ -57,16 +48,14 @@ tasks.withType<JavaExec> {
   systemProperty("file.encoding", "UTF-8")
   val appconf = Path.of(this.project.rootDir.absolutePath, "conf", "application.conf")
   val logbackConfPath = Path.of(this.project.rootDir.absolutePath, "conf", "logback.xml")
-//  val ebeanConfPath = Path.of(this.project.rootDir.absolutePath, "conf", "ebean.yml")
 
   this.jvmArgs(
     "-Dlogback.configurationFile=${logbackConfPath}",
     "-Dconfig.file=${appconf}"
   )
 
+  // 为了解决 gradle run 时, 终端输出中文乱码的问题
   this.jvmArguments.addAll(jvm_args_for_encoding)
-
-  println(this.jvmArgs?.joinToString(" "))
 }
 
 tasks.withType<CreateStartScripts> {

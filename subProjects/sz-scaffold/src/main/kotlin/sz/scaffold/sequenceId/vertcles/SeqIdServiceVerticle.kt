@@ -5,14 +5,9 @@ import io.vertx.core.Promise
 import io.vertx.core.Vertx
 import io.vertx.core.eventbus.MessageConsumer
 import io.vertx.core.shareddata.Lock
-import io.vertx.kotlin.core.eventbus.requestAwait
-import io.vertx.kotlin.core.shareddata.getAsyncMapAwait
-import io.vertx.kotlin.core.shareddata.getAwait
-import io.vertx.kotlin.core.shareddata.getLockAwait
-import io.vertx.kotlin.core.shareddata.putAwait
 import io.vertx.kotlin.coroutines.CoroutineVerticle
-import io.vertx.kotlin.coroutines.await
 import io.vertx.kotlin.coroutines.coAwait
+import sz.logger.log
 import sz.scaffold.Application
 import sz.scaffold.sequenceId.IdGenerator
 import sz.scaffold.sequenceId.exceptions.FailedToGetWorkerId
@@ -20,7 +15,6 @@ import sz.scaffold.sequenceId.exceptions.ReachMaxCountOfIdGenerators
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.json.toJsonPretty
 import sz.scaffold.tools.json.toMutableMap
-import sz.scaffold.tools.logger.Logger
 import java.util.*
 
 //
@@ -46,7 +40,7 @@ class SeqIdServiceVerticle : CoroutineVerticle() {
             }
         }
 
-        Logger.info("Start SeqIdServiceVerticle, workerId: $workerId")
+        log.info("Start SeqIdServiceVerticle, workerId: $workerId")
     }
 
     override suspend fun stop() {

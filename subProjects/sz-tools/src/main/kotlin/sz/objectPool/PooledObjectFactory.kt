@@ -1,6 +1,6 @@
 package sz.objectPool
 
-import sz.scaffold.tools.logger.Logger
+import sz.logger.log
 
 //
 // Created by kk on 2019/10/23.
@@ -14,13 +14,13 @@ abstract class PooledObjectFactory<T : Any> {
             val obj = createObjectAwait()
             return PooledObject(target = obj, pool = pool)
         } catch (ex: Exception) {
-            Logger.warn("Create ${this.javaClass.name} object failed.\n$ex")
+            log.warn("Create ${this.javaClass.name} object failed.\n$ex")
             return null
         }
 
     }
 
     open fun destroyObject(target: T) {
-//        Logger.debug("Destroy pooled object: [${System.identityHashCode(obj)}]")
+
     }
 }

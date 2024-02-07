@@ -2,10 +2,8 @@ package sz.cache
 
 import io.vertx.core.Future
 import io.vertx.core.Promise
-import io.vertx.kotlin.coroutines.await
 import jodd.datetime.JDateTime
-import sz.scaffold.tools.logger.Logger
-import kotlin.math.exp
+import sz.logger.log
 
 //
 // Created by kk on 2019-06-14.
@@ -126,7 +124,7 @@ interface AsyncCacheApi {
             if (bytes == null) {
                 val newValue = supplier()
                 setBytes(key, newValue, expirationInMs).onFailure { ex ->
-                    Logger.warn(ex.localizedMessage)
+                    log.warn(ex.localizedMessage)
                 }
                 result.complete(newValue)
             } else {

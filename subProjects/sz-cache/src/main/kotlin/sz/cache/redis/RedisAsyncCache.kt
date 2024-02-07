@@ -2,18 +2,13 @@ package sz.cache.redis
 
 import io.vertx.core.Future
 import io.vertx.core.Promise
-import io.vertx.kotlin.coroutines.await
-import io.vertx.kotlin.redis.client.getAwait
 import io.vertx.redis.client.Command
 import io.vertx.redis.client.Redis
 import io.vertx.redis.client.RedisAPI
 import io.vertx.redis.client.Request
 import sz.cache.AsyncCacheApi
 import sz.redis.api
-import sz.redis.psetexAwait
-import sz.redis.setAwait
 import sz.scaffold.tools.SzException
-import sz.scaffold.tools.logger.Logger
 
 //
 // Created by kk on 2019/11/12.

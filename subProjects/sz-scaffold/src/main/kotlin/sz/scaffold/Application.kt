@@ -16,22 +16,20 @@ import io.vertx.spi.cluster.zookeeper.ZookeeperClusterManager
 import jodd.exception.ExceptionUtil
 import jodd.io.FileNameUtil
 import jodd.io.FileUtil
-import jodd.io.PathUtil
 import jodd.system.SystemInfo
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import sz.logger.log
 import sz.scaffold.controller.ApiRoute
 import sz.scaffold.controller.BodyHandlerOptions
 import sz.scaffold.dispatchers.IDispatcherFactory
 import sz.scaffold.ext.filePathJoin
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.json.toShortJson
-import sz.scaffold.tools.logger.Logger
 import sz.scaffold.websocket.WebSocketFilter
 import java.io.File
 import java.lang.management.ManagementFactory
 import java.net.InetAddress
-import java.nio.file.Paths
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutorService
 import kotlin.io.path.Path
@@ -101,24 +99,24 @@ object Application {
         inProductionMode = config.getBoolean("app.httpServer.productionMode")
 
         this.regOnStartHandler(Int.MIN_VALUE) {
-            Logger.info("Application start ...")
+            log.info("Application start ...")
         }
 
         this.regOnStopHanlder(Int.MAX_VALUE) {
-            Logger.info("Application stop ...")
+            log.info("Application stop ...")
             val stopVertxFuture = CompletableFuture<Boolean>()
             vertx.close { res ->
                 if (res.failed()) {
-                    Logger.error(ExceptionUtil.exceptionChainToString(res.cause()))
+                    log.error(ExceptionUtil.exceptionChainToString(res.cause()))
                     stopVertxFuture.complete(false)
                 } else {
                     stopVertxFuture.complete(true)
                 }
             }
             if (stopVertxFuture.get()) {
-                Logger.info("Stop vertx successfully.")
+                log.info("Stop vertx successfully.")
             } else {
-                Logger.error("Stop vertx failed.")
+                log.error("Stop vertx failed.")
             }
         }
     }
@@ -137,7 +135,7 @@ object Application {
         this._vertoptions = buildVertxOptions()
 
         if (this.isClustered) {
-            Logger.info("Vertx: cluster mode")
+            log.info("Vertx: cluster mode")
 
             val zookeeperConfig = JsonObject(config.getConfig("app.vertx.zookeeper").root().unwrapped().toShortJson())
             val clusterManager = ZookeeperClusterManager(zookeeperConfig)
@@ -146,7 +144,7 @@ object Application {
             return fut.result()
 
         } else {
-            Logger.info("Vertx: standalone mode")
+            log.info("Vertx: standalone mode")
             return Vertx.builder().with(this.vertxOptions).build()
         }
 
@@ -293,7 +291,7 @@ object Application {
 
         setupWebSocketHandler(httpServer)
 
-        Logger.info("Start http server at: http://localhost:${httpServerOptions.port}")
+        log.info("Start http server at: http://localhost:${httpServerOptions.port}")
         return httpServer
     }
 
@@ -394,8 +392,8 @@ object Application {
 
     private fun logClusterNodeId() {
         if (this.isClustered) {
-            Logger.info("NodeId: ${vertxOptions.clusterManager.nodeId}")
-            Logger.info("Cluster Nodes: ${vertxOptions.clusterManager.nodes.joinToString(", ")}")
+            log.info("NodeId: ${vertxOptions.clusterManager.nodeId}")
+            log.info("Cluster Nodes: ${vertxOptions.clusterManager.nodes.joinToString(", ")}")
         }
     }
 

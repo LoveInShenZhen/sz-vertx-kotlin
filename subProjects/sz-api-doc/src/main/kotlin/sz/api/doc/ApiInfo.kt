@@ -2,12 +2,12 @@ package sz.api.doc
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import sz.api.controllers.ApiDoc
+import sz.logger.log
 import sz.scaffold.Application
 import sz.scaffold.annotations.Comment
 import sz.scaffold.ext.escapeMarkdown
 import sz.scaffold.tools.json.JsonDataType
 import sz.scaffold.tools.json.toJsonPretty
-import sz.scaffold.tools.logger.Logger
 import kotlin.reflect.KClass
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.findAnnotation
@@ -131,7 +131,7 @@ class ApiInfo constructor(
         try {
             analyse()
         } catch (ex: Exception) {
-            Logger.warn("ApiInfo analyse:WARN ${this.path} Abnormal")
+            log.warn("ApiInfo analyse:WARN ${this.path} Abnormal")
         }
     }
 
@@ -286,7 +286,7 @@ class ApiInfo constructor(
                 val sampleObj = kClass.java.getDeclaredConstructor().newInstance()
                 return sampleObj.toJsonPretty()
             } catch (ex: Exception) {
-                Logger.debug(ex.cause.toString())
+                log.debug(ex.cause.toString())
                 return ""
             }
         }

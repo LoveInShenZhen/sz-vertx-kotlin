@@ -4,7 +4,8 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import sz.scaffold.tools.logger.Logger
+import org.slf4j.LoggerFactory
+import sz.logger.log
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.fixedRateTimer
@@ -13,7 +14,11 @@ import kotlin.concurrent.fixedRateTimer
 // Created by kk on 2019/10/23.
 //
 @Suppress("MemberVisibilityCanBePrivate")
-open class ObjectPool<T : Any>(val config: PoolConfig, val factory: PooledObjectFactory<T>, val name: String = "Unnamed") {
+open class ObjectPool<T : Any>(
+    val config: PoolConfig,
+    val factory: PooledObjectFactory<T>,
+    val name: String = "Unnamed"
+) {
 
     private val idleChannel = Channel<PooledObject<T>>(config.maxTotal)
 
@@ -111,14 +116,14 @@ open class ObjectPool<T : Any>(val config: PoolConfig, val factory: PooledObject
             try {
                 factory.destroyObject(pooledObject.target)
             } catch (ex: Exception) {
-                Logger.warn("${factory.javaClass.name}.onDestoryObject(...) failed.\n$ex")
+                log.warn("${factory.javaClass.name}.onDestoryObject(...) failed.\n$ex")
             }
         }
     }
 
     fun returnObject(pooledObject: PooledObject<T>) {
         scope.launch {
-//            Logger.debug("return object: $pooledObject")
+//            log.debug("return object: $pooledObject")
             if (pooledObject.broken) {
                 pooledObject.status = PooledObjectStatus.Broken
                 counterMutex.withLock {
@@ -159,8 +164,8 @@ open class ObjectPool<T : Any>(val config: PoolConfig, val factory: PooledObject
                     } else {
                         exceed
                     }
-//                    Logger.debug("==> ${pool.poolInfo()}")
-//                    Logger.debug("==> 执行驱逐策略, 本次驱逐 $count 个")
+//                    log.debug("==> ${pool.poolInfo()}")
+//                    log.debug("==> 执行驱逐策略, 本次驱逐 $count 个")
                     for (i in 1..count) {
                         scope.launch {
                             try {
@@ -168,7 +173,7 @@ open class ObjectPool<T : Any>(val config: PoolConfig, val factory: PooledObject
                                     it.markBroken()
                                 }
                             } catch (ex: Exception) {
-                                Logger.warn("Object Pool: [${name}] evictionChecking failed by exception:\n$ex")
+                                log.warn("Object Pool: [${name}] evictionChecking failed by exception:\n$ex")
                             }
 
                         }
@@ -212,17 +217,17 @@ open class ObjectPool<T : Any>(val config: PoolConfig, val factory: PooledObject
                 idleObjMap.remove(it.first)
                 factory.destroyObject(it.second.target)
             } catch (ex: Exception) {
-                Logger.warn("${factory.javaClass.name}.onDestoryObject(...) failed.\n$ex")
+                log.warn("${factory.javaClass.name}.onDestoryObject(...) failed.\n$ex")
             }
         }
 
-//        Logger.debug("using count = ${usingCounter.get()}")
-//        Logger.debug("usingObjMap count = ${usingObjMap.count()}")
-//        Logger.debug("idleObjMap count = ${idleObjMap.count()}")
+//        log.debug("using count = ${usingCounter.get()}")
+//        log.debug("usingObjMap count = ${usingObjMap.count()}")
+//        log.debug("idleObjMap count = ${idleObjMap.count()}")
 
         idleChannel.close()
         idleCounter.set(0)
-        Logger.debug("This object pool: [${this.name}] was stopped.")
+        log.debug("This object pool: [${this.name}] was stopped.")
 
     }
 

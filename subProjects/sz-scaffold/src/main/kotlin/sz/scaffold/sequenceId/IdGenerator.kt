@@ -1,8 +1,8 @@
 package sz.scaffold.sequenceId
 
 import jodd.datetime.JDateTime
+import sz.logger.log
 import sz.scaffold.tools.SzException
-import sz.scaffold.tools.logger.Logger
 
 /**
  * 53 bits sequence Id:
@@ -50,7 +50,7 @@ class IdGenerator(val workerId: Long) {
     private fun nextIdInner(epochSecond: Long): Long {
         var epoch = epochSecond
         if (epoch < lastEpoch) {
-            Logger.warn("clock is back: $epoch from previous: $lastEpoch. [diff: ${lastEpoch - epoch} secs] or reach the maximum id per second, epochSecond borrow from future.")
+            log.warn("clock is back: $epoch from previous: $lastEpoch. [diff: ${lastEpoch - epoch} secs] or reach the maximum id per second, epochSecond borrow from future.")
             epoch = lastEpoch
         }
 
@@ -62,7 +62,7 @@ class IdGenerator(val workerId: Long) {
         idOffset++
         val next = idOffset and maxNext
         if (next == 0L) {
-            Logger.warn("maximum id reached in 1 second in epoch: $epoch")
+            log.warn("maximum id reached in 1 second in epoch: $epoch")
             return nextIdInner(epoch + 1)
         }
         return generateId(epoch, next)

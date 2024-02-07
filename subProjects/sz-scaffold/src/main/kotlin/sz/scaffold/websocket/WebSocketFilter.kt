@@ -3,9 +3,9 @@ package sz.scaffold.websocket
 import io.vertx.core.Vertx
 import io.vertx.core.http.ServerWebSocket
 import jodd.exception.ExceptionUtil
+import sz.logger.log
 import sz.scaffold.Application
 import sz.scaffold.tools.SzException
-import sz.scaffold.tools.logger.Logger
 
 //
 // Created by kk on 2019-06-17.
@@ -38,7 +38,7 @@ class WebSocketFilter(private val vertx: Vertx) : WebSocketHandler {
             }
         } catch (ex: Exception) {
             webSocket.close(500, ex.message)
-            Logger.error(ExceptionUtil.exceptionStackTraceToString(ex))
+            log.error(ExceptionUtil.exceptionStackTraceToString(ex))
         }
     }
 
