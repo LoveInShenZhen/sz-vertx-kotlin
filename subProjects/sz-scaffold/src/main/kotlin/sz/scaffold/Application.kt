@@ -47,7 +47,7 @@ object Application {
     private val stopHandlers = mutableMapOf<Int, MutableList<() -> Unit>>()
 
     val config: Config
-    val confDir: String
+    val app_home_dir: String
     val classLoader = Application::class.java.classLoader
     val inProductionMode: Boolean
 
@@ -87,11 +87,11 @@ object Application {
         // ref: https://vertx.io/docs/vertx-core/java/#_configuring_with_the_system_property
         System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.SLF4JLogDelegateFactory")
 
-        val app_conf_fpath = System.getProperty("config.file")
-        if (app_conf_fpath.isNullOrBlank()) {
-            this.confDir = Path(".").absolutePathString()
+        val sz_app_home = System.getProperty("sz.app.home")
+        if (sz_app_home.isNullOrBlank()) {
+            this.app_home_dir = "."
         } else {
-            this.confDir = Path(app_conf_fpath).parent.absolutePathString()
+            this.app_home_dir = sz_app_home
         }
 
         config = ConfigFactory.load()
@@ -198,7 +198,7 @@ object Application {
     }
 
     fun getFile(relativePath: String): File {
-        return File(filePathJoin(confDir, relativePath))
+        return File(filePathJoin(app_home_dir, relativePath))
     }
 
     // 从 conf/route 文件, 以及 conf/sub_routes/*.route 子路由文件里加载路由配置
@@ -375,7 +375,7 @@ object Application {
             this.mergeFormAttributes = config.getBoolean("app.httpServer.bodyHandler.mergeFormAttributes")
             this.deleteUploadedFilesOnEnd = config.getBoolean("app.httpServer.bodyHandler.deleteUploadedFilesOnEnd")
             this.uploadsDirectory =
-                    filePathJoin(confDir, config.getString("app.httpServer.bodyHandler.uploadsDirectory"))
+                    filePathJoin(app_home_dir, config.getString("app.httpServer.bodyHandler.uploadsDirectory"))
         }
     }
 
