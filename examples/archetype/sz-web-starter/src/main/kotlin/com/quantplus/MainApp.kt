@@ -19,14 +19,14 @@ class MainApp {
 
       Application.setupVertx()
 
-      Application.regOnStartHandler(50) {
-        log.info("服务启动")
-      }
-
-      Application.regOnStopHanlder {
-
-        log.info("服务退出")
-      }
+//      Application.regOnStartHandler(50) {
+//        log.info("服务启动")
+//      }
+//
+//      Application.regOnStopHanlder {
+//
+//        log.info("服务退出")
+//      }
 
       Application.runHttpServer()
       Application.setupOnStartAndOnStop()
@@ -41,11 +41,11 @@ class MainApp {
       System.setProperty("stderr.encoding", "UTF-8")
       System.setProperty("stdout.encoding", "UTF-8")
 
-      System.getProperties().toSortedMap(compareBy {
-        it.toString()
-      }).forEach { (k, v) ->
-        log.debug("-D{}={}", k, v)
-      }
+//      System.getProperties().toSortedMap(compareBy {
+//        it.toString()
+//      }).forEach { (k, v) ->
+//        log.debug("-D{}={}", k, v)
+//      }
     }
   }
 }
