@@ -1,8 +1,6 @@
 package sz.redis
 
-import io.vertx.kotlin.coroutines.await
 import io.vertx.kotlin.coroutines.coAwait
-import io.vertx.kotlin.redis.client.sendAwait
 import io.vertx.redis.client.*
 
 //
