@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.9.22"
+    kotlin("jvm") version "1.9.23"
     java
     application
     id("org.beryx.runtime") version "1.12.7"
@@ -21,16 +21,16 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation(kotlin("stdlib-jdk8"))
 
-    implementation("com.github.ajalt.clikt:clikt:3.2.0") {
+    implementation("com.github.ajalt.clikt:clikt:4.3.0") {
         exclude(group = "org.jetbrains.kotlin")
     }
-    implementation("ch.qos.logback:logback-classic:1.2.9")
-    implementation("io.github.config4k:config4k:0.4.2") {
+    implementation("ch.qos.logback:logback-classic:1.4.14")
+    implementation("io.github.config4k:config4k:0.7.0") {
         exclude(group = "org.jetbrains.kotlin")
     }
     implementation("org.jodd:jodd-core:5.3.0")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
 
