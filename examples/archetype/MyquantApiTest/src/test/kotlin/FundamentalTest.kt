@@ -3,6 +3,7 @@ import myquant.proto.platform.data.fundamental.*
 import myquant.proto.platform.data.fundamental.FundamentalServiceProto.GetDividendsReq
 import myquant.proto.platform.data.fundamental.FundamentalServiceProto.GetHistoryInstrumentsReq
 import myquant.proto.platform.data.fundamental.FundamentalServiceProto.GetInstrumentInfosReq
+import myquant.proto.platform.data.fundamental.FundamentalServiceProto.GetInstrumentsReq
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -27,6 +28,25 @@ class FundamentalTest : DsProxyTesterBase() {
             assert(rsp.dataCount > 0)
         }
 
+    }
+
+    @Test
+    @DisplayName("默认参数下查询全市场码表最新数据")
+    fun GetInstruments_test() {
+        MeasureTime {
+            val req = GetInstrumentsReq {  }
+            val rsp = fundamental_api.getInstruments(req)
+            logger.info("getInstruments count: ${rsp.dataCount}")
+
+            // 无异常, 有数据
+            assert(rsp.dataCount > 0)
+
+            rsp.dataList.filter {
+                it.symbol == "CFFEX.IC2107"
+            }.forEach {
+                logger.info(it.toString())
+            }
+        }
     }
 
     @Test

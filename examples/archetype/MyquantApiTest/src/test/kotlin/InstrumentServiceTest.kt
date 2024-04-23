@@ -41,6 +41,31 @@ class InstrumentServiceTest : DsProxyTesterBase() {
     }
 
     @Test
+    @DisplayName("根据 sectype1 = 1010 查询所有股票 2024-04-17 的码表数据")
+    fun TestGetSymbols_by_sectype1_tradeDate() {
+        MeasureTime {
+            val req = GetSymbolsReq {
+                secType1 = 1010
+                tradeDate = "2024-04-17"
+            }
+
+            val rsp = instrument_api.getSymbols(req)
+            logger.info("根据 sectype1=${req.secType1} 查询码表数据, 共 ${rsp.symbolsCount} 条")
+            assert(rsp.symbolsCount > 0)
+
+            val exchanges = mutableSetOf<String>()
+            rsp.symbolsList.forEach {
+                assert(it.info.secType1 == 1010L)
+                exchanges.add(it.info.exchange)
+            }
+
+            assert(exchanges.size == 2)
+            assert("SHSE" in exchanges)
+            assert("SZSE" in exchanges)
+        }
+    }
+
+    @Test
     @DisplayName("查询SZSE的所有股票的码表数据")
     fun TestGetSymbols_by_sectype1_exchange() {
         MeasureTime {

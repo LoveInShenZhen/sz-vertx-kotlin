@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.9.22"
+    kotlin("jvm") version "1.9.23"
     application
 }
 
@@ -17,17 +17,19 @@ repositories {
 dependencies {
     // https://mvnrepository.com/artifact/io.grpc/grpc-netty
     implementation("io.grpc:grpc-netty:1.54.2")
-    api("myquant.cn:myquant-kroto:1.0-SNAPSHOT")
+    implementation("myquant.cn:myquant-kroto:1.0-SNAPSHOT")
     implementation("ch.qos.logback:logback-classic:1.4.11")
 
-    api("com.fasterxml.jackson.module:jackson-module-jsonSchema:2.14.3")
-    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.3") {
+    implementation("com.fasterxml.jackson.module:jackson-module-jsonSchema:2.14.3")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.3") {
         this.exclude(group = "org.jetbrains.kotlin")
     }
-    api("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.14.3")
-    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.3")
-    api("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.3")
-    api("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.14.3")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.14.3")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.3")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.3")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.14.3")
+
+    implementation("org.jetbrains.kotlinx:dataframe:0.13.1")
 
     testImplementation(kotlin("test"))
 }

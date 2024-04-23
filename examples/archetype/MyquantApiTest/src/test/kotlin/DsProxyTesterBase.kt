@@ -1,4 +1,5 @@
 import com.google.protobuf.Empty
+import com.googlecode.protobuf.format.JsonJacksonFormat
 import io.grpc.Channel
 import myquant.proto.platform.data.data_dists.BasicDataQueryServiceGrpc
 import myquant.proto.platform.data.data_dists.HistoryInnerServiceGrpc
@@ -27,8 +28,12 @@ open class DsProxyTesterBase {
         val health_api: HealthCheckServiceGrpc.HealthCheckServiceBlockingStub
         val basic_data_dists_api: BasicDataQueryServiceGrpc.BasicDataQueryServiceBlockingStub
 
+        val json_formatter = JsonJacksonFormat()
+
+
         init {
-            channel_factory = test_env_channel_factory()
+//            channel_factory = test_env_channel_factory()
+            channel_factory = prod_env_channel_factory()
             val ds_proxy_channel = test_env_local_ds_proxy_channel()
 
             fundamental_api = FundamentalServiceGrpc.newBlockingStub(ds_proxy_channel).withCompression("gzip")
@@ -42,10 +47,11 @@ open class DsProxyTesterBase {
             health_api.ping(Empty.newBuilder().build())
 
             // 连接线上测试环境的数据分发服务
-//            val dists_channel = channel_factory.getChannel("120.78.94.151", 7501)
+            val dists_channel = channel_factory.getChannel("120.78.94.151", 7501)
 
             // 连接本地的数据分发服务
-            val dists_channel = channel_factory.getChannel("127.0.0.1", 7513)
+//            val dists_channel = channel_factory.getChannel("127.0.0.1", 7513)
+
             basic_data_dists_api = BasicDataQueryServiceGrpc.newBlockingStub(dists_channel)
         }
 
@@ -65,7 +71,7 @@ open class DsProxyTesterBase {
             )
         }
 
-        // 先生生产环境
+        // 生产环境
         private fun prod_env_channel_factory(): ChannelFactory {
             return ChannelFactory(
                 gmHost = "discovery.myquant.cn",

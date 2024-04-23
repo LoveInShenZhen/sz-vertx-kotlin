@@ -1,32 +1,25 @@
 import com.google.protobuf.Empty
-import com.google.protobuf.EmptyProto
-import com.googlecode.protobuf.format.JsonFormat
-import com.googlecode.protobuf.format.JsonJacksonFormat
 import commons.toLocalDate
 import commons.toLocalDateTime
 import io.grpc.Metadata
 import io.grpc.stub.MetadataUtils
-import jdk.jfr.Frequency
 import myquant.proto.platform.data.DataProto
 import myquant.proto.platform.data.ds_instrument.GetSymbolInfosReq
-import myquant.proto.platform.data.ds_instrument.GetSymbolsReq
 import myquant.proto.platform.data.fundamental.GetPreviousTradingDateReq
 import myquant.proto.platform.data.history.GetCurrentTicksReq
 import myquant.proto.platform.data.history.GetHistoryBarsNReq
 import myquant.proto.platform.data.history.GetHistoryBarsReq
 import myquant.proto.platform.data.history.GetHistoryTicksReq
-import myquant.proto.platform.data.history.HistoryServiceProto.GetHistoryBarsReq
-import myquant.proto.platform.data.history.HistoryServiceProto.GetHistoryTicksReq
 import myquant.rpc.client.TokenUpdater
-import myquant.rpc.client.TokenUpdater.Companion.logger
+import org.jetbrains.kotlinx.dataframe.DataFrame
+import org.jetbrains.kotlinx.dataframe.api.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
-import kotlin.math.log
+import kotlin.time.DurationUnit
 import kotlin.time.measureTime
 
 //
@@ -39,7 +32,7 @@ class DsHistoryTest : DsProxyTesterBase() {
 
     @Test
     @DisplayName("测试查询日内tick数据的性能, 查询1分钟的tick数据")
-    fun HistoryTick_intraday_performance() {
+    fun TestHistoryTick_intraday_performance() {
         val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
         val req = GetHistoryTicksReq {
             symbols = "SHSE.600000"
@@ -67,7 +60,7 @@ class DsHistoryTest : DsProxyTesterBase() {
 
     @Test
     @DisplayName("HistoryBarN_60s")
-    fun HistoryBarN_60s() {
+    fun TestHistoryBarN_60s() {
         val req = GetHistoryBarsNReq {
             symbol = "SHSE.600000"
             frequency = "60s"
@@ -88,8 +81,26 @@ class DsHistoryTest : DsProxyTesterBase() {
     }
 
     @Test
+    @DisplayName("查询往年的tick数据")
+    fun TestHistoryTick_per_year() {
+        measureTime {
+            val req = GetHistoryTicksReq {
+                symbols = "SHSE.000009 "
+                startTime = "2023-09-22 09:40:00"
+                endTime = "2023-09-22 09:45:00"
+            }
+
+            val rsp = history_api.getHistoryTicks(req)
+            logger.info("查询结果 ${rsp.dataCount} 条记录")
+            logger.info("第1条:   ${rsp.dataList.first().createdAt.toLocalDateTime()}  ${json_formatter.printToString(rsp.dataList.first())}")
+            logger.info("最后1条: ${rsp.dataList.last().createdAt.toLocalDateTime()} ${json_formatter.printToString(rsp.dataList.last())}")
+        }
+
+    }
+
+    @Test
     @DisplayName("查询最新tick")
-    fun CurrentTick() {
+    fun TestCurrentTick() {
         val symbols="""SHSE.000001
 SHSE.000002
 SHSE.000003
@@ -161,7 +172,7 @@ SHSE.000053
 
     @Test
     @DisplayName("查询历史分钟线")
-    fun GetHistoryBars_60s() {
+    fun TestGetHistoryBars_60s() {
         val req = GetHistoryBarsReq {
             symbols = "SHSE.600000"
             frequency = "60s"
@@ -175,7 +186,7 @@ SHSE.000053
 
     @Test
     @DisplayName("查询tick起始时间在当前时间之后")
-    fun GetHistoryTicks_startTime_after_now() {
+    fun TestGetHistoryTicks_startTime_after_now() {
         val start_time = LocalDateTime.now().plusMinutes(10).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
         val end_time = LocalDateTime.now().plusMinutes(15).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
         val req = GetHistoryTicksReq {
@@ -189,7 +200,7 @@ SHSE.000053
 
     @Test
     @DisplayName("查询分钟Bar起始时间在当前时间之后")
-    fun GetHistoryBars_startTime_after_now() {
+    fun TestGetHistoryBars_startTime_after_now() {
         val start_time = LocalDateTime.now().plusMinutes(10).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
         val end_time = LocalDateTime.now().plusMinutes(15).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
 
@@ -205,7 +216,7 @@ SHSE.000053
 
     @Test
     @DisplayName("股票tick数据查询优化-日内")
-    fun GetHistoryTicks_stock_today() {
+    fun TestGetHistoryTicks_stock_today() {
 
         val begin_time = System.currentTimeMillis()
         val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
@@ -224,7 +235,7 @@ SHSE.000053
 
     @Test
     @DisplayName("股票一个symbol全天tick")
-    fun GetHistoryTicks_stock_today_2() {
+    fun TestGetHistoryTicks_stock_today_2() {
         val ping_req = Empty.newBuilder().build()
         health_api.ping(ping_req)
 
@@ -245,7 +256,7 @@ SHSE.000053
 
     @Test
     @DisplayName("股票tick数据查询优化-日前+日内")
-    fun GetHistoryTicks_stock_yesterday_and_today() {
+    fun TestGetHistoryTicks_stock_yesterday_and_today() {
         val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
         val preTradeDay = preTradeDay()
 
@@ -273,7 +284,7 @@ SHSE.000053
 
     @Test
     @DisplayName("股票tick数据查询优化-日前")
-    fun GetHistoryTicks_stock_yesterday() {
+    fun TestGetHistoryTicks_stock_yesterday() {
         val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
         val preTradeDay = preTradeDay()
 
@@ -291,7 +302,7 @@ SHSE.000053
 
     @Test
     @DisplayName("股票分钟Bar日内数据查询")
-    fun GetHistoryBar_60s_stock_today() {
+    fun TestGetHistoryBar_60s_stock_today() {
         val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
         val req = GetHistoryBarsReq {
             frequency = "60s"
@@ -306,7 +317,7 @@ SHSE.000053
 
     @Test
     @DisplayName("股票5分钟Bar日内数据查")
-    fun GetHistoryBar_5m_stock_today() {
+    fun TestGetHistoryBar_5m_stock_today() {
         val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
         val req = GetHistoryBarsReq {
             frequency = "5m"
@@ -323,7 +334,7 @@ SHSE.000053
 
     @Test
     @DisplayName("股票5分钟Barr日前和日内数据查")
-    fun GetHistoryBar_5m_stock_today_and_yesterday() {
+    fun TestGetHistoryBar_5m_stock_today_and_yesterday() {
         val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
         val preTradeDay = preTradeDay()
 
@@ -342,7 +353,7 @@ SHSE.000053
 
     @Test
     @DisplayName("股票分钟Bar日前和日内数据查询")
-    fun GetHistoryBar_60s_stock_today_and_yesterday() {
+    fun TestGetHistoryBar_60s_stock_today_and_yesterday() {
         val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
         val preTradeDay = preTradeDay()
 
@@ -359,7 +370,7 @@ SHSE.000053
 
     @Test
     @DisplayName("股票5分钟Bar日内数据查询")
-    fun GetHistoryBar_300s_stock_today() {
+    fun TestGetHistoryBar_300s_stock_today() {
         val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
         val req = GetHistoryBarsReq {
             frequency = "300s"
@@ -374,7 +385,7 @@ SHSE.000053
 
     @Test
     @DisplayName("当前年度股票日线")
-    fun GetHistoryBar_1d_stock_this_year() {
+    fun TestGetHistoryBar_1d_stock_this_year() {
         MeasureTime {
             val first_day = "${LocalDate.now().year}-01-01"
             val last_day = "${LocalDate.now().year}-12-31"
@@ -396,7 +407,7 @@ SHSE.000053
 
     @Test
     @DisplayName("最近2年的股票日线")
-    fun GetHistoryBar_1d_stock_last_2_year() {
+    fun TestGetHistoryBar_1d_stock_last_2_year() {
         var rsp: DataProto.Bars? = null
         MeasureTime {
             val first_day = "${LocalDate.now().year-1}-01-01"
@@ -424,7 +435,7 @@ SHSE.000053
 
     @Test
     @DisplayName("DCE.j2309")
-    fun GetHistoryBar_dce() {
+    fun TestGetHistoryBar_dce() {
         MeasureTime {
             val req = GetHistoryBarsReq {
                 symbols = "DCE.j2309"
@@ -443,7 +454,7 @@ SHSE.000053
 
     @Test
     @DisplayName("查询虚拟合约日线")
-    fun GetHistoryBar_1d_ccsymbol() {
+    fun TestGetHistoryBar_1d_ccsymbol() {
         MeasureTime {
             // history(symbol='SHFE.RB', frequency='1d', start_time='2022-09-14 00:00:00', end_time='2023-04-28 00:00:00', adjust=0, adjust_end_time=date, df=True)
             val req = GetHistoryBarsReq {
@@ -462,7 +473,7 @@ SHSE.000053
 
     @Test
     @DisplayName("日线查询, 过滤掉成交量为0的记录(停牌)")
-    fun GetHistoryBars_filter_volume_zero() {
+    fun TestGetHistoryBars_filter_volume_zero() {
         MeasureTime {
             val req = GetHistoryBarsReq {
                 symbols = "SZSE.128127"
@@ -480,7 +491,7 @@ SHSE.000053
     }
 
     @Test
-    fun GetHistoryBar_sunsen() {
+    fun TestGetHistoryBar_sunsen() {
         MeasureTime {
             val req = GetHistoryBarsReq {
                 symbols = "SHSE.600000"
@@ -499,7 +510,7 @@ SHSE.000053
 
     @Test
     @DisplayName("debug")
-    fun GetHistoryBarsReq_adj_test() {
+    fun TestGetHistoryBarsReq_adj() {
         MeasureTime {
             val req = GetHistoryBarsReq {
                 symbols = "SZSE.000001"
@@ -520,7 +531,7 @@ SHSE.000053
 
     @Test
     @DisplayName("3000 个symbol 查询1年的日线")
-    fun GetDayBar_3000_symbols_1year() {
+    fun TestGetDayBar_3000_symbols_1year() {
         val req_infos = GetSymbolInfosReq {
             secType1 = 1010
             addExchanges("SHSE")
@@ -550,7 +561,7 @@ SHSE.000053
 
     @Test
     @DisplayName("3000 个symbol 查询1天的日线")
-    fun GetDayBar_3000_symbols_1day() {
+    fun TestGetDayBar_3000_symbols_1day() {
         val req_infos = GetSymbolInfosReq {
             secType1 = 1010
             addExchanges("SHSE")
@@ -579,7 +590,7 @@ SHSE.000053
     }
 
     @Test
-    fun GetHistoryTick_for_revision_test() {
+    fun TestGetHistoryTick_for_revision() {
         MeasureTime {
             val req = GetHistoryTicksReq {
                 symbols = "SHSE.600000"
@@ -590,12 +601,88 @@ SHSE.000053
             val rsp = history_api.getHistoryTicks(req)
             logger.info("查询结果 ${rsp.dataCount} 条记录")
 
-            val json_formatter = JsonJacksonFormat()
-            json_formatter.defaultCharset = Charsets.UTF_8
-
             logger.info("第一条记录:\n${json_formatter.printToString(rsp.dataList.first())}")
             logger.info("最后一条记录:\n${json_formatter.printToString(rsp.dataList.last())}")
         }
     }
 
+    @Test
+    fun TestGetHistoryBar_dayBar_n() {
+        MeasureTime {
+            val req = GetHistoryBarsNReq {
+                symbol = "SHSE.601318"
+                frequency = "1d"
+                endTime = "2024-03-23 00:00:00"
+                count = 150
+                adjust = 1
+            }
+
+            val rsp = history_api.getHistoryBarsN(req)
+            TokenUpdater.logger.info("查询结果 ${rsp.dataCount} 条记录")
+
+
+            TokenUpdater.logger.info("第一条记录:\n${json_formatter.printToString(rsp.dataList.first())}")
+            TokenUpdater.logger.info("最后一条记录:\n${json_formatter.printToString(rsp.dataList.last())}")
+        }
+    }
+
+    @Test
+    @DisplayName("批量测试日线-n查询性能")
+    fun TestGetHistoryBar_dayBar_n_bat() {
+        // 先查询沪市所有股票代码
+        val req_symbols = GetSymbolInfosReq {
+            secType1 = 1010
+            addExchanges("SZSE")
+        }
+
+        val rsp_symbols = instrument_api.getSymbolInfos(req_symbols)
+
+        logger.info("测试 ${rsp_symbols.symbolInfosList.count()} 支股票的日线-n查询")
+
+        val time_consuming_list = mutableListOf<Long>()
+
+        rsp_symbols.symbolInfosList.forEach { symbolInfo ->
+            val duration = measureTime {
+                val req = GetHistoryBarsNReq {
+                    symbol = symbolInfo.symbol
+                    frequency = "1d"
+                    endTime = "2024-03-23 00:00:00"
+                    count = 150
+                    adjust = 1
+                }
+
+                val rsp = history_api.getHistoryBarsN(req)
+                logger.info("${req.symbol} 查询结果 ${rsp.dataCount} 条记录")
+            }
+            time_consuming_list.add(duration.toLong(DurationUnit.MILLISECONDS))
+        }
+
+        val df = time_consuming_list.toDataFrame()
+//        val desc = df.describe()
+        logger.info("count:     ${df.count()}")
+        logger.info("max:       ${df.max()}")
+        logger.info("min:       ${df.min()}")
+        logger.info("mean:      ${df.mean()}")
+        logger.info("median:    ${df.median()}")
+    }
+
+    @Test
+    @DisplayName("测试bar合成")
+    fun TestHistoryBar_1m() {
+        measureTime {
+            val req = GetHistoryBarsReq {
+                symbols = "SZSE.123167"
+                frequency = "3600s"
+//                frequency = "60s"
+                startTime = "2024-03-25 08:00:00"
+                endTime = "2024-03-25 15:00:00"
+            }
+
+            val rsp = history_api.getHistoryBars(req)
+            rsp.dataList.forEach {
+                logger.info("${json_formatter.printToString(it)}")
+                logger.info("close: ${it.close}, BOB: ${it.bob.toLocalDateTime()} EOB: ${it.eob.toLocalDateTime()}")
+            }
+        }
+    }
 }
