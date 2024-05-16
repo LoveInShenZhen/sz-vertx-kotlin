@@ -685,4 +685,23 @@ SHSE.000053
             }
         }
     }
+
+    @Test
+    fun debug_test() {
+        val req = GetHistoryBarsNReq {
+            symbol = "SZSE.159955"
+            frequency = "1d"
+            count = 10
+            endTime = "2020-01-06"
+            adjust = 1
+            adjustEndTime = "2024-04-29"
+        }
+
+        val rsp = history_api.getHistoryBarsN(req)
+        logger.info("结果条数: ${rsp.dataCount}")
+
+        rsp.dataList.forEach{
+            logger.info("${it.eob.toLocalDate()} ${json_formatter.printToString(it)}")
+        }
+    }
 }
