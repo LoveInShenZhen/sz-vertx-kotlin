@@ -13,6 +13,7 @@ import io.ebean.Database
 import io.ebean.DatabaseFactory
 import io.ebean.Model
 import io.ebean.annotation.DbComment
+import io.ebean.annotation.DbJson
 import io.ebean.annotation.View
 import io.ebean.annotation.WhenCreated
 import io.ebean.annotation.WhenModified
@@ -24,10 +25,10 @@ import sz.ebean.gen.dbinfo.*
 import java.io.File
 import java.math.BigDecimal
 import java.util.*
-import javax.persistence.*
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.defaultType
 import kotlin.reflect.full.isSubclassOf
+import jakarta.persistence.*
 
 //
 // Created by kk on 2021/5/5.
@@ -168,7 +169,7 @@ class GenBean : CliktCommand(name = "gen") {
         dataSourceConfig.url = jdbcUrl
 
         val config = DatabaseConfig()
-        config.dataSourceConfig = dataSourceConfig
+        config.setDataSourceConfig(dataSourceConfig)
 
         return DatabaseFactory.create(config)
     }
@@ -308,6 +309,10 @@ class GenBean : CliktCommand(name = "gen") {
             }
 
             builder.addAnnotation(columnAnnSpecBuilder.build())
+        }
+
+        if (columnInfo.isJsonType()) {
+            builder.addAnnotation(DbJson::class)
         }
 
         return builder.build()

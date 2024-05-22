@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm").version("1.9.24")
-    id("io.ebean").version("13.6.4")
+    id("io.ebean").version("15.3.0")
     application
 }
 
@@ -20,13 +20,14 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation(kotlin("stdlib-jdk8"))
 
-    implementation("ch.qos.logback:logback-classic:1.2.11")
-    implementation("io.ebean:ebean:13.6.4")
-    implementation("com.github.ajalt.clikt:clikt:3.1.0") {
+    implementation("ch.qos.logback:logback-classic:1.4.12")
+    implementation("io.ebean:ebean:15.3.0")
+    implementation("io.ebean:jakarta-persistence-api:3.0")
+    implementation("com.github.ajalt.clikt:clikt:4.3.0") {
         exclude(group = "org.jetbrains.kotlin")
     }
     implementation("mysql:mysql-connector-java:8.0.29")
-    implementation("com.squareup:kotlinpoet:1.12.0") {
+    implementation("com.squareup:kotlinpoet:1.15.2") {
         exclude(group = "org.jetbrains.kotlin")
     }
 //    implementation("com.google.guava:guava:28.2-jre")

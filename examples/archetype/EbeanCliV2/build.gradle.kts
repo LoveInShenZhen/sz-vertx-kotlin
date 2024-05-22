@@ -7,7 +7,7 @@ plugins {
     id("org.beryx.runtime") version "1.12.7"
     id("io.ebean").version("15.3.0")
     id("org.jetbrains.kotlin.kapt") version "1.9.24"
-    id("com.github.johnrengelman.shadow") version("7.1.2")
+    id("com.github.johnrengelman.shadow") version ("7.1.2")
     application
 }
 
@@ -15,9 +15,9 @@ group = "com.myquant"
 version = "1.0-SNAPSHOT"
 
 repositories {
-    maven {
-        url = uri("https://maven.aliyun.com/repository/public/")
-    }
+//    maven {
+//        url = uri("https://maven.aliyun.com/repository/public/")
+//    }
     mavenLocal()
     mavenCentral()
 }
@@ -33,9 +33,10 @@ dependencies {
     implementation("mysql:mysql-connector-java:8.0.29")
 
     implementation("io.ebean:ebean:15.3.0")
-    kapt("io.ebean:querybean-generator:15.3.0")
-    implementation("io.ebean:jakarta-persistence-api:3.0")
 
+
+    implementation("io.ebean:ebean-ddl-generator:15.3.0")
+    kapt("io.ebean:querybean-generator:15.3.0")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.+")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.+")
@@ -64,6 +65,9 @@ tasks.withType<JavaExec> {
     val ebeanConfPath = Path.of(this.project.rootDir.absolutePath, "conf", "ebean.yml")
     this.jvmArgs(
         "-Dfile.encoding=UTF-8",
+        "-Dsun.stdout.encoding=UTF-8",
+        "-Dsun.stderr.encoding=UTF-8",
+        "-Dsun.jnu.encoding=UTF-8",
         "-Dlogback.configurationFile=${logbackConfPath}",
         "-Dprops.file=${ebeanConfPath}",
         "-Dconfig.file=${appconf}"
@@ -116,9 +120,10 @@ ebean {
     kotlin = true
 }
 
+
 sourceSets {
     main {
-        java.srcDirs.add(file("${buildDir.path}/generated/source/kapt/main"))
+        java.srcDirs.add(file("${layout.buildDirectory.asFile.get().path}/generated/source/kapt/main"))
     }
 }
 
@@ -134,13 +139,13 @@ distTar.into("${project.name}-${project.version}") {
     from(".").include("conf/**")
 }
 
-val shadowDistZip :Zip by tasks
+val shadowDistZip: Zip by tasks
 shadowDistZip.enabled = false
 shadowDistZip.into("${project.name}-shadow-${project.version}") {
     from(".").include("conf/**")
 }
 
-val shadowDistTar : Tar by tasks
+val shadowDistTar: Tar by tasks
 shadowDistTar.enabled = false
 shadowDistTar.into("${project.name}-shadow-${project.version}") {
     from(".").include("conf/**")

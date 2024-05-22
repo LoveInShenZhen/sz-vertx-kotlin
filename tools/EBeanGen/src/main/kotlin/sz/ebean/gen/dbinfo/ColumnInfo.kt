@@ -1,5 +1,7 @@
 package sz.ebean.gen.dbinfo
 
+import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import jodd.util.StringUtil
 import java.sql.JDBCType
 import java.sql.Types
@@ -44,20 +46,28 @@ class ColumnInfo {
         }
 
     fun kotlinType(): KClass<*> {
-        val kotlinType = kotlinTypeOf(JDBCType.valueOf(this.jdbc_type))
-        if (this.is_pk && kotlinType == kotlin.String::class && this.column_size == 36) {
-            // 主键, 且长度为 36, 字符串, 所以推断为 uuid
-            return UUID::class
+        // 针对 mysql 的 json 字段类型进行特殊处理
+        if (this.type_name.uppercase() == "JSON") {
+            // 判断 remarks 里是否包含 array 字符串
+            if (this.remarks.contains("array", ignoreCase = true)) {
+                return ArrayNode::class
+            } else {
+                return ObjectNode::class
+            }
+        } else {
+            val kotlinType = kotlinTypeOf(JDBCType.valueOf(this.jdbc_type))
+            if (this.is_pk && kotlinType == kotlin.String::class && this.column_size == 36) {
+                // 主键, 且长度为 36, 字符串, 所以推断为 uuid
+                return UUID::class
+            }
+            return kotlinType
         }
-        return kotlinType
     }
 
 
     fun isWhenCreated(): Boolean {
         if (this.field_name in setOf<String>(
-                "created",
-                "created_at",
-                "when_created"
+                "created", "created_at", "when_created"
             ) && this.jdbc_type in setOf(Types.TIME, Types.TIMESTAMP)
         ) {
             return true
@@ -68,12 +78,7 @@ class ColumnInfo {
 
     fun isWhenModified(): Boolean {
         if (this.field_name in setOf(
-                "modified",
-                "modified_at",
-                "when_modified",
-                "updated",
-                "updated_at",
-                "when_updated"
+                "modified", "modified_at", "when_modified", "updated", "updated_at", "when_updated"
             ) && this.jdbc_type in setOf(Types.TIME, Types.TIMESTAMP)
         ) {
             return true
@@ -88,6 +93,10 @@ class ColumnInfo {
         }
 
         return false
+    }
+
+    fun isJsonType(): Boolean {
+        return this.type_name.equals("JSON", ignoreCase = true)
     }
 
     companion object {
