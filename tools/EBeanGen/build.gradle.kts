@@ -20,7 +20,7 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation(kotlin("stdlib-jdk8"))
 
-    implementation("ch.qos.logback:logback-classic:1.4.12")
+    implementation("ch.qos.logback:logback-classic:1.5.6")
     implementation("io.ebean:ebean:15.3.0")
     implementation("io.ebean:jakarta-persistence-api:3.0")
     implementation("com.github.ajalt.clikt:clikt:4.3.0") {
@@ -31,11 +31,11 @@ dependencies {
         exclude(group = "org.jetbrains.kotlin")
     }
 //    implementation("com.google.guava:guava:28.2-jre")
-    implementation("org.jodd:jodd-util:6.1.0")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3") {
+    implementation("org.jodd:jodd-util:6.2.2")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.1") {
         exclude(group = "org.jetbrains.kotlin")
     }
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.3")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.0-rc1")
 
 
     testImplementation("junit", "junit", "4.12")
