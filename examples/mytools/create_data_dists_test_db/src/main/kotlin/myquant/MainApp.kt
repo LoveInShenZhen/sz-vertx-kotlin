@@ -15,7 +15,7 @@ class MainApp {
         fun main(args: Array<String>) {
             initLogbackConfigFilePath()
             CmdRoot()
-                .subcommands(CmdTest())
+                .subcommands(CmdTest(), CmdInitTestEnvDb())
                 .main(args)
         }
 
@@ -28,6 +28,7 @@ class MainApp {
                 log.info("working dir: ${File(".").absolutePath.trim('.')}")
                 log.info("config.file: ${System.getProperty("config.file", "undefined")}")
                 log.info("ebean props.file: ${System.getProperty("props.file", "undefined")}")
+                log.info("main class: ${this::class.qualifiedName}")
             }
         }
 

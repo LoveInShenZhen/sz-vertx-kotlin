@@ -47,6 +47,8 @@ dependencies {
     // https://mvnrepository.com/artifact/org.apache.commons/commons-csv
     implementation("org.apache.commons:commons-csv:1.11.0")
 
+    // 阿里云 OSS SDK
+    implementation("com.aliyun.oss:aliyun-sdk-oss:3.17.4")
 
     testImplementation(kotlin("test"))
 }

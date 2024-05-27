@@ -6,12 +6,17 @@ datasource:
   db:
     username: root
     password: "showmethemoney"
-    url: "jdbc:mysql://localhost:3306/ebean_gen_test?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true"
+    url: "jdbc:mysql://localhost:3306/data_dists?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true"
 
-  ebean_gen_test:
+  test_env_db:
     username: root
     password: "showmethemoney"
-    url: "jdbc:mysql://localhost:3306/ebean_gen_test?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true"
+    url: "jdbc:mysql://localhost:3306/data_dists?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true"
+
+  prod_env_db:
+    username: myquant_readonly
+    password: SNFaXxvjm5
+    url: "jdbc:mysql://localhost:6603/data_dists?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true"
 
 ebean:
   search:
