@@ -1,0 +1,30 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level) %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+    </root>
+    <logger name="org.mongodb.driver" level="INFO"/>
+
+    <logger name="io.ebean" level="INFO"/>
+    <logger name="io.ebeaninternal" level="INFO"/>
+    <logger name="io.ebean.datasource" level="ERROR"/>
+    <!--    <logger name="io.ebean.DDL" level="DEBUG"/>-->
+
+    <!--    <logger name="io.ebean.SQL" level="DEBUG"/>-->
+    <!--    <logger name="io.ebean.TXN" level="DEBUG"/>-->
+    <!--    <logger name="io.ebean.SUM" level="DEBUG"/>-->
+
+    <!--    &lt;!&ndash; L2 logging &ndash;&gt;-->
+    <!--    <logger name="io.ebean.cache.QUERY" level="DEBUG"/>-->
+    <!--    <logger name="io.ebean.cache.BEAN" level="DEBUG"/>-->
+    <!--    <logger name="io.ebean.cache.COLL" level="DEBUG"/>-->
+    <!--    <logger name="io.ebean.cache.NATKEY" level="DEBUG"/>-->
+
+    <!--    &lt;!&ndash; Testing with Docker containers &ndash;&gt;-->
+    <!--    <logger name="io.ebean.docker" level="DEBUG"/>-->
+
+</configuration>

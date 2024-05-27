@@ -4,13 +4,8 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
 import io.ebean.DB
-import models.OrderReq
-import models.query.QOrderReq
-import myquant.tools.Json
-import myquant.tools.toJsonPretty
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.util.*
 
 //
 // Created by drago on 2022/12/22 022.
@@ -46,11 +41,11 @@ class CmdTest : CliktCommand(help = "临时测试代码", name = "test") {
 //            log.info("新增一条记录")
 //        }
 
-        db.beginTransaction().use {
-            val tag = "C"
-            val req = QOrderReq(db).where().raw("""JSON_CONTAINS(`posi_tag`,'"${tag}"', '${'$'}')""").findOne()
-            log.info(req?.toJsonPretty())
-        }
+//        db.beginTransaction().use {
+//            val tag = "C"
+//            val req = QOrderReq(db).where().raw("""JSON_CONTAINS(`posi_tag`,'"${tag}"', '${'$'}')""").findOne()
+//            log.info(req?.toJsonPretty())
+//        }
 
     }
 
