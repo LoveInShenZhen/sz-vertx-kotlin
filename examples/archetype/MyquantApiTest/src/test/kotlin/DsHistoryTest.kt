@@ -4,6 +4,9 @@ import commons.toLocalDateTime
 import io.grpc.Metadata
 import io.grpc.stub.MetadataUtils
 import myquant.proto.platform.data.DataProto
+import myquant.proto.platform.data.data_dists.BatchQueryReq
+import myquant.proto.platform.data.data_dists.DataInnerServiceProto
+import myquant.proto.platform.data.data_dists.ExchangeSymbols
 import myquant.proto.platform.data.ds_instrument.GetSymbolInfosReq
 import myquant.proto.platform.data.fundamental.GetPreviousTradingDateReq
 import myquant.proto.platform.data.history.GetCurrentTicksReq
@@ -306,9 +309,9 @@ SHSE.000053
         val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
         val req = GetHistoryBarsReq {
             frequency = "60s"
-            symbols = "SHSE.600000"
-            startTime = "${today} 09:00:00"
-            endTime = "${today} 15:00:00"
+            symbols = "SHSE.600895"
+            startTime = "${today} 09:35:00"
+            endTime = "${today} 09:40:00"
         }
 
         val rsp = history_api.getHistoryBars(req)
@@ -321,15 +324,42 @@ SHSE.000053
         val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
         val req = GetHistoryBarsReq {
             frequency = "5m"
-            symbols = "SHSE.600000"
-            startTime = "${today} 09:00:00"
-            endTime = "${today} 15:00:00"
+            symbols = "SHSE.600895"
+            startTime = "${today} 09:35:00"
+            endTime = "${today} 09:40:00"
         }
 
         val rsp = history_api.getHistoryBars(req)
         logger.info("查询结果 ${rsp.dataCount} 条记录")
         logger.info("第一条 bar 时间: ${rsp.dataList.first().eob.toLocalDateTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)}")
         logger.info("最后一条 bar 时间: ${rsp.dataList.last().eob.toLocalDateTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)}")
+        rsp.dataList.forEach {
+            logger.info(json_formatter.printToString(it))
+        }
+    }
+
+    @Test
+    @DisplayName("日内5分钟Bar,向上游MongoDb里查询")
+    fun UpstreamDataService_BarsBatchQuery() {
+        val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
+        val req = BatchQueryReq {
+            frequency = "5m"
+            startTime = "${today} 09:35:00"
+            endTime = "${today} 09:40:00"
+
+            addExchangeSymbols(ExchangeSymbols {
+                exchange = "SHSE"
+                addSymbols("SHSE.600895")
+            })
+        }
+
+        val rsp = innder_api.barsBatchQuery(req)
+        logger.info("查询结果 ${rsp.dataCount} 条记录")
+        logger.info("第一条 bar 时间: ${rsp.dataList.first().eob.toLocalDateTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)}")
+        logger.info("最后一条 bar 时间: ${rsp.dataList.last().eob.toLocalDateTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)}")
+        rsp.dataList.forEach {
+            logger.info(json_formatter.printToString(it))
+        }
     }
 
     @Test

@@ -16,7 +16,7 @@ import kotlin.String
 
 @Entity
 @Table(name = "data_revision_by_day")
-@DbComment("日频分发数据修订记录")
+@DbComment("以差异的数据的方式分发的数据修正补丁")
 public open class DataRevisionByDay() {
   @Id
   @Column(
@@ -107,7 +107,7 @@ public open class DataRevisionByDay() {
   )
   public var other_dists_info: String = ""
 
-  @DbComment("补丁数据记录里的最晚的时间戳")
+  @DbComment("用于补丁记录查询的时间戳")
   @Column(
     name = "last_cutime",
     nullable = false,
@@ -126,4 +126,12 @@ public open class DataRevisionByDay() {
     length = 10,
   )
   public var records_count: Int = 0
+
+  @DbComment("记录补丁数据记录里的最后更新时间")
+  @Column(
+    name = "last_mtime",
+    nullable = false,
+    length = 19,
+  )
+  public var last_mtime: LocalDateTime? = null
 }

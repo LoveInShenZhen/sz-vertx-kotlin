@@ -14,9 +14,9 @@
     <logger name="io.ebean.datasource" level="ERROR"/>
     <!--    <logger name="io.ebean.DDL" level="DEBUG"/>-->
 
-    <!--    <logger name="io.ebean.SQL" level="DEBUG"/>-->
-    <!--    <logger name="io.ebean.TXN" level="DEBUG"/>-->
-    <!--    <logger name="io.ebean.SUM" level="DEBUG"/>-->
+<!--        <logger name="io.ebean.SQL" level="DEBUG"/>-->
+<!--        <logger name="io.ebean.TXN" level="DEBUG"/>-->
+<!--        <logger name="io.ebean.SUM" level="DEBUG"/>-->
 
     <!--    &lt;!&ndash; L2 logging &ndash;&gt;-->
     <!--    <logger name="io.ebean.cache.QUERY" level="DEBUG"/>-->

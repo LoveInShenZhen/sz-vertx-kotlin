@@ -32,8 +32,8 @@ open class DsProxyTesterBase {
 
 
         init {
-//            channel_factory = test_env_channel_factory()
-            channel_factory = prod_env_channel_factory()
+            channel_factory = test_env_channel_factory()
+//            channel_factory = prod_env_channel_factory()
             val ds_proxy_channel = test_env_local_ds_proxy_channel()
 
             fundamental_api = FundamentalServiceGrpc.newBlockingStub(ds_proxy_channel).withCompression("gzip")

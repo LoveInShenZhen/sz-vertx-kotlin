@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "文件系统同步机制(fdatasync fsync syncfs sync).md",
+                "file": "异步编程/Linux 异步 IO 框架 io_uring 基本原理,程序示例与性能压测.md",
                 "mode": "source",
                 "source": false
               }
@@ -25,14 +25,13 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "BoltDB/深入浅出BoltDB - (1) 存储与缓存.md",
+                "file": "异步编程/Linux 原生异步 IO 原理与使用（Native AIO）.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -98,7 +97,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "BoltDB/深入浅出BoltDB - (1) 存储与缓存.md",
+                "file": "异步编程/Linux 异步 IO 框架 io_uring 基本原理,程序示例与性能压测.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +114,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "BoltDB/深入浅出BoltDB - (1) 存储与缓存.md",
+                "file": "异步编程/Linux 异步 IO 框架 io_uring 基本原理,程序示例与性能压测.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,7 +137,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "BoltDB/深入浅出BoltDB - (1) 存储与缓存.md"
+                "file": "异步编程/Linux 异步 IO 框架 io_uring 基本原理,程序示例与性能压测.md"
               }
             }
           }
@@ -151,6 +150,7 @@
   },
   "left-ribbon": {
     "hiddenItems": {
+      "obsidian-excalidraw-plugin:新建绘图文件": false,
       "switcher:打开快速切换": false,
       "graph:查看关系图谱": false,
       "canvas:新建白板": false,
@@ -159,11 +159,16 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "2191cd7a13adc984",
+  "active": "08492c19879020a0",
   "lastOpenFiles": [
-    "BoltDB/深入浅出BoltDB - (2) B+Tree.md",
-    "BoltDB/深入浅出BoltDB - (1) 存储与缓存.md",
     "文件系统同步机制(fdatasync fsync syncfs sync).md",
+    "异步编程/Linux 原生异步 IO 原理与使用（Native AIO）.md",
+    "异步编程/Linux 异步 IO 框架 io_uring 基本原理,程序示例与性能压测.md",
+    "java/Java-FFI.md",
+    "异步编程",
+    "BoltDB/深入浅出BoltDB - (1) 存储与缓存.md",
+    "java",
+    "BoltDB/深入浅出BoltDB - (2) B+Tree.md",
     "网络编程/TCP keepalive简介.md",
     "网络编程"
   ]

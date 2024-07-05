@@ -15,7 +15,7 @@ import kotlin.String
 
 @Entity
 @Table(name = "data_revision_by_year")
-@DbComment("记录按年分发的数据有哪些是修改重新分发了")
+@DbComment("记录按年分发的数据有哪些是修改重新分发了;这张表里的补丁,都是整个分发的数据库/数据集被替换的方式进行更新;")
 public open class DataRevisionByYear() {
   @Id
   @Column(
@@ -102,11 +102,19 @@ public open class DataRevisionByYear() {
   @WhenCreated
   public var created_at: LocalDateTime? = null
 
-  @DbComment("补丁数据记录里的最晚的时间戳")
+  @DbComment("用于补丁记录查询的时间戳")
   @Column(
     name = "last_cutime",
     nullable = false,
     length = 19,
   )
   public var last_cutime: LocalDateTime? = null
+
+  @DbComment("记录补丁数据记录里的最后更新时间")
+  @Column(
+    name = "last_mtime",
+    nullable = false,
+    length = 19,
+  )
+  public var last_mtime: LocalDateTime? = null
 }

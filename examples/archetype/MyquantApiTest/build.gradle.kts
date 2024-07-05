@@ -18,7 +18,7 @@ dependencies {
     // https://mvnrepository.com/artifact/io.grpc/grpc-netty
     implementation("io.grpc:grpc-netty:1.54.2")
     implementation("myquant.cn:myquant-kroto:1.0-SNAPSHOT")
-    implementation("ch.qos.logback:logback-classic:1.4.11")
+    implementation("ch.qos.logback:logback-classic:1.4.12")
 
     implementation("com.fasterxml.jackson.module:jackson-module-jsonSchema:2.14.3")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.3") {
