@@ -20,6 +20,18 @@
             }
           },
           {
+            "id": "9012750bee2e5cb9",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "grpc/python grpc 开发环境构建.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
             "id": "2191cd7a13adc984",
             "type": "leaf",
             "state": {
@@ -31,7 +43,8 @@
               }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -97,7 +110,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Linux系统编程/Linux中断基础原理及内核实现.md",
+                "file": "grpc/python grpc 开发环境构建.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -114,7 +127,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Linux系统编程/Linux中断基础原理及内核实现.md",
+                "file": "grpc/python grpc 开发环境构建.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -137,7 +150,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Linux系统编程/Linux中断基础原理及内核实现.md"
+                "file": "grpc/python grpc 开发环境构建.md"
               }
             }
           }
@@ -159,8 +172,10 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "08492c19879020a0",
+  "active": "9012750bee2e5cb9",
   "lastOpenFiles": [
+    "grpc/python grpc 开发环境构建.md",
+    "grpc",
     "Linux系统编程/Linux原生异步IO原理与使用.md",
     "Linux系统编程/Linux中断基础原理及内核实现.md",
     "Linux系统编程/Linux 异步 IO 框架 io_uring 基本原理,程序示例与性能压测.md",
