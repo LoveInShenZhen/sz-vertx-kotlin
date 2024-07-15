@@ -551,11 +551,13 @@ class CmdInitTestEnvDb : CliktCommand(help = "初始化测试环境数据库", n
                     }
                 }
 
-                // 从 prod_env_oss 下载
-                val data = prod_env_oss.getObject(it.oss_object)
+                if (it.oss_object.isNotBlank()) {
+                    // 从 prod_env_oss 下载
+                    val data = prod_env_oss.getObject(it.oss_object)
 
-                // 上传到 test_env_oss
-                test_env_oss.putObject(it.oss_object, data)
+                    // 上传到 test_env_oss
+                    test_env_oss.putObject(it.oss_object, data)
+                }
 
                 // 在测试数据库里保存补丁记录
                 val rec = DataRevisionByDay()
