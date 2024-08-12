@@ -12,13 +12,13 @@ buildscript {
     }
 
     dependencies {
-        classpath(group="commons-io", name="commons-io", version="2.16.1")
+        classpath(group = "commons-io", name = "commons-io", version = "2.16.1")
     }
 }
 
 
 plugins {
-    kotlin("jvm") version "2.0.0"
+    kotlin("jvm") version "2.0.10"
     id("org.beryx.runtime") version "1.12.7"
     application
 }
@@ -36,7 +36,9 @@ repositories {
 }
 
 dependencies {
+    // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
     implementation("ch.qos.logback:logback-classic:1.5.6")
+
     implementation("com.github.ajalt.clikt:clikt:4.3.0") {
         exclude(group = "org.jetbrains.kotlin")
     }
@@ -105,7 +107,7 @@ tasks.withType<CreateStartScripts> {
     }
 }
 
-fun currentOsType() : String {
+fun currentOsType(): String {
     val os_name = System.getProperty("os.name").lowercase()
     if (os_name.contains("win")) {
         return "win"
@@ -152,8 +154,6 @@ fun jdkHome(): String {
 }
 
 runtime {
-    this.options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
-
     if (targetOsType() == "win") {
         targetPlatform("win") {
             setJdkHome(jdkHome())
@@ -163,17 +163,15 @@ runtime {
 
     if (targetOsType() == "linux") {
         targetPlatform("linux") {
-            val linux_jdk_home = System.getenv("LINUX_JDK_HOME")
-            if (linux_jdk_home.isNullOrBlank()) {
-                println("请设置 LINUX_JDK_HOME 环境变量")
-                throw Exception("请设置 LINUX_JDK_HOME 环境变量")
-            }
-            setJdkHome(linux_jdk_home)
+            setJdkHome(jdkHome())
+            println("JDK_HOME=${jdkHome()}")
             addOptions("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages")
+            // 不知道为什么, org.beryx.runtime 插件, 在linux环境下, 不能正确的检测出所依赖的 jmod, 只能手工指定了
+            addModules("java.base", "java.logging", "java.naming", "java.xml", "java.management")
         }
     }
 
-    this.imageZip.set(layout.buildDirectory.file("runtime_dists/${project.name}-${targetOsType()}.zip").get().asFile)
+    this.imageZip.set(layout.buildDirectory.file("runtime_dists/${project.name}").get().asFile)
 }
 
 tasks.named("runtime") {
@@ -185,7 +183,7 @@ tasks.named("runtime") {
     }
 }
 
-fun execCmd(cmdarray:Array<String>) :String {
+fun execCmd(cmdarray: Array<String>): String {
     val p = Runtime.getRuntime().exec(cmdarray)
     val resultStream = p.inputStream
     p.waitFor()
@@ -196,7 +194,7 @@ fun execCmd(cmdarray:Array<String>) :String {
 tasks.named("build") {
     doFirst {
         val git_ver_args = arrayOf("git", "rev-parse", "HEAD")
-        val git_rev =execCmd(git_ver_args)
+        val git_rev = execCmd(git_ver_args)
 
         val git_ver_tag = arrayOf("git", "tag | sort -r -V | head -1")
         var ver_tag = execCmd(git_ver_tag)
