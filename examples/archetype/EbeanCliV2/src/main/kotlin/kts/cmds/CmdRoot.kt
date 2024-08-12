@@ -1,4 +1,4 @@
-package myquant.cmds
+package kts.cmds
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.typesafe.config.Config

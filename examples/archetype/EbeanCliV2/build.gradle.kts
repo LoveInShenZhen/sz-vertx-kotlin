@@ -1,51 +1,68 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.nio.file.Path
+import org.apache.commons.io.FileUtils
+
+buildscript {
+    repositories {
+        maven {
+            url = uri("https://maven.aliyun.com/repository/public/")
+        }
+        mavenLocal()
+    }
+
+    dependencies {
+        classpath(group="commons-io", name="commons-io", version="2.16.1")
+    }
+}
 
 
 plugins {
     kotlin("jvm") version "2.0.0"
     id("org.beryx.runtime") version "1.12.7"
-    id("io.ebean").version("15.3.0")
+    id("io.ebean").version("15.5.0")
     id("org.jetbrains.kotlin.kapt") version "2.0.0"
-    id("com.github.johnrengelman.shadow") version ("7.1.2")
     application
 }
 
-group = "com.myquant"
+group = "com.kts"
 version = "1.0-SNAPSHOT"
 
+
 repositories {
-//    maven {
-//        url = uri("https://maven.aliyun.com/repository/public/")
-//    }
+    maven {
+        url = uri("https://maven.aliyun.com/repository/public/")
+    }
     mavenLocal()
     mavenCentral()
 }
 
 dependencies {
-    implementation("ch.qos.logback:logback-classic:1.2.11")
-    implementation("com.github.ajalt.clikt:clikt:3.4.2") {
+    implementation("ch.qos.logback:logback-classic:1.5.6")
+    implementation("com.github.ajalt.clikt:clikt:4.3.0") {
         exclude(group = "org.jetbrains.kotlin")
     }
-    implementation("io.github.config4k:config4k:0.4.2") {
+    implementation("io.github.config4k:config4k:0.7.0") {
         exclude(group = "org.jetbrains.kotlin")
     }
-    implementation("mysql:mysql-connector-java:8.0.29")
+    // https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
+    implementation("com.mysql:mysql-connector-j:8.4.0")
 
-    implementation("io.ebean:ebean:15.3.0")
+    implementation("io.ebean:ebean:15.5.0")
 
 
-    implementation("io.ebean:ebean-ddl-generator:15.3.0")
-    kapt("io.ebean:querybean-generator:15.3.0")
+    implementation("io.ebean:ebean-ddl-generator:15.5.0")
+    kapt("io.ebean:querybean-generator:15.5.0")
 
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.+")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.+")
-    implementation("org.jodd:jodd-util:6.1.0")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.1")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2")
+//    implementation("org.jodd:jodd-util:6.1.0")
 
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-    implementation("org.apache.commons:commons-lang3:3.14.0")
+//    implementation("org.apache.commons:commons-lang3:3.14.0")
     // https://mvnrepository.com/artifact/org.apache.commons/commons-csv
-    implementation("org.apache.commons:commons-csv:1.11.0")
+//    implementation("org.apache.commons:commons-csv:1.11.0")
+    // https://mvnrepository.com/artifact/commons-io/commons-io
+//    implementation("commons-io:commons-io:2.16.1")
+
 
 
     testImplementation(kotlin("test"))
@@ -56,7 +73,7 @@ tasks.test {
 }
 
 kotlin { // Extension for easy setup
-    jvmToolchain(21) // Target version of generated JVM bytecode. See 7️⃣
+    jvmToolchain(17) // Target version of generated JVM bytecode. See 7️⃣
 }
 
 tasks.withType<JavaExec> {
@@ -75,7 +92,7 @@ tasks.withType<JavaExec> {
 }
 
 application {
-    mainClass.set("myquant.MainApp")
+    mainClass.set("kts.MainApp")
 }
 
 tasks.withType<CreateStartScripts> {
@@ -106,8 +123,96 @@ tasks.withType<CreateStartScripts> {
     }
 }
 
+fun currentOsType() : String {
+    val os_name = System.getProperty("os.name").lowercase()
+    if (os_name.contains("win")) {
+        return "win"
+    }
+    if (os_name.contains("linux")) {
+        return "linux"
+    }
+    if (os_name.contains("mac")) {
+        return "mac"
+    }
+
+    return "unknown"
+}
+
+fun targetOsType(): String {
+    val targetOs = System.getProperty("target.os")
+    if (targetOs.isNullOrBlank()) {
+        return currentOsType()
+    } else {
+        return targetOs
+    }
+}
+
+fun jdkHome(): String {
+    val os_type = currentOsType()
+    val target_os_type = targetOsType()
+    if (os_type == target_os_type) {
+        val java_home = System.getenv("JAVA_HOME")
+        if (java_home.isNullOrBlank()) {
+            println("请设置 JAVA_HOME 环境变量")
+            throw Exception("请设置 JAVA_HOME 环境变量")
+        }
+        return java_home
+    } else {
+        val jdk_home_env_name = "${target_os_type.uppercase()}_JDK_HOME"
+        val jdk_home = System.getenv(jdk_home_env_name)
+        if (jdk_home.isNullOrBlank()) {
+            println("请设置 $jdk_home_env_name 环境变量")
+            throw Exception("请设置 $jdk_home_env_name 环境变量")
+        }
+
+        return jdk_home
+    }
+}
+
 runtime {
     this.options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
+
+    if (targetOsType() == "win") {
+        targetPlatform("win") {
+            setJdkHome(jdkHome())
+            addOptions("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages")
+        }
+    }
+
+    if (targetOsType() == "linux") {
+        targetPlatform("linux") {
+            val linux_jdk_home = System.getenv("LINUX_JDK_HOME")
+            if (linux_jdk_home.isNullOrBlank()) {
+                println("请设置 LINUX_JDK_HOME 环境变量")
+                throw Exception("请设置 LINUX_JDK_HOME 环境变量")
+            }
+            setJdkHome(linux_jdk_home)
+            addOptions("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages")
+        }
+    }
+
+}
+
+tasks.named("runtimeZip") {
+
+    println("runtimeZip task type: ${this.javaClass.name}")
+
+    doFirst {
+        val src_dir = layout.projectDirectory.dir("conf").asFile
+        val dest_dir = layout.buildDirectory.dir("image/${project.name}-${targetOsType()}/conf").get().asFile
+
+        FileUtils.copyDirectory(src_dir, dest_dir)
+        println("copy ${src_dir.path} to ${dest_dir.path}")
+    }
+
+    doLast {
+        val src_file = layout.buildDirectory.file("image-${targetOsType()}.zip").get().asFile
+        val dest_dir = layout.buildDirectory.dir("runtime_dists").get().asFile
+        val dest_file = layout.buildDirectory.file("runtime_dists/${project.name}-${targetOsType()}.zip").get().asFile
+        FileUtils.forceMkdir(dest_dir)
+        FileUtils.moveFile(src_file, dest_file)
+//        FileUtils.moveFileToDirectory(src_file, dest_dir, true)
+    }
 }
 
 kapt {
@@ -128,25 +233,19 @@ sourceSets {
 }
 
 val distZip: Zip by tasks
-distZip.enabled = true
-distZip.into("${project.name}-${project.version}") {
-    from(".").include("conf/**")
+distZip.apply {
+    enabled = true
+    into("${project.name}-${project.version}") {
+        from(".").include("conf/**")
+    }
 }
 
 val distTar: Tar by tasks
-distTar.enabled = false
-distTar.into("${project.name}-${project.version}") {
-    from(".").include("conf/**")
+distTar.apply {
+    enabled = false
+    into("${project.name}-${project.version}") {
+        from(".").include("conf/**")
+    }
 }
 
-val shadowDistZip: Zip by tasks
-shadowDistZip.enabled = false
-shadowDistZip.into("${project.name}-shadow-${project.version}") {
-    from(".").include("conf/**")
-}
 
-val shadowDistTar: Tar by tasks
-shadowDistTar.enabled = false
-shadowDistTar.into("${project.name}-shadow-${project.version}") {
-    from(".").include("conf/**")
-}

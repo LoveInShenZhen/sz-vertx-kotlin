@@ -1,7 +1,7 @@
-package myquant
+package kts
 
 import com.github.ajalt.clikt.core.subcommands
-import myquant.cmds.*
+import kts.cmds.*
 import org.slf4j.LoggerFactory
 import java.io.File
 
