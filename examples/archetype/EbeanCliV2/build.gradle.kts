@@ -191,27 +191,15 @@ runtime {
         }
     }
 
+    this.imageZip.set(layout.buildDirectory.file("runtime_dists/${project.name}-${targetOsType()}.zip").get().asFile)
 }
 
-tasks.named("runtimeZip") {
-
-    println("runtimeZip task type: ${this.javaClass.name}")
-
-    doFirst {
+tasks.named("runtime") {
+    doLast {
         val src_dir = layout.projectDirectory.dir("conf").asFile
         val dest_dir = layout.buildDirectory.dir("image/${project.name}-${targetOsType()}/conf").get().asFile
 
         FileUtils.copyDirectory(src_dir, dest_dir)
-        println("copy ${src_dir.path} to ${dest_dir.path}")
-    }
-
-    doLast {
-        val src_file = layout.buildDirectory.file("image-${targetOsType()}.zip").get().asFile
-        val dest_dir = layout.buildDirectory.dir("runtime_dists").get().asFile
-        val dest_file = layout.buildDirectory.file("runtime_dists/${project.name}-${targetOsType()}.zip").get().asFile
-        FileUtils.forceMkdir(dest_dir)
-        FileUtils.moveFile(src_file, dest_file)
-//        FileUtils.moveFileToDirectory(src_file, dest_dir, true)
     }
 }
 
@@ -240,12 +228,10 @@ distZip.apply {
     }
 }
 
-val distTar: Tar by tasks
-distTar.apply {
+// 这里展示了2种修改 task 配置的方法
+tasks.named<Tar>("distTar") {
     enabled = false
     into("${project.name}-${project.version}") {
         from(".").include("conf/**")
     }
 }
-
-
