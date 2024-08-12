@@ -1,8 +1,7 @@
-package sz.tools
+package kts.tools
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
-import sz.tools.Json
 
 //
 // Created by kk on 17/8/16.

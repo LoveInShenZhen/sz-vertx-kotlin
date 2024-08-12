@@ -1,0 +1,12 @@
+<configuration>
+    <appender name="ConsoleLog" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level) %logger{36} - %msg%n</pattern>
+        </encoder>
+        <target>System.err</target>
+    </appender>
+    <root level="INFO">
+        <appender-ref ref="ConsoleLog"/>
+    </root>
+
+</configuration>

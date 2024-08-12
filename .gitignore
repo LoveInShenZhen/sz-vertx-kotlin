@@ -33,3 +33,5 @@ RUNNING_PID
 docs/cherrytree/金融知识/金融知识.ctd~
 docs/obsidian/.obsidian/
 examples/mytools/create_data_dists_test_db/conf/oss.conf
+resources/version.conf
+examples/archetype/cliappV2/src/main/resources/version.conf

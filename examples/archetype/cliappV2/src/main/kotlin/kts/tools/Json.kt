@@ -1,8 +1,10 @@
-package sz.tools
+package kts.tools
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 
@@ -91,5 +93,13 @@ object Json {
         val jsonNode = parse(jsonStr)
         jsonNode.fields().forEach { map.put(it.key, it.value.asText()) }
         return map
+    }
+
+    fun createArrayNode(): ArrayNode {
+        return this.mapper.createArrayNode()
+    }
+
+    fun createObjectNode(): ObjectNode {
+        return this.mapper.createObjectNode()
     }
 }
