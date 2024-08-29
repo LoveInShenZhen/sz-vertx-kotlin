@@ -43,9 +43,10 @@ class CmdTest : CliktCommand(help = "临时测试代码", name = "test") {
 //            log.info("新增一条记录")
 //        }
 
-        db.beginTransaction().use {
+        val tran = db.beginTransaction()
+        tran.use {
             val tag = "C"
-            val req = QOrderReq(db).where().raw("""JSON_CONTAINS(`posi_tag`,'"${tag}"', '${'$'}')""").findOne()
+            val req = QOrderReq().usingTransaction(tran).where().raw("""JSON_CONTAINS(`posi_tag`,'"${tag}"', '${'$'}')""").findOne()
             log.info(req?.toJsonPretty())
         }
 
