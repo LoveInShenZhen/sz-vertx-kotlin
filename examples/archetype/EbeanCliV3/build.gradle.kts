@@ -130,7 +130,7 @@ fun targetOsType(): String {
     if (targetOs.isNullOrBlank()) {
         return currentOsType()
     } else {
-        return targetOs
+        return targetOs.lowercase()
     }
 }
 
@@ -161,12 +161,14 @@ runtime {
 
     if (targetOsType() == "win") {
         targetPlatform("win") {
+            println("构建 runtime 包目标平台: win")
             setJdkHome(jdkHome())
             addOptions("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages")
         }
     }
 
     if (targetOsType() == "linux") {
+        println("构建 runtime 包目标平台: linux")
         targetPlatform("linux") {
             val linux_jdk_home = System.getenv("LINUX_JDK_HOME")
             if (linux_jdk_home.isNullOrBlank()) {
