@@ -4,9 +4,9 @@ import java.time.format.DateTimeFormatter
 
 
 plugins {
-    kotlin("jvm") version "2.0.10"
+    kotlin("jvm") version "2.0.20"
     id("io.ebean").version("15.5.0")
-    id("org.jetbrains.kotlin.kapt") version "2.0.10"
+    id("org.jetbrains.kotlin.kapt") version "2.0.20"
     id("org.beryx.runtime") version "1.12.7"
     application
 }
@@ -33,7 +33,7 @@ dependencies {
         exclude(group = "org.jetbrains.kotlin")
     }
     // https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
-    implementation("com.mysql:mysql-connector-j:8.4.0")
+    implementation("com.mysql:mysql-connector-j:8.0.33")
 
 
     implementation("io.ebean:ebean:15.5.0")
