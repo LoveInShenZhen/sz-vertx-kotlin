@@ -32,7 +32,6 @@ import java.lang.management.ManagementFactory
 import java.net.InetAddress
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutorService
-import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 import kotlinx.coroutines.runBlocking as kxRunBlocking
 
@@ -87,13 +86,7 @@ object Application {
         // ref: https://vertx.io/docs/vertx-core/java/#_configuring_with_the_system_property
         System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.SLF4JLogDelegateFactory")
 
-        val sz_app_home = System.getProperty("sz.app.home")
-        if (sz_app_home.isNullOrBlank()) {
-            this.app_home_dir = "."
-        } else {
-            this.app_home_dir = sz_app_home
-        }
-
+        app_home_dir = appHome()
         config = ConfigFactory.load()
 
         inProductionMode = config.getBoolean("app.httpServer.productionMode")
@@ -121,6 +114,24 @@ object Application {
         }
     }
 
+    fun appHome(): String {
+        // 先检查是否有设置 APP_HOME 环境变量
+        val app_home_env = System.getenv("APP_HOME")
+        if (app_home_env.isNullOrBlank()) {
+            // 如果没有指定 APP_HOME 环境变量, 则根据 application.conf 的路径来推断;
+            // application.conf 的路径由 config.file 这个 system property 来指定
+            val config_file_prop = System.getProperty("config.file")
+            if (config_file_prop.isNullOrEmpty()) {
+                throw SzException("请指定 config.file")
+            }
+
+            val app_conf_path = java.nio.file.Path.of(config_file_prop)
+            // 根据 config.file property得到 application.conf 的路径, 父目录就是 conf 目录, 再上一级就是 app 的目录了
+            return app_conf_path.parent.parent.absolutePathString()
+        } else {
+            return app_home_env
+        }
+    }
 
     fun setupVertx(appVertx: Vertx? = null) {
         if (_vertx != null) {
@@ -169,7 +180,7 @@ object Application {
 
     private fun loadRouteFromFiles(files: List<File>): List<ApiRoute> {
         return files.map { file -> ApiRoute.parseFromFile(file) }
-                .flatMap { it }
+            .flatMap { it }
     }
 
     // 检查在 route 文件 和 subRoutes 目录下的 *.route 里定义的route 的 method + path 没有重复的
@@ -187,11 +198,11 @@ object Application {
         val errRoutes = routeMap.filter { it.value > 1 }.map { it.key }
         if (errRoutes.isNotEmpty()) {
             throw SzException(
-                    "The following routes are repeatedly defined, please check route file:\n${
-                        errRoutes.joinToString(
-                                "\n"
-                        )
-                    }"
+                "The following routes are repeatedly defined, please check route file:\n${
+                    errRoutes.joinToString(
+                        "\n"
+                    )
+                }"
             )
         }
 
@@ -223,7 +234,7 @@ object Application {
         if (routeFile.exists()) {
             val routeRegex = """(/\S*)\s+(\S+)\s*$""".toRegex()
             val lines = routeFile.readLines().map { it.trim() }
-                    .filter { it.startsWith("#").not() && it.startsWith("//").not() && it.isNotBlank() }
+                .filter { it.startsWith("#").not() && it.startsWith("//").not() && it.isNotBlank() }
             if (lines.isNotEmpty()) {
                 val webSocketRootHandler = WebSocketFilter(vertx)
                 lines.forEach { line ->
@@ -258,11 +269,11 @@ object Application {
         router.route("/builtinstatic/*").handler(StaticHandler.create())
 
         router.route().handler(
-                BodyHandler.create()
-                        .setMergeFormAttributes(bodyHandlerOptions.mergeFormAttributes)
-                        .setBodyLimit(bodyHandlerOptions.bodyLimit)
-                        .setDeleteUploadedFilesOnEnd(bodyHandlerOptions.deleteUploadedFilesOnEnd)
-                        .setUploadsDirectory(bodyHandlerOptions.uploadsDirectory)
+            BodyHandler.create()
+                .setMergeFormAttributes(bodyHandlerOptions.mergeFormAttributes)
+                .setBodyLimit(bodyHandlerOptions.bodyLimit)
+                .setDeleteUploadedFilesOnEnd(bodyHandlerOptions.deleteUploadedFilesOnEnd)
+                .setUploadsDirectory(bodyHandlerOptions.uploadsDirectory)
         )
 
         loadApiRouteFromRouteFiles().forEach {
@@ -375,7 +386,7 @@ object Application {
             this.mergeFormAttributes = config.getBoolean("app.httpServer.bodyHandler.mergeFormAttributes")
             this.deleteUploadedFilesOnEnd = config.getBoolean("app.httpServer.bodyHandler.deleteUploadedFilesOnEnd")
             this.uploadsDirectory =
-                    filePathJoin(app_home_dir, config.getString("app.httpServer.bodyHandler.uploadsDirectory"))
+                filePathJoin(app_home_dir, config.getString("app.httpServer.bodyHandler.uploadsDirectory"))
         }
     }
 
@@ -404,7 +415,7 @@ object Application {
 
     val workerDispatcher: CoroutineDispatcher by lazy {
         val factory = Class.forName(config.getString("app.httpServer.dispatcher.factory")).getDeclaredConstructor()
-                .newInstance() as IDispatcherFactory
+            .newInstance() as IDispatcherFactory
         factory.build()
     }
 

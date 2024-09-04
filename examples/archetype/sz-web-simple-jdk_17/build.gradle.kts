@@ -2,13 +2,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
-    kotlin("jvm").version("2.0.0")
+    kotlin("jvm").version("2.0.20")
 
     // Apply the application plugin to add support for building a CLI application.
     application
 
     id("io.ebean").version("12.13.0")
-    kotlin("kapt").version("2.0.0")
+    kotlin("kapt").version("2.0.20")
 }
 
 

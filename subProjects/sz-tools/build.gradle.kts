@@ -24,8 +24,8 @@ dependencies {
     api("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.3")
     api("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.14.3")
 
-    api("io.github.config4k:config4k:0.6.0")
-    api("org.apache.commons:commons-lang3:3.12.0")
+    api("io.github.config4k:config4k:0.7.0")
+    api("org.apache.commons:commons-lang3:3.14.0")
 
     constraints {
         api("com.fasterxml.jackson.core:jackson-databind:2.13.2.2")

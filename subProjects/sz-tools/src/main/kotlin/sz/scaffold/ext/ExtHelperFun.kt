@@ -141,6 +141,6 @@ fun changeWorkingDir(dirPath: String) {
         System.setProperty("user.dir", directory.absolutePath)
         System.setProperty("vertx.cwd", directory.absolutePath)
     } else {
-        throw RuntimeException("Faild to change user.dir to $dirPath")
+        throw RuntimeException("Failed to change user.dir to $dirPath")
     }
 }
