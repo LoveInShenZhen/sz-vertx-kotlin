@@ -12,5 +12,5 @@ GET     /api/builtin/doc/pageIndex                                      sz.api.c
 GET     /api/builtin/doc/pageTest                                       sz.api.controllers.ApiDoc.pageTest
 
 # 测试接口
-GET     /api/sample/hello                                               com.quantplus.controllers.sample.SampleController.hello
+GET     /api/sample/hello                                               com.myquant.controllers.sample.SampleController.hello
 

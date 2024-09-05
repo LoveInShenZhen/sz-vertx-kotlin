@@ -17,13 +17,13 @@ class AsyncTasksVerticle : AbstractVerticle() {
 
     override fun start() {
         log.debug(
-            "AsyncTasksVerticle start. context: ${this.context} Threa Id: ${
-                Thread.currentThread().threadId()
+            "AsyncTasksVerticle start. context: ${this.context} Thread name: ${
+                Thread.currentThread().name
             }"
         )
         consumer = this.vertx.eventBus().consumer(address) { message ->
             this.vertx.executeBlocking(Callable {
-                log.debug("AsyncTasksVerticle received message. Threa Id: ${Thread.currentThread().threadId()} msg:\n${message.body()}")
+                log.debug("AsyncTasksVerticle received message. Thread name: ${Thread.currentThread().name} msg:\n${message.body()}")
                 val asyncTask = Json.fromJsonString(message.body(), AsyncTask::class.java)
                 val task = Json.fromJsonString(asyncTask.data, Class.forName(asyncTask.className)) as Runnable
                 task.run()

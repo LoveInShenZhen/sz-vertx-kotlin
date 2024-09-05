@@ -1,0 +1,13 @@
+# 配置参数参考: io/ebean/datasource/DataSourceConfig.java
+# 文档: https://ebean.io/docs/intro/configuration/
+# 配置文件路径设定, 请查看代码: io/avaje/config/InitialLoader.java 中 loadViaSystemProperty() 函数实现
+# 默认数据库名称约定: null, "", "db", 参考代码: io/ebean/DbPrimary.java determineDefaultServerName() 函数实现
+datasource:
+  db:
+    username: root
+    password: "showmethemoney"
+    url: "jdbc:mysql://192.168.233.233:3306/gm_test_gmadmin_platform?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true"
+
+ebean:
+  search:
+    packages: models

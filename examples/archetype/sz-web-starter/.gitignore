@@ -183,3 +183,6 @@ nbdist/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+src/main/resources/version.conf
+.idea/

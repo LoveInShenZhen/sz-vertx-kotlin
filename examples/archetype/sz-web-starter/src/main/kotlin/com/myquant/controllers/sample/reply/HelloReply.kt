@@ -1,4 +1,4 @@
-package com.quantplus.controllers.sample.reply
+package com.myquant.controllers.sample.reply
 
 import sz.scaffold.annotations.Comment
 import sz.scaffold.controller.reply.ReplyBase

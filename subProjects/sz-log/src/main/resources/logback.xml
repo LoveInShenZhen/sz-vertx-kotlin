@@ -4,7 +4,7 @@
     <conversionRule conversionWord="coloredLevel" converterClass="sz.logger.conversions.ColoredLevel"/>
     <conversionRule conversionWord="coloredMsg" converterClass="sz.logger.conversions.ColoredMessage"/>
 
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%date{HH:mm:ss.SSS} %coloredLevel [%logger] in [%thread] - %coloredMsg{com.sample}%n%xException{10}
             </pattern>
@@ -12,7 +12,7 @@
     </appender>
 
     <root level="INFO">
-        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="Console"/>
     </root>
 
     <logger name="App" level="DEBUG">
