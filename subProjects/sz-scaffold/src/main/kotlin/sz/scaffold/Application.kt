@@ -2,11 +2,13 @@ package sz.scaffold
 
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
+import io.netty.handler.codec.http.HttpHeaderNames
 import io.vertx.core.Vertx
 import io.vertx.core.VertxOptions
 import io.vertx.core.http.HttpMethod
 import io.vertx.core.http.HttpServer
 import io.vertx.core.http.HttpServerOptions
+import io.vertx.core.http.impl.HttpUtils
 import io.vertx.core.impl.VertxImpl
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
@@ -282,14 +284,14 @@ object Application {
 
         httpServer.requestHandler {
             try {
-                // enable chunked responses because we will be adding data as
-                // we execute over other handlers. This is only required once and
-                // only if several handlers do output.
-
                 // 排除 /builtinstatic/* , 该 path 是约定专门用于处理静态文件的
                 if (it.path().startsWith("/builtinstatic/").not()) {
+                    // enable chunked responses because we will be adding data as
+                    // we execute over other handlers. This is only required once and
+                    // only if several handlers do output.
                     it.response().isChunked = true
-                    if (it.method() == HttpMethod.POST) {
+
+                    if (it.method() == HttpMethod.POST && HttpUtils.isValidMultipartContentType(it.getHeader(HttpHeaderNames.CONTENT_TYPE))) {
                         it.isExpectMultipart = true
                     }
                 }
