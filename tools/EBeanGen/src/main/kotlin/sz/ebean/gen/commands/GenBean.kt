@@ -227,15 +227,23 @@ class GenBean : CliktCommand(name = "gen") {
             } else {
                 // 表结构定义里, 有指定默认值.
                 // 先判断指定的默认值, 是否是与字段的 java 类型所对应的默认值相同
-                if (columnInfo.default_value == "0" && fieldType == BigDecimal::class) {
+                if (fieldType == BigDecimal::class) {
                     typeName = columnInfo.kotlinType().asTypeName().copy(nullable = false)
-                    initValue = "BigDecimal.ZERO"
-                } else if (columnInfo.default_value == "0" && fieldType.isSubclassOf(Number::class)) {
+                    if (columnInfo.default_value == "0") {
+                        initValue = "BigDecimal.ZERO"
+                    } else {
+                        initValue = "BigDecimal.valueOf({$columnInfo.default_value})"
+                    }
+                } else if (fieldType.isSubclassOf(Number::class)) {
                     typeName = columnInfo.kotlinType().asTypeName().copy(nullable = false)
-                    initValue = 0
-                } else if (columnInfo.default_value == "" && fieldType == String::class) {
+                    if (columnInfo.default_value == "0") {
+                        initValue = 0
+                    } else {
+                        initValue = columnInfo.default_value
+                    }
+                } else if (fieldType == String::class) {
                     typeName = columnInfo.kotlinType().asTypeName().copy(nullable = false)
-                    initValue = ""
+                    initValue = columnInfo.default_value
                 } else if (columnInfo.default_value == "0" && fieldType == Boolean::class) {
                     typeName = columnInfo.kotlinType().asTypeName().copy(nullable = false)
                     initValue = false
