@@ -8,6 +8,7 @@ import io.vertx.ext.web.RoutingContext
 import jodd.exception.ExceptionUtil
 import jodd.util.ClassUtil
 import kotlinx.coroutines.async
+import org.slf4j.LoggerFactory
 import sz.logger.log
 import sz.scaffold.Application
 import sz.scaffold.annotations.PostForm
@@ -33,6 +34,9 @@ import kotlin.reflect.jvm.javaMethod
 //
 // Created by kk on 17/8/16.
 //
+
+val log = LoggerFactory.getLogger("ApiRoute")
+
 @Suppress("DuplicatedCode")
 data class ApiRoute(val method: HttpMethod,
                     val path: String,
@@ -165,24 +169,28 @@ data class ApiRoute(val method: HttpMethod,
     }
 
     private fun onNormal(httpContext: RoutingContext, result: Any?) {
-        val response = httpContext.response()
+        try {
+            val response = httpContext.response()
 
-        if (response.ended()) {
-            // response 已经在前面被结束, 则直接返回
-            return
-        }
+            if (response.ended()) {
+                // response 已经在前面被结束, 则直接返回
+                return
+            }
 
-        if (result == null || result == Unit) {
-            return
-        }
+            if (result == null || result == Unit) {
+                return
+            }
 
-        if (result is ReplyBase || result is JsonNode) {
-            response.write(result.singleLineJson())
-            response.putHeader("Content-Type", ContentTypes.Json)
-        } else if (result is String) {
-            response.write(result.toString())
+            if (result is ReplyBase || result is JsonNode) {
+                response.write(result.singleLineJson())
+                response.putHeader("Content-Type", ContentTypes.Json)
+            } else if (result is String) {
+                response.write(result.toString())
+            }
+            // 其他类型(非 ReplyBase, 非 JsonNode, 非 String), 不做处理
+        } catch (ex: Exception) {
+            log.error(ex.message, ex)
         }
-        // 其他类型(非 ReplyBase, 非 JsonNode, 非 String), 不做处理
     }
 
     fun isJsonApi(): Boolean {

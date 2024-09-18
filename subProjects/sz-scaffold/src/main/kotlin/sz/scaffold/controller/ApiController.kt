@@ -1,5 +1,6 @@
 package sz.scaffold.controller
 
+import io.vertx.core.buffer.Buffer
 import io.vertx.ext.web.RoutingContext
 import jodd.bean.BeanCopy
 import sz.scaffold.tools.json.toJsonNode
@@ -20,6 +21,7 @@ object ContentTypes {
 open class ApiController {
 
     private var _context: RoutingContext? = null
+    private var _bodyBuffer: Buffer? = null
 
     fun setupContext(context: RoutingContext) {
         _context = context
@@ -61,9 +63,17 @@ open class ApiController {
         }.toMap()
     }
 
+    val body: Buffer
+        get() {
+            if (_bodyBuffer == null) {
+                _bodyBuffer = this.httpContext.body().buffer()
+            }
+            return _bodyBuffer!!
+        }
+
     inline fun <reified BeanType> postJsonToBean(): BeanType {
 //        return this.httpContext.getBodyAsString(contentCharset()).toJsonNode().toObj(BeanType::class.java)
-        return this.httpContext.body().asString(contentCharset()).toJsonNode().toObj(BeanType::class.java)
+        return this.body.toString(contentCharset()).toJsonNode().toObj(BeanType::class.java)
     }
 
     inline fun <reified BeanType> postFormToBean(needDecode: Boolean = false, enc: String = "UTF-8"): BeanType {
