@@ -379,8 +379,8 @@ class GenBean : CliktCommand(name = "gen") {
 
         val pkClassConstructorBuilder = FunSpec.constructorBuilder()
         tableInfo.pkColumnInfos().forEach { columnInfo ->
-            var typeName: TypeName
-            var defaultValue: Any?
+            val typeName: TypeName
+            val defaultValue: Any?
             if (columnInfo.null_able) {
                 typeName = columnInfo.kotlinType().asTypeName().copy(nullable = true)
                 defaultValue = null
