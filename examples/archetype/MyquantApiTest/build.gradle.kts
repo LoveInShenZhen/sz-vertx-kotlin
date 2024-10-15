@@ -16,7 +16,7 @@ repositories {
 
 dependencies {
     // https://mvnrepository.com/artifact/io.grpc/grpc-netty
-    implementation("io.grpc:grpc-netty:1.54.2")
+    implementation("io.grpc:grpc-netty:1.68.0")
     implementation("myquant.cn:myquant-kroto:1.0-SNAPSHOT")
     implementation("ch.qos.logback:logback-classic:1.4.12")
 

@@ -1,3 +1,6 @@
+import com.googlecode.protobuf.format.JsonFormat
+import com.googlecode.protobuf.format.JsonJacksonFormat
+import commons.toJsonPretty
 import commons.toLocalDate
 import io.grpc.stub.MetadataUtils
 import myquant.proto.platform.data.ds_fund.FndGetDividendReq
@@ -50,17 +53,19 @@ class FundProxyServiceTest : DsProxyTesterBase() {
     @DisplayName("查询基金拆分记录")
     fun GetSplit_fund() {
         val req = GetSplitReq{
-            fund = "SZSE.159629"
-            startDate = "1980-01-01"
-            endDate = "2023-12-31"
+            fund = "SHSE.516160"
+            startDate = "2024-01-01"
+            endDate = "2024-12-31"
         }
 
         val rsp = fundProxy_api.getSplit(req)
 
         assert(rsp.dataCount > 0)
         logger.info("查询基金 ${req.fund} 在 ${req.startDate} ~ ${req.endDate} 期间的拆分记录 ${rsp.dataCount} 条")
+        val jsonFormatter = JsonFormat()
         rsp.dataList.forEach {
-            logger.info("${it.fund} ${it.exDateClose.toLocalDate()}")
+//            logger.info("${it.fund} ${it.exDateClose.toLocalDate()}")
+            logger.info(jsonFormatter.printToString(it))
         }
     }
 }
