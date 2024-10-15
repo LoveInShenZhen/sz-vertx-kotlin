@@ -11,24 +11,17 @@ import com.github.ajalt.clikt.parameters.types.file
 import com.squareup.kotlinpoet.*
 import io.ebean.Database
 import io.ebean.DatabaseFactory
-import io.ebean.Model
-import io.ebean.annotation.DbComment
-import io.ebean.annotation.DbJson
-import io.ebean.annotation.View
-import io.ebean.annotation.WhenCreated
-import io.ebean.annotation.WhenModified
+import io.ebean.annotation.*
 import io.ebean.config.DatabaseConfig
 import io.ebean.datasource.DataSourceConfig
+import jakarta.persistence.*
 import jodd.io.FileUtil
 import jodd.util.Wildcard
 import sz.ebean.gen.dbinfo.*
 import java.io.File
 import java.math.BigDecimal
 import java.util.*
-import kotlin.reflect.full.createInstance
-import kotlin.reflect.full.defaultType
 import kotlin.reflect.full.isSubclassOf
-import jakarta.persistence.*
 
 //
 // Created by kk on 2021/5/5.
@@ -232,7 +225,7 @@ class GenBean : CliktCommand(name = "gen") {
                     if (columnInfo.default_value == "0") {
                         initValue = "BigDecimal.ZERO"
                     } else {
-                        initValue = "BigDecimal.valueOf({$columnInfo.default_value})"
+                        initValue =  "BigDecimal.valueOf(${columnInfo.default_value})"
                     }
                 } else if (fieldType.isSubclassOf(Number::class)) {
                     typeName = columnInfo.kotlinType().asTypeName().copy(nullable = false)

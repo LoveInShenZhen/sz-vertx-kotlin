@@ -46,5 +46,5 @@ kotlin { // Extension for easy setup
 }
 
 application {
-    mainClass.set("sz.ebean.gen.AppKt")
+    mainClass.set("sz.ebean.gen.App")
 }
