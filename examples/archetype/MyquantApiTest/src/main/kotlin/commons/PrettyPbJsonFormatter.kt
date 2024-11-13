@@ -1,6 +1,7 @@
-package kts.tools
+package commons
 
 import com.fasterxml.jackson.core.JsonGenerator
+import com.google.protobuf.Message
 import com.googlecode.protobuf.format.JsonJacksonFormat
 import java.io.OutputStream
 
@@ -13,4 +14,10 @@ class PrettyPbJsonFormatter : JsonJacksonFormat() {
         jsonGenerator.useDefaultPrettyPrinter()
         return jsonGenerator
     }
+}
+
+val pbJsonFormatter = PrettyPbJsonFormatter()
+
+fun Message.toJsonStr():String {
+    return pbJsonFormatter.printToString(this)
 }

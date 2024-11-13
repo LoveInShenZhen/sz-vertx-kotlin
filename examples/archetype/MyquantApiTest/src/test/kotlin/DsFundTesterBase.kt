@@ -1,4 +1,5 @@
 import com.googlecode.protobuf.format.JsonJacksonFormat
+import commons.PrettyPbJsonFormatter
 import myquant.rpc.client.ChannelFactory
 import org.slf4j.LoggerFactory
 import myquant.proto.platform.data.ds_fund.FundStkServiceGrpc
@@ -14,7 +15,7 @@ open class DsFundTesterBase {
 
     companion object {
         val logger = LoggerFactory.getLogger("UnitTest")!!
-        val json_formatter = JsonJacksonFormat()
+        val json_formatter = PrettyPbJsonFormatter()
         val channel_factory: ChannelFactory
         val stk_api: FundStkServiceGrpc.FundStkServiceBlockingStub
         val fnd_api: FundFndServiceGrpc.FundFndServiceBlockingStub

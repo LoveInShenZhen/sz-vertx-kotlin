@@ -1,10 +1,11 @@
-import myquant.proto.platform.data.ds_fund.GetAnalysisReq
-import myquant.proto.platform.data.ds_fund.GetFinanceAuditReq
-import myquant.proto.platform.data.ds_fund.GetFinanceForecastReq
-import myquant.proto.platform.data.ds_fund.GetMoneyFlowReq
-import myquant.proto.platform.data.ds_fund.GetShareReq
+import commons.toJsonStr
+import myquant.proto.platform.data.ds_fund.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import java.io.File
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 //
 // Created by drago on 2024/10/28 周一.
@@ -25,13 +26,31 @@ SZSE.300021
 SZSE.300140""".split("\n").joinToString(",")
         val req = GetMoneyFlowReq {
             setSymbols(symbols)
-            tradeDate = "2024-10-25"
+//            tradeDate = "2024-10-24"
         }
 
         val rsp = stk_api.getMoneyFlow(req)
         rsp.dataList.forEach {
             logger.info(json_formatter.printToString(it))
         }
+    }
+
+    @Test
+    fun TestPrettyPbJsonFormatter_01() {
+        val symbols = """SZSE.002986
+SZSE.002730
+SZSE.000526
+SZSE.002970
+SZSE.301291
+SZSE.300305
+SZSE.300021
+SZSE.300140""".split("\n").joinToString(",")
+        val req = GetMoneyFlowReq {
+            setSymbols(symbols)
+            tradeDate = "2024-10-24"
+        }
+
+        logger.info("\n${req.toJsonStr()}")
     }
 
     @Test
@@ -152,4 +171,33 @@ SZSE.300140""".split("\n").joinToString(",")
 
     }
 
+    @Test
+    fun createFixShellScript() {
+        val destFile = "D:\\downloads\\fix_main_cont_contract.sh"
+        val lines = StringBuilder()
+        lines.appendLine("#!/bin/bash")
+        lines.appendLine("")
+
+        val endDate = LocalDate.parse("2024-11-01")
+        var pDate = LocalDate.parse("2024-01-01")
+
+        while (pDate.isBefore(endDate)) {
+            // 过滤掉 周六 和 周日
+            if (pDate.dayOfWeek == DayOfWeek.SATURDAY || pDate.dayOfWeek == DayOfWeek.SUNDAY) {
+                pDate = pDate.plusDays(1)
+                continue
+            }
+
+            lines.appendLine(
+                "./gen-instrument --config=gen-ins.config.toml electContinuousContract --date=${
+                    pDate.format(
+                        DateTimeFormatter.ISO_LOCAL_DATE
+                    )
+                }"
+            )
+            pDate = pDate.plusDays(1)
+        }
+
+        File(destFile).writeText(lines.toString())
+    }
 }
