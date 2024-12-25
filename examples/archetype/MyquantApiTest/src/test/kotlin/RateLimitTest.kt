@@ -2,8 +2,6 @@ import io.grpc.Metadata
 import io.grpc.Metadata.ASCII_STRING_MARSHALLER
 import io.grpc.Status
 import io.grpc.stub.MetadataUtils
-import myquant.proto.platform.data.history.GetCurrentTicksReq
-import myquant.proto.platform.data.history.HistoryServiceGrpcKt
 import myquant.proto.platform.data.history.HistoryServiceProto
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -56,9 +54,9 @@ SHSE.000070
 """
 
         val symbol_list = symbol_txt.split("\n").map { it.trim() }
-        val req = GetCurrentTicksReq {
+        val req = HistoryServiceProto.GetCurrentTicksReq.newBuilder().apply {
             symbols = symbol_list.joinToString(",")
-        }
+        }.build()
 
         val headersCapture = AtomicReference<Metadata>()
         val trailersCapture = AtomicReference<Metadata>()
@@ -126,9 +124,9 @@ SHSE.000070
 """
 
         val symbol_list = symbol_txt.split("\n").map { it.trim() }
-        val req = GetCurrentTicksReq {
+        val req = HistoryServiceProto.GetCurrentTicksReq.newBuilder().apply {
             symbols = symbol_list.joinToString(",")
-        }
+        }.build()
 
         val headersCapture = AtomicReference<Metadata>()
         val trailersCapture = AtomicReference<Metadata>()
@@ -167,9 +165,9 @@ SHSE.000070
     @DisplayName("GetCurrentTicks 流控测试: 同一个symbo循环10次变查询")
     fun GetCurrentTicks_repeated() {
         val symbol = "SHSE.600000"
-        val req = GetCurrentTicksReq {
+        val req = HistoryServiceProto.GetCurrentTicksReq.newBuilder().apply {
             symbols = symbol
-        }
+        }.build()
 
         val headersCapture = AtomicReference<Metadata>()
         val trailersCapture = AtomicReference<Metadata>()
@@ -201,9 +199,9 @@ SHSE.000070
     @DisplayName("GetCurrentTicks 流控测试: 同一个symbo循环10次变查询, 请求上下文里设置x-code : 666,999, 豁免流控检查和权限检查")
     fun GetCurrentTicks_repeated_disable_rate_limit() {
         val symbol = "SHSE.600000"
-        val req = GetCurrentTicksReq {
+        val req = HistoryServiceProto.GetCurrentTicksReq.newBuilder().apply {
             symbols = symbol
-        }
+        }.build()
 
         val headersCapture = AtomicReference<Metadata>()
         val trailersCapture = AtomicReference<Metadata>()
@@ -238,6 +236,4 @@ SHSE.000070
         }
 
     }
-
-
 }

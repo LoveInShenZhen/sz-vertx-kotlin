@@ -1,14 +1,10 @@
 import commons.toLocalDateTime
-import myquant.proto.platform.data.data_dists.BatchQueryReq
 import myquant.proto.platform.data.data_dists.DataInnerServiceProto
 import myquant.proto.platform.data.data_dists.DataInnerServiceProto.ExchangeSymbols
-import myquant.proto.platform.data.data_dists.DayBarsReq
-import myquant.proto.platform.data.data_dists.ExchangeSymbols
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 //
@@ -29,15 +25,14 @@ class DsInnerTest : DsProxyTesterBase() {
 
         val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
 
-        val req = BatchQueryReq {
+        val req = DataInnerServiceProto.BatchQueryReq.newBuilder().apply {
             startTime = "$today 09:40:00"
             endTime = "$today 09:41:00"
-            addExchangeSymbols(ExchangeSymbols {
+            addExchangeSymbols(ExchangeSymbols.newBuilder().apply {
                 exchange = "SHSE"
                 addAllSymbols(symbols)
             })
-
-        }
+        }.build()
 
         val begin_time = System.currentTimeMillis()
 
@@ -78,11 +73,11 @@ class DsInnerTest : DsProxyTesterBase() {
 
     @Test
     fun TestDayBars() {
-        val req = DayBarsReq {
+        val req = DataInnerServiceProto.DayBarsReq.newBuilder().apply {
             symbol = "SZSE.000001"
             fromDay = "1991-04-12"
             toDay = "1991-04-29"
-        }
+        }.build()
 
         val rsp = innder_api.dayBars(req)
         rsp.dataList.forEach{

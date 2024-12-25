@@ -1,6 +1,6 @@
-import myquant.rpc.client.ChannelFactory
 import myquant.proto.platform.data.fundamental.FundamentalServiceGrpc
-import myquant.proto.platform.data.fundamental.GetTradingDatesReq
+import myquant.proto.platform.data.fundamental.FundamentalServiceProto
+import myquant.rpc.client.ChannelFactory
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -24,10 +24,10 @@ fun main(args: Array<String>) {
     val channel = factory.getChannel("127.0.0.1", 7050)
     val rpcClient = FundamentalServiceGrpc.newBlockingStub(channel)
 
-    val req = GetTradingDatesReq {
+    val req = FundamentalServiceProto.GetTradingDatesReq.newBuilder().apply {
         startDate = "2020-01-01"
         endDate = "2020-12-31"
-    }
+    }.build()
 
     val rsp = rpcClient.getTradingDates(req)
     rsp.datesList.forEach{

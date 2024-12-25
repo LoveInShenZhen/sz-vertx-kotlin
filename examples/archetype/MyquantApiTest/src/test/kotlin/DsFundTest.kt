@@ -24,10 +24,10 @@ SZSE.301291
 SZSE.300305
 SZSE.300021
 SZSE.300140""".split("\n").joinToString(",")
-        val req = GetMoneyFlowReq {
+        val req = FundStkServiceProto.GetMoneyFlowReq.newBuilder().apply {
             setSymbols(symbols)
 //            tradeDate = "2024-10-24"
-        }
+        }.build()
 
         val rsp = stk_api.getMoneyFlow(req)
         rsp.dataList.forEach {
@@ -45,10 +45,10 @@ SZSE.301291
 SZSE.300305
 SZSE.300021
 SZSE.300140""".split("\n").joinToString(",")
-        val req = GetMoneyFlowReq {
+        val req = FundStkServiceProto.GetMoneyFlowReq.newBuilder().apply {
             setSymbols(symbols)
             tradeDate = "2024-10-24"
-        }
+        }.build()
 
         logger.info("\n${req.toJsonStr()}")
     }
@@ -74,9 +74,9 @@ SZSE.300140""".split("\n").joinToString(",")
             SZSE.138425
         """.trimIndent().split("\n").joinToString(",")
 
-        val req = GetFinanceAuditReq {
+        val req = FundStkServiceProto.GetFinanceAuditReq.newBuilder().apply {
             setSymbols(symbols)
-        }
+        }.build()
 
         val rsp = stk_api.getFinanceAudit(req)
         rsp.dataList.forEach {
@@ -109,9 +109,9 @@ SZSE.300140""".split("\n").joinToString(",")
             SHSE.A22367
         """.trimIndent().split("\n").joinToString(",")
 
-        val req = GetFinanceForecastReq {
+        val req = FundStkServiceProto.GetFinanceForecastReq.newBuilder().apply {
             setSymbols(symbols)
-        }
+        }.build()
 
         val rsp = stk_api.getFinanceForecast(req)
         rsp.dataList.forEach {
@@ -121,11 +121,11 @@ SZSE.300140""".split("\n").joinToString(",")
 
     @Test
     fun TestGetShare_01() {
-        val req = GetShareReq {
+        val req = FundFndServiceProto.GetShareReq.newBuilder().apply {
             fund = "SHSE.508002"
             startDate = "2024-10-01"
             endDate = "2024-10-28"
-        }
+        }.build()
 
         val rsp = fnd_api.getShare(req)
 
@@ -158,11 +158,11 @@ SZSE.300140""".split("\n").joinToString(",")
 //SHSE.113549
 //""".trimIndent().split("\n").joinToString(",")
 //
-        val req = GetAnalysisReq {
+        val req = FundBndServiceProto.GetAnalysisReq.newBuilder().apply {
             symbol = "SHSE.110077"
             startDate = "2024-10-01"
             endDate = "2024-10-28"
-        }
+        }.build()
 
         val rsp = bnd_api.getAnalysis(req)
         rsp.dataList.forEach {
@@ -199,5 +199,18 @@ SZSE.300140""".split("\n").joinToString(",")
         }
 
         File(destFile).writeText(lines.toString())
+    }
+
+    @Test
+    fun GetFundamentalsCashflow_test1() {
+        // stk_get_fundamentals_cashflow(symbol='SHSE.600000', rpt_type=2, data_type=None, start_date=None, end_date=None, fields='cash_pay_int_fee, cash_pay_fee,cash_pay_fin_leas', df=True)
+        val req = FundStkServiceProto.GetFundamentalsCashflowReq.newBuilder().apply {
+            symbol = "SHSE.600000"
+            rptType = 2
+            addAllFields(listOf("cash_pay_int_fee", "cash_pay_fee", "cash_pay_fin_leas"))
+        }.build()
+
+        val rsp = stk_api.getFundamentalsCashflow(req)
+        logger.info("返回结果记录数量: ${rsp.dataCount}")
     }
 }
