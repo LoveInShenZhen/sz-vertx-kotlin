@@ -1,5 +1,6 @@
 import commons.toLocalDateTime
 import myquant.proto.platform.data.data_dists.BasicDataDistsServiceProto
+import myquant.proto.platform.data.data_dists.DataDistsServiceProto
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -39,6 +40,25 @@ class DistsTest : DistsTesterBase(){
         val rsp = basic_data_dists_api.getPatchRecords(req)
         val record = rsp.dataList.filter { it.symbol == "SHSE.600000" }.first()
         logger.info(json_formatter.printToString(record))
+
+    }
+
+    @Test
+    fun GetDownloadUrlOfHistoryData_test() {
+        val req = DataDistsServiceProto.GetDownloadUrlOfHistoryDataReq.newBuilder().apply {
+            dataType = "history-tick"
+            symbol = "SHSE.600000"
+            fromDate = "2024-12-23"
+            toDate = "2024-12-25"
+        }.build()
+
+        for (i in 1..100) {
+            val rsp = dists_query_api.getDownloadUrlOfHistoryData(req)
+            rsp.dataList.forEach {
+                logger.info(it.downloadUrl)
+                logger.info(it.sizeInBytes.toString())
+            }
+        }
 
     }
 }
