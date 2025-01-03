@@ -48,8 +48,8 @@ class DistsTest : DistsTesterBase(){
         val req = DataDistsServiceProto.GetDownloadUrlOfHistoryDataReq.newBuilder().apply {
             dataType = "history-tick"
             symbol = "SHSE.600000"
-            fromDate = "2024-12-23"
-            toDate = "2024-12-25"
+            fromDate = "2024-12-28"
+            toDate = "2024-12-30"
         }.build()
 
         for (i in 1..100) {
