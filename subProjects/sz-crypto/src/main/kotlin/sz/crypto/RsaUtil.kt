@@ -20,7 +20,7 @@ import kotlin.math.min
 @Suppress("MemberVisibilityCanBePrivate", "DuplicatedCode")
 object RsaUtil {
 
-    private const val rsaAlgorithm = "SHA1withRSA"
+    private const val rsaAlgorithm = "SHA256withRSA"
     private const val cipherTransformation = "RSA/ECB/PKCS1Padding"
     private const val maxPlainBytesSize = 96                                // 最大明文字节数
     private const val keySize = 1024                                        // 密钥长度
