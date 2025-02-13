@@ -341,13 +341,13 @@ class GenBean : CliktCommand(name = "gen") {
         if (tableInfo.table_type == "VIEW") {
             entityClassBuilder.addAnnotation(
                 AnnotationSpec.builder(View::class)
-                    .addMember("name = %S", tableInfo.table_name)
+                    .addMember("name = %P", "`${tableInfo.table_name}`")
                     .build()
             )
         } else {
             entityClassBuilder.addAnnotation(
                 AnnotationSpec.builder(Table::class)
-                    .addMember("name = %S", tableInfo.table_name)
+                    .addMember("name = %P", "`${tableInfo.table_name}`")
                     .build()
             )
         }
