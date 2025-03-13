@@ -1,3 +1,4 @@
+import commons.pbToJsonStr
 import commons.toLocalDate
 import myquant.proto.platform.data.fundamental.FundamentalServiceProto
 import myquant.proto.platform.data.fundamental.FundamentalServiceProto.*
@@ -340,6 +341,22 @@ class FundamentalTest : DsProxyTesterBase() {
             val rsp = fundamental_api.getInstrumentInfos(req)
             rsp.dataList.forEach {
                 logger.info(it.toString())
+                logger.info("=".repeat(64))
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("查询退市开始日期")
+    fun DelistingBeginDate_test() {
+        MeasureTime {
+            val req = GetInstrumentInfosReq.newBuilder().apply {
+                symbols = "SZSE.300526,SHSE.515750,SZSE.301031,SHSE.600253"
+            }.build()
+
+            val rsp = fundamental_api.getInstrumentInfos(req)
+            rsp.dataList.forEach {
+                logger.info(it.pbToJsonStr())
                 logger.info("=".repeat(64))
             }
         }

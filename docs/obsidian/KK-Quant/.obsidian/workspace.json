@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "ca2710aa24d1f323",
+        "id": "3027e11ef5748ef9",
         "type": "tabs",
         "children": [
           {
-            "id": "5ca5112f11cf8092",
+            "id": "029e8325b03239d9",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -119,7 +119,7 @@
       "markdown-importer:打开 Markdown 格式转换器": false
     }
   },
-  "active": "3c41069e57610214",
+  "active": "029e8325b03239d9",
   "lastOpenFiles": [
     "Qlib",
     "开源量化框架/回测框架/回测框架设计备忘录.md",

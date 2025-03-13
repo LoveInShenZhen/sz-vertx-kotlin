@@ -1,4 +1,4 @@
-import commons.toJsonStr
+import commons.pbToJsonStr
 import myquant.proto.platform.data.ds_fund.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -50,7 +50,7 @@ SZSE.300140""".split("\n").joinToString(",")
             tradeDate = "2024-10-24"
         }.build()
 
-        logger.info("\n${req.toJsonStr()}")
+        logger.info("\n${req.pbToJsonStr()}")
     }
 
     @Test

@@ -25,9 +25,14 @@ dependencies {
         exclude(group = "org.jetbrains.kotlin")
     }
     implementation("ch.qos.logback:logback-classic:1.4.14")
+
+    implementation("com.github.ajalt.clikt:clikt:4.3.0") {
+        exclude(group = "org.jetbrains.kotlin")
+    }
     implementation("io.github.config4k:config4k:0.7.0") {
         exclude(group = "org.jetbrains.kotlin")
     }
+
     implementation("org.jodd:jodd-core:5.3.0")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")

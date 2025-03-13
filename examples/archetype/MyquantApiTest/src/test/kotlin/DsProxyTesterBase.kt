@@ -1,5 +1,6 @@
 import com.google.protobuf.Empty
 import com.googlecode.protobuf.format.JsonJacksonFormat
+import commons.pbToJsonStr
 import io.grpc.Channel
 import myquant.proto.platform.data.data_dists.BasicDataQueryServiceGrpc
 import myquant.proto.platform.data.data_dists.HistoryInnerServiceGrpc
@@ -8,6 +9,7 @@ import myquant.proto.platform.data.ds_instrument.InstrumentServiceGrpc
 import myquant.proto.platform.data.fundamental.FundamentalServiceGrpc
 import myquant.proto.platform.data.history.HistoryServiceGrpc
 import myquant.proto.platform.health.HealthCheckServiceGrpc
+import myquant.proto.platform.separate.SeparateDataServiceGrpc
 import myquant.rpc.client.ChannelFactory
 import org.slf4j.LoggerFactory
 import kotlin.time.measureTime
@@ -27,6 +29,7 @@ open class DsProxyTesterBase {
         val innder_api: HistoryInnerServiceGrpc.HistoryInnerServiceBlockingStub
         val health_api: HealthCheckServiceGrpc.HealthCheckServiceBlockingStub
         val basic_data_dists_api: BasicDataQueryServiceGrpc.BasicDataQueryServiceBlockingStub
+        val separate_data_api : SeparateDataServiceGrpc.SeparateDataServiceBlockingStub
 
         val json_formatter = JsonJacksonFormat()
 
@@ -42,15 +45,17 @@ open class DsProxyTesterBase {
             history_api = HistoryServiceGrpc.newBlockingStub(ds_proxy_channel).withCompression("gzip")
             innder_api = HistoryInnerServiceGrpc.newBlockingStub(ds_proxy_channel).withCompression("gzip")
             health_api = HealthCheckServiceGrpc.newBlockingStub(ds_proxy_channel).withCompression("gzip")
+            separate_data_api = SeparateDataServiceGrpc.newBlockingStub(ds_proxy_channel).withCompression("gzip")
 
             // 先ping一下, 保证已经创建好 grpc 连接
-            health_api.ping(Empty.newBuilder().build())
+            val ping_rsp = health_api.ping(Empty.newBuilder().build())
+            logger.info("ping ds-proxy ok: ${ping_rsp.pbToJsonStr()}")
 
             // 连接线上测试环境的数据分发服务
-            val dists_channel = channel_factory.getChannel("120.78.94.151", 7501)
+//            val dists_channel = channel_factory.getChannel("120.78.94.151", 7501)
 
             // 连接本地的数据分发服务
-//            val dists_channel = channel_factory.getChannel("127.0.0.1", 7513)
+            val dists_channel = channel_factory.getChannel("127.0.0.1", 7513)
 
             basic_data_dists_api = BasicDataQueryServiceGrpc.newBlockingStub(dists_channel)
         }

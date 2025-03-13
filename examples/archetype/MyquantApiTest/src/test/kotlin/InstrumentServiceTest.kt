@@ -1,13 +1,11 @@
-import commons.toJsonPretty
-import commons.toJsonStr
+import commons.pbToJsonStr
 import commons.toLocalDate
 import myquant.proto.platform.data.ds_instrument.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import sz.logger.log
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import kotlin.math.log
-import kotlin.time.measureTime
 
 //
 // Created by drago on 2023/9/12 012.
@@ -587,5 +585,34 @@ class InstrumentServiceTest : DsProxyTesterBase() {
         }
     }
 
+    @Test
+    @DisplayName("查询退市开始日期")
+    fun DelistingBeginDate_test() {
+        MeasureTime {
+            val req = InstrumentServiceProto.GetSymbolsReq.newBuilder().apply {
+                secType1 = 1010
+                addSymbols("SZSE.300526")
+            }.build()
 
+            val rsp = instrument_api.getSymbols(req)
+            rsp.symbolsList.forEach {
+                logger.info(it.pbToJsonStr())
+            }
+        }
+    }
+
+    @Test
+    fun TestGetSymbols_by_symbol_tradedate2() {
+        MeasureTime {
+            val req = InstrumentServiceProto.GetSymbolsReq.newBuilder().apply {
+                secType1 = 1010
+                addSymbols("SZSE.300526")
+                tradeDate = "2023-06-19"
+            }.build()
+
+            val rsp = instrument_api.getSymbols(req)
+            logger.info(rsp.pbToJsonStr())
+            logger.info(rsp.symbolsList.first().tradeDate.toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE))
+        }
+    }
 }

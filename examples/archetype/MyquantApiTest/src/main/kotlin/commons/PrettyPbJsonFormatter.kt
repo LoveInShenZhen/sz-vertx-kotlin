@@ -18,6 +18,6 @@ class PrettyPbJsonFormatter : JsonJacksonFormat() {
 
 val pbJsonFormatter = PrettyPbJsonFormatter()
 
-fun Message.toJsonStr():String {
+fun Message.pbToJsonStr():String {
     return pbJsonFormatter.printToString(this)
 }

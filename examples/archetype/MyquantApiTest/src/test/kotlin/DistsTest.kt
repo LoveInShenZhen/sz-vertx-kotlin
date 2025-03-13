@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+import kotlin.math.floor
 
 //
 // Created by drago on 2024/1/23 023.
@@ -59,6 +60,31 @@ class DistsTest : DistsTesterBase(){
                 logger.info(it.sizeInBytes.toString())
             }
         }
+    }
 
+    @Test
+    fun testMathRound() {
+        val num1 = 2.5
+        val num2 = 3.5
+
+
+        // 手动模拟 Math.round 的计算过程
+        val result1 = floor(num1 + 0.5).toLong()
+        val result2 = floor(num2 + 0.5).toLong()
+
+
+        // 使用 Math.round 方法计算
+        val roundResult1 = Math.round(num1)
+        val roundResult2 = Math.round(num2)
+
+        println("手动计算 2.5 四舍五入结果: $result1")
+        println("Math.round(2.5) 结果: $roundResult1")
+
+        println("手动计算 3.5 四舍五入结果: $result2")
+        println("Math.round(3.5) 结果: $roundResult2")
+
+        logger.info("Math.round(2.5) = ${Math.round(2.5)}")
+        logger.info("Math.round(9 * 0.1) = ${Math.round(9 * 0.1)}")
+        logger.info("Math.round(9 * 0.2) = ${Math.round(9 * 0.2)}")
     }
 }

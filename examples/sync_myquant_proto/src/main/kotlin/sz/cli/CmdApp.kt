@@ -21,6 +21,7 @@ class CmdApp {
                 logger.info("config.file 未设置")
             } else {
                 logger.info("config.file : $config_file")
+                logger.info(File(config_file).readText())
             }
 
             logger.info("workingDir : ${File("").absolutePath}")
