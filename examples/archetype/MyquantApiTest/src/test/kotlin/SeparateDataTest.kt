@@ -71,6 +71,18 @@ SHSE.000053
             val rsp = separate_data_api.latestPrice(req)
             logger.info(rsp.pbToJsonStr())
         }
+    }
 
+    @Test
+    fun LatestPriceTest2() {
+        MeasureTime {
+            val symbols = "SHSE.000001"
+            val req = SeparateBandwidthServiceProto.LatestPriceReq.newBuilder().apply {
+                addSymbols(symbols)
+            }.build()
+
+            val rsp = separate_data_api.latestPrice(req)
+            logger.info(rsp.pbToJsonStr())
+        }
     }
 }
