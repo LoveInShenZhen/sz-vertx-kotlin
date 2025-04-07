@@ -293,7 +293,7 @@ class GenBean : CliktCommand(name = "gen") {
             builder.addAnnotation(Version::class)
         } else {
             val columnAnnSpecBuilder = AnnotationSpec.builder(Column::class)
-            columnAnnSpecBuilder.addMember("name = %S", columnInfo.field_name)
+            columnAnnSpecBuilder.addMember("name = %P", "`${columnInfo.field_name}`")
 
             if (columnInfo.null_able) {
                 columnAnnSpecBuilder.addMember("nullable = true")
@@ -448,7 +448,7 @@ class GenBean : CliktCommand(name = "gen") {
             }
 
             val columnAnnSpecBuilder = AnnotationSpec.builder(Column::class)
-            columnAnnSpecBuilder.addMember("name = %S", columnInfo.field_name)
+            columnAnnSpecBuilder.addMember("name = %P", "`${columnInfo.field_name}`")
 
             if (columnInfo.null_able) {
                 columnAnnSpecBuilder.addMember("nullable = true")
