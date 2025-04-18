@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 //
 // Created by drago on 2023/9/14 014.
 //
-class FundProxyServiceTest : DsProxyTesterBase() {
+class FundProxyServiceTest : DsProxyTestEnvBase() {
 
     @Test
     @DisplayName("查询股票分红送配")

@@ -1,6 +1,7 @@
 @file:Suppress("LoggingSimilarMessage")
 
 import com.google.protobuf.Empty
+import commons.pbToJsonStr
 import commons.toLocalDate
 import commons.toLocalDateTime
 import io.grpc.Metadata
@@ -17,6 +18,8 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.time.DurationUnit
 import kotlin.time.measureTime
@@ -27,7 +30,7 @@ import kotlin.time.measureTime
 
 
 @DisplayName("历史行情服务单元测试")
-class DsHistoryTest : DsProxyTesterBase() {
+class DsHistoryTest : DsProxyTestEnvBase() {
 
     @Test
     @DisplayName("测试查询日内tick数据的性能, 查询1分钟的tick数据")
@@ -173,6 +176,30 @@ SHSE.000053
             }
 
         }
+    }
+
+    @Test
+    fun TestCurrentTick2() {
+        val req1 = HistoryServiceProto.GetCurrentTicksReq.newBuilder().apply {
+            symbols = "CFFEX.IM"
+        }.build()
+        val rsp1 = history_api.getCurrentTicks(req1)
+        logger.info(rsp1.dataList.first().pbToJsonStr())
+
+        val req3 = HistoryServiceProto.GetCurrentTicksReq.newBuilder().apply {
+            symbols = "CFFEX.IM02"
+        }.build()
+        val rsp3 = history_api.getCurrentTicks(req3)
+        logger.info(rsp3.dataList.first().pbToJsonStr())
+
+
+        val req2 = HistoryServiceProto.GetCurrentTicksReq.newBuilder().apply {
+            symbols = "CFFEX.IM2506"
+        }.build()
+        val rsp2 = history_api.getCurrentTicks(req2)
+        logger.info(rsp2.dataList.first().pbToJsonStr())
+
+
     }
 
     @Test
@@ -779,6 +806,47 @@ SHSE.000053
 
         rsp.dataList.forEach {
             logger.info("${it.eob.toLocalDate()} ${json_formatter.printToString(it)}")
+        }
+    }
+
+    @Test
+    @DisplayName("加载全市场3年日线数据性能基准测试")
+    fun load_day_bar_perf_test() {
+        MeasureTime {
+            // 先查询沪市所有股票代码
+            val req_symbols = InstrumentServiceProto.GetSymbolInfosReq.newBuilder().apply {
+                secType1 = 1010
+                addExchanges("SHSE")
+                addExchanges("SZSE")
+            }.build()
+
+            logger.info("查询所有股票代码")
+            val rsp_symbols = instrument_api.getSymbolInfos(req_symbols)
+            logger.info("查询结果 ${rsp_symbols.symbolInfosList.count()} 支股票")
+
+            val worker = Executors.newFixedThreadPool(8)
+            val completableFutures = mutableListOf<CompletableFuture<Void>>()
+
+            // 查询所有股票的日线数据
+            rsp_symbols.symbolInfosList.forEach { symbolInfo ->
+                completableFutures.add(CompletableFuture.runAsync({
+                    val req = HistoryServiceProto.GetHistoryBarsReq.newBuilder().apply {
+                        symbols = symbolInfo.symbol
+                        frequency = "1d"
+                        startTime = "2022-04-01"
+                        endTime = "2025-04-01"
+                    }
+
+                    val rsp = history_api.getHistoryBars(req.build())
+                    logger.info("${symbolInfo.symbol} 查询结果 ${rsp.dataCount} 条记录")
+
+                    return@runAsync
+                }, worker))
+            }
+
+            CompletableFuture.allOf(*completableFutures.toTypedArray()).join()
+
+            worker.shutdown()
         }
     }
 }

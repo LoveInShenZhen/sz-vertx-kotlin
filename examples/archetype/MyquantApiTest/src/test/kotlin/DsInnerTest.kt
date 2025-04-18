@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter
 //
 
 @DisplayName("数据缓存代理内部数据服务")
-class DsInnerTest : DsProxyTesterBase() {
+class DsInnerTest : DsProxyTestEnvBase() {
 
     fun loadSymbols(count: Int): List<String> {
         val symbols_file_path = """C:\Users\drago\work\tmp\myquant_ins_instrument_last.csv"""

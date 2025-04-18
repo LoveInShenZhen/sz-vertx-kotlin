@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicReference
 //
 
 @DisplayName("测试ds-proxy的api流控功能")
-class RateLimitTest : DsProxyTesterBase() {
+class RateLimitTest : DsProxyTestEnvBase() {
 
     @Test
     @DisplayName("GetCurrentTicks 流控测试: 批量查询")

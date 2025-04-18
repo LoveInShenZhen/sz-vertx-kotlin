@@ -9,7 +9,7 @@ import kotlin.time.measureTime
 //
 
 @DisplayName("老接口-交易日历测试")
-class TradeDateTest :DsProxyTesterBase() {
+class TradeDateTest :DsProxyTestEnvBase() {
 
     @Test
     @DisplayName("查询2023年的交易日历")

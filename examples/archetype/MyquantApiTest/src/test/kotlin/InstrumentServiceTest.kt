@@ -3,7 +3,6 @@ import commons.toLocalDate
 import myquant.proto.platform.data.ds_instrument.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import sz.logger.log
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -14,7 +13,7 @@ import java.time.format.DateTimeFormatter
 // api 接口文档: https://gnuixbiqmy.feishu.cn/docs/doccnom7tXsFsFeYatDxoknFYLc#joYCF2
 
 @DisplayName("新版本码表服务接口单元测试")
-class InstrumentServiceTest : DsProxyTesterBase() {
+class InstrumentServiceTest : DsProxyTestEnvBase() {
 
     @Test
     @DisplayName("根据 sectype1 = 1010 查询所有股票的码表数据")

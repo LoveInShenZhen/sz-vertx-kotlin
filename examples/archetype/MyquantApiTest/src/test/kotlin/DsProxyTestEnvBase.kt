@@ -17,7 +17,7 @@ import kotlin.time.measureTime
 //
 // Created by drago on 2023/9/12 012.
 //
-open class DsProxyTesterBase {
+open class DsProxyTestEnvBase {
     companion object {
         val logger = LoggerFactory.getLogger("UnitTest")!!
         val channel_factory: ChannelFactory

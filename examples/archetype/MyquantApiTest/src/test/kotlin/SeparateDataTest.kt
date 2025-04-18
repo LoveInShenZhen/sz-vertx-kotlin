@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 //
 
 @DisplayName("独立带宽数据服务单元测试")
-class SeparateDataTest : DsProxyTesterBase() {
+class SeparateDataTest : DsProxyTestEnvBase() {
 
     @Test
     fun LatestPriceTest() {
@@ -76,9 +76,10 @@ SHSE.000053
     @Test
     fun LatestPriceTest2() {
         MeasureTime {
-            val symbols = "SHSE.000001"
             val req = SeparateBandwidthServiceProto.LatestPriceReq.newBuilder().apply {
-                addSymbols(symbols)
+                addSymbols("CFFEX.IM2506")
+//                addSymbols("CFFEX.IM")
+//                addSymbols("CFFEX.IM02")
             }.build()
 
             val rsp = separate_data_api.latestPrice(req)

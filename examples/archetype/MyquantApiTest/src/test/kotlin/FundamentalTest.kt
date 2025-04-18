@@ -11,7 +11,7 @@ import java.time.LocalDate
 //
 
 @DisplayName("老接口-码表查询接口测试")
-class FundamentalTest : DsProxyTesterBase() {
+class FundamentalTest : DsProxyTestEnvBase() {
 
     @Test
     @DisplayName("默认参数下查询全市场码表最新数据")
