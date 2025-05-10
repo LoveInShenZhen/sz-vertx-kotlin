@@ -849,4 +849,23 @@ SHSE.000053
             worker.shutdown()
         }
     }
+
+    @Test
+    @DisplayName("查询日线数据")
+    fun QueryDayBarTest() {
+        MeasureTime {
+            val req = HistoryServiceProto.GetHistoryBarsReq.newBuilder().apply {
+                symbols = "SHSE.603375"
+                frequency = "1d"
+                startTime = "2024-06-23"
+                endTime = "2024-06-25"
+            }.build()
+
+            val rsp = history_api.getHistoryBars(req)
+            logger.info("查询结果 ${rsp.dataCount} 条记录")
+            rsp.dataList.forEach {
+                logger.info("${it.eob.toLocalDate()} \n${it.pbToJsonStr()}")
+            }
+        }
+    }
 }

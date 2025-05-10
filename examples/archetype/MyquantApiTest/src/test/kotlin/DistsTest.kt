@@ -12,7 +12,7 @@ import kotlin.math.floor
 //
 
 @DisplayName("数据分发服务单元测试")
-class DistsTest : DistsTesterBase(){
+class DistsTest : DistsProdEnvBase() {
 
     @Test
     fun GetPatchRecords_day_bar_SHSE() {
@@ -49,17 +49,27 @@ class DistsTest : DistsTesterBase(){
         val req = DataDistsServiceProto.GetDownloadUrlOfHistoryDataReq.newBuilder().apply {
             dataType = "history-tick"
             symbol = "SHSE.600000"
-            fromDate = "2024-12-28"
-            toDate = "2024-12-30"
+            fromDate = "2025-04-18"
+            toDate = "2025-04-18"
         }.build()
+
+        var gm_count = 0
+        var em_count = 0
 
         for (i in 1..100) {
             val rsp = dists_query_api.getDownloadUrlOfHistoryData(req)
             rsp.dataList.forEach {
                 logger.info(it.downloadUrl)
-                logger.info(it.sizeInBytes.toString())
+                if (it.downloadUrl.contains("emgm3-data-dists")) {
+                    em_count++
+                } else {
+                    gm_count++
+                }
             }
         }
+
+        logger.info("gm_count: $gm_count")
+        logger.info("em_count: $em_count")
     }
 
     @Test

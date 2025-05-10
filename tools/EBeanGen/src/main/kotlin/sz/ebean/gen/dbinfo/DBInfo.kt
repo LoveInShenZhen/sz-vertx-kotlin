@@ -16,7 +16,22 @@ class DBInfo(val db: Database, val tableCommentService: TableCommentService?) {
             val metaData = cnn.metaData
 
             val tablesRs = metaData.getTables(cnn.catalog, null, null, arrayOf("TABLE"))
+            var postgres_current_schema = ""
+            if (metaData.url.startsWith("jdbc:postgresql:")) {
+                val rs = cnn.createStatement().executeQuery("SELECT current_schema;")
+                if (rs.next()) {
+                    postgres_current_schema = rs.getString(1)
+                }
+            }
+
             while (tablesRs.next()) {
+                if (metaData.url.startsWith("jdbc:postgresql:")) {
+                    // 过滤掉非 public 模式下的表
+                    if (tablesRs.getString("TABLE_SCHEM") != postgres_current_schema) {
+                        continue
+                    }
+                }
+
                 val tableName = tablesRs.getString("TABLE_NAME")
                 val tableType = tablesRs.getString("TABLE_TYPE")
                 var remarks = tablesRs.getString("REMARKS")
@@ -54,7 +69,22 @@ class DBInfo(val db: Database, val tableCommentService: TableCommentService?) {
             val metaData = cnn.metaData
 
             val tablesRs = metaData.getTables(cnn.catalog, null, null, arrayOf("VIEW"))
+            var postgres_current_schema = ""
+            if (metaData.url.startsWith("jdbc:postgresql:")) {
+                val rs = cnn.createStatement().executeQuery("SELECT current_schema;")
+                if (rs.next()) {
+                    postgres_current_schema = rs.getString(1)
+                }
+            }
+
             while (tablesRs.next()) {
+                if (metaData.url.startsWith("jdbc:postgresql:")) {
+                    // 过滤掉非 public 模式下的表
+                    if (tablesRs.getString("TABLE_SCHEM") != postgres_current_schema) {
+                        continue
+                    }
+                }
+
                 val tableName = tablesRs.getString("TABLE_NAME")
                 val tableType = tablesRs.getString("TABLE_TYPE")
                 var remarks = tablesRs.getString("REMARKS")
@@ -100,7 +130,7 @@ class DBInfo(val db: Database, val tableCommentService: TableCommentService?) {
                     null_able = columnRs.getString("IS_NULLABLE").uppercase() == "YES"
                     default_value = columnRs.getString("COLUMN_DEF")
                     is_autoincrement = columnRs.getString("IS_AUTOINCREMENT").uppercase() == "YES"
-                    remarks = columnRs.getString("REMARKS").trim()
+                    remarks = columnRs.getString("REMARKS")?.trim() ?: ""
                     is_pk = tableInfo.pk_columns.contains(column_name)
                 }
                 tableInfo.columns.add(columnInfo)

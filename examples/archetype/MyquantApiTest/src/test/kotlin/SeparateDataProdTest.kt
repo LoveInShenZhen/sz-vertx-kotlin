@@ -20,7 +20,7 @@ class SeparateDataProdTest {
 
     init {
         channel_factory = channel_factory()
-        val traefik_channel = channel_factory.getChannel("120.79.218.12", 7611)
+        val traefik_channel = channel_factory.getChannel("120.79.218.12", 7511)
         separate_data_api = SeparateDataServiceGrpc.newBlockingStub(traefik_channel).withCompression("gzip")
         instrument_api = InstrumentServiceGrpc.newBlockingStub(traefik_channel).withCompression("gzip")
     }
@@ -37,7 +37,7 @@ class SeparateDataProdTest {
 
     @Test
     fun LatestPriceTest2() {
-        val symbols = "CFFEX.IM2506"
+        val symbols = "SZSE.000001"
         val req = SeparateBandwidthServiceProto.LatestPriceReq.newBuilder().apply {
             addSymbols(symbols)
         }.build()

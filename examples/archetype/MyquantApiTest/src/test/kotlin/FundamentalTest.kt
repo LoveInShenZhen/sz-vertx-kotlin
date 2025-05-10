@@ -25,6 +25,12 @@ class FundamentalTest : DsProxyTestEnvBase() {
             logger.info("getInstrumentInfos count: ${rsp.dataCount}")
             // 无异常, 有数据
             assert(rsp.dataCount > 0)
+
+            rsp.dataList.filter {
+                it.symbol == "SHSE.688256"
+            }.forEach {
+                logger.info(it.toString())
+            }
         }
 
     }
@@ -44,7 +50,7 @@ class FundamentalTest : DsProxyTestEnvBase() {
             assert(rsp.dataCount > 0)
 
             rsp.dataList.filter {
-                it.symbol == "CFFEX.IC2107"
+                it.symbol == "SHSE.688256"
             }.forEach {
                 logger.info(it.toString())
             }
@@ -144,11 +150,11 @@ class FundamentalTest : DsProxyTestEnvBase() {
     fun GetInstruments_by_symbols() {
         MeasureTime {
             val req = GetInstrumentsReq.newBuilder().apply {
-                symbols = "SHSE.600000,GFEX.SI"
+                symbols = "SHSE.600000,GFEX.SI,SZSE.000565"
             }.build()
 
             val rsp = fundamental_api.getInstruments(req)
-            assert(rsp.dataCount == 2)
+            assert(rsp.dataCount == 3)
 
             val symbols = req.symbols.split(",").toSet()
             rsp.dataList.forEach {
@@ -159,6 +165,11 @@ class FundamentalTest : DsProxyTestEnvBase() {
             }
 
             logger.info("返回结果记录 ${rsp.dataCount} 条")
+
+            rsp.dataList.forEach {
+                logger.info("-".repeat(80))
+                logger.info("\n${it.pbToJsonStr()}")
+            }
         }
     }
 

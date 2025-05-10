@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory
 import kotlin.time.measureTime
 
 //
-// Created by drago on 2024/1/24 024.
+// Created by drago on 2025/4/21 周一.
 //
-open class DistsTesterBase {
+open class DistsProdEnvBase {
     companion object {
         val logger = LoggerFactory.getLogger("UnitTest")!!
         val channel_factory: ChannelFactory
@@ -21,8 +21,7 @@ open class DistsTesterBase {
         init {
             channel_factory = test_env_channel_factory()
 
-//            val dists_channel = local_data_dists_channel()
-            val dists_channel = aliyun_test_channel()
+            val dists_channel = aliyun_prod_channel()
 
             basic_data_dists_api = BasicDataQueryServiceGrpc.newBlockingStub(dists_channel).withCompression("gzip")
             dists_query_api = DistsQueryServiceGrpc.newBlockingStub(dists_channel).withCompression("gzip")
@@ -35,24 +34,19 @@ open class DistsTesterBase {
             logger.info("耗时: ${duration.toString()}")
         }
 
-        fun local_data_dists_channel(): Channel {
-            logger.info("连接本地数据分发服务")
-            return channel_factory.getChannel("127.0.0.1", 7513)
-        }
-
-        fun aliyun_test_channel(): Channel {
-            logger.info("连接阿里云测试环境")
-            return channel_factory.getChannel("120.79.180.133", 7513)
+        fun aliyun_prod_channel(): Channel {
+            logger.info("连接阿里云生产环境")
+            return channel_factory.getChannel("120.79.218.12", 7513)
         }
 
         // 线上测试环境
         private fun test_env_channel_factory(): ChannelFactory {
             return ChannelFactory(
-                gmHost = "120.78.94.151",
-                gmPort = 8201,
-                plainToken = "b7aa8e2bb5093a200803a7844d2140ff2f605585",
+                gmHost = "discovery.myquant.cn",
+                gmPort = 7061,
+                plainToken = "16c784b8bf794616c5450de2bf1a4c8418b5e35d",
                 orgCode = "myquant",
-                siteId = "kk-site"
+                siteId = "service-site-1"
             )
         }
     }

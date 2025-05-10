@@ -26,6 +26,8 @@ dependencies {
     implementation("com.github.ajalt.clikt:clikt:4.3.0") {
         exclude(group = "org.jetbrains.kotlin")
     }
+    // https://mvnrepository.com/artifact/org.postgresql/postgresql
+    implementation("org.postgresql:postgresql:42.7.5")
     implementation("mysql:mysql-connector-java:8.0.29")
     implementation("com.squareup:kotlinpoet:1.15.2") {
         exclude(group = "org.jetbrains.kotlin")
@@ -36,6 +38,8 @@ dependencies {
         exclude(group = "org.jetbrains.kotlin")
     }
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.0-rc1")
+
+
 
 
     testImplementation("junit", "junit", "4.12")

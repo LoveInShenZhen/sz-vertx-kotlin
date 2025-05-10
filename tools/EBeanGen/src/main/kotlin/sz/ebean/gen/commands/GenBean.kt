@@ -100,6 +100,10 @@ class GenBean : CliktCommand(name = "gen") {
             // mysql
             tableCommentService = MysqlTableCommentService(db)
         }
+        if (this.jdbcUrl.startsWith("jdbc:postgresql:")) {
+            // postgresql
+            tableCommentService = PostgresTableCommentService(db)
+        }
 
         dbinfo = DBInfo(db, tableCommentService)
         val tables = mutableListOf<TableInfo>()
