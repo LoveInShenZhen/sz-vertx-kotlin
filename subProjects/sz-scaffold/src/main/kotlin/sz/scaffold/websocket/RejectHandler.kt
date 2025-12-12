@@ -1,5 +1,6 @@
 package sz.scaffold.websocket
 
+import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.ServerWebSocket
 
 //
@@ -7,6 +8,8 @@ import io.vertx.core.http.ServerWebSocket
 //
 class RejectHandler : WebSocketHandler {
     override fun handle(webSocket: ServerWebSocket) {
-        webSocket.reject(404)
+        webSocket.close(404, "未找到 http请求Path 对应的 WebSocket 处理器")
+
+        webSocket.writePing(Buffer.buffer("PING"))
     }
 }

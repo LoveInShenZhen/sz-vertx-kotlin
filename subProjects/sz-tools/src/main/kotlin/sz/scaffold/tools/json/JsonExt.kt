@@ -36,6 +36,19 @@ fun <A> JsonNode.toObj(clazz: Class<A>): A {
     return Json.fromJsonNode(this, clazz)
 }
 
+fun JsonNode.asStringList(): List<String> {
+    if (this.isArray()) {
+        val result = mutableListOf<String>()
+        this.elements().forEach {
+            result.add(it.asText())
+        }
+        return result.toList()
+    } else {
+        throw Exception("JsonNode 不是数组类型, 无法转换成字符串列表, 当前实例类型: ${this.nodeType.name}")
+    }
+
+}
+
 /**
  * 将JsonNode对象转换成指定类型的Bean对象
  */

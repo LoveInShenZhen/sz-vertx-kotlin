@@ -13,7 +13,7 @@ plugins {
 }
 
 dependencies {
-    api("org.bouncycastle:bcprov-jdk18on:1.78.1")
+    api("org.bouncycastle:bcprov-jdk18on:1.83")
 
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")
@@ -35,5 +35,5 @@ publishing {
 }
 
 kotlin { // Extension for easy setup
-    jvmToolchain(17) // Target version of generated JVM bytecode. See 7️⃣
+    jvmToolchain(21) // Target version of generated JVM bytecode. See 7️⃣
 }

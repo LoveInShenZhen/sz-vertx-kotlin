@@ -9,7 +9,7 @@ import jodd.exception.ExceptionUtil
 import jodd.util.ClassUtil
 import kotlinx.coroutines.async
 import org.slf4j.LoggerFactory
-import sz.logger.log
+import sz.scaffold.log
 import sz.scaffold.Application
 import sz.scaffold.annotations.PostForm
 import sz.scaffold.annotations.PostJson

@@ -2,7 +2,7 @@ package sz.api.doc
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import sz.api.controllers.ApiDoc
-import sz.logger.log
+import sz.api.log
 import sz.scaffold.Application
 import sz.scaffold.annotations.Comment
 import sz.scaffold.ext.escapeMarkdown

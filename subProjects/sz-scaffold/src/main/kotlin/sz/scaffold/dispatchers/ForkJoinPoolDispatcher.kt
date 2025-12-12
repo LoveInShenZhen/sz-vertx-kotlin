@@ -25,7 +25,7 @@ class ForkJoinPoolDispatcher : IDispatcherFactory {
 class ThreadFactory : ForkJoinPool.ForkJoinWorkerThreadFactory {
     override fun newThread(pool: ForkJoinPool?): ForkJoinWorkerThread {
         val thread = ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(pool)
-        thread.name = "http-${thread.name}"
+        thread.name = " worker-${thread.name}"
         return thread
     }
 

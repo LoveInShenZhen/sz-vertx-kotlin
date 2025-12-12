@@ -2,7 +2,6 @@ package sz.scaffold.ext
 
 import jodd.exception.ExceptionUtil
 import jodd.io.FileNameUtil
-import sz.logger.AnsiColor
 import java.io.File
 import java.util.*
 
@@ -19,11 +18,6 @@ fun String?.escapeMarkdown(): String {
 
 fun String?.safeString(): String {
     return this ?: ""
-}
-
-fun String.colorization(color: AnsiColor? = AnsiColor.BLUE, bgColog: AnsiColor? = null): String {
-    if (color == null && bgColog == null) return this
-    return "${color?.code ?: ""}${bgColog?.code ?: ""}${this}${AnsiColor.RESET.code}"
 }
 
 fun Exception.chainToString(): String {

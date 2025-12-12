@@ -1,6 +1,6 @@
 package sz.objectPool
 
-import sz.logger.log
+import org.slf4j.LoggerFactory
 
 //
 // Created by kk on 2019/10/23.
@@ -22,5 +22,9 @@ abstract class PooledObjectFactory<T : Any> {
 
     open fun destroyObject(target: T) {
 
+    }
+
+    companion object {
+        private val log = LoggerFactory.getLogger("sz.vertx.tools")
     }
 }

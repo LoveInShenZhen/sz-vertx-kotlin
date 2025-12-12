@@ -3,7 +3,7 @@ package sz.scaffold.aop.interceptors.builtin.api.etag
 //
 // Created by kk on 2019-06-27.
 //
-import jodd.crypt.DigestEngine
+import jodd.util.DigestEngine
 import sz.scaffold.aop.actions.Action
 import sz.scaffold.aop.annotations.WithAction
 import sz.scaffold.controller.ContentTypes

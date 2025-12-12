@@ -1,7 +1,5 @@
 package sz.scaffold.controller.builtIn
 
-import jodd.util.ClassLoaderUtil
-import jodd.util.CommandLine
 import sz.scaffold.Application
 import sz.scaffold.annotations.Comment
 import sz.scaffold.aop.interceptors.builtin.api.DevModeOnly
@@ -69,13 +67,6 @@ $builtInLinks
         info.appendLine("-".repeat(64))
         info.appendLine()
 
-        info.append("jvm class path list:\n")
-        info.appendLine("-".repeat(64))
-        ClassLoaderUtil.getDefaultClasspath().forEach { file ->
-            info.appendLine("  ${file.absolutePath}")
-        }
-        info.appendLine("-".repeat(64))
-
         info.appendLine("Memory Managemen info:")
 
         val mxBean = ManagementFactory.getMemoryMXBean()
@@ -115,8 +106,8 @@ $builtInLinks
         if (Application.isClustered) {
             // 集群方式
             info.appendLine("Vertx: cluster mode [当前为: Vertx 集群模式]")
-            info.appendLine("    Node Id: ${Application.vertxOptions.clusterManager.nodeId}")
-            info.appendLine("    Nodes: ${Application.vertxOptions.clusterManager.nodes.toList()}")
+            info.appendLine("    Node Id: ${Application.clusterManager?.nodeId}")
+            info.appendLine("    Nodes: ${Application.clusterManager?.nodes?.toList()}")
         } else {
             info.appendLine("当前为: Vertx 单机模式")
         }
@@ -125,18 +116,6 @@ $builtInLinks
         info.appendLine("application.conf:")
         info.appendLine(Application.config.root().unwrapped().toJsonPretty())
         info.appendLine()
-
-        info.appendLine("-".repeat(64))
-        // sh -c 'ulimit -a'
-        val ulimitCmd = CommandLine.cmd("sh").args("-c", "ulimit -a").outPrefix("    ")
-
-        try {
-            val cmdResult = ulimitCmd.run()
-            info.appendLine("ulimit info:")
-            info.appendLine(cmdResult.output)
-        } catch (ex: Exception) {
-            info.appendLine("Can not get ulimit info: ${ex.message}")
-        }
 
         return info.toString()
     }

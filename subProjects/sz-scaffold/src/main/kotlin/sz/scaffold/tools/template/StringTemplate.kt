@@ -4,7 +4,7 @@ import freemarker.cache.StringTemplateLoader
 import freemarker.template.Configuration
 import freemarker.template.Template
 import freemarker.template.TemplateNotFoundException
-import jodd.crypt.DigestEngine
+import jodd.util.DigestEngine
 import java.io.StringWriter
 
 //

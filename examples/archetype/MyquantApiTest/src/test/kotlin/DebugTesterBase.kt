@@ -1,0 +1,82 @@
+import com.google.protobuf.Empty
+import com.googlecode.protobuf.format.JsonJacksonFormat
+import commons.pbToJsonStr
+import io.grpc.Channel
+import myquant.proto.platform.data.data_dists.BasicDataQueryServiceGrpc
+import myquant.proto.platform.data.data_dists.HistoryInnerServiceGrpc
+import myquant.proto.platform.data.ds_fund.FundProxyServiceGrpc
+import myquant.proto.platform.data.ds_instrument.InstrumentServiceGrpc
+import myquant.proto.platform.data.fundamental.FundamentalServiceGrpc
+import myquant.proto.platform.data.history.HistoryServiceGrpc
+import myquant.proto.platform.health.HealthCheckServiceGrpc
+import myquant.proto.platform.separate.SeparateDataServiceGrpc
+import myquant.rpc.client.ChannelFactory
+import org.slf4j.LoggerFactory
+import kotlin.time.measureTime
+
+//
+// Created by drago on 2025/6/16 周一.
+//
+open class DebugTesterBase {
+    companion object {
+        val logger = LoggerFactory.getLogger("UnitTest")!!
+        val channel_factory: ChannelFactory
+
+        val fundamental_api: FundamentalServiceGrpc.FundamentalServiceBlockingStub
+        val instrument_api: InstrumentServiceGrpc.InstrumentServiceBlockingStub
+        val fundProxy_api: FundProxyServiceGrpc.FundProxyServiceBlockingStub
+        val history_api: HistoryServiceGrpc.HistoryServiceBlockingStub
+        val innder_api: HistoryInnerServiceGrpc.HistoryInnerServiceBlockingStub
+        val health_api: HealthCheckServiceGrpc.HealthCheckServiceBlockingStub
+        val basic_data_dists_api: BasicDataQueryServiceGrpc.BasicDataQueryServiceBlockingStub
+        val separate_data_api : SeparateDataServiceGrpc.SeparateDataServiceBlockingStub
+
+        val json_formatter = JsonJacksonFormat()
+
+
+        init {
+            channel_factory = test_env_channel_factory()
+            val ds_proxy_channel = test_env_local_ds_proxy_channel()
+
+            fundamental_api = FundamentalServiceGrpc.newBlockingStub(ds_proxy_channel).withCompression("gzip")
+            instrument_api = InstrumentServiceGrpc.newBlockingStub(ds_proxy_channel).withCompression("gzip")
+            fundProxy_api = FundProxyServiceGrpc.newBlockingStub(ds_proxy_channel).withCompression("gzip")
+            history_api = HistoryServiceGrpc.newBlockingStub(ds_proxy_channel).withCompression("gzip")
+            innder_api = HistoryInnerServiceGrpc.newBlockingStub(ds_proxy_channel).withCompression("gzip")
+            health_api = HealthCheckServiceGrpc.newBlockingStub(ds_proxy_channel).withCompression("gzip")
+            separate_data_api = SeparateDataServiceGrpc.newBlockingStub(ds_proxy_channel).withCompression("gzip")
+
+            // 先ping一下, 保证已经创建好 grpc 连接
+            val ping_rsp = health_api.ping(Empty.newBuilder().build())
+            logger.info("ping ds-proxy ok: ${ping_rsp.pbToJsonStr()}")
+
+            // 连接线上测试环境的数据分发服务
+            val dists_channel = channel_factory.getChannel("120.78.94.151", 7501)
+
+            // 连接本地的数据分发服务
+//            val dists_channel = channel_factory.getChannel("127.0.0.1", 7513)
+
+            basic_data_dists_api = BasicDataQueryServiceGrpc.newBlockingStub(dists_channel)
+        }
+
+        fun MeasureTime(block: () -> Unit) {
+            val duration = measureTime(block)
+            logger.info("耗时: ${duration.toString()}")
+        }
+
+        // 线上测试环境
+        private fun test_env_channel_factory(): ChannelFactory {
+            return ChannelFactory(
+                gmHost = "120.78.94.151",
+                gmPort = 8201,
+                plainToken = "b7aa8e2bb5093a200803a7844d2140ff2f605585",
+                orgCode = "myquant",
+                siteId = "kk-site"
+            )
+        }
+
+        private fun test_env_local_ds_proxy_channel(): Channel {
+            return channel_factory.getChannel("127.0.0.1", 7050)
+        }
+    }
+}

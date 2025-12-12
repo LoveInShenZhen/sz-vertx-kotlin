@@ -1,7 +1,7 @@
 package sz.scaffold.sequenceId
 
-import jodd.datetime.JDateTime
-import java.util.*
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 //
 // Created by kk on 2019-06-25.
@@ -43,10 +43,11 @@ class SeqIdObject(val idNum: Long) {
             return java.lang.Long.toBinaryString(idOffset)
         }
 
-    val createTime: JDateTime
+    val createTime: LocalDateTime
         get() {
-            val dateTime = Date((epochSecond + IdGenerator.OffsetEpoch) * 1000)
-            return JDateTime(dateTime)
+//            val dateTime = Date((epochSecond + IdGenerator.OffsetEpoch) * 1000)
+//            return JDateTime(dateTime)
+            return LocalDateTime.ofEpochSecond(epochSecond + IdGenerator.OffsetEpoch, 0, ZoneOffset.UTC)
         }
 
 

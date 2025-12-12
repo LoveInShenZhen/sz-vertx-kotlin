@@ -1,7 +1,9 @@
 package sz.objectPool
 
-import jodd.datetime.ext.epochMsToLocalDateTime
 import java.io.Closeable
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 //
 // Created by kk on 2019/10/23.
@@ -40,13 +42,20 @@ class PooledObject<T : Any>(val target: T, private val pool: ObjectPool<T>) : Cl
         buf.appendLine("  identityHashCode: $identityHashCode")
         buf.appendLine("  target type: ${target.javaClass.name}")
         buf.appendLine("  status: ${status.name}")
-        buf.appendLine("  createTime: ${epochMsToLocalDateTime(createTimeMs)}")
-        buf.appendLine("  lastBorrowTime: ${epochMsToLocalDateTime(lastBorrowTimeMs)}")
-        buf.appendLine("  lastReturnTime: ${epochMsToLocalDateTime(lastReturnTimeMs)}")
+        buf.appendLine("  createTime: ${createTimeMs.toLocalDateTime()}")
+        buf.appendLine("  lastBorrowTime: ${lastBorrowTimeMs.toLocalDateTime()}")
+        buf.appendLine("  lastReturnTime: ${lastReturnTimeMs.toLocalDateTime()}")
         buf.appendLine("  isBroken: $broken")
 
         return buf.toString()
     }
+}
+
+fun Long.toLocalDateTime(): LocalDateTime {
+    return LocalDateTime.ofInstant(
+        Instant.ofEpochMilli(this),
+        ZoneId.systemDefault()
+    )
 }
 
 enum class PooledObjectStatus {

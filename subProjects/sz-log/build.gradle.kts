@@ -9,7 +9,7 @@ plugins {
 dependencies {
     // android gradle依赖：implementation 和compile的区别
     // 参考: https://www.jianshu.com/p/f34c179bc9d0 根据需要选择使用不同的依赖设定方式
-    api("ch.qos.logback:logback-classic:1.5.7")
+    api("ch.qos.logback:logback-classic:1.5.13")
 }
 
 java {
@@ -25,5 +25,5 @@ publishing {
 }
 
 kotlin { // Extension for easy setup
-    jvmToolchain(17) // Target version of generated JVM bytecode. See 7️⃣
+    jvmToolchain(21) // Target version of generated JVM bytecode. See 7️⃣
 }

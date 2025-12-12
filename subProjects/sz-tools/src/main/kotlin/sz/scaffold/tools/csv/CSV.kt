@@ -5,9 +5,6 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import jodd.datetime.JDateTime
-import sz.scaffold.tools.json.JDateTimeJsonDeserializer
-import sz.scaffold.tools.json.JDateTimeJsonSerializer
 import java.io.File
 import java.io.FileOutputStream
 
@@ -20,8 +17,6 @@ object CSV {
 
     init {
         val JDateTimeModule = SimpleModule("CustomTypeModule")
-        JDateTimeModule.addSerializer(JDateTime::class.java, JDateTimeJsonSerializer())
-        JDateTimeModule.addDeserializer(JDateTime::class.java, JDateTimeJsonDeserializer())
 
         mapper.registerKotlinModule()
                 .registerModule(Jdk8Module())

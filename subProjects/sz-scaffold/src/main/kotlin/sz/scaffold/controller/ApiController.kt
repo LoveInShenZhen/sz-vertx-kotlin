@@ -71,18 +71,6 @@ open class ApiController {
             return _bodyBuffer!!
         }
 
-    inline fun <reified BeanType> postJsonToBean(): BeanType {
-//        return this.httpContext.getBodyAsString(contentCharset()).toJsonNode().toObj(BeanType::class.java)
-        return this.body.toString(contentCharset()).toJsonNode().toObj(BeanType::class.java)
-    }
-
-    inline fun <reified BeanType> postFormToBean(needDecode: Boolean = false, enc: String = "UTF-8"): BeanType {
-        val formMap = formFields(needDecode, enc)
-        val bean = BeanType::class.java.getDeclaredConstructor().newInstance()
-        val beanCopy = BeanCopy.fromMap(formMap).toBean(bean)
-        beanCopy.copy()
-        return bean
-    }
 
     fun redirect(newLocation: String) {
         httpContext.response().statusCode = 307

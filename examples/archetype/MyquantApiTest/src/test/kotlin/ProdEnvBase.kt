@@ -2,6 +2,7 @@ import com.google.protobuf.Empty
 import com.googlecode.protobuf.format.JsonJacksonFormat
 import io.grpc.Channel
 import myquant.proto.platform.data.data_dists.BasicDataQueryServiceGrpc
+import myquant.proto.platform.data.data_dists.DistsQueryServiceGrpc
 import myquant.proto.platform.data.data_dists.HistoryInnerServiceGrpc
 import myquant.proto.platform.data.ds_fund.FundProxyServiceGrpc
 import myquant.proto.platform.data.ds_instrument.InstrumentServiceGrpc
@@ -27,13 +28,14 @@ open class ProdEnvBase {
         val innder_api: HistoryInnerServiceGrpc.HistoryInnerServiceBlockingStub
         val health_api: HealthCheckServiceGrpc.HealthCheckServiceBlockingStub
         val basic_data_dists_api: BasicDataQueryServiceGrpc.BasicDataQueryServiceBlockingStub
+        val data_dists_api: DistsQueryServiceGrpc.DistsQueryServiceBlockingStub
 
         val json_formatter = JsonJacksonFormat()
 
 
         init {
             channel_factory = prod_env_channel_factory()
-            val ds_proxy_channel = channel_factory.getChannel("ds-proxy-cloud-rpc")
+            val ds_proxy_channel = local_ds_proxy_channel()
 
             fundamental_api = FundamentalServiceGrpc.newBlockingStub(ds_proxy_channel).withCompression("gzip")
             instrument_api = InstrumentServiceGrpc.newBlockingStub(ds_proxy_channel).withCompression("gzip")
@@ -48,11 +50,16 @@ open class ProdEnvBase {
             val dists_channel = channel_factory.getChannel("data-dists-rpc")
 
             basic_data_dists_api = BasicDataQueryServiceGrpc.newBlockingStub(dists_channel)
+            data_dists_api = DistsQueryServiceGrpc.newBlockingStub(dists_channel)
         }
 
         fun MeasureTime(block: () -> Unit) {
             val duration = measureTime(block)
             logger.info("耗时: ${duration.toString()}")
+        }
+
+        private fun local_ds_proxy_channel(): Channel {
+            return channel_factory.getChannel("127.0.0.1", 7050)
         }
 
         // 生产环境

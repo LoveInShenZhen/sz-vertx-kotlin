@@ -1,6 +1,5 @@
 package sz.scaffold.tools.json
 
-import jodd.datetime.JDateTime
 import jodd.util.ClassUtil
 import org.apache.commons.lang3.reflect.TypeUtils
 import java.math.BigDecimal
@@ -101,7 +100,6 @@ fun isDateTime(kType: KType): Boolean {
         Date::class.java,
         java.sql.Date::class.java,
         Calendar::class.java,
-        jodd.datetime.JDateTime::class.java,
         OffsetDateTime::class.java,
         OffsetTime::class.java,
         ZonedDateTime::class.java)
@@ -132,7 +130,6 @@ fun isBasicType(kClass: KClass<*>): Boolean {
         LocalTime::class.java,
         Date::class.java,
         java.sql.Date::class.java,
-        JDateTime::class.java,
         Calendar::class.java,
         UUID::class.java,
         OffsetDateTime::class.java,
@@ -166,7 +163,6 @@ fun isBasicType(kType: KType): Boolean {
         LocalTime::class.java,
         Date::class.java,
         java.sql.Date::class.java,
-        JDateTime::class.java,
         Calendar::class.java,
         UUID::class.java,
         OffsetDateTime::class.java,

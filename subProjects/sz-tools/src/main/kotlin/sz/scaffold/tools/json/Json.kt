@@ -9,7 +9,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import jodd.datetime.JDateTime
 import kotlin.reflect.KClass
 
 //
@@ -22,8 +21,6 @@ object Json {
 
     init {
         val JDateTimeModule = SimpleModule("CustomTypeModule")
-        JDateTimeModule.addSerializer(JDateTime::class.java, JDateTimeJsonSerializer())
-        JDateTimeModule.addDeserializer(JDateTime::class.java, JDateTimeJsonDeserializer())
 
         mapper.registerKotlinModule()
                 .registerModule(Jdk8Module())

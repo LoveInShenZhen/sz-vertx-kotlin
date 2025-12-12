@@ -3,7 +3,7 @@ package sz.scaffold.websocket
 import io.vertx.core.Vertx
 import io.vertx.core.http.ServerWebSocket
 import jodd.exception.ExceptionUtil
-import sz.logger.log
+import sz.scaffold.log
 import sz.scaffold.Application
 import sz.scaffold.tools.SzException
 
@@ -31,21 +31,13 @@ class WebSocketFilter(private val vertx: Vertx) : WebSocketHandler {
     override fun handle(webSocket: ServerWebSocket) {
         try {
             val handlerInstance = pathHandlerMap.getOrDefault(webSocket.path(), rejectHandler)
-            if (autoPingByServer) {
-                handlerInstance.handle(AutoPingServerWebSocket(webSocket, vertx, pingInterval))
-            } else {
-                handlerInstance.handle(webSocket)
-            }
+
+            handlerInstance.handle(webSocket)
+
         } catch (ex: Exception) {
             webSocket.close(500, ex.message)
             log.error(ExceptionUtil.exceptionStackTraceToString(ex))
         }
     }
-
-    private val pingInterval: Long
-        get() = Application.config.getLong("app.httpServer.webSocket.pingInterval")
-
-    private val autoPingByServer: Boolean
-        get() = Application.config.getBoolean("app.httpServer.webSocket.autoPingByServer")
 
 }

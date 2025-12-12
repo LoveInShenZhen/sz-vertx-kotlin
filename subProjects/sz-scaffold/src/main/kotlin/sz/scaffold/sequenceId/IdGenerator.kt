@@ -1,8 +1,9 @@
 package sz.scaffold.sequenceId
 
-import jodd.datetime.JDateTime
-import sz.logger.log
+import sz.scaffold.log
 import sz.scaffold.tools.SzException
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 /**
  * 53 bits sequence Id:
@@ -73,7 +74,7 @@ class IdGenerator(val workerId: Long) {
     }
 
     companion object {
-        val OffsetEpoch = JDateTime("2019-06-01 12:00:00", "YYYY-MM-DD hh:mm:ss").convertToDate().time / 1000
+        val OffsetEpoch = LocalDateTime.of(2019, 6, 1, 12, 0, 0).toEpochSecond(ZoneOffset.UTC)
         val minWokerId: Long = 0
         val maxWorkerId: Long = 0b1111_1
         val maxNext: Long = 0b1111_1111_1111_1111 // 65535

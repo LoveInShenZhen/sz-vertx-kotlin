@@ -7,7 +7,7 @@ import io.vertx.core.eventbus.MessageConsumer
 import io.vertx.core.shareddata.Lock
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.coAwait
-import sz.logger.log
+import sz.scaffold.log
 import sz.scaffold.Application
 import sz.scaffold.sequenceId.IdGenerator
 import sz.scaffold.sequenceId.exceptions.FailedToGetWorkerId
@@ -56,7 +56,7 @@ class SeqIdServiceVerticle : CoroutineVerticle() {
             if (vertx != Application.vertx) {
                 throw SzException("SeqIdServiceVerticle is not deployed by Application.vertx")
             }
-            "$uid@${Application.vertxOptions.clusterManager.nodeId}"
+            "$uid@${Application.clusterManager?.nodeId ?: "local"}"
         } else {
             "$uid@local"
         }
@@ -133,7 +133,7 @@ class SeqIdServiceVerticle : CoroutineVerticle() {
         }
 
         private fun removeOffLineWorkerIdWhenClustered(idMap: MutableMap<Long, String>) {
-            val nodes = Application.vertxOptions.clusterManager.nodes.toSet()
+            val nodes = Application.clusterManager?.nodes?.toSet() ?: setOf()
             val offlineIdList = idMap.filter { nodes.contains(it.value.nodeId()).not() }.keys
 
             offlineIdList.forEach {

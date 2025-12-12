@@ -13,10 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "什么是一级市场和二级市场.md",
+                "file": "股票/累计复权因子.md",
                 "mode": "source",
                 "source": false
-              }
+              },
+              "icon": "lucide-file",
+              "title": "累计复权因子"
             }
           },
           {
@@ -28,10 +30,13 @@
                 "file": "股票/交易规则.md",
                 "mode": "source",
                 "source": false
-              }
+              },
+              "icon": "lucide-file",
+              "title": "交易规则"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -50,8 +55,11 @@
             "state": {
               "type": "file-explorer",
               "state": {
-                "sortOrder": "alphabetical"
-              }
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
             }
           },
           {
@@ -66,7 +74,9 @@
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical"
-              }
+              },
+              "icon": "lucide-search",
+              "title": "搜索"
             }
           },
           {
@@ -74,7 +84,9 @@
             "type": "leaf",
             "state": {
               "type": "bookmarks",
-              "state": {}
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "书签"
             }
           }
         ]
@@ -97,7 +109,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "什么是一级市场和二级市场.md",
+                "file": "股票/累计复权因子.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -105,7 +117,9 @@
                 "searchQuery": "",
                 "backlinkCollapsed": false,
                 "unlinkedCollapsed": true
-              }
+              },
+              "icon": "links-coming-in",
+              "title": "累计复权因子 的反向链接列表"
             }
           },
           {
@@ -114,8 +128,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "什么是一级市场和二级市场.md"
-              }
+                "file": "股票/累计复权因子.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "累计复权因子 的大纲"
             }
           }
         ]
@@ -127,6 +146,7 @@
   },
   "left-ribbon": {
     "hiddenItems": {
+      "bases:创建新数据库": false,
       "switcher:打开快速切换": false,
       "graph:查看关系图谱": false,
       "canvas:新建白板": false,
@@ -134,11 +154,13 @@
       "markdown-importer:打开 Markdown 格式转换器": false
     }
   },
-  "active": "dde71fa5a1fc930c",
+  "active": "0318ee94765ac473",
   "lastOpenFiles": [
+    "股票/交易时段与集合竞价.md",
+    "股票/累计复权因子.md",
+    "什么是一级市场和二级市场.md",
     "股票/股票交易手续费.md",
     "股票/交易规则.md",
-    "股票/交易时段与集合竞价.md",
     "股票/视频资料汇总.md",
     "股票/A股交易进入全面注册制时代，交易规则变化.md",
     "基金/ETF.md",
@@ -151,7 +173,6 @@
     "交易系统/券商柜台系统/行情基础知识.md",
     "交易系统/券商柜台系统/几家大的券商的PB系统以及算法交易概况.md",
     "交易系统/券商柜台系统/期货交易柜台基础知识.md",
-    "什么是一级市场和二级市场.md",
     "交易系统/券商柜台系统/attachments/Pasted image 20220410122034.png",
     "交易系统/券商柜台系统/attachments/Pasted image 20220410121435.png"
   ]

@@ -1,6 +1,5 @@
 package sz.scaffold.sequenceId
 
-import io.vertx.kotlin.coroutines.await
 import io.vertx.kotlin.coroutines.coAwait
 import sz.scaffold.Application
 import sz.scaffold.sequenceId.vertcles.SeqIdServiceVerticle

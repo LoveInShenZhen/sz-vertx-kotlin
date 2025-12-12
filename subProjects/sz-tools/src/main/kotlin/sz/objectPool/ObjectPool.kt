@@ -5,7 +5,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.slf4j.LoggerFactory
-import sz.logger.log
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.fixedRateTimer
@@ -235,5 +234,9 @@ open class ObjectPool<T : Any>(
         runBlocking {
             stop()
         }
+    }
+
+    companion object {
+        private val log = LoggerFactory.getLogger("sz.vertx.tools")
     }
 }

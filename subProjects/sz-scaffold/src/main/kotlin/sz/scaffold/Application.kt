@@ -9,7 +9,6 @@ import io.vertx.core.http.HttpMethod
 import io.vertx.core.http.HttpServer
 import io.vertx.core.http.HttpServerOptions
 import io.vertx.core.http.impl.HttpUtils
-import io.vertx.core.impl.VertxImpl
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
@@ -18,10 +17,10 @@ import io.vertx.spi.cluster.zookeeper.ZookeeperClusterManager
 import jodd.exception.ExceptionUtil
 import jodd.io.FileNameUtil
 import jodd.io.FileUtil
-import jodd.system.SystemInfo
+import jodd.util.SystemInfo
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import sz.logger.log
+import org.slf4j.LoggerFactory
 import sz.scaffold.controller.ApiRoute
 import sz.scaffold.controller.BodyHandlerOptions
 import sz.scaffold.dispatchers.IDispatcherFactory
@@ -33,7 +32,6 @@ import java.io.File
 import java.lang.management.ManagementFactory
 import java.net.InetAddress
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.ExecutorService
 import kotlin.io.path.absolutePathString
 import kotlinx.coroutines.runBlocking as kxRunBlocking
 
@@ -44,6 +42,7 @@ import kotlinx.coroutines.runBlocking as kxRunBlocking
 @Suppress("MemberVisibilityCanBePrivate", "HasPlatformType")
 object Application {
 
+    private val log = LoggerFactory.getLogger("sz.vertx.scaffold")
     private val startHandlers = mutableMapOf<Int, MutableList<() -> Unit>>()
     private val stopHandlers = mutableMapOf<Int, MutableList<() -> Unit>>()
 
@@ -51,6 +50,7 @@ object Application {
     val app_home_dir: String
     val classLoader = Application::class.java.classLoader
     val inProductionMode: Boolean
+    var clusterManager: ZookeeperClusterManager? = null
 
     private var _vertx: Vertx? = null
 
@@ -60,16 +60,6 @@ object Application {
                 throw SzException("Application has not initialized vertx.")
             }
             return _vertx!!
-        }
-
-    private val vertxImpl: VertxImpl
-        get() {
-            return vertx as VertxImpl
-        }
-
-    val workerPool: ExecutorService
-        get() {
-            return vertxImpl.workerPool.executor()
         }
 
     private var _vertoptions: VertxOptions? = null
@@ -100,7 +90,7 @@ object Application {
         this.regOnStopHanlder(Int.MAX_VALUE) {
             log.info("Application stop ...")
             val stopVertxFuture = CompletableFuture<Boolean>()
-            vertx.close { res ->
+            vertx.close().onComplete { res ->
                 if (res.failed()) {
                     log.error(ExceptionUtil.exceptionChainToString(res.cause()))
                     stopVertxFuture.complete(false)
@@ -108,6 +98,7 @@ object Application {
                     stopVertxFuture.complete(true)
                 }
             }
+
             if (stopVertxFuture.get()) {
                 log.info("Stop vertx successfully.")
             } else {
@@ -140,8 +131,6 @@ object Application {
             throw SzException("The vertx of Application has been initialized. Do not initialize it again.")
         }
         _vertx = appVertx ?: createVertx()
-
-        logClusterNodeId()
     }
 
     private fun createVertx(): Vertx {
@@ -151,9 +140,16 @@ object Application {
             log.info("Vertx: cluster mode")
 
             val zookeeperConfig = JsonObject(config.getConfig("app.vertx.zookeeper").root().unwrapped().toShortJson())
-            val clusterManager = ZookeeperClusterManager(zookeeperConfig)
+            clusterManager = ZookeeperClusterManager(zookeeperConfig)
 
             val fut = Vertx.builder().with(this.vertxOptions).withClusterManager(clusterManager).buildClustered()
+            fut.onComplete { res ->
+                if (res.failed()) {
+                    throw SzException("Create clustered vertx failed: ${ExceptionUtil.exceptionChainToString(res.cause())}")
+                }
+                log.info("Create clustered vertx successfully. nodeId: ${clusterManager?.nodeId}, nodes: ${clusterManager?.nodes?.joinToString(", ")}")
+            }
+
             return fut.result()
 
         } else {
@@ -400,13 +396,6 @@ object Application {
         val pidFilePath = System.getProperty("pidfile.path")
         if (!pidFilePath.isNullOrBlank()) {
             FileUtil.writeString(pidFilePath, queryPid().toString())
-        }
-    }
-
-    private fun logClusterNodeId() {
-        if (this.isClustered) {
-            log.info("NodeId: ${vertxOptions.clusterManager.nodeId}")
-            log.info("Cluster Nodes: ${vertxOptions.clusterManager.nodes.joinToString(", ")}")
         }
     }
 

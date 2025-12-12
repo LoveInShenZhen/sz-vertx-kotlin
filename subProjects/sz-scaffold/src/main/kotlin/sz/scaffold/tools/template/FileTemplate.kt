@@ -2,7 +2,7 @@ package sz.scaffold.tools.template
 
 import freemarker.template.Configuration
 import jodd.exception.ExceptionUtil
-import sz.logger.log
+import sz.scaffold.log
 import sz.scaffold.Application
 import java.io.File
 import java.io.IOException

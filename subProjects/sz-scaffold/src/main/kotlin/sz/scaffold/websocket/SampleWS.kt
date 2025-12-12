@@ -1,9 +1,9 @@
 package sz.scaffold.websocket
 
 import io.vertx.core.http.ServerWebSocket
-import jodd.datetime.JDateTime
-import sz.logger.log
+import sz.scaffold.log
 import sz.scaffold.Application
+import java.time.LocalDateTime
 
 /**
  * 注: 该类的实现必须是线程安全的.
@@ -19,20 +19,19 @@ class SampleWS : WebSocketHandler {
 
         webSocket.closeHandler {
             // Set a close handler. This will be called when the WebSocket is closed.
-            log.debug("[${JDateTime()}] WebSocket is closed")
+            log.debug("[${LocalDateTime.now()}] WebSocket is closed")
             consumer.unregister()
-            log.debug("[${JDateTime()}] consumer is unregister")
+            log.debug("[${LocalDateTime.now()}] consumer is unregister")
         }.exceptionHandler {
             // Set an exception handler on the read stream.
-            log.warn("[${JDateTime()}] WebSocket 有异常发生:\n$it")
+            log.warn("[${LocalDateTime.now()}] WebSocket 有异常发生:\n$it")
         }.textMessageHandler {
-            log.debug("[${JDateTime()}] WebSocket 接收到client 发过来的消息:\n$it")
+            log.debug("[${LocalDateTime.now()}] WebSocket 接收到client 发过来的消息:\n$it")
         }.pongHandler {
-            log.debug("[${JDateTime()}] websocket pong handler:\n${it.toString(Charsets.UTF_8)}")
+            log.debug("[{}] websocket pong handler:\n{}", LocalDateTime.now(), it.toString(Charsets.UTF_8))
         }
 
-        log.debug("[${JDateTime()}] 收到 client 端的 web socket 请求, accept it")
-        webSocket.accept()
+        log.debug("[${LocalDateTime.now()}] 收到 client 端的 web socket 请求, accept it")
     }
 
     companion object {

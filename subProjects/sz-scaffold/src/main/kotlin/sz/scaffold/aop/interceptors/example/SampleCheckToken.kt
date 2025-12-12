@@ -1,7 +1,7 @@
 package sz.scaffold.aop.interceptors.example
 
 
-import sz.logger.log
+import sz.scaffold.log
 import sz.scaffold.aop.actions.Action
 import sz.scaffold.aop.annotations.WithAction
 
