@@ -40,7 +40,7 @@ application {
 
 // 配置 Kotlin 的 JVM 工具链版本为 17
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(17)
 }
 
 // 配置 JavaFX 的版本和使用的模块

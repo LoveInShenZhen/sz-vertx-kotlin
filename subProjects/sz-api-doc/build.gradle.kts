@@ -25,7 +25,7 @@ publishing {
 }
 
 kotlin { // Extension for easy setup
-    jvmToolchain(21) // Target version of generated JVM bytecode. See 7️⃣
+    jvmToolchain(17) // Target version of generated JVM bytecode. See 7️⃣
 }
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.compilerOptions {
