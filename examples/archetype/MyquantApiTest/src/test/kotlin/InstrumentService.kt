@@ -573,19 +573,19 @@ class InstrumentService : ProdEnvBase() {
     }
 
     @Test
-    fun TestGetHistorySymbol_SHSE_501000() {
+    fun TestGetHistorySymbol_SHSE_600730() {
         MeasureTime {
             val req = InstrumentServiceProto.GetHistorySymbolReq.newBuilder().apply {
-                symbol = "SHSE.501000"
-                startDate = "2024-01-22"
-                endDate = "2024-01-22"
+                symbol = "SHSE.600730"
+                startDate = "2025-12-22"
+                endDate = "2025-12-22"
             }.build()
 
             val rsp = instrument_api.getHistorySymbol(req)
 
             logger.info("结果记录 ${rsp.symbolsCount} 条记录")
             rsp.symbolsList.forEach {
-                logger.info("${it.toString()}}")
+                logger.info("${it.pbToJsonStr()}}")
             }
         }
     }

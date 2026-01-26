@@ -7,7 +7,7 @@ class BizLogicException : RuntimeException {
 
     var ErrCode: Int = 0
 
-    constructor(msg: String) : super(msg) {
+    constructor(msg: String?) : super(msg) {
         this.ErrCode = -1
     }
 

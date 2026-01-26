@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm").version("2.1.0")
+    kotlin("jvm").version("2.2.21")
     id("io.ebean").version("15.3.0")
     application
 }
@@ -40,15 +40,22 @@ dependencies {
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.0-rc1")
 
 
-
-
     testImplementation("junit", "junit", "4.12")
 }
 
 kotlin { // Extension for easy setup
-    jvmToolchain(17) // Target version of generated JVM bytecode. See 7️⃣
+    jvmToolchain(21) // Target version of generated JVM bytecode. See 7️⃣
 }
 
 application {
     mainClass.set("sz.ebean.gen.App")
+}
+
+tasks.withType<JavaExec> {
+    this.jvmArgs(
+        "-Dfile.encoding=UTF-8",
+        "-Dsun.stdout.encoding=UTF-8",
+        "-Dsun.stderr.encoding=UTF-8",
+        "-Dsun.jnu.encoding=UTF-8",
+    )
 }

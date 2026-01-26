@@ -1,6 +1,7 @@
 package sz.scaffold.controller
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException
 import io.vertx.core.http.HttpMethod
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
@@ -102,12 +103,20 @@ data class ApiRoute(val method: HttpMethod,
             } catch (ex: Throwable) {
                 log.debug(ExceptionUtil.exceptionChainToString(ex))
                 val reply = ReplyBase()
-                val reason = ExceptionUtil.findCause(ex, BizLogicException::class.java)
-                if (reason != null) {
-                    reply.onError(reason)
+                val reason1 = ExceptionUtil.findCause(ex, BizLogicException::class.java)
+                if (reason1 != null) {
+                    reply.onError(reason1)
                 } else {
                     reply.onError(ex)
                 }
+
+                val reason2 = ExceptionUtil.findCause(ex, UnrecognizedPropertyException::class.java)
+                if (reason2 != null) {
+                    reply.onError(BizLogicException(reason2.message))
+                } else {
+                    reply.onError(ex)
+                }
+
                 if (httpContext.queryParams(mapOf()).containsKey("callback")) {
                     response.putHeader("Content-Type", ContentTypes.JavaScript)
                     val callback = httpContext.queryParams(mapOf()).getValue("callback")

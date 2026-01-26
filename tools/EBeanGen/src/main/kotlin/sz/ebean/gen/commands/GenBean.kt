@@ -141,7 +141,7 @@ class GenBean : CliktCommand(name = "gen") {
             }
         }
 
-        echo("完毕")
+        echo("完毕, 生成的代码的目标目录: ${this.outdir.absolutePath}, 目标package: ${this.pkg}")
     }
 
     private fun wrapName(name: String): String {
@@ -195,8 +195,10 @@ class GenBean : CliktCommand(name = "gen") {
             // 再判断, 在表结构定义里, 该 column 是否指定了默认值
             if (columnInfo.default_value.isNullOrBlank()) {
                 // 表结构定义里, 没有指定默认值, 那么, 我们根据该字段的 kotlinType 来设置其java类型的默认值
-                // 原生数值类型, 默认值为 0
                 // BigDecimal 类型, 默认值为 0
+                // Double 类型, 默认值为 0.0
+                // Float 类型, 默认值为 0.0f
+                // 其他原生数值类型, 默认值为 0
                 // String 类型, 默认值为 ""
                 // Boolean 类型, 默认值为 False
                 // Uuid 类型, 默认值为 全0 的uuid
@@ -205,6 +207,12 @@ class GenBean : CliktCommand(name = "gen") {
                 if (fieldType == BigDecimal::class) {
                     typeName = columnInfo.kotlinType().asTypeName().copy(nullable = false)
                     initValue = "BigDecimal.ZERO"
+                } else if (fieldType == Double::class) {
+                    typeName = columnInfo.kotlinType().asTypeName().copy(nullable = false)
+                    initValue = 0.0
+                } else if (fieldType == Float::class) {
+                    typeName = columnInfo.kotlinType().asTypeName().copy(nullable = false)
+                    initValue = 0.0f
                 } else if (fieldType.isSubclassOf(Number::class)) {
                     typeName = columnInfo.kotlinType().asTypeName().copy(nullable = false)
                     initValue = 0
@@ -229,8 +237,14 @@ class GenBean : CliktCommand(name = "gen") {
                     if (columnInfo.default_value == "0") {
                         initValue = "BigDecimal.ZERO"
                     } else {
-                        initValue =  "BigDecimal.valueOf(${columnInfo.default_value})"
+                        initValue = "BigDecimal.valueOf(${columnInfo.default_value})"
                     }
+                } else if (fieldType == Double::class) {
+                    typeName = columnInfo.kotlinType().asTypeName().copy(nullable = false)
+                    initValue = columnInfo.default_value!!.toDouble()
+                } else if (fieldType == Float::class) {
+                    typeName = columnInfo.kotlinType().asTypeName().copy(nullable = false)
+                    initValue = columnInfo.default_value!!.toFloat()
                 } else if (fieldType.isSubclassOf(Number::class)) {
                     typeName = columnInfo.kotlinType().asTypeName().copy(nullable = false)
                     if (columnInfo.default_value == "0") {

@@ -6,7 +6,7 @@ plugins {
     id("maven-publish")
 }
 
-val vertxVersion = "5.0.5"
+val vertxVersion = "5.0.6"
 
 dependencies {
     api(project(":subProjects:sz-tools"))
