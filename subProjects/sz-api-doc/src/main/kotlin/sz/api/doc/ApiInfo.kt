@@ -1,6 +1,7 @@
 package sz.api.doc
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import sz.api.controllers.ApiDoc
 import sz.api.log
 import sz.scaffold.Application
@@ -9,11 +10,13 @@ import sz.scaffold.ext.escapeMarkdown
 import sz.scaffold.tools.json.JsonDataType
 import sz.scaffold.tools.json.toJsonPretty
 import kotlin.reflect.KClass
+import kotlin.reflect.KProperty1
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.javaType
 
 //
@@ -216,7 +219,7 @@ class ApiInfo constructor(
                     if (paramComment != null && paramComment is Comment) {
                         paramDesc = paramComment.value
                     }
-                    ParameterInfo(name = it.name,
+                    ParameterInfo(name = propertyName(it),
                         desc = paramDesc,
                         type = it.returnType.javaType.typeName.split(".").last())
                 }
@@ -235,13 +238,31 @@ class ApiInfo constructor(
                     if (paramComment != null && paramComment is Comment) {
                         paramDesc = paramComment.value
                     }
-                    ParameterInfo(name = it.name,
+
+                    ParameterInfo(name = propertyName(it),
                         desc = paramDesc,
                         type = it.returnType.javaType.typeName.split(".").last())
                 }
         } else {
             return emptyList()
         }
+    }
+
+    private fun propertyName(memberProperty: KProperty1<*, *>): String {
+        var jsonPropertyAnn = memberProperty.findAnnotation<JsonProperty>()
+        if (jsonPropertyAnn != null) {
+            return jsonPropertyAnn.value
+        } else {
+            // 如果没找到，从对应的Java字段（field）查找
+            jsonPropertyAnn = memberProperty.javaField?.getAnnotation(JsonProperty::class.java)
+
+            if (jsonPropertyAnn != null) {
+                return jsonPropertyAnn.value
+            }
+        }
+
+        // 如果还是没找到，则使用属性名称
+        return memberProperty.name
     }
 
     fun postJsonSchema(): String {

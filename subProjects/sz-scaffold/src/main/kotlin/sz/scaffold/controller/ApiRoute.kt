@@ -10,7 +10,6 @@ import jodd.exception.ExceptionUtil
 import jodd.util.ClassUtil
 import kotlinx.coroutines.async
 import org.slf4j.LoggerFactory
-import sz.scaffold.log
 import sz.scaffold.Application
 import sz.scaffold.annotations.PostForm
 import sz.scaffold.annotations.PostJson
@@ -18,6 +17,7 @@ import sz.scaffold.aop.actions.Action
 import sz.scaffold.aop.annotations.WithAction
 import sz.scaffold.aop.interceptors.GlobalInterceptorBase
 import sz.scaffold.controller.reply.ReplyBase
+import sz.scaffold.log
 import sz.scaffold.tools.BizLogicException
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.json.Json
@@ -104,14 +104,10 @@ data class ApiRoute(val method: HttpMethod,
                 log.debug(ExceptionUtil.exceptionChainToString(ex))
                 val reply = ReplyBase()
                 val reason1 = ExceptionUtil.findCause(ex, BizLogicException::class.java)
+                val reason2 = ExceptionUtil.findCause(ex, UnrecognizedPropertyException::class.java)
                 if (reason1 != null) {
                     reply.onError(reason1)
-                } else {
-                    reply.onError(ex)
-                }
-
-                val reason2 = ExceptionUtil.findCause(ex, UnrecognizedPropertyException::class.java)
-                if (reason2 != null) {
+                } else if (reason2 != null) {
                     reply.onError(BizLogicException(reason2.message))
                 } else {
                     reply.onError(ex)
@@ -348,7 +344,7 @@ data class ApiRoute(val method: HttpMethod,
         }
 
         private fun parse(routeDef: String): ApiRoute {
-            val routeRegex = """(GET|POST|HEAD)\s+(/\S*)\s+(\S+)\s*(\{.*\})?$""".toRegex()
+            val routeRegex = """(GET|POST|HEAD|PUT)\s+(/\S*)\s+(\S+)\s*(\{.*\})?$""".toRegex()
             if (routeRegex.matches(routeDef)) {
                 val parts = routeRegex.matchEntire(routeDef)!!.groupValues
                 val method = parts[1].trim()

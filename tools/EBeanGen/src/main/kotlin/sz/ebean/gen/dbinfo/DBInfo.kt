@@ -114,6 +114,34 @@ class DBInfo(val db: Database, val tableCommentService: TableCommentService?) {
         return tables
     }
 
+    /**
+     * 从系统表, 查询所有的保留字, 并缓存起来;
+     * mysql 方式
+     * 查询回来的关键字都是大写
+     */
+    val reservedWords: Set<String> by lazy {
+        val sql = "SELECT WORD FROM information_schema.KEYWORDS where RESERVED=1"
+        return@lazy db.sqlQuery(sql).findList().map { it.getString("WORD") }.toSet()
+    }
+
+    /**
+     * 判断一个单词是否是保留字
+     */
+    fun isReservedWord(word: String): Boolean {
+        return reservedWords.contains(word.uppercase())
+    }
+
+    /**
+     * 对一个单词进行引号包裹, 如果是保留字, 则包裹在反引号中;
+     */
+    fun quoteWord(word: String): String {
+        return if (isReservedWord(word)) {
+            "`$word`"
+        } else {
+            word
+        }
+    }
+
     private fun loadColumnInfo(tableInfo: TableInfo): TableInfo {
         db.beginTransaction().use { tran ->
             val cnn = tran.connection()

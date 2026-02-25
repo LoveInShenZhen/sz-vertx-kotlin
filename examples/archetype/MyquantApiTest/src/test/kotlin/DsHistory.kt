@@ -21,6 +21,7 @@ import java.time.format.DateTimeFormatter
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import kotlin.math.log
 import kotlin.time.DurationUnit
 import kotlin.time.measureTime
 
@@ -866,6 +867,21 @@ SHSE.000053
             rsp.dataList.forEach {
                 logger.info("${it.eob.toLocalDate()} \n${it.pbToJsonStr()}")
             }
+        }
+    }
+
+    @Test
+    @DisplayName("临时debug")
+    fun debugHistoryTick() {
+        MeasureTime {
+            val req = HistoryServiceProto.GetHistoryTicksReq.newBuilder().apply {
+                symbols = "BK.007318"
+                startTime = "2026-01-30 09:00:00"
+                endTime = "2026-01-30 16:00:00"
+            }.build()
+
+            val rsp = history_api.getHistoryTicks(req)
+            logger.info("查询结果 ${rsp.dataCount} 条记录")
         }
     }
 }

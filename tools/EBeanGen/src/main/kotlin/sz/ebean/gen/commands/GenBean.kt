@@ -311,7 +311,7 @@ class GenBean : CliktCommand(name = "gen") {
             builder.addAnnotation(Version::class)
         } else {
             val columnAnnSpecBuilder = AnnotationSpec.builder(Column::class)
-            columnAnnSpecBuilder.addMember("name = %P", "`${columnInfo.field_name}`")
+            columnAnnSpecBuilder.addMember("name = %P", dbinfo!!.quoteWord(columnInfo.field_name))
 
             if (columnInfo.null_able) {
                 columnAnnSpecBuilder.addMember("nullable = true")
@@ -365,7 +365,7 @@ class GenBean : CliktCommand(name = "gen") {
         } else {
             entityClassBuilder.addAnnotation(
                 AnnotationSpec.builder(Table::class)
-                    .addMember("name = %P", "`${tableInfo.table_name}`")
+                    .addMember("name = %P", dbinfo!!.quoteWord(tableInfo.table_name))
                     .build()
             )
         }
@@ -466,7 +466,7 @@ class GenBean : CliktCommand(name = "gen") {
             }
 
             val columnAnnSpecBuilder = AnnotationSpec.builder(Column::class)
-            columnAnnSpecBuilder.addMember("name = %P", "`${columnInfo.field_name}`")
+            columnAnnSpecBuilder.addMember("name = %P", dbinfo!!.quoteWord(columnInfo.field_name))
 
             if (columnInfo.null_able) {
                 columnAnnSpecBuilder.addMember("nullable = true")
@@ -515,7 +515,7 @@ class GenBean : CliktCommand(name = "gen") {
         } else {
             entityClassBuilder.addAnnotation(
                 AnnotationSpec.builder(Table::class)
-                    .addMember("name = %S", tableInfo.table_name)
+                    .addMember("name = %S", dbinfo!!.quoteWord(tableInfo.table_name))
                     .build()
             )
         }

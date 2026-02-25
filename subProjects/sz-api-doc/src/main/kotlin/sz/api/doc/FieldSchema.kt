@@ -1,6 +1,7 @@
 package sz.api.doc
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import sz.scaffold.annotations.Comment
 import sz.scaffold.tools.console.PrettyTree
 import sz.scaffold.tools.console.TreeNode
@@ -71,7 +72,7 @@ class FieldSchema {
                 .forEach {
                     val propSchema = FieldSchema()
                     propSchema.level = ownnerSchema.level + 1
-                    propSchema.name = it.name
+                    propSchema.name = propertyName(it)
                     propSchema.desc = propertyDesc(it.annotations)
                     propSchema.type = jsonType(it.returnType).typeName
                     propSchema.kotlin_class = it.returnType.jvmErasure //it.returnType.javaType.typeName
@@ -132,6 +133,23 @@ class FieldSchema {
             }
 
             return ""
+        }
+
+        private fun propertyName(memberProperty: KProperty1<*, *>): String {
+            var jsonPropertyAnn = memberProperty.findAnnotation<JsonProperty>()
+            if (jsonPropertyAnn != null) {
+                return jsonPropertyAnn.value
+            } else {
+                // 如果没找到，从对应的Java字段（field）查找
+                jsonPropertyAnn = memberProperty.javaField?.getAnnotation(JsonProperty::class.java)
+
+                if (jsonPropertyAnn != null) {
+                    return jsonPropertyAnn.value
+                }
+            }
+
+            // 如果还是没找到，则使用属性名称
+            return memberProperty.name
         }
 
         private fun <T : Any> jsonIgnored(prop: KProperty1<T, *>): Boolean {

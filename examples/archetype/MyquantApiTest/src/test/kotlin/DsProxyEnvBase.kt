@@ -18,7 +18,7 @@ import kotlin.time.measureTime
 // Created by drago on 2023/9/12 012.
 //
 
-var EnvName = "test"
+var EnvName = "prod"
 
 open class DsProxyEnvBase() {
     companion object {
