@@ -103,15 +103,7 @@ data class ApiRoute(val method: HttpMethod,
             } catch (ex: Throwable) {
                 log.debug(ExceptionUtil.exceptionChainToString(ex))
                 val reply = ReplyBase()
-                val reason1 = ExceptionUtil.findCause(ex, BizLogicException::class.java)
-                val reason2 = ExceptionUtil.findCause(ex, UnrecognizedPropertyException::class.java)
-                if (reason1 != null) {
-                    reply.onError(reason1)
-                } else if (reason2 != null) {
-                    reply.onError(BizLogicException(reason2.message))
-                } else {
-                    reply.onError(ex)
-                }
+                reply.onError(ex)
 
                 if (httpContext.queryParams(mapOf()).containsKey("callback")) {
                     response.putHeader("Content-Type", ContentTypes.JavaScript)
@@ -130,12 +122,8 @@ data class ApiRoute(val method: HttpMethod,
         }.invokeOnCompletion { ex ->
             if (ex != null) {
                 val reply = ReplyBase()
-                val reason = ExceptionUtil.findCause(ex, BizLogicException::class.java)
-                if (reason != null) {
-                    reply.onError(reason)
-                } else {
-                    reply.onError(ex)
-                }
+                reply.onError(ex)
+
                 if (httpContext.queryParams(mapOf()).containsKey("callback")) {
                     response.putHeader("Content-Type", ContentTypes.JavaScript)
                     val callback = httpContext.queryParams(mapOf()).getValue("callback")
