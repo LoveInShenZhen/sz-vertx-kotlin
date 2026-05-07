@@ -25,6 +25,7 @@ import sz.scaffold.controller.ApiRoute
 import sz.scaffold.controller.BodyHandlerOptions
 import sz.scaffold.dispatchers.IDispatcherFactory
 import sz.scaffold.ext.filePathJoin
+import sz.scaffold.tools.BizLogicException
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.json.toShortJson
 import sz.scaffold.websocket.WebSocketFilter
@@ -287,7 +288,12 @@ object Application {
                     // only if several handlers do output.
                     it.response().isChunked = true
 
-                    if (it.method() == HttpMethod.POST && HttpUtils.isValidMultipartContentType(it.getHeader(HttpHeaderNames.CONTENT_TYPE))) {
+                    val contentType = it.getHeader(HttpHeaderNames.CONTENT_TYPE)
+//                    if (contentType.isNullOrBlank()) {
+//                        throw BizLogicException("Content-Type is null or blank")
+//                    }
+
+                    if (contentType.isNullOrBlank().not() && it.method() == HttpMethod.POST && HttpUtils.isValidMultipartContentType(it.getHeader(HttpHeaderNames.CONTENT_TYPE))) {
                         it.isExpectMultipart = true
                     }
                 }

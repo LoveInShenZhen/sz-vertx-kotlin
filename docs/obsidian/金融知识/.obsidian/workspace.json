@@ -48,9 +48,21 @@
               "icon": "lucide-file",
               "title": "前复权因子计算"
             }
+          },
+          {
+            "id": "93f992645e15eca9",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.11.5"
+              },
+              "icon": "lucide-book-up",
+              "title": "版本说明 1.11.5"
+            }
           }
         ],
-        "currentTab": 2
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -142,13 +154,12 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "股票/前复权因子计算.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "前复权因子计算 的大纲"
+              "title": "大纲"
             }
           }
         ],
@@ -168,7 +179,7 @@
       "markdown-importer:打开 Markdown 格式转换器": false
     }
   },
-  "active": "8fb5c27fbac868d4",
+  "active": "93f992645e15eca9",
   "lastOpenFiles": [
     "股票/累计复权因子.md",
     "股票/交易时段与集合竞价.md",

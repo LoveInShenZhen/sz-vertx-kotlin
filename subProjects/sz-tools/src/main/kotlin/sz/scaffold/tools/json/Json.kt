@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema
@@ -23,15 +25,15 @@ object Json {
         val JDateTimeModule = SimpleModule("CustomTypeModule")
 
         mapper.registerKotlinModule()
-                .registerModule(Jdk8Module())
-                .registerModule(JavaTimeModule())
-                .registerModule(JDateTimeModule)
+            .registerModule(Jdk8Module())
+            .registerModule(JavaTimeModule())
+            .registerModule(JDateTimeModule)
 
         excludeEmptyMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
         excludeEmptyMapper.registerKotlinModule()
-                .registerModule(Jdk8Module())
-                .registerModule(JavaTimeModule())
-                .registerModule(JDateTimeModule)
+            .registerModule(Jdk8Module())
+            .registerModule(JavaTimeModule())
+            .registerModule(JDateTimeModule)
 
     }
 
@@ -46,6 +48,28 @@ object Json {
     fun parse(src: String): JsonNode {
         try {
             return mapper.readTree(src)
+        } catch (t: Throwable) {
+            throw RuntimeException(t)
+        }
+    }
+
+    /**
+     * 将json字符串转换为ObjectNode, 调用方保证json字符串是合法的,且是object类型
+     */
+    fun parseToObjectNode(src: String): ObjectNode {
+        try {
+            return mapper.readTree(src) as ObjectNode
+        } catch (t: Throwable) {
+            throw RuntimeException(t)
+        }
+    }
+
+    /**
+     * 将json字符串转换为ArrayNode, 调用方保证json字符串是合法的,且是array类型
+     */
+    fun parseToArrayNode(src: String): ArrayNode {
+        try {
+            return mapper.readTree(src) as ArrayNode
         } catch (t: Throwable) {
             throw RuntimeException(t)
         }

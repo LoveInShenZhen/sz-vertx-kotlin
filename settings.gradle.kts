@@ -1,4 +1,3 @@
-include("subProjects:jodd-dependency")
 include("subProjects:sz-crypto")
 include("subProjects:sz-log")
 include("subProjects:sz-tools")
