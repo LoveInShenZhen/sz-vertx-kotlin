@@ -21,7 +21,9 @@ import kotlin.math.min
 object RsaUtil {
 
     private const val rsaAlgorithm = "SHA256withRSA"
-    private const val cipherTransformation = "RSA/ECB/PKCS1Padding"
+    // 因为 Web Crypto API 支持公钥加密（asymmetric encryption），但仅支持 RSA-OAEP 这一种算法，不支持 RSAES-PKCS1-v1_5（已被标记为遗留算法）
+    // Java 的 RSA/ECB/OAEPWithSHA-256AndMGF1Padding 和 JS 中配置了 SHA-256 的 RSA-OAEP 是完全等价的加密方案，只是不同平台对 “算法标识” 和 “参数配置” 的拆分方式不同
+    private const val cipherTransformation = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding"
     private const val maxPlainBytesSize = 96                                // 最大明文字节数
     private const val keySize = 1024                                        // 密钥长度
     private const val encryptedBlockSize = keySize / 8                      // 加密后, 密文块的字节数

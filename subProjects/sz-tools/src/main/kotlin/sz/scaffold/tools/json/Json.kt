@@ -29,7 +29,7 @@ object Json {
             .registerModule(JavaTimeModule())
             .registerModule(JDateTimeModule)
 
-        excludeEmptyMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
+        excludeEmptyMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_EMPTY)
         excludeEmptyMapper.registerKotlinModule()
             .registerModule(Jdk8Module())
             .registerModule(JavaTimeModule())
@@ -130,7 +130,7 @@ object Json {
     fun toStrMap(jsonStr: String): Map<String, String> {
         val map = mutableMapOf<String, String>()
         val jsonNode = parse(jsonStr)
-        jsonNode.fields().forEach { map.put(it.key, it.value.asText()) }
+        jsonNode.properties().forEach { map.put(it.key, it.value.asText()) }
         return map
     }
 }

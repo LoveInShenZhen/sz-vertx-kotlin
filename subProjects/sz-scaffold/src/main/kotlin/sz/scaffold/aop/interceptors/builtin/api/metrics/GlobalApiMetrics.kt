@@ -34,7 +34,7 @@ class GlobalApiMetrics : GlobalInterceptorBase() {
             val request = this.httpContext.request()
 
             record.http_method = request.method().name()
-            record.path = request.path()
+            record.path = request.path()!!
             record.query_string = request.query()
             record.headers = request.headers().map { Pair<String, String>(it.key, it.value) }.toMap()
             record.request_body = this.httpContext.body().asString(contentCharset())

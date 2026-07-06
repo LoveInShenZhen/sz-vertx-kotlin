@@ -33,7 +33,7 @@ abstract class GlobalInterceptorBase : Action<JsonObject>() {
     abstract suspend fun whenMatch(): Any?
 
     override suspend fun call(): Any? {
-        val path = this.httpContext.request().path()
+        val path = this.httpContext.request().path()!!
         return if (match(path)) {
             whenMatch()
         } else {

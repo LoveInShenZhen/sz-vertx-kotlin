@@ -27,7 +27,7 @@ object Xml {
                 .registerModule(JDateTimeModule)
 
         excludeEmptyMapper = XmlMapper()
-        excludeEmptyMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
+        excludeEmptyMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_EMPTY)
                 .registerKotlinModule()
                 .registerModule(Jdk8Module())
                 .registerModule(JavaTimeModule())
@@ -44,7 +44,7 @@ object Xml {
                 .registerModule(JDateTimeModule)
 
         if (excludeEmpty) {
-            xmlMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
+            xmlMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_EMPTY)
         }
 
         if (writeXmlDeclaration) {

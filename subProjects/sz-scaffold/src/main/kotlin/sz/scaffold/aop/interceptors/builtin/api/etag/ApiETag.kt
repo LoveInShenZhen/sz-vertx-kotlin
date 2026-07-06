@@ -42,10 +42,10 @@ class ApiETagAction : Action<ApiETag>() {
     private fun etagOfRequest(): String {
         val headers = this.httpContext.request().headers()
         if (headers.contains("If-None-Match")) {
-            return headers.get("If-None-Match")
+            return headers.get("If-None-Match")!!
         }
         if (headers.contains("If-Match")) {
-            return headers.get("If-Match")
+            return headers.get("If-Match")!!
         }
 
         return ""

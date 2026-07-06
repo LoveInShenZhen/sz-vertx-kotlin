@@ -25,7 +25,7 @@ annotation class QpsLimiter(
 class QpsLimiterAction : Action<QpsLimiter>() {
 
     override suspend fun call(): Any? {
-        val limiter = QpsLimiterMap.apiLimiterOf(this.httpContext.request().path())
+        val limiter = QpsLimiterMap.apiLimiterOf(this.httpContext.request().path()!!)
         return if (limiter.tryAcquire()) {
             delegate.call()
         } else {

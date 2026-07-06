@@ -178,7 +178,7 @@ data class ApiRoute(val method: HttpMethod,
                 response.write(result.singleLineJson())
                 response.putHeader("Content-Type", ContentTypes.Json)
             } else if (result is String) {
-                response.write(result.toString())
+                response.write(result)
             }
             // 其他类型(非 ReplyBase, 非 JsonNode, 非 String), 不做处理
         } catch (ex: Exception) {

@@ -53,6 +53,8 @@ object Application {
     val inProductionMode: Boolean
     var clusterManager: ZookeeperClusterManager? = null
 
+    val mainRouter : Router by lazy { Router.router(vertx) }
+
     private var _vertx: Vertx? = null
 
     val vertx: Vertx
@@ -262,12 +264,11 @@ object Application {
         val httpServer = vertx.createHttpServer(httpServerOptions)
         val bodyHandlerOptions = this.bodyHandlerOptions()
 
-        val router = Router.router(vertx)
 
         // /builtinstatic/* , 该 path 是约定专门用于处理静态文件的
-        router.route("/builtinstatic/*").handler(StaticHandler.create())
+        mainRouter.route("/builtinstatic/*").handler(StaticHandler.create())
 
-        router.route().handler(
+        mainRouter.route().handler(
             BodyHandler.create()
                 .setMergeFormAttributes(bodyHandlerOptions.mergeFormAttributes)
                 .setBodyLimit(bodyHandlerOptions.bodyLimit)
@@ -276,13 +277,13 @@ object Application {
         )
 
         loadApiRouteFromRouteFiles().forEach {
-            it.addToRoute(router)
+            it.addToRoute(mainRouter)
         }
 
         httpServer.requestHandler {
             try {
                 // 排除 /builtinstatic/* , 该 path 是约定专门用于处理静态文件的
-                if (it.path().startsWith("/builtinstatic/").not()) {
+                if (it.path()!!.startsWith("/builtinstatic/").not()) {
                     // enable chunked responses because we will be adding data as
                     // we execute over other handlers. This is only required once and
                     // only if several handlers do output.
@@ -298,7 +299,7 @@ object Application {
                     }
                 }
 
-                router.handle(it)
+                mainRouter.handle(it)
             } catch (ex: Exception) {
                 it.response().end("${ex.message}\n\n${ExceptionUtil.exceptionChainToString(ex)}")
             }

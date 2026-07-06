@@ -53,6 +53,13 @@ open class ReplyBase {
                 return
             }
 
+            val illegalArgumentException = ExceptionUtil.findCause(ex, IllegalArgumentException::class.java)
+            if (illegalArgumentException != null) {
+                this.ret = -1
+                this.errmsg = illegalArgumentException.message!!
+                return
+            }
+
             // 其他异常
             this.ret = -1
             this.errmsg =
