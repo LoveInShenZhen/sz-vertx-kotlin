@@ -6,7 +6,6 @@ import sz.scaffold.Application
 import sz.scaffold.ext.getIntOrElse
 import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.ForkJoinWorkerThread
-import kotlin.math.max
 
 //
 // Created by kk on 2020/7/23.
@@ -14,11 +13,15 @@ import kotlin.math.max
 class ForkJoinPoolDispatcher : IDispatcherFactory {
 
     val parallelism: Int by lazy {
-        Application.config.getIntOrElse("app.httpServer.dispatcher.parallelism", max(16, Runtime.getRuntime().availableProcessors()))
+        var defaultParallelism = Runtime.getRuntime().availableProcessors()
+        if (defaultParallelism < 4) {
+            defaultParallelism = 4
+        }
+        Application.config.getIntOrElse("app.httpServer.dispatcher.parallelism", defaultParallelism)
     }
 
     override fun build(): CoroutineDispatcher {
-        return ForkJoinPool(parallelism, ThreadFactory(), null, false).asCoroutineDispatcher()
+        return ForkJoinPool(parallelism, ThreadFactory(), null, true).asCoroutineDispatcher()
     }
 }
 

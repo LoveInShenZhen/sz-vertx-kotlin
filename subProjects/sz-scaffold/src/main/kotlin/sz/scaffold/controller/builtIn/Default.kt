@@ -25,6 +25,7 @@ class Default : ApiController() {
                 <li><a href="/api/builtin/sysInfo">系统信息</a></li>
                 <li><a href="/api/builtin/doc/apiDocMarkdown">api 文档的markdown格式</a></li>
                 <li><a href="/api/builtin/doc/apiDocHtml">api 文档的html格式</a></li>
+                <li><a href="/builtinstatic/api_doc_lite.html">api 文档的html格式-Lite</a></li>
             </ul>
         """.trimIndent()
 

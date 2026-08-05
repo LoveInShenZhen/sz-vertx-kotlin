@@ -18,7 +18,7 @@
 <#if apiInfo.IsPostJsonApi() >
 * Post Json Data 样例:
 
-```
+```json
 ${apiInfo.postDataSample}
 ```
 </#if>
@@ -47,7 +47,7 @@ ${apiInfo.replySchemaDesc}
 
 * 返回结果样例:
 
-```
+```json
 ${apiInfo.replySampleData}
 ```
 </#list>

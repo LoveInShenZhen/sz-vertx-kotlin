@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 接口文档</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked@13.0.3/marked.min.js"></script>
+    <!-- Prism.js JSON语法高亮 -->
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            background-color: #f7f8fa;
+            color: #333;
+            overflow-x: hidden; /* 全局禁止页面横向滚动 */
+        }
+        .sidebar {
+            width: 280px;
+            height: 100vh;
+            overflow-y: auto;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: #ffffff;
+            border-right: 1px solid #e5e7eb;
+            padding: 24px 12px;
+        }
+        .sidebar h2 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            padding-left: 8px;
+        }
+        .toc-list {
+            list-style: none;
+        }
+        .toc-list li {
+            margin: 4px 0;
+        }
+        .toc-list a {
+            text-decoration: none;
+            display: block;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .toc-list a:hover {
+            background-color: #eff6ff;
+            color: #2563eb;
+        }
+        .toc-list a.active {
+            background-color: #dbeafe;
+            color: #1d4ed8;
+            font-weight: 500;
+        }
+
+        /* ## h2 */
+        .toc-h2 {
+            padding-left: 0px;
+            font-size: 16px;
+            font-weight: 600;
+            color:#222;
+        }
+        /* ### h3 */
+        .toc-h3 {
+            padding-left: 12px;
+            font-size: 14px;
+            font-weight: 400;
+            color:#333;
+        }
+        /* #### h4 */
+        .toc-h4 {
+            padding-left: 24px;
+            font-size: 13px;
+            font-weight: 400;
+            color:#555;
+        }
+
+        /* 主内容区域：修复横向滚动，不改动JS */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 32px 48px;
+            overflow-x: hidden;
+        }
+        .markdown-body {
+            background: #fff;
+            padding: 32px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            width: 100%;
+            box-sizing: border-box; /* padding向内计算，不会撑宽盒子 */
+        }
+        .loading {
+            padding:40px;
+            color:#666;
+        }
+        .markdown-body h2 { font-size: 1.6em; margin: 1em 0 0.5em; border-bottom: 1px solid #eee; padding-bottom: 0.3em;}
+        .markdown-body h3 { font-size: 1.3em; margin: 0.8em 0 0.4em; }
+        .markdown-body h4 { font-size: 1.1em; margin: 0.7em 0 0.35em; }
+        .markdown-body p { margin: 1em 0; line-height: 1.7; }
+
+        /* 代码块：仅代码块内部横向滚动，不会带出页面滚动条 */
+        .markdown-body pre {
+            background: #2d2d2d !important;
+            margin: 1em 0;
+            border-radius:6px;
+            overflow-x: auto;
+        }
+        .markdown-body code {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: Consolas, monospace;
+        }
+        /* 代码块内的code强制透明背景+浅色文字 */
+        .markdown-body pre code {
+            background: transparent !important;
+            padding:0 !important;
+            color: #ccc !important;
+        }
+
+        /* 表格：彻底移除 display:block，避免大文档卡死；单元格自动换行 */
+        .markdown-body table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 1em 0;
+        }
+        .markdown-body th,.markdown-body td {
+            border:1px solid #ddd;
+            padding:8px 12px;
+            word-break: break-word;
+        }
+        .markdown-body th { background:#f3f4f6; }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <h2>目录导航</h2>
+    <ul id="toc" class="toc-list"></ul>
+</div>
+<div class="main-content">
+    <div id="content" class="markdown-body loading">加载 api_doc.md ...</div>
+</div>
+
+<script>
+    function parseTocFromMarkdown(mdText){
+        const lines = mdText.split(/\r?\n/);
+        const tocMeta = [];
+        const headingReg = /^(#{2,4})\s+(.*)$/;
+
+        for(const line of lines){
+            const m = line.match(headingReg);
+            if(!m) continue;
+            const sharp = m[1];
+            const content = m[2].trim();
+            const level = sharp.length;
+
+            let displayName = content;
+            let anchorId = null;
+            const linkMatch = content.match(/^\[([^\]]+)\]\(#([^)]+)\)/);
+            if(linkMatch){
+                displayName = linkMatch[1].trim();
+                anchorId = linkMatch[2].trim();
+            }
+            tocMeta.push({level, display: displayName, anchorId});
+        }
+        return tocMeta;
+    }
+
+    async function loadMarkdown(){
+        const contentDom = document.getElementById('content');
+        const tocDom = document.getElementById('toc');
+        try{
+            const resp = await fetch('/api/builtin/doc/apiDocMarkdown');
+            if(!resp.ok){
+                contentDom.innerText = `读取 api_doc.md 失败！
+    请确认 api_doc.md 和 html 在同一目录；
+    必须使用http服务打开，禁止file://本地双击打开。`;
+                return;
+            }
+            let mdText = await resp.text();
+
+            const tocMeta = parseTocFromMarkdown(mdText);
+
+            // 锚点空格转下划线预处理
+            mdText = mdText.replace(/(\[.*?\]\(#)([^)]+)(\))/g, (_, prefix, anchor, suffix) => {
+                const safeAnchor = anchor.replace(/\s+/g, "_");
+                return prefix + safeAnchor + suffix;
+            });
+
+            marked.setOptions({
+                gfm:true,
+                breaks:true,
+                highlight: function(code, lang) {
+                    const useLang = lang || 'json';
+                    return Prism.highlight(code, Prism.languages[useLang], useLang);
+                }
+            });
+            const html = marked.parse(mdText);
+            contentDom.innerHTML = html;
+            contentDom.classList.remove('loading');
+
+            Prism.highlightAll();
+
+            tocDom.innerHTML = '';
+            const observeList = [];
+            const tocItemMap = new Map();
+            const allHeaders = Array.from(contentDom.querySelectorAll('h2,h3,h4'));
+
+            for(let i=0; i<tocMeta.length; i++){
+                const meta = tocMeta[i];
+                let targetEl = null;
+                if(meta.anchorId){
+                    const safeAnchor = meta.anchorId.replace(/\s+/g,"_");
+                    targetEl = contentDom.querySelector(`span[id="${CSS.escape(safeAnchor)}"]`);
+                }
+                if(!targetEl && allHeaders[i]){
+                    targetEl = allHeaders[i];
+                }
+                if(!targetEl) continue;
+
+                const li = document.createElement('li');
+                const aToc = document.createElement('a');
+                aToc.textContent = meta.display;
+                aToc.className = `toc-h${meta.level}`;
+
+                aToc.addEventListener('click', (e)=>{
+                    e.preventDefault();
+                    targetEl.scrollIntoView({behavior:'smooth', block:'start'});
+                });
+
+                tocItemMap.set(targetEl, aToc);
+                observeList.push(targetEl);
+                li.appendChild(aToc);
+                tocDom.appendChild(li);
+            }
+
+            const observer = new IntersectionObserver((entries)=>{
+                entries.forEach(entry=>{
+                    if(entry.isIntersecting){
+                        for(const link of tocItemMap.values()) link.classList.remove('active');
+                        const activeLink = tocItemMap.get(entry.target);
+                        if(activeLink){
+                            activeLink.classList.add('active');
+                            activeLink.scrollIntoView({block:'nearest', behavior:'smooth'});
+                        }
+                    }
+                });
+            },{rootMargin:"-120px 0px -60% 0px"});
+            observeList.forEach(el=>observer.observe(el));
+
+        }catch(err){
+            contentDom.innerText = "异常：" + err.message + "\n提示：file协议禁止读取本地md，请启动http服务。";
+            console.error(err);
+        }
+    }
+
+    window.onload = loadMarkdown;
+</script>
+</body>
+</html>

@@ -60,9 +60,21 @@
               "icon": "lucide-book-up",
               "title": "版本说明 1.11.5"
             }
+          },
+          {
+            "id": "ff25ca8c1b7a0cd0",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.12.7"
+              },
+              "icon": "lucide-book-up",
+              "title": "版本说明 1.12.7"
+            }
           }
         ],
-        "currentTab": 3
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -179,7 +191,7 @@
       "markdown-importer:打开 Markdown 格式转换器": false
     }
   },
-  "active": "93f992645e15eca9",
+  "active": "ff25ca8c1b7a0cd0",
   "lastOpenFiles": [
     "股票/累计复权因子.md",
     "股票/交易时段与集合竞价.md",

@@ -190,7 +190,7 @@ class ApiInfo constructor(
     }
 
     fun anchor(): String {
-        return "${path}.${httpMethod}".replace(".", "_").replace("/", "_")
+        return "${path}.${httpMethod}".replace(".", "_").replace("/", "_").replace(" ", "_")
     }
 
     fun DocPage(): String {
@@ -266,16 +266,20 @@ class ApiInfo constructor(
     }
 
     fun postJsonSchema(): String {
-        val jsonSchema = FieldSchema()
-        jsonSchema.level = 0
-        jsonSchema.name = "Post Json Schema"
-        jsonSchema.desc = ""
-        jsonSchema.type = JsonDataType.OBJECT.typeName
-        jsonSchema.kotlin_class = Class.forName(this.postDataClass).kotlin
+        if (this.postDataClass == Any::class.javaObjectType.name) {
+            return "一个合法有效的 json object 字符串"
+        } else {
+            val jsonSchema = FieldSchema()
+            jsonSchema.level = 0
+            jsonSchema.name = "Post Json Schema"
+            jsonSchema.desc = ""
+            jsonSchema.type = JsonDataType.OBJECT.typeName
+            jsonSchema.kotlin_class = Class.forName(this.postDataClass).kotlin
 
-        FieldSchema.resolveFields(Class.forName(this.postDataClass).kotlin, jsonSchema)
+            FieldSchema.resolveFields(Class.forName(this.postDataClass).kotlin, jsonSchema)
 
-        return jsonSchema.JsonSchema()
+            return jsonSchema.JsonSchema()
+        }
     }
 
     fun pathOfTestPage(): String {
