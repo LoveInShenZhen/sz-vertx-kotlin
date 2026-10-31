@@ -1,7 +1,6 @@
 package sz.scaffold.controller
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException
 import io.vertx.core.http.HttpMethod
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
@@ -18,7 +17,6 @@ import sz.scaffold.aop.annotations.WithAction
 import sz.scaffold.aop.interceptors.GlobalInterceptorBase
 import sz.scaffold.controller.reply.ReplyBase
 import sz.scaffold.log
-import sz.scaffold.tools.BizLogicException
 import sz.scaffold.tools.SzException
 import sz.scaffold.tools.json.Json
 import sz.scaffold.tools.json.Json.toStrMap
@@ -61,26 +59,31 @@ data class ApiRoute(val method: HttpMethod,
         val apiController = controller as ApiController
         apiController.setupContext(httpContext)
 
-        val paramDatas = httpContext.queryParams(defaults)
+        val query_params = httpContext.queryParams(defaults)
         // 在此, 需要先检查控制器方法需要的参数, 在 query parameters 和 default 参数列表 里是否都存在
 
         val missingParameters = this.controllerFun.parameters
             .filter { !it.isOptional && it.kind == KParameter.Kind.VALUE }      // 排除掉控制器方法的可选参数和 实例() 参数
-            .filter { !paramDatas.containsKey(it.name) && !this.defaults.containsKey(it.name) }
+            .filter { !query_params.containsKey(it.name) && !this.defaults.containsKey(it.name) }
 
         if (missingParameters.isNotEmpty()) {
             // 说明缺少参数
+            response.statusCode = 406
+            response.putHeader("Content-Type", ContentTypes.Text)
+
             missingParameters.forEach {
                 response.write("missing query parameter: ${it.name}\n")
             }
-            response.putHeader("Content-Type", ContentTypes.Text)
+
+
             response.end()
+
             return
         }
 
         Application.workerScope.async {
             try {
-                val args = controllerFun.buildCallArgs(apiController, paramDatas)
+                val args = controllerFun.buildCallArgs(apiController, query_params)
                 val wrapperAction = buildWrappedAction(httpContext, args)
                 // 通过控制器方法的返回类型, 是否是ReplyBase或者其子类型, 来判断是否是 json api 方法
                 if (controllerFun.returnType.isSubtypeOf(ReplyBase::class.createType())) {

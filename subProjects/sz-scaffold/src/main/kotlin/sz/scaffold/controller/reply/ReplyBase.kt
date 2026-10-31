@@ -36,12 +36,18 @@ open class ReplyBase {
         if (ex is BizLogicException) {
             this.ret = ex.ErrCode
             this.errmsg = ex.message!!
-            return
+            if (Application.hideBizLogicExceptionDetails) {
+                this.errmsg = "发生业务错误"
+            }
         } else {
             val causeByBizLogicException = ExceptionUtil.findCause(ex, BizLogicException::class.java)
             if (causeByBizLogicException != null) {
                 this.ret = causeByBizLogicException.ErrCode
                 this.errmsg = causeByBizLogicException.message!!
+
+                if (Application.hideBizLogicExceptionDetails) {
+                    this.errmsg = "发生业务错误"
+                }
                 return
             }
 
@@ -50,6 +56,10 @@ open class ReplyBase {
             if (causeByUnrecognizedPropertyException != null) {
                 this.ret = -1
                 this.errmsg = causeByUnrecognizedPropertyException.message!!
+
+                if (Application.hideApiErrorDetails) {
+                    this.errmsg = "JSON 不符合规范"
+                }
                 return
             }
 
@@ -57,15 +67,22 @@ open class ReplyBase {
             if (illegalArgumentException != null) {
                 this.ret = -1
                 this.errmsg = illegalArgumentException.message!!
+
+                if (Application.hideApiErrorDetails) {
+                    this.errmsg = "参数校验错误"
+                }
                 return
             }
 
             // 其他异常
             this.ret = -1
-            this.errmsg =
-                if (Application.inProductionMode) ex.message.safeString() else ExceptionUtil.exceptionChainToString(ex)
+            this.errmsg = ExceptionUtil.exceptionChainToString(ex)
 
+            if (Application.hideApiErrorDetails) {
+                this.errmsg = "内部错误"
+            }
         }
+
     }
 
     fun successed(): Boolean {

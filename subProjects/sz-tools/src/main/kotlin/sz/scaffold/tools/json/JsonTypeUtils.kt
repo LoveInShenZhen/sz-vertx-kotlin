@@ -105,6 +105,7 @@ fun isDateTime(kType: KType): Boolean {
         ZonedDateTime::class.java)
 }
 
+@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 fun isBasicType(kClass: KClass<*>): Boolean {
     return isOneOfTypes(kClass.javaObjectType,
         Byte::class.java,
@@ -137,6 +138,7 @@ fun isBasicType(kClass: KClass<*>): Boolean {
         ZonedDateTime::class.java)
 }
 
+@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 fun isBasicType(kType: KType): Boolean {
     val rawType = ClassUtil.getRawType(kType.javaType)
     return isOneOfTypes(rawType,

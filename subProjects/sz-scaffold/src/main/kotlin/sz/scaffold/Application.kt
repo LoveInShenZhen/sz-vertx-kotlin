@@ -47,10 +47,21 @@ object Application {
     private val startHandlers = mutableMapOf<Int, MutableList<() -> Unit>>()
     private val stopHandlers = mutableMapOf<Int, MutableList<() -> Unit>>()
 
-    val config: Config
+    val config: Config by lazy {
+        ConfigFactory.load()
+    }
     val app_home_dir: String
     val classLoader = Application::class.java.classLoader
-    val inProductionMode: Boolean
+    val inProductionMode: Boolean by lazy {
+        config.getBoolean("app.httpServer.productionMode")
+    }
+    val hideApiErrorDetails: Boolean by lazy {
+        config.getBoolean("app.httpServer.hideApiErrorDetails")
+    }
+    val hideBizLogicExceptionDetails: Boolean by lazy {
+        config.getBoolean("app.httpServer.hideBizLogicExceptionDetails")
+    }
+
     var clusterManager: ZookeeperClusterManager? = null
 
     val mainRouter : Router by lazy { Router.router(vertx) }
@@ -82,9 +93,6 @@ object Application {
         System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.SLF4JLogDelegateFactory")
 
         app_home_dir = appHome()
-        config = ConfigFactory.load()
-
-        inProductionMode = config.getBoolean("app.httpServer.productionMode")
 
         this.regOnStartHandler(Int.MIN_VALUE) {
             log.info("Application start ...")

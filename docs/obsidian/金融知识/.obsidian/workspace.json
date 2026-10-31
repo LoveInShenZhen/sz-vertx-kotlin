@@ -53,28 +53,86 @@
             "id": "93f992645e15eca9",
             "type": "leaf",
             "state": {
-              "type": "release-notes",
+              "type": "markdown",
               "state": {
-                "currentVersion": "1.11.5"
+                "file": "股票/累计复权因子.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-book-up",
-              "title": "版本说明 1.11.5"
+              "icon": "lucide-file",
+              "title": "累计复权因子"
             }
           },
           {
-            "id": "ff25ca8c1b7a0cd0",
+            "id": "2554b8fc89bdf0a3",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "股票/vn.py CTA下单三参数：stop, lock, net.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "vn.py CTA下单三参数：stop, lock, net"
+            }
+          },
+          {
+            "id": "6f14f533cb0cdbaa",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "期货/保证金、手续费、风险度的计算.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "保证金、手续费、风险度的计算"
+            }
+          },
+          {
+            "id": "7ec3c44c9411a3bd",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "期货/VWMA vs SMA 的合理性分析.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "VWMA vs SMA 的合理性分析"
+            }
+          },
+          {
+            "id": "1130d93fc19ac12f",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "期货/在计算分钟级的 MA 均线时, SMA 与 VMMA 哪种更加合理.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "在计算分钟级的 MA 均线时, SMA 与 VMMA 哪种更加合理"
+            }
+          },
+          {
+            "id": "5fd6860af6b2313d",
             "type": "leaf",
             "state": {
               "type": "release-notes",
               "state": {
-                "currentVersion": "1.12.7"
+                "currentVersion": "1.14.4"
               },
               "icon": "lucide-book-up",
-              "title": "版本说明 1.12.7"
+              "title": "版本说明 1.14.4"
             }
           }
         ],
-        "currentTab": 4
+        "currentTab": 8
       }
     ],
     "direction": "vertical"
@@ -94,7 +152,9 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical",
-                "autoReveal": false
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
               },
               "icon": "lucide-folder-closed",
               "title": "文件列表"
@@ -131,7 +191,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 395.5
   },
   "right": {
     "id": "7bb3e1ac406e9bce",
@@ -187,16 +247,24 @@
       "switcher:打开快速切换": false,
       "graph:查看关系图谱": false,
       "canvas:新建白板": false,
-      "command-palette:打开命令面板": false,
-      "markdown-importer:打开 Markdown 格式转换器": false
+      "command-palette:打开命令面板": false
     }
   },
-  "active": "ff25ca8c1b7a0cd0",
+  "active": "5fd6860af6b2313d",
   "lastOpenFiles": [
+    "期货/VWMA vs SMA 的合理性分析.md",
+    "期货/在计算分钟级的 MA 均线时, SMA 与 VMMA 哪种更加合理.md",
+    "期货/保证金、手续费、风险度的计算.md",
+    "期货/爆仓、强平、穿仓.md",
+    "期货/多、空.md",
+    "期货/杠杆原理.md",
+    "期货/T+0.md",
+    "股票/前复权因子计算.md",
+    "股票/股票交易手续费.md",
+    "股票/VWMA vs SMA 的合理性分析.md",
+    "股票/vn.py CTA下单三参数：stop, lock, net.md",
     "股票/累计复权因子.md",
     "股票/交易时段与集合竞价.md",
-    "股票/股票交易手续费.md",
-    "股票/前复权因子计算.md",
     "股票/交易规则.md",
     "什么是一级市场和二级市场.md",
     "股票/视频资料汇总.md",
